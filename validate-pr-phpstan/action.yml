@@ -1,0 +1,42 @@
+# @format
+
+# @package tomgrv/actions/validate-pr-phpstan
+
+name: Validate PR PHPStan
+description: Run PHPStan with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  reviewdog-version:
+    description: reviewdog version to install.
+    required: false
+    default: v0.20.3
+  paths:
+    description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`
+    required: false
+    default: app
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure PHPStan is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpstan ] || composer require --dev phpstan/phpstan --no-interaction --no-progress --quiet
+
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: ${{ inputs.reviewdog-version }}
+
+    - name: Run PHPStan
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}"

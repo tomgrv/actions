@@ -1,0 +1,28 @@
+{
+    "name": "@tomgrv/actions",
+    "version": "0.0.1",
+    "description": "Actions package",
+    "keywords": [
+        "actions",
+        "flekskit"
+    ],
+    "license": "MIT",
+    "author": "",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "main": "dist/index.js",
+    "type": "module",
+    "types": "dist/index.d.ts",
+    "repository": {
+        "url": "https://github.com/tomgrv/actions"
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    }
+}

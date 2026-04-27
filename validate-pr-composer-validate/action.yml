@@ -1,0 +1,33 @@
+# @format
+
+# @package tomgrv/actions/validate-pr-composer-validate
+
+name: Validate PR Composer Validate
+description: Run composer validate with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  reviewdog-version:
+    description: reviewdog version to install.
+    required: false
+    default: v0.20.3
+
+runs:
+  using: composite
+  steps:
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: ${{ inputs.reviewdog-version }}
+
+    - name: Run composer validate
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+      run: sh "${{ github.action_path }}/run.sh"

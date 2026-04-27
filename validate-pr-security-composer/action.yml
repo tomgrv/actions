@@ -1,0 +1,34 @@
+# @format
+
+# @package tomgrv/actions/validate-pr-security-composer
+
+name: Validate PR Security Composer
+description: Run Composer dependency security audit and report via reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up PHP toolchain
+      id: setup-php
+      if: steps.setup-php.outputs.php-version == ''
+      uses: ./packages/perspikapps/actions/setup-php
+
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: v0.20.3
+
+    - name: Run composer security audit
+      shell: bash
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+      run: bash "${{ github.action_path }}/run.sh"

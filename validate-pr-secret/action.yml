@@ -1,0 +1,27 @@
+# @format
+
+# @package tomgrv/actions/validate-pr-secret
+
+name: Validate PR Secrets
+description: Scan pull request changes for secrets.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for gitleaks action.
+    required: true
+  gitleaks-license:
+    description: Optional gitleaks license.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Run gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITLEAKS_LICENSE: ${{ inputs.gitleaks-license }}
