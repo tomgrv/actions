@@ -1,0 +1,42 @@
+# @format
+
+# @package tomgrv/actions/validate-pr-pint
+
+name: Validate PR Pint
+description: Run Laravel Pint with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  reviewdog-version:
+    description: reviewdog version to install.
+    required: false
+    default: v0.20.3
+  paths:
+    description: Comma-separated list of paths to analyze with Pint.
+    required: false
+    default: app
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure Pint is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/pint ] || composer require --dev laravel/pint --no-interaction --no-progress --quiet
+
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: ${{ inputs.reviewdog-version }}
+
+    - name: Run Pint
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}"
