@@ -1,0 +1,68 @@
+/** @format */
+
+.env-ribbon {
+    width: var(--ribbon-width, 50em);
+    background: var(--ribbon-color, #e3342f);
+    position: absolute;
+    z-index: 5000;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid lighten(var(--ribbon-color, #e3342f), 50%);
+    font:
+        bold 100% 'Helvetica Neue',
+        Helvetica,
+        Arial,
+        sans-serif;
+    font-size: 0.8em;
+    margin: 1px 0;
+    padding: 10px 50px;
+    color: white;
+    opacity: 0.2;
+}
+
+.env-ribbon.shadow {
+    text-shadow: 0 0 5px #444;
+    -webkit-box-shadow: 0 0 10px #888;
+    -moz-box-shadow: 0 0 10px #888;
+    box-shadow: 0 0 10px #888;
+}
+
+.env-ribbon.sticky {
+    position: fixed;
+}
+
+.env-ribbon.top-left {
+    top: calc(var(--ribbon-width, 50em) / 6);
+    left: calc(var(--ribbon-width, 50em) / -4);
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.env-ribbon.top-right {
+    top: calc(var(--ribbon-width, 50em) / 6);
+    right: calc(var(--ribbon-width, 50em) / -4);
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.env-ribbon.bottom-left {
+    top: auto;
+    bottom: calc(var(--ribbon-width, 50em) / 6);
+    left: calc(var(--ribbon-width, 50em) / -4);
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.env-ribbon.bottom-right {
+    top: auto;
+    right: calc(var(--ribbon-width, 50em) / -4);
+    bottom: calc(var(--ribbon-width, 50em) / 6);
+    left: auto;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}

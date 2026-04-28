@@ -1,0 +1,144 @@
+{
+    "name": "perspikapps/laravel-envribbon",
+    "description": "A laravel ribbon to display current environement",
+    "license": "MIT",
+    "type": "library",
+    "version": "1.0.0",
+    "keywords": [
+        "laravel",
+        "env",
+        "ribbon"
+    ],
+    "authors": [
+        {
+            "name": "@tomgrv",
+            "email": "tomgrv@users.perpikapps.fr"
+        }
+    ],
+    "homepage": "https://github.com/perspikapps/laravel-envribbon",
+    "support": {
+        "issues": "https://github.com/perspikapps/laravel-envribbon/issues",
+        "source": "https://github.com/perspikapps/laravel-envribbon"
+    },
+    "require": {
+        "avto-dev/app-version-laravel": "^3.6",
+        "php": ">=7.4",
+        "spatie/laravel-package-tools": "^1.18"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^8.0",
+        "nunomaduro/phpinsights": "^2.12",
+        "pestphp/pest": "^4.1",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Perspikapps\\LaravelEnvRibbon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Perspikapps\\LaravelEnvRibbon\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "wikimedia/composer-merge-plugin": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "aliases": {
+                "EnvRibbon": "Perspikapps\\LaravelEnvRibbon\\Facades\\EnvRibbon"
+            },
+            "providers": [
+                "Perspikapps\\LaravelEnvRibbon\\EnvRibbonServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "base": [
+            "composer @additional_args --ignore-platform-reqs --with-all-dependencies --minimal-changes --ansi"
+        ],
+        "helpers": [
+            "@php artisan ide-helper:generate --ansi",
+            "@php artisan ide-helper:meta --ansi"
+        ],
+        "inst": [
+            "@composer install --ignore-platform-reqs",
+            "@composer helpers"
+        ],
+        "link": [
+            "@composer config repositories.local '{\"type\": \"path\", \"url\": \"@additional_args\"}' --file composer.json"
+        ],
+        "lint": [
+            "php-cs-fixer fix -v --config=.php_cs --using-cache=no"
+        ],
+        "lint-check": [
+            "php-cs-fixer fix -v --config=.php_cs --using-cache=no --dry-run"
+        ],
+        "lock": [
+            "@composer validate --no-check-all --strict 2>&1 | grep -oP 'Required package \"\\K[^\"]+' | while read -r package; do @composer require --ignore-platform-reqs --no-scripts --no-interaction --no-progress --no-install \"$package\"; done;",
+            "@composer update --lock --minimal-changes --ignore-platform-reqs --no-scripts --no-interaction --no-progress --no-install"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate"
+        ],
+        "req": [
+            "@composer require --ignore-platform-reqs --with-all-dependencies",
+            "@composer helpers"
+        ],
+        "req-all": [
+            "npx lerna exec -- composer require --ignore-platform-reqs --with-all-dependencies --no-install --no-interaction @additional_args; composer req @additional_args",
+            "@composer helpers"
+        ],
+        "reqdev": [
+            "@composer require --ignore-platform-reqs --with-all-dependencies --dev ",
+            "@composer helpers"
+        ],
+        "reqdev-all": [
+            "npx lerna exec -- composer require --ignore-platform-reqs --with-all-dependencies --no-install --no-interaction --dev @additional_args; composer reqdev @additional_args",
+            "@composer helpers"
+        ],
+        "rmv": [
+            "@composer remove --ignore-platform-reqs --with-all-dependencies",
+            "@composer helpers"
+        ],
+        "rmv-all": [
+            "npx lerna exec -- composer remove --ignore-platform-reqs --with-all-dependencies --no-install --no-interaction @additional_args; composer rmv @additional_args",
+            "@composer helpers"
+        ],
+        "test": [
+            "phpunit --coverage-text"
+        ],
+        "test-coverage": [
+            "vendor/bin/pest --coverage"
+        ],
+        "upg": [
+            "@composer update --ignore-platform-reqs --with-all-dependencies",
+            "@composer helpers"
+        ],
+        "upg-all": [
+            "npx lerna exec -- composer upgrade --ignore-platform-reqs --with-all-dependencies --no-install --no-interaction @additional_args; composer upg @additional_args",
+            "@composer helpers"
+        ]
+    }
+}
