@@ -13,12 +13,9 @@ inputs:
   github-token:
     description: GitHub token with pull request permissions.
     required: true
-  repository-organization:
-    description: Repository owner (organization or user).
-    required: true
-  repository-name:
-    description: Repository name.
-    required: true
+  repository:
+    description: Repository in the format "owner/name". Defaults to the current repository.
+    required: false
   head-branch:
     description: Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.
     required: true
@@ -52,16 +49,19 @@ inputs:
 outputs:
   has-changes:
     description: Whether there were changes to commit when commit-all is enabled.
-    value: ${{ steps.create-pr.outputs.has_changes }}
+    value: ${{ steps.create-pr.outputs.has-changes }}
   head-branch:
     description: Head branch used for the pull request.
-    value: ${{ steps.create-pr.outputs.head_branch }}
+    value: ${{ steps.create-pr.outputs.head-branch }}
   pr-number:
     description: Pull request number.
-    value: ${{ steps.create-pr.outputs.pr_number }}
+    value: ${{ steps.create-pr.outputs.pr-number }}
   pr-url:
     description: Pull request URL.
-    value: ${{ steps.create-pr.outputs.pr_url }}
+    value: ${{ steps.create-pr.outputs.pr-url }}
+  action:
+    description: Action taken by the workflow (created, updated, or skip).
+    value: ${{ steps.create-pr.outputs.action }}
 
 runs:
   using: composite
@@ -71,8 +71,7 @@ runs:
       shell: sh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        REPO_ORG: ${{ inputs.repository-organization || github.repository_owner }}
-        REPO_NAME: ${{ inputs.repository-name || github.repository_name }}
+        REPOSITORY: ${{ inputs.repository || github.repository }}
         HEAD_BRANCH: ${{ inputs.head-branch }}
         WORKING_DIRECTORY: ${{ inputs.workdir }}
         COMMIT_FILES: ${{ inputs.commit-files }}
