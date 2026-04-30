@@ -1,0 +1,31 @@
+# @format
+
+# @package tomgrv/actions/list-packages
+
+name: List Packages
+description: Discovers Composer and npm workspace packages and emits a JSON matrix array.
+author: Perspikapps
+branding:
+  icon: list
+  color: blue
+
+inputs:
+  workdir:
+    description: Working directory to search for packages. Defaults to the repository root.
+    required: false
+    default: ${{ github.workspace }}
+
+outputs:
+  packages:
+    description: JSON array of package objects (org, name, path, repository).
+    value: ${{ steps.packages.outputs.packages }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate package matrix
+      id: packages
+      shell: sh
+      env:
+        WORKDIR: ${{ inputs.workdir }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

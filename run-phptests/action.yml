@@ -1,0 +1,17 @@
+# @format
+
+# @package tomgrv/actions/run-phptests
+
+name: Validate PR Test Suite
+description: Run pull request test suite for a PHP matrix version.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+runs:
+  using: composite
+  steps:
+    - name: Run test suite
+      shell: sh
+      run: sh -c "${{ github.action_path }}/run.sh"

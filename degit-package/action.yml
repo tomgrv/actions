@@ -1,0 +1,67 @@
+# @format
+
+# @package tomgrv/actions/degit-package
+
+name: Degit Package
+description: Import the tip of a source branch into a target repository workspace.
+author: Perspikapps
+branding:
+  icon: copy
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token with read access to source and write access to target repository.
+    required: true
+  source-organization:
+    description: Source repository organization or user to import from.
+    required: true
+  source-repository:
+    description: Source repository name to import from.
+    required: true
+  source-branch:
+    description: Source branch to import. Defaults to the source repository default branch.
+    required: false
+    default: ''
+  target-subdir:
+    description: Relative subdirectory inside the target repository where content is imported.
+    required: false
+    default: .
+  exclude-paths:
+    description: Comma-separated paths to exclude during import.
+    required: false
+    default: '.github,.devcontainer,.git'
+  head-branch:
+    description: Branch name to prepare in repository. Auto-generated when empty.
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: Whether import produced changes in the target workspace.
+    value: ${{ steps.degit-package.outputs.has-changes }}
+  degit-branch:
+    description: Branch prepared in the target repository workspace.
+    value: ${{ steps.degit-package.outputs.degit-branch }}
+  degit-workdir:
+    description: Working directory used for the target repository clone.
+    value: ${{ steps.degit-package.outputs.degit-workdir }}
+  source-sha:
+    description: Source branch tip SHA used for import.
+    value: ${{ steps.degit-package.outputs.source-sha }}
+
+runs:
+  using: composite
+  steps:
+    - name: Degit package
+      id: degit-package
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        SOURCE_BRANCH: ${{ inputs.source-branch }}
+        SOURCE_ORG: ${{ inputs.source-organization }}
+        SOURCE_NAME: ${{ inputs.source-repository }}
+        TARGET_SUBDIR: ${{ inputs.target-subdir }}
+        EXCLUDE_PATHS: ${{ inputs.exclude-paths }}
+        HEAD_BRANCH: ${{ inputs.head-branch }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

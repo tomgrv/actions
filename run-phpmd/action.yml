@@ -1,0 +1,51 @@
+# @format
+
+# @package tomgrv/actions/run-phpmd
+
+name: Validate PR PHPMD
+description: Run PHPMD with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  paths:
+    description: Paths to analyze with PHPMD, comma-separated. Defaults to `app`
+    required: false
+    default: app
+  ruleset:
+    description: PHPMD ruleset to use, comma-separated. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`
+    required: false
+    default: cleancode,codesize,controversial,design,naming,unusedcode
+  priority:
+    description: Priority of issues to report (min/max). Defaults to max.
+    required: false
+    default: max
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure PHPMD is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpmd ] || composer require --dev phpmd/phpmd --no-interaction --no-progress --quiet
+
+    - name: Cache baseline report
+      uses: actions/cache@v5
+      with:
+        path: .phpmd.result-cache.php
+        key: ${{ runner.os }}-phpmd
+        restore-keys: |
+          ${{ runner.os }}-phpmd-
+
+    - name: Run PHPMD
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        PHPMD_RULESET: ${{ inputs.ruleset }}
+        PHPMD_PRIORITY: ${{ inputs.priority }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

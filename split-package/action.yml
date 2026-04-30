@@ -1,0 +1,74 @@
+# @format
+
+# @package tomgrv/actions/split-package
+
+name: Split Package
+description: Split a monorepo package and push the split branch.
+author: Perspikapps
+branding:
+  icon: git-merge
+  color: green
+
+outputs:
+  split-branch:
+    description: Generated split branch name.
+    value: ${{ steps.split-package.outputs.split-branch }}
+  split-sha:
+    description: Generated split commit SHA.
+    value: ${{ steps.split-package.outputs.split-sha }}
+  split-workdir:
+    description: Temporary split workspace directory to use for committing and pushing.
+    value: ${{ steps.split-package.outputs.split-workdir }}
+
+inputs:
+  package-directory:
+    description: 'Relative path to the package directory from the repository root'
+    required: true
+  repository-organization:
+    description: 'GitHub organization or user that owns the origin repository'
+    required: true
+  repository-name:
+    description: 'Name of the origin repository'
+    required: true
+  sync-branch:
+    description: 'Branch to target in the PR on the origin repository'
+    required: false
+    default: 'main'
+  github-token:
+    description: 'GitHub token with permissions to push to the origin repository'
+    required: false
+  splitsh-version:
+    description: 'Version of splitsh-lite to use for splitting the repository'
+    required: false
+    default: 'v1.0.1'
+
+runs:
+  using: composite
+  steps:
+    - name: Cache splitsh-lite
+      id: cache-splitsh
+      uses: actions/cache@v5
+      with:
+        path: /usr/local/bin/splitsh-lite
+        key: splitsh-lite-${{ inputs.splitsh-version }}-linux-amd64
+        restore-keys: |
+          splitsh-lite-${{ inputs.splitsh-version }}-linux-amd64
+
+    - name: Install splitsh-lite
+      id: setup-splitsh
+      if: steps.cache-splitsh.outputs.cache-hit != 'true'
+      shell: sh
+      env:
+        SPLITSH_VERSION: ${{ inputs.splitsh-version }}
+        SPLITSH_ARCH: linux_amd64
+      run: |
+        sh -c "${{ github.action_path }}/setup.sh"
+
+    - name: Split package
+      id: split-package
+      shell: sh
+      env:
+        PACKAGE_DIR: ${{ inputs.package-directory }}
+        REPO_ORG: ${{ inputs.repository-organization }}
+        REPO_NAME: ${{ inputs.repository-name }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

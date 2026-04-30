@@ -1,0 +1,52 @@
+# @format
+
+# @package tomgrv/actions/run-phpinsights
+
+name: Validate PR PHP Insights
+description: Run PHP Insights with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  paths:
+    description: Paths to analyze with PHP Insights, comma-separated. Defaults to `app`.
+    required: false
+    default: app
+  fix:
+    description: Enable auto-fix mode instead of reviewdog reporting.
+    required: false
+    default: 'false'
+  branch-prefix:
+    description: Prefix for generated branch name when fix mode is enabled.
+    required: false
+    default: chore/phpinsights-fix
+
+outputs:
+  has-changes:
+    description: Whether fix mode produced changes.
+    value: ${{ steps.run-phpinsights.outputs.has-changes }}
+  changed-files:
+    description: Comma-separated list of changed files when fix mode is enabled.
+    value: ${{ steps.run-phpinsights.outputs.changed-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure PHP Insights is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpinsights ] || composer require --dev nunomaduro/phpinsights --no-interaction --no-progress --quiet
+
+    - name: Run PHP Insights
+      id: run-phpinsights
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        FIX: ${{ inputs.fix }}
+        BRANCH_PREFIX: ${{ inputs.branch-prefix }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

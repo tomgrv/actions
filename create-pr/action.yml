@@ -1,0 +1,83 @@
+# @format
+
+# @package tomgrv/actions/create-pr
+
+name: Create or Update Pull Request
+description: Create or update a pull request from a branch.
+author: Perspikapps
+branding:
+  icon: git-pull-request
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token with pull request permissions.
+    required: true
+  repository-organization:
+    description: Repository owner (organization or user).
+    required: true
+  repository-name:
+    description: Repository name.
+    required: true
+  head-branch:
+    description: Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.
+    required: true
+  workdir:
+    description: Working directory where changes to commit are located. Defaults to the repository root.
+    required: false
+    default: .
+  commit-message:
+    description: Commit message for the changes being committed. Defaults to the PR title if not provided.
+    required: false
+    default: ''
+  commit-files:
+    description: Comma-separated list of files to commit. Defaults to all changes in the workdir.
+    required: false
+    default: ''
+  head-owner:
+    description: Owner of the head branch repository. Defaults to repository-organization. PR via a fork if head-owner is different from repository-organization.
+    required: false
+  base-branch:
+    description: Base branch for the pull request. Defaults to the default branch of the repository if not provided.
+    required: false
+    default: ''
+  pr-title:
+    description: Pull request title.
+    required: true
+  pr-body:
+    description: Pull request body.
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: Whether there were changes to commit when commit-all is enabled.
+    value: ${{ steps.create-pr.outputs.has_changes }}
+  head-branch:
+    description: Head branch used for the pull request.
+    value: ${{ steps.create-pr.outputs.head_branch }}
+  pr-number:
+    description: Pull request number.
+    value: ${{ steps.create-pr.outputs.pr_number }}
+  pr-url:
+    description: Pull request URL.
+    value: ${{ steps.create-pr.outputs.pr_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create or update pull request
+      id: create-pr
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPO_ORG: ${{ inputs.repository-organization || github.repository_owner }}
+        REPO_NAME: ${{ inputs.repository-name || github.repository_name }}
+        HEAD_BRANCH: ${{ inputs.head-branch }}
+        WORKING_DIRECTORY: ${{ inputs.workdir }}
+        COMMIT_FILES: ${{ inputs.commit-files }}
+        COMMIT_MESSAGE: ${{ inputs.commit-message }}
+        BASE_BRANCH: ${{ inputs.base-branch }}
+        PR_TITLE: ${{ inputs.pr-title }}
+        PR_BODY: ${{ inputs.pr-body }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

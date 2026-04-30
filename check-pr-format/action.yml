@@ -1,0 +1,28 @@
+# @format
+
+# @package tomgrv/actions/check-pr-format
+
+name: Validate PR Format
+description: Validate and optionally normalize pull request title format.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token used to update PR title when needed.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Validate PR title
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+        HEAD_REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
+      run: sh "${{ github.action_path }}/run.sh"
