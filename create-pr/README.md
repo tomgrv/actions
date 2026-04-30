@@ -8,54 +8,51 @@ This action creates a pull request from a branch, or updates the existing open p
 
 ### github-token
 
-Required. GitHub token with pull request write permissions.
+**Required.** GitHub token with pull request permissions.
 
-### repository-organization
+### repository
 
-Required. Repository owner.
-
-### repository-name
-
-Required. Repository name.
+**Optional.** Repository in the format `owner/name`. Defaults to the current repository.
 
 ### head-branch
 
-Required. Branch name used as pull request head.
+**Required.** Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.
 
-### working-directory
+### workdir
 
-Optional. Directory where commit/push operations are executed. Defaults to `.`.
-
-### commit-all
-
-Optional. When `true`, stage all changes, commit, and push to `head-branch` before PR operations. Defaults to `false`.
+**Optional.** Working directory where changes to commit are located. Defaults to the repository root (`.`).
 
 ### commit-message
 
-Optional. Commit message used when `commit-all` is `true`.
+**Optional.** Commit message for the changes being committed. Defaults to the PR title if not provided.
+
+### commit-files
+
+**Optional.** Comma-separated list of files to commit. Defaults to all changes in the workdir.
 
 ### head-owner
 
-Optional. Head branch owner. Defaults to `repository-organization`.
+**Optional.** Owner of the head branch repository. Defaults to repository-organization. PR via a fork if head-owner is different from repository-organization.
 
 ### base-branch
 
-Optional. Base branch. Defaults to default branch of the repository.
+**Optional.** Base branch for the pull request. Defaults to the default branch of the repository if not provided.
 
 ### pr-title
 
-Required. Pull request title.
+**Required.** Pull request title.
 
 ### pr-body
 
-Optional. Pull request body.
+**Optional.** Pull request body.
 
 ## Outputs
 
-- `has-changes`: Whether changes were found and committed when `commit-all` is enabled.
-- `head-branch`: Head branch used for the PR.
+- `has-changes`: Whether there were changes to commit when commit-all is enabled.
+- `head-branch`: Head branch used for the pull request.
 - `pr-number`: Pull request number.
 - `pr-url`: Pull request URL.
+- `action`: Action taken by the workflow (`created`, `updated`, or `skip`).
 
 ## Usage
 
@@ -64,8 +61,7 @@ Optional. Pull request body.
   uses: tomgrv/actions/create-pr
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-      repository-organization: ${{ github.repository_owner }}
-      repository-name: ${{ github.event.repository.name }}
+      repository: ${{ github.repository }}
       head-branch: chore/automated-update
       commit-message: 'chore: automated update'
       base-branch: develop
