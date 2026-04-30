@@ -2,14 +2,13 @@
 
 set -eu
 
-REPO_ORG="${REPO_ORG:?REPO_ORG is required}"
-REPO_NAME="${REPO_NAME:?REPO_NAME is required}"
+REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 HEAD_BRANCH="${HEAD_BRANCH:?HEAD_BRANCH is required}"
 WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
-HEAD_OWNER="${HEAD_OWNER:-${REPO_ORG}}"
+HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
 
-DEFAULT_BRANCH=$(gh repo view "${REPO_ORG}/${REPO_NAME}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+DEFAULT_BRANCH=$(gh repo view "${REPOSITORY}" --json defaultBranchRef --jq '.defaultBranchRef.name')
 DEFAULT_TITLE="sync: Update from ${HEAD_BRANCH}"
 
 BASE_BRANCH="${BASE_BRANCH:-${DEFAULT_BRANCH:-main}}"
@@ -37,9 +36,11 @@ cd "${WORKING_DIRECTORY}" || {
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
 if [ -z "$(git status --porcelain)" ]; then
-    printf 'has_changes=false\n'
-    printf 'pr_number=\n'
-    printf 'pr_url=\n'
+    echo "::notice::No changes detected in working directory, skipping PR creation." >&2
+    printf 'action=skip\n'
+    printf 'has-changes=false\n'
+    printf 'pr-number=\n'
+    printf 'pr-url=\n'
     exit 0
 fi
 
@@ -53,13 +54,11 @@ git add $(echo "${COMMIT_FILES:-.}" | tr ',' ' ') >&2
 git commit -m "${COMMIT_MESSAGE}" --no-verify >&2
 git push origin "HEAD:${HEAD_BRANCH}" --no-verify --force >&2
 
-
-REPO="${REPO_ORG}/${REPO_NAME}"
 HEAD_REF="${HEAD_OWNER}:${HEAD_BRANCH}"
 
 PR_NUMBER_JQ="[.[] | select(.headRepositoryOwner.login == \"${HEAD_OWNER}\")] | .[0].number // empty"
 PR_NUMBER=$(gh pr list \
-  --repo "${REPO}" \
+  --repo "${REPOSITORY}" \
   --state open \
   --head "${HEAD_BRANCH}" \
   --json number,headRepositoryOwner \
@@ -71,14 +70,16 @@ if [ -n "${PR_NUMBER}" ]; then
 
   if [ -n "${PR_BODY}" ]; then
     gh pr edit "${PR_NUMBER}" \
-      --repo "${REPO}" \
+      --repo "${REPOSITORY}" \
       --title "${PR_TITLE}" \
       --body "${PR_BODY}" >/dev/null
   else
     gh pr edit "${PR_NUMBER}" \
-      --repo "${REPO}" \
+      --repo "${REPOSITORY}" \
       --title "${PR_TITLE}" >/dev/null
   fi
+
+  ACTION="updated"
 
 else
 
@@ -86,31 +87,33 @@ else
 
   if [ -n "${PR_BODY}" ]; then
     gh pr create \
-      --repo "${REPO}" \
+      --repo "${REPOSITORY}" \
       --head "${HEAD_REF}" \
       --base "${BASE_BRANCH}" \
       --title "${PR_TITLE}" \
       --body "${PR_BODY}" >/dev/null
   else
     gh pr create \
-      --repo "${REPO}" \
+      --repo "${REPOSITORY}" \
       --head "${HEAD_REF}" \
       --base "${BASE_BRANCH}" \
       --title "${PR_TITLE}" >/dev/null
   fi
 
   PR_NUMBER=$(gh pr list \
-  --repo "${REPO}" \
+  --repo "${REPOSITORY}" \
   --state open \
   --head "${HEAD_BRANCH}" \
   --json number,headRepositoryOwner \
   --jq "${PR_NUMBER_JQ}" 2>/dev/null || true)
+
+  ACTION="created"
 fi
 
-PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json url --jq '.url')
+PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPOSITORY}" --json url --jq '.url')
+echo "::notice::PR #${PR_NUMBER} ${ACTION}: ${PR_URL}" >&2
 
-echo "::notice::PR #${PR_NUMBER} created/updated: ${PR_URL}" >&2
-
-printf 'has_changes=true\n'
-printf 'pr_number=%s\n' "${PR_NUMBER}"
-printf 'pr_url=%s\n' "${PR_URL}"
+printf 'action=%s\n' "${ACTION}"
+printf 'has-changes=true\n'
+printf 'pr-number=%s\n' "${PR_NUMBER}"
+printf 'pr-url=%s\n' "${PR_URL}"

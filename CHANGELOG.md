@@ -2,6 +2,10 @@
 
 # Changelog
 
+## 1.0.0 (2026-04-30)
+
+_Commits from: v0.2.0..HEAD_
+
 ## 0.1.0 (2026-04-30)
 
 _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
