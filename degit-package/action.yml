@@ -30,7 +30,7 @@ inputs:
   exclude-paths:
     description: Comma-separated paths to exclude during import.
     required: false
-    default: '.github,.devcontainer,.git'
+    default: '.github,.devcontainer,.vscode'
   head-branch:
     description: Branch name to prepare in repository. Auto-generated when empty.
     required: false
