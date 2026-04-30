@@ -1,0 +1,116 @@
+#!/usr/bin/sh
+
+set -eu
+
+REPO_ORG="${REPO_ORG:?REPO_ORG is required}"
+REPO_NAME="${REPO_NAME:?REPO_NAME is required}"
+HEAD_BRANCH="${HEAD_BRANCH:?HEAD_BRANCH is required}"
+WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
+
+HEAD_OWNER="${HEAD_OWNER:-${REPO_ORG}}"
+
+DEFAULT_BRANCH=$(gh repo view "${REPO_ORG}/${REPO_NAME}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+DEFAULT_TITLE="sync: Update from ${HEAD_BRANCH}"
+
+BASE_BRANCH="${BASE_BRANCH:-${DEFAULT_BRANCH:-main}}"
+
+COMMIT_MESSAGE="${COMMIT_MESSAGE:-${DEFAULT_TITLE}}"
+COMMIT_FILES="${COMMIT_FILES:-.}"
+
+PR_TITLE="${PR_TITLE:-${DEFAULT_TITLE}}"
+PR_BODY="${PR_BODY:-${DEFAULT_TITLE}} \
+--- \
+_This pull request was created automatically by [tomgrv/actions/create-pr](https://github.com/tomgrv/actions/create-pr)_"
+
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+  echo "::error::GITHUB_TOKEN is required" >&2
+  exit 1
+fi
+
+export GH_TOKEN="${GITHUB_TOKEN}"
+
+cd "${WORKING_DIRECTORY}" || {
+  echo "::error::Working directory '${WORKING_DIRECTORY}' does not exist" >&2
+  exit 1
+}
+
+git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
+
+if [ -z "$(git status --porcelain)" ]; then
+    printf 'has_changes=false\n'
+    printf 'pr_number=\n'
+    printf 'pr_url=\n'
+    exit 0
+fi
+
+if [ -z "${COMMIT_MESSAGE}" ]; then
+    echo "::error::commit-message is required when commit-all is true" >&2
+    exit 1
+fi
+
+git checkout -B "${HEAD_BRANCH}" >&2
+git add $(echo "${COMMIT_FILES:-.}" | tr ',' ' ') >&2
+git commit -m "${COMMIT_MESSAGE}" --no-verify >&2
+git push origin "HEAD:${HEAD_BRANCH}" --no-verify --force >&2
+
+
+REPO="${REPO_ORG}/${REPO_NAME}"
+HEAD_REF="${HEAD_OWNER}:${HEAD_BRANCH}"
+
+PR_NUMBER_JQ="[.[] | select(.headRepositoryOwner.login == \"${HEAD_OWNER}\")] | .[0].number // empty"
+PR_NUMBER=$(gh pr list \
+  --repo "${REPO}" \
+  --state open \
+  --head "${HEAD_BRANCH}" \
+  --json number,headRepositoryOwner \
+  --jq "${PR_NUMBER_JQ}" 2>/dev/null || true)
+
+if [ -n "${PR_NUMBER}" ]; then
+
+  echo "Existing PR #${PR_NUMBER} found for head '${HEAD_REF}'" >&2
+
+  if [ -n "${PR_BODY}" ]; then
+    gh pr edit "${PR_NUMBER}" \
+      --repo "${REPO}" \
+      --title "${PR_TITLE}" \
+      --body "${PR_BODY}" >/dev/null
+  else
+    gh pr edit "${PR_NUMBER}" \
+      --repo "${REPO}" \
+      --title "${PR_TITLE}" >/dev/null
+  fi
+
+else
+
+  echo "No existing PR found for head '${HEAD_REF}', creating a new one" >&2
+
+  if [ -n "${PR_BODY}" ]; then
+    gh pr create \
+      --repo "${REPO}" \
+      --head "${HEAD_REF}" \
+      --base "${BASE_BRANCH}" \
+      --title "${PR_TITLE}" \
+      --body "${PR_BODY}" >/dev/null
+  else
+    gh pr create \
+      --repo "${REPO}" \
+      --head "${HEAD_REF}" \
+      --base "${BASE_BRANCH}" \
+      --title "${PR_TITLE}" >/dev/null
+  fi
+
+  PR_NUMBER=$(gh pr list \
+  --repo "${REPO}" \
+  --state open \
+  --head "${HEAD_BRANCH}" \
+  --json number,headRepositoryOwner \
+  --jq "${PR_NUMBER_JQ}" 2>/dev/null || true)
+fi
+
+PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json url --jq '.url')
+
+echo "::notice::PR #${PR_NUMBER} created/updated: ${PR_URL}" >&2
+
+printf 'has_changes=true\n'
+printf 'pr_number=%s\n' "${PR_NUMBER}"
+printf 'pr_url=%s\n' "${PR_URL}"

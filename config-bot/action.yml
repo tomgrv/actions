@@ -1,0 +1,48 @@
+# @format
+
+# @package tomgrv/actions/config-bot
+
+name: Configure Git Bot
+description: Configure Git identity and authentication for bot commits.
+author: Perspikapps
+branding:
+  icon: user-check
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token used for authenticated Git operations.
+    required: true
+  github-app-slug:
+    description: GitHub App slug for the bot. Defaults to the current action's app slug.
+    required: false
+    default: github-actions
+
+outputs:
+  user-id:
+    description: GitHub App bot user ID.
+    value: ${{ steps.get-user-id.outputs.user_id }}
+  git-user-name:
+    description: Effective Git user.name configured.
+    value: ${{ steps.configure-bot.outputs.git_user_name }}
+  git-user-email:
+    description: Effective Git user.email configured.
+    value: ${{ steps.configure-bot.outputs.git_user_email }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get GitHub App User ID
+      id: get-user-id
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: echo "user_id=$(gh api "/users/${{ inputs.github-app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+    - name: Configure Git bot credentials
+      id: configure-bot
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        BOT_NAME: ${{ inputs.github-app-slug }}[bot]
+        BOT_EMAIL: ${{ steps.get-user-id.outputs.user_id || '341898282' }}+${{ inputs.github-app-slug || 'github-actions' }}[bot]@users.noreply.github.com
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

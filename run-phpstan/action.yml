@@ -1,0 +1,55 @@
+# @format
+
+# @package tomgrv/actions/run-phpstan
+
+name: Validate PR PHPStan
+description: Run PHPStan with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  paths:
+    description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`
+    required: false
+    default: app
+  fix:
+    description: Enable baseline generation mode instead of reviewdog reporting.
+    required: false
+    default: 'false'
+  branch-prefix:
+    description: Prefix for generated branch name when fix mode is enabled.
+    required: false
+    default: chore/phpstan-fix
+  baseline-file:
+    description: Baseline file generated when fix mode is enabled.
+    required: false
+    default: phpstan-baseline.neon
+
+outputs:
+  has-changes:
+    description: Whether fix mode produced changes.
+    value: ${{ steps.run-phpstan.outputs.has_changes }}
+  head-branch:
+    description: Generated branch name when fix mode is enabled.
+    value: ${{ steps.run-phpstan.outputs.head_branch }}
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure PHPStan is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpstan ] || composer require --dev phpstan/phpstan --no-interaction --no-progress --quiet
+
+    - name: Run PHPStan
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        PHPSTAN_RULESET: ${{ inputs.ruleset }}
+        PHPSTAN_PRIORITY: ${{ inputs.priority }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

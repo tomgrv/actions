@@ -1,0 +1,53 @@
+# @format
+
+# @package tomgrv/actions/setup-php
+
+name: Setup php
+description: Shared PHP and Composer setup for PR validation actions.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  options:
+    description: Additional options to pass to composer install, such as --no-dev.
+    required: false
+    default: ''
+
+outputs:
+  php-version:
+    description: Detected PHP version from composer.json, or default.
+    value: ${{ steps.php-version.outputs.version }}
+  php-extensions:
+    description: Detected PHP extensions from composer.json, or empty.
+    value: ${{ steps.php-extensions.outputs.extensions }}
+
+runs:
+  using: composite
+  steps:
+    - name: Extract PHP version from composer.json
+      id: php-version
+      shell: sh
+      run: |
+        version=$(jq -r '.require.php // empty' composer.json | sed 's/[^0-9.]//g' | cut -d. -f1,2)
+        echo "version=${version:-8.3}" >> "$GITHUB_OUTPUT"
+
+    - name: Extract php extensions from composer.json
+      id: php-extensions
+      shell: sh
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      id: php-setup
+      with:
+        php-version: ${{ steps.php-version.outputs.version }}
+        extensions: ${{ steps.php-extensions.outputs.extensions }}
+        coverage: xdebug
+
+    - name: Install Composer dependencies
+      uses: ramsey/composer-install@v3
+      id: composer-install
+      with:
+        composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
