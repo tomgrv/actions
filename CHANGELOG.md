@@ -2,6 +2,16 @@
 
 # Changelog
 
+## 1.0.1 (2026-04-30)
+
+_Commits from: v1.0.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- 📚️ update README for clarity and consistency in input descriptions ([f0aa7f5](https://github.com/tomgrv/actions/commit/f0aa7f5cea75ef0e269cafe2c3817f3cfe0055c7))
+
 ## 1.0.0 (2026-04-30)
 
 _Commits from: v0.2.0..HEAD_
