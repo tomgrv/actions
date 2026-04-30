@@ -1,0 +1,13 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "name": "",
+    "features": {
+        "ghcr.io/tomgrv/devcontainer-features/githooks": {},
+        "ghcr.io/tomgrv/devcontainer-features/gitutils": {},
+        "ghcr.io/tomgrv/devcontainer-features/gitversion": {}
+    },
+    "remoteEnv": {},
+    "postCreateCommand": ".devcontainer/create.sh",
+    "postStartCommand": ".devcontainer/start.sh",
+    "customizations": {}
+}
