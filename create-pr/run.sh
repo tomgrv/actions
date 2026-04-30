@@ -37,9 +37,11 @@ cd "${WORKING_DIRECTORY}" || {
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
 if [ -z "$(git status --porcelain)" ]; then
-    printf 'has_changes=false\n'
-    printf 'pr_number=\n'
-    printf 'pr_url=\n'
+    echo "::notice::No changes detected in working directory, skipping PR creation." >&2
+    printf 'action=skip\n'
+    printf 'has-changes=false\n'
+    printf 'pr-number=\n'
+    printf 'pr-url=\n'
     exit 0
 fi
 
@@ -80,6 +82,8 @@ if [ -n "${PR_NUMBER}" ]; then
       --title "${PR_TITLE}" >/dev/null
   fi
 
+  ACTION="updated"
+
 else
 
   echo "No existing PR found for head '${HEAD_REF}', creating a new one" >&2
@@ -105,12 +109,14 @@ else
   --head "${HEAD_BRANCH}" \
   --json number,headRepositoryOwner \
   --jq "${PR_NUMBER_JQ}" 2>/dev/null || true)
+
+  ACTION="created"
 fi
 
 PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json url --jq '.url')
+echo "::notice::PR #${PR_NUMBER} ${ACTION}: ${PR_URL}" >&2
 
-echo "::notice::PR #${PR_NUMBER} created/updated: ${PR_URL}" >&2
-
-printf 'has_changes=true\n'
-printf 'pr_number=%s\n' "${PR_NUMBER}"
-printf 'pr_url=%s\n' "${PR_URL}"
+printf 'action=%s\n' "${ACTION}"
+printf 'has-changes=true\n'
+printf 'pr-number=%s\n' "${PR_NUMBER}"
+printf 'pr-url=%s\n' "${PR_URL}"

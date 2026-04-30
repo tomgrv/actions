@@ -52,16 +52,19 @@ inputs:
 outputs:
   has-changes:
     description: Whether there were changes to commit when commit-all is enabled.
-    value: ${{ steps.create-pr.outputs.has_changes }}
+    value: ${{ steps.create-pr.outputs.has-changes }}
   head-branch:
     description: Head branch used for the pull request.
-    value: ${{ steps.create-pr.outputs.head_branch }}
+    value: ${{ steps.create-pr.outputs.head-branch }}
   pr-number:
     description: Pull request number.
-    value: ${{ steps.create-pr.outputs.pr_number }}
+    value: ${{ steps.create-pr.outputs.pr-number }}
   pr-url:
     description: Pull request URL.
-    value: ${{ steps.create-pr.outputs.pr_url }}
+    value: ${{ steps.create-pr.outputs.pr-url }}
+  action:
+    description: Action taken by the workflow (created, updated, or skip).
+    value: ${{ steps.create-pr.outputs.action }}
 
 runs:
   using: composite
