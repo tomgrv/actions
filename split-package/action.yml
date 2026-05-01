@@ -3,7 +3,7 @@
 # @package tomgrv/actions/split-package
 
 name: Split Package
-description: Split a monorepo package and push the split branch.
+description: Split a package from a monorepo and push the split branch.
 author: Perspikapps
 branding:
   icon: git-merge

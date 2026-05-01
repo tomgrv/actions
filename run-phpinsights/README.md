@@ -2,46 +2,91 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-This action runs PHP Insights and reports findings with reviewdog. It can also run in fix mode.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes and produce a list of changed files for downstream steps.
 
 ## Inputs
 
 ### github-token
 
-Required. GitHub token for reviewdog reporting.
+**Required.** GitHub token for reviewdog reporting.
 
 ### paths
 
-Optional. Comma-separated paths to analyze. Defaults to `app`.
+**Optional.** Comma-separated list of paths to analyze. Defaults to `app`.
 
 ### fix
 
-Optional. Enable auto-fix mode. Defaults to `false`.
+**Optional.** Enable auto-fix mode instead of reviewdog reporting. Defaults to `false`.
 
 ### branch-prefix
 
-Optional. Prefix for generated branch name in fix mode. Defaults to `chore/phpinsights-fix`.
+**Optional.** Prefix for the generated branch name when fix mode is enabled. Defaults to `chore/phpinsights-fix`.
 
 ## Outputs
 
 - `has-changes`: Whether fix mode produced local changes.
-- `head-branch`: Generated branch name in fix mode.
+- `changed-files`: Comma-separated list of changed files when fix mode is enabled.
 
-## Usage
+## Works well with
+
+- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHP Insights.
+- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+
+## Example
 
 ```yaml
-- name: Run PHP Insights
-  uses: tomgrv/actions/run-phpinsights
-  with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+name: PR PHP Checks
+
+on:
+    pull_request:
+
+jobs:
+    php-insights:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup PHP toolchain
+              uses: tomgrv/actions/setup-php@v1
+
+            - name: Run PHP Insights
+              uses: tomgrv/actions/run-phpinsights@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  paths: app,config,routes
 ```
 
+### Fix mode
+
 ```yaml
-- name: Run PHP Insights in fix mode
-  id: phpinsights-fix
-  uses: tomgrv/actions/run-phpinsights
-  with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
-      paths: app,config,database,resources,routes,tests,modules,packages
-      fix: 'true'
+name: PHP Insights Fix
+
+on:
+    workflow_dispatch:
+
+jobs:
+    fix:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup PHP toolchain
+              uses: tomgrv/actions/setup-php@v1
+
+            - name: Run PHP Insights in fix mode
+              id: insights
+              uses: tomgrv/actions/run-phpinsights@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  paths: app,config,routes
+                  fix: 'true'
+
+            - name: Create pull request with fixes
+              if: ${{ steps.insights.outputs.has-changes == 'true' }}
+              uses: tomgrv/actions/create-pr@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  head-branch: chore/phpinsights-fix
+                  commit-files: ${{ steps.insights.outputs.changed-files }}
+                  pr-title: 'chore: apply phpinsights fixes'
 ```
