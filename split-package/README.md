@@ -2,7 +2,7 @@
 
 # GitHub Action: Split Package
 
-Splits a package from a monoreponto a separate repository using [splitsh-lite](https://github.com/splitsh/lite). The action extracts the commit history of the given package directory, pushes a split branch to the origin repository, and exposes a working directory ready for use with `create-pr`.
+Splits a package from a monorepo a separate repository using [splitsh-lite](https://github.com/splitsh/lite). The action extracts the commit history of the given package directory, pushes a split branch to the origin repository, and exposes a working directory ready for use with `create-pr`.
 
 ## Inputs
 
