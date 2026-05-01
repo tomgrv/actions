@@ -20,6 +20,17 @@ if [ -z "${CI_PULL_REQUEST:-}" ]; then
   zz_ask "No pull request context detected. Do you want to continue running the tests? (y/N)" && exit 1
 fi
 
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+  zz_log w "GITHUB_TOKEN is not set. Attempting to retrieve token via gh CLI."
+  export GITHUB_TOKEN="$(gh auth token)"
+fi
+
+if [ -z "${GITHUB_REPOSITORY:-}" ]; then
+  zz_log w "GITHUB_REPOSITORY is not set. Attempting to retrieve repository via gh CLI."
+  export GITHUB_REPOSITORY="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+fi
+
+
 CMD=${1}
 APP=${2:-app,config,database,resources,routes,tests,modules,packages}
 
