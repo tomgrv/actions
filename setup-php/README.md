@@ -1,19 +1,63 @@
 <!-- @format -->
 
-# Setup php
+# GitHub Action: Setup PHP
 
-Shared composite action that prepares PHP and Composer for validation jobs.
+Shared composite action that prepares PHP, extensions, and Composer for workflow jobs. Reads the required PHP version and extensions from `composer.json`, installs the matching PHP runtime, and runs `composer install`.
 
-## What It Does
+## Inputs
 
-- Extracts PHP version from `composer.json`
-- Sets up PHP with required extensions
-- Caches Composer packages
-- Installs Composer dependencies
+### options
 
-## Usage
+**Optional.** Additional options to pass to `composer install`, such as `--no-dev`. Defaults to none.
+
+## Outputs
+
+- `php-version`: Detected PHP version from `composer.json`, or the default (`8.3`).
+- `php-extensions`: Detected PHP extensions from `composer.json`, or empty.
+
+## Works well with
+
+- [**check-composer**](../check-composer/README.md) — validate `composer.json` after setup.
+- [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependencies after setup.
+- [**run-phpinsights**](../run-phpinsights/README.md) — run PHP Insights after setup.
+- [**run-phpmd**](../run-phpmd/README.md) — run PHPMD after setup.
+- [**run-phpstan**](../run-phpstan/README.md) — run PHPStan after setup.
+- [**run-pint**](../run-pint/README.md) — run Pint after setup.
+- [**run-phptests**](../run-phptests/README.md) — run the test suite after setup.
+- [**list-packages**](../list-packages/README.md) — discover Composer packages after setup.
+
+## Example
 
 ```yaml
-- name: Setup PHP toolchain
-  uses: tomgrv/actions/setup-php
+name: PR PHP Checks
+
+on:
+    pull_request:
+
+jobs:
+    php-checks:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup PHP toolchain
+              uses: tomgrv/actions/setup-php@v1
+
+            - name: Validate composer
+              uses: tomgrv/actions/check-composer@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Audit Composer dependencies
+              uses: tomgrv/actions/check-security-composer@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Run PHPStan
+              uses: tomgrv/actions/run-phpstan@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Run tests
+              uses: tomgrv/actions/run-phptests@v1
 ```
