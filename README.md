@@ -39,6 +39,10 @@ tomgrv/actions is a suite of modular, reusable GitHub composite actions designed
 - [**check-secret**](check-secret/README.md): Scan pull request changes for leaked secrets.
 - [**check-security-npm**](check-security-npm/README.md): Audit npm dependencies for known vulnerabilities.
 
+### Repository Management
+
+- [**update-labels**](update-labels/README.md): Create or update repository labels from a JSON file or comma-separated list.
+
 See each action's README for usage, inputs, and outputs.
 
 ## License
