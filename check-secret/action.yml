@@ -14,7 +14,7 @@ inputs:
     description: GitHub token for gitleaks action.
     required: true
   gitleaks-license:
-    description: Optional gitleaks license.
+    description: Gitleaks license key for private repositories. Not required for public repositories.
     required: false
 
 runs:
