@@ -24,7 +24,7 @@ Configures global Git identity and GitHub authentication for bot commits within 
 
 - [**create-pr**](../create-pr/README.md) — open or update a pull request after committing changes as the bot.
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; pair with `config-bot` for authenticated pushes.
-- [**split-package**](../split-package/README.md) — split a monorepo subtree; pair with `config-bot` to sign the split commits.
+- [**split-packages**](../split-packages/README.md) — split a monorepo subtree; pair with `config-bot` to sign the split commits.
 
 ## Example
 

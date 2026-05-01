@@ -20,7 +20,7 @@ tomgrv/actions is a suite of modular, reusable GitHub composite actions designed
 
 - [**list-packages**](list-packages/README.md): List all composer/npm packages in a monorepo.
 - [**degit-package**](degit-package/README.md): Import the latest source branch content into a package repository and prune unwanted folders.
-- [**split-package**](split-package/README.md): Split a monorepo package to a separate repository based on path.
+- [**split-packages**](split-packages/README.md): Split a monorepo package to a separate repository based on path.
 
 ### PHP Check
 

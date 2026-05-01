@@ -58,7 +58,7 @@ Creates a pull request from a branch, or updates the existing open pull request 
 
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before committing.
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; feed `degit-branch` and `degit-workdir` outputs into `create-pr`.
-- [**split-package**](../split-package/README.md) — split a monorepo subtree; feed `split-branch` and `split-workdir` outputs into `create-pr`.
+- [**split-packages**](../split-packages/README.md) — split a monorepo subtree; feed `split-branch` and `split-workdir` outputs into `create-pr`.
 
 ## Example
 
