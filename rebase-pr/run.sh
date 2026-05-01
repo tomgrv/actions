@@ -4,7 +4,8 @@ set -eu
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
   echo "::error::GITHUB_TOKEN is required" >&2
-  exit 1i
+  exit 1
+fi
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "::error::gh CLI could not be found. Please install it to run this action." >&2
@@ -16,27 +17,17 @@ export GH_TOKEN="${GITHUB_TOKEN}"
 REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 AUTOSQUASH="${AUTOSQUASH:-false}"
 
-# Resolve PR number from input or current event context
+# Resolve PR number and metadata
 if [ -n "${PR_NUMBER:-}" ]; then
-  PR_DATA=$(gh pr view "${PR_NUMBER}" --repo "${REPOSITORY}" --json number,url,headRefName,baseRefName,mergeable 2>/dev/null || true)
+  PR_VIEW_ARGS="${PR_NUMBER}"
 else
-  PR_DATA=$(gh pr view --repo "${REPOSITORY}" --json number,url,headRefName,baseRefName,mergeable 2>/dev/null || true)
+  PR_VIEW_ARGS=""
 fi
 
-if [ -z "${PR_DATA:-}" ]; then
-  echo "::error::Could not find pull request." >&2
-  exit 1
-fi
-
-PR_NUMBER=$(printf '%s' "${PR_DATA}" | gh api /repos/"${REPOSITORY}"/pulls --jq '.number' 2>/dev/null || \
-  printf '%s' "${PR_DATA}" | grep -o '"number":[0-9]*' | head -1 | cut -d: -f2)
-
-# Use gh JSON extraction via process substitution compatible with POSIX sh
-PR_NUMBER=$(printf '%s' "${PR_DATA}" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['number'])" 2>/dev/null || \
-            printf '%s' "${PR_DATA}" | sed -n 's/.*"number":\([0-9]*\).*/\1/p' | head -1)
-HEAD_BRANCH=$(printf '%s' "${PR_DATA}" | sed -n 's/.*"headRefName":"\([^"]*\)".*/\1/p' | head -1)
-BASE_BRANCH=$(printf '%s' "${PR_DATA}" | sed -n 's/.*"baseRefName":"\([^"]*\)".*/\1/p' | head -1)
-PR_URL=$(printf '%s' "${PR_DATA}" | sed -n 's/.*"url":"\([^"]*\)".*/\1/p' | head -1)
+HEAD_BRANCH=$(gh pr view ${PR_VIEW_ARGS} --repo "${REPOSITORY}" --json headRefName --jq '.headRefName')
+BASE_BRANCH=$(gh pr view ${PR_VIEW_ARGS} --repo "${REPOSITORY}" --json baseRefName --jq '.baseRefName')
+PR_NUMBER=$(gh pr view ${PR_VIEW_ARGS} --repo "${REPOSITORY}" --json number --jq '.number')
+PR_URL=$(gh pr view ${PR_VIEW_ARGS} --repo "${REPOSITORY}" --json url --jq '.url')
 
 if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
   echo "::error::Could not resolve head or base branch for PR #${PR_NUMBER}." >&2
@@ -66,7 +57,7 @@ fi
 
 # Create a temporary worktree for the rebase
 TMP_DIR=$(mktemp -d)
-trap 'rm -rf "${TMP_DIR}"' EXIT INT TERM
+trap 'git worktree remove "${TMP_DIR}" --force >/dev/null 2>&1; rm -rf "${TMP_DIR}"' EXIT INT TERM
 
 git worktree add "${TMP_DIR}" "origin/${HEAD_BRANCH}" >&2
 
@@ -82,9 +73,7 @@ git worktree add "${TMP_DIR}" "origin/${HEAD_BRANCH}" >&2
   git push origin "HEAD:${HEAD_BRANCH}" --force-with-lease >&2
 )
 
-git worktree remove "${TMP_DIR}" --force >/dev/null 2>&1 || true
-
-NEW_HEAD=$(git rev-parse "origin/${HEAD_BRANCH}")
+NEW_HEAD=$(git -C "${TMP_DIR}" rev-parse HEAD)
 echo "::notice::PR #${PR_NUMBER} successfully rebased. New HEAD: ${NEW_HEAD}" >&2
 
 printf 'action=rebased\n'
