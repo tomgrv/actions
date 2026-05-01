@@ -53,9 +53,7 @@ git fetch origin "${BASE_BRANCH}" "${HEAD_BRANCH}" >&2
 MERGE_BASE=$(git merge-base "origin/${HEAD_BRANCH}" "origin/${BASE_BRANCH}")
 BASE_TIP=$(git rev-parse "origin/${BASE_BRANCH}")
 
-UP_TO_DATE=$(printf '%s %s\n' "${MERGE_BASE}" "${BASE_TIP}" | awk '{print ($1 == $2) ? "yes" : "no"}')
-
-if [ "${UP_TO_DATE}" = "yes" ]; then
+if [ "${MERGE_BASE}" = "${BASE_TIP}" ]; then
   echo "::notice::PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do." >&2
   printf 'action=up-to-date\n'
   printf 'head_branch=%s\n' "${HEAD_BRANCH}"
