@@ -84,7 +84,7 @@ git worktree add "${TMP_DIR}" "origin/${HEAD_BRANCH}" >&2
 NEW_HEAD=$(git -C "${TMP_DIR}" rev-parse HEAD)
 
 # Extract short SHA with awk for annotation
-SHORT_SHA=$(printf '%s\n' "${NEW_HEAD}" | awk '{print substr($0,1,8)}')
+SHORT_SHA=$(git -C "${TMP_DIR}" rev-parse --short=8 HEAD)
 
 echo "::notice::PR #${PR_NUMBER} successfully rebased. New HEAD: ${SHORT_SHA} (${NEW_HEAD})" >&2
 
