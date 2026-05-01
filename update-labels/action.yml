@@ -25,17 +25,6 @@ inputs:
     required: false
     default: '25 documentation,10 must,20 should,30 could,80 duplicate,90 wont'
 
-outputs:
-  labels-created:
-    description: Number of labels created.
-    value: ${{ steps.update-labels.outputs.labels-created }}
-  labels-updated:
-    description: Number of labels updated.
-    value: ${{ steps.update-labels.outputs.labels-updated }}
-  labels-deleted:
-    description: Number of labels deleted.
-    value: ${{ steps.update-labels.outputs.labels-deleted }}
-
 runs:
   using: composite
   steps:
