@@ -29,7 +29,8 @@
         "run-pint",
         "check-secret",
         "check-security-composer",
-        "check-security-npm"
+        "check-security-npm",
+        "update-labels"
     ],
     "repository": {
         "type": "git",
