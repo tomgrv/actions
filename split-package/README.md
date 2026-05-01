@@ -2,7 +2,7 @@
 
 # GitHub Action: Split Package
 
-Splits a monorepo package into a separate repository using [splitsh-lite](https://github.com/splitsh/lite). The action extracts the commit history of the given package directory, pushes a split branch to the origin repository, and exposes a working directory ready for use with `create-pr`.
+Splits a package from a monoreponto a separate repository using [splitsh-lite](https://github.com/splitsh/lite). The action extracts the commit history of the given package directory, pushes a split branch to the origin repository, and exposes a working directory ready for use with `create-pr`.
 
 ## Inputs
 
@@ -38,7 +38,7 @@ Splits a monorepo package into a separate repository using [splitsh-lite](https:
 
 ## Works well with
 
-- [**list-packages**](../list-packages/README.md) — discover packages to use as a matrix for `split-packages`.
+- [**list-packages**](../list-packages/README.md) — discover packages to use as a matrix for `split-package`.
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before splitting.
 - [**create-pr**](../create-pr/README.md) — open a pull request in the origin repository using `split-branch` and `split-workdir` outputs.
 
@@ -71,7 +71,7 @@ jobs:
               id: list
               uses: tomgrv/actions/list-packages@v1
 
-    split-packages:
+    split-package:
         runs-on: ubuntu-latest
         needs: list-packages
         strategy:
@@ -99,7 +99,7 @@ jobs:
 
             - name: Split package
               id: split
-              uses: tomgrv/actions/split-packages@v1
+              uses: tomgrv/actions/split-package@v1
               with:
                   package-directory: ${{ matrix.package.path }}
                   repository-organization: ${{ matrix.package.org }}
