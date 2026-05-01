@@ -17,7 +17,7 @@ inputs:
     description: Repository in the format "owner/name". Defaults to the current repository.
     required: false
   labels-file:
-    description: Path to labels.json file in Hyouji format. Defaults to .github/labels.json if it exists.
+    description: Path to labels.json file. Defaults to .github/labels.json if it exists.
     required: false
     default: .github/labels.json
   labels:
