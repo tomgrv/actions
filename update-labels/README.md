@@ -2,7 +2,7 @@
 
 # GitHub Action: Update Repository Labels
 
-This action creates or updates GitHub repository labels from a JSON file (Hyouji format) or a comma-separated list. The action is idempotent and performs seamless updates without intermediate deletion.
+This action creates or updates GitHub repository labels from a JSON file (`.github/labels.json`) or a comma-separated list. The action is idempotent and performs seamless updates without intermediate deletion.
 
 ## Features
 
@@ -24,22 +24,22 @@ This action creates or updates GitHub repository labels from a JSON file (Hyouji
 
 ### labels-file
 
-**Optional.** Path to labels.json file in Hyouji format. Defaults to `.github/labels.json` if it exists.
+**Optional.** Path to labels.json file. Defaults to `.github/labels.json` if it exists.
 
-The Hyouji format is a JSON array of label objects:
+The labels.json is a JSON array of label objects:
 
 ```json
 [
-  {
-    "name": "bug",
-    "color": "d73a4a",
-    "description": "Something isn't working"
-  },
-  {
-    "name": "documentation",
-    "color": "0075ca",
-    "description": "Improvements or additions to documentation"
-  }
+    {
+        "name": "bug",
+        "color": "d73a4a",
+        "description": "Something isn't working"
+    },
+    {
+        "name": "documentation",
+        "color": "0075ca",
+        "description": "Improvements or additions to documentation"
+    }
 ]
 ```
 
@@ -50,10 +50,12 @@ The Hyouji format is a JSON array of label objects:
 Default: `25 documentation,10 must,20 should,30 could,80 duplicate,90 wont`
 
 **Format:** Each label can be specified as:
+
 - `<number> <name>`: Number prefix for priority-based color assignment (e.g., `10 must`)
 - `<name>`: Simple name without number (uses default color)
 
 **Color mapping by number:**
+
 - 0-19: Red (high priority)
 - 20-39: Blue (medium priority)
 - 40-59: Cyan (lower priority)
@@ -74,9 +76,21 @@ Create a `.github/labels.json` file in your repository:
 
 ```json
 [
-  {"name": "bug", "color": "d73a4a", "description": "Something isn't working"},
-  {"name": "enhancement", "color": "a2eeef", "description": "New feature or request"},
-  {"name": "documentation", "color": "0075ca", "description": "Documentation updates"}
+    {
+        "name": "bug",
+        "color": "d73a4a",
+        "description": "Something isn't working"
+    },
+    {
+        "name": "enhancement",
+        "color": "a2eeef",
+        "description": "New feature or request"
+    },
+    {
+        "name": "documentation",
+        "color": "0075ca",
+        "description": "Documentation updates"
+    }
 ]
 ```
 
@@ -113,14 +127,17 @@ Then use the action:
 ## Behavior
 
 ### When using JSON file
+
 - Labels in the file are created or updated in the repository
 - Labels not in the file but present in the repository are deleted
 - Label updates are seamless (no deletion and recreation)
 
 ### When using comma-separated list
+
 - Labels in the list are created or updated in the repository
 - Existing labels not in the list are **not** deleted (safe mode)
 - Label updates are seamless (no deletion and recreation)
 
 ### Idempotency
+
 Running the action multiple times with the same input produces the same result without unnecessary API calls or changes.
