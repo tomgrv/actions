@@ -19,7 +19,7 @@ JSON array of package objects, each containing `org`, `name`, `path`, and `repos
 ## Works well with
 
 - [**degit-package**](../degit-package/README.md) — use the package matrix to degit each package in parallel.
-- [**split-package**](../split-package/README.md) — use the package matrix to split each package in parallel.
+- [**split-packages**](../split-packages/README.md) — use the package matrix to split each package in parallel.
 - [**setup-php**](../setup-php/README.md) — install Composer dependencies before listing packages.
 - [**setup-node**](../setup-node/README.md) — install npm dependencies before listing packages.
 
@@ -64,7 +64,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Split package
-              uses: tomgrv/actions/split-package@v1
+              uses: tomgrv/actions/split-packages@v1
               with:
                   package-directory: ${{ matrix.package.path }}
                   repository-organization: ${{ matrix.package.org }}
