@@ -31,33 +31,33 @@ name: Action Display Name
 description: Short description of what the action does
 author: Perspikapps
 branding:
-  icon: icon-name                  # GitHub icon (e.g., check-circle, git-merge, tag)
-  color: color-name                # Branding color (blue, green, red, purple)
+    icon: icon-name # GitHub icon (e.g., check-circle, git-merge, tag)
+    color: color-name # Branding color (blue, green, red, purple)
 
 inputs:
-  github-token:
-    description: GitHub token with required permissions.
-    required: true
-  parameter-name:
-    description: What this parameter does
-    required: true/false
-    default: 'default-value'       # Optional default
+    github-token:
+        description: GitHub token with required permissions.
+        required: true
+    parameter-name:
+        description: What this parameter does
+        required: true/false
+        default: 'default-value' # Optional default
 
 outputs:
-  output-name:
-    description: What this output contains
-    value: ${{ steps.step-id.outputs.output-var }}
+    output-name:
+        description: What this output contains
+        value: ${{ steps.step-id.outputs.output-var }}
 
 runs:
-  using: composite
-  steps:
-    - name: Step name
-      id: step-id
-      shell: sh
-      env:
-        ENV_VAR: ${{ inputs.parameter-name }}
-        GITHUB_TOKEN: ${{ inputs.github-token }}
-      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+    using: composite
+    steps:
+        - name: Step name
+          id: step-id
+          shell: sh
+          env:
+              ENV_VAR: ${{ inputs.parameter-name }}
+              GITHUB_TOKEN: ${{ inputs.github-token }}
+          run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
 ```
 
 ### Shell Script (run.sh)
@@ -73,8 +73,8 @@ PARAMETER="${PARAMETER:-default-value}"
 
 # Validate required inputs
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "::error::GITHUB_TOKEN is required" >&2
-  exit 1
+    echo "::error::GITHUB_TOKEN is required" >&2
+    exit 1
 fi
 
 # Export GitHub token for gh CLI
@@ -82,8 +82,8 @@ export GH_TOKEN="${GITHUB_TOKEN}"
 
 # Safe directory handling (if needed)
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
-  cd "${GITHUB_WORKSPACE}" || exit 1
-  git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
+    cd "${GITHUB_WORKSPACE}" || exit 1
+    git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
 # Main logic here
@@ -117,6 +117,7 @@ Brief description of what the action does.
 ## Inputs
 
 ### parameter-name
+
 **Required/Optional.** Description of parameter.
 
 ## Outputs
@@ -126,16 +127,18 @@ Brief description of what the action does.
 ## Usage
 
 \`\`\`yaml
+
 - name: Action display name
   uses: tomgrv/actions/action-name
   with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
-      parameter-name: value
-\`\`\`
+  github-token: ${{ secrets.GITHUB_TOKEN }}
+  parameter-name: value
+  \`\`\`
 
 ## Behavior
 
 Describe how the action behaves, including:
+
 - What it does when run
 - How it handles edge cases
 - Whether it's idempotent
@@ -162,9 +165,9 @@ gh label create "${NAME}" --color "${COLOR}" --force
 
 ```bash
 # Check if jq is available
-if ! command -v jq >/dev/null 2>&1; then
-  echo "::error::jq is required" >&2
-  exit 1
+if ! command -v jq > /dev/null 2>&1; then
+    echo "::error::jq is required" >&2
+    exit 1
 fi
 
 # Parse JSON
@@ -180,13 +183,13 @@ trap 'rm -rf "${TMP_DIR}"' EXIT
 
 # Track operations in files
 CREATED_FILE="${TMP_DIR}/created"
-: >"${CREATED_FILE}"
+: > "${CREATED_FILE}"
 
 # Increment counter
-echo "1" >>"${CREATED_FILE}"
+echo "1" >> "${CREATED_FILE}"
 
 # Count at the end
-CREATED=$(wc -l <"${CREATED_FILE}" | tr -d ' ')
+CREATED=$(wc -l < "${CREATED_FILE}" | tr -d ' ')
 ```
 
 ### Updating Root README
@@ -212,6 +215,7 @@ Before committing:
 ### Example Actions
 
 Reference existing actions for patterns:
+
 - **create-pr**: Complex workflow with git operations
 - **update-labels**: JSON parsing and GitHub API usage
 - **list-packages**: JQ and monorepo handling
