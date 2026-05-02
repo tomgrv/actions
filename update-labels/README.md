@@ -70,11 +70,13 @@ When labels are defined with a numeric prefix (e.g., `10 must`), the action auto
 
 | Priority Range | Color Name | Hex Code | Preview | Example Labels |
 |---|---|---|---|---|
-| 0 – 19 | Red | `#e11d48` | ![#e11d48](https://img.shields.io/badge/-%23e11d48-e11d48) | `10 must`, `15 critical` |
-| 20 – 39 | Blue | `#2563eb` | ![#2563eb](https://img.shields.io/badge/-%232563eb-2563eb) | `20 should`, `25 documentation` |
-| 40 – 59 | Cyan | `#06b6d4` | ![#06b6d4](https://img.shields.io/badge/-%2306b6d4-06b6d4) | `40 nice`, `50 leftover` |
-| 60 – 79 | Purple | `#7c3aed` | ![#7c3aed](https://img.shields.io/badge/-%237c3aed-7c3aed) | `60 could`, `70 idea` |
-| 80+ | Gray | `#6b7280` | ![#6b7280](https://img.shields.io/badge/-%236b7280-6b7280) | `80 duplicate`, `90 wont` |
+| 0 – 19 | Red | `b60205` | ![#b60205](https://img.shields.io/badge/-%23b60205-b60205) | `10 must`, `15 critical` |
+| 20 – 29 | Yellow | `fbca04` | ![#fbca04](https://img.shields.io/badge/-%23fbca04-fbca04) | `20 should` |
+| 30 – 49 | Green | `0e8a16` | ![#0e8a16](https://img.shields.io/badge/-%230e8a16-0e8a16) | `30 could` |
+| 50 – 59 | Dark Green | `006b75` | ![#006b75](https://img.shields.io/badge/-%23006b75-006b75) | `50 documentation` |
+| 60 – 79 | Purple | `7057ff` | ![#7057ff](https://img.shields.io/badge/-%237057ff-7057ff) | `60 could`, `70 idea` |
+| 80 – 89 | Light Gray | `cfd3d7` | ![#cfd3d7](https://img.shields.io/badge/-%23cfd3d7-cfd3d7) | `80 duplicate` |
+| 90+ | Gray | `808080` | ![#808080](https://img.shields.io/badge/-%23808080-808080) | `90 wont` |
 
 ### Custom Colors in JSON
 
