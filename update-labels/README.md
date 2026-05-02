@@ -62,6 +62,37 @@ Default: `25 documentation,10 must,20 should,30 could,80 duplicate,90 wont`
 - 60-79: Purple (could/nice-to-have)
 - 80+: Gray (duplicate/won't fix)
 
+## Color Reference
+
+### Smart Color Generation
+
+When labels are defined with a numeric prefix (e.g., `10 must`), the action automatically assigns a color based on the number range. The table below shows the exact hex values used:
+
+| Priority Range | Color Name | Hex Code | Preview | Example Labels |
+|---|---|---|---|---|
+| 0 – 19 | Red | `#e11d48` | ![#e11d48](https://img.shields.io/badge/-%23e11d48-e11d48) | `10 must`, `15 critical` |
+| 20 – 39 | Blue | `#2563eb` | ![#2563eb](https://img.shields.io/badge/-%232563eb-2563eb) | `20 should`, `25 documentation` |
+| 40 – 59 | Cyan | `#06b6d4` | ![#06b6d4](https://img.shields.io/badge/-%2306b6d4-06b6d4) | `40 nice`, `50 leftover` |
+| 60 – 79 | Purple | `#7c3aed` | ![#7c3aed](https://img.shields.io/badge/-%237c3aed-7c3aed) | `60 could`, `70 idea` |
+| 80+ | Gray | `#6b7280` | ![#6b7280](https://img.shields.io/badge/-%236b7280-6b7280) | `80 duplicate`, `90 wont` |
+
+### Custom Colors in JSON
+
+When using a `labels.json` file, you can specify any valid 6-digit hex color code (without `#`):
+
+| Color Name | Hex Code | Preview | Common Use |
+|---|---|---|---|
+| Red | `d73a4a` | ![d73a4a](https://img.shields.io/badge/-%23d73a4a-d73a4a) | Bugs, critical issues |
+| Blue | `0075ca` | ![0075ca](https://img.shields.io/badge/-%230075ca-0075ca) | Documentation, info |
+| Green | `0e8a16` | ![0e8a16](https://img.shields.io/badge/-%230e8a16-0e8a16) | Enhancements, good first issues |
+| Yellow | `e4e669` | ![e4e669](https://img.shields.io/badge/-%23e4e669-e4e669) | Questions, help wanted |
+| Purple | `5319e7` | ![5319e7](https://img.shields.io/badge/-%235319e7-5319e7) | Blocked, needs review |
+| Teal | `a2eeef` | ![a2eeef](https://img.shields.io/badge/-%23a2eeef-a2eeef) | Features, requests |
+| Orange | `e99695` | ![e99695](https://img.shields.io/badge/-%23e99695-e99695) | Low priority, won't fix |
+| Gray | `cfd3d7` | ![cfd3d7](https://img.shields.io/badge/-%23cfd3d7-cfd3d7) | Duplicates, invalid |
+
+> ℹ️ GitHub label colors must be valid 6-character hex codes **without** the `#` prefix.
+
 ## Outputs
 
 - `labels-created`: Number of labels created.
