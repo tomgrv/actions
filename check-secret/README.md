@@ -1,20 +1,48 @@
 <!-- @format -->
 
-# Validate PR Secrets
+# GitHub Action: Validate PR Secrets
 
-Scans pull request changes for leaked secrets using gitleaks.
+Scans pull request changes for leaked secrets using [gitleaks](https://github.com/gitleaks/gitleaks-action).
 
 ## Inputs
 
-- `github-token` (required): GitHub token for gitleaks action.
-- `gitleaks-license` (optional): Optional gitleaks license.
+### github-token
 
-## Usage
+**Required.** GitHub token for the gitleaks action.
+
+### gitleaks-license
+
+**Optional.** Gitleaks license key.
+
+## Outputs
+
+This action has no outputs.
+
+## Works well with
+
+- [**check-pr-format**](../check-pr-format/README.md) — validate PR title format.
+- [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependency security.
+- [**check-security-npm**](../check-security-npm/README.md) — audit npm dependency security.
+
+## Example
 
 ```yaml
-- name: Validate PR secrets
-  uses: tomgrv/actions/check-secret
-  with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
-      gitleaks-license: ${{ secrets.GITLEAKS_LICENSE }}
+name: PR Security Check
+
+on:
+    pull_request:
+
+jobs:
+    check-secrets:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Scan for secrets
+              uses: tomgrv/actions/check-secret@v1
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  gitleaks-license: ${{ secrets.GITLEAKS_LICENSE }}
 ```

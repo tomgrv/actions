@@ -35,8 +35,8 @@ tomgrv/actions is a suite of modular, reusable GitHub composite actions designed
 ### Pull Request
 
 - [**create-pr**](create-pr/README.md): Open or update a pull request for a branch, with customizable title/body/labels.
-- [**check-pr-format**](check-pr-format/README.md): Validate PR title and body format.
 - [**rebase-pr**](rebase-pr/README.md): Rebase the head branch of a pull request onto its base branch.
+- [**check-pr-format**](check-pr-format/README.md): Validate PR title and body format.
 - [**check-secret**](check-secret/README.md): Scan pull request changes for leaked secrets.
 - [**check-security-npm**](check-security-npm/README.md): Audit npm dependencies for known vulnerabilities.
 

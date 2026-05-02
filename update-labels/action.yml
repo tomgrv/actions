@@ -1,0 +1,39 @@
+# @format
+
+# @package tomgrv/actions/update-labels
+
+name: Update Repository Labels
+description: Create or update GitHub repository labels from a JSON file or comma-separated list.
+author: Perspikapps
+branding:
+  icon: tag
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token with repository permissions.
+    required: true
+  repository:
+    description: Repository in the format "owner/name". Defaults to the current repository.
+    required: false
+  labels-file:
+    description: Path to labels.json file. Defaults to .github/labels.json if it exists.
+    required: false
+    default: .github/labels.json
+  labels:
+    description: Comma-separated list of label names with optional numbers (e.g., "25 documentation,10 must,20 should"). Used if labels-file does not exist.
+    required: false
+    default: '25 documentation,10 must,20 should,30 could,80 duplicate,90 wont'
+
+runs:
+  using: composite
+  steps:
+    - name: Update repository labels
+      id: update-labels
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPOSITORY: ${{ inputs.repository || github.repository }}
+        LABELS_FILE: ${{ inputs.labels-file }}
+        LABELS: ${{ inputs.labels }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
