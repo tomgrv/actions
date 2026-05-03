@@ -105,7 +105,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
     fi
 
   # If label exists but color or description differ, attempt to update (case-insensitive name match)
-  elif ! grep -iqE "^[0-9]* ${name}[[:space:]]+${color}[[:space:]]+${desc}$" "${TMP_DIR}/existing_labels"; then
+  elif ! grep -iqE "^([0-9]+ +)?${name}[[:space:]]+${color}[[:space:]]+${desc}$" "${TMP_DIR}/existing_labels"; then
 
     # Get the actual existing label name (in case of case differences or formatting or number prefix)
     oldname=$(grep -iE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
