@@ -22,5 +22,4 @@ echo "Running PHPmd analysis on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}"
     -f=sarif \
     -name="phpmd" \
     -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
-    -filter-mode=nofilter \
-    -fail-level=none
+    -filter-mode=nofilter 

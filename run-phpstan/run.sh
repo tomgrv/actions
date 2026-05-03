@@ -30,12 +30,12 @@ if [ "${FIX:-false}" = "true" ]; then
 
 else
 
-  { vendor/bin/phpstan analyse --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
+  { vendor/bin/phpstan analyse --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') || true; } | \
     reviewdog \
       -f=checkstyle \
       -name="phpstan" \
       -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
-      -filter-mode=diff_context \
+      -filter-mode=diff_context
 
   printf 'has-changes=false\n'
 fi

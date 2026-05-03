@@ -13,9 +13,12 @@ inputs:
   github-token:
     description: GitHub token with pull request permissions.
     required: true
-  repository:
-    description: Repository in the format "owner/name". Defaults to the current repository.
-    required: false
+  repository-organization:
+    description: Repository owner (organization or user).
+    required: true
+  repository-name:
+    description: Repository name.
+    required: true
   head-branch:
     description: Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.
     required: true
@@ -71,7 +74,8 @@ runs:
       shell: sh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        REPOSITORY: ${{ inputs.repository || github.repository }}
+        REPO_ORG: ${{ inputs.repository-organization || github.repository_owner }}
+        REPO_NAME: ${{ inputs.repository-name || github.repository_name }}
         HEAD_BRANCH: ${{ inputs.head-branch }}
         WORKING_DIRECTORY: ${{ inputs.workdir }}
         COMMIT_FILES: ${{ inputs.commit-files }}

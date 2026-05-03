@@ -17,8 +17,7 @@ TARGET_PATHS="${1:-app}"
 echo "Running PHP Insights analysis on: ${TARGET_PATHS}" >&2
 
 if [ "${FIX:-false}" = "true" ]; then
-   CHANGED=$({ vendor/bin/phpinsights analyse --no-interaction --fix --summary --format=github-action -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
-    tee /dev/stderr | \
+  CHANGED=$({ vendor/bin/phpinsights analyse --no-interaction --fix --summary --format=github-action -- $(echo "${TARGET_PATHS}" | tr ',' ' ') || true; } | \
     awk -F'file=|,line=' '{print $2}' | sort | uniq | paste -sd "," - | sed 's/^,//' )
 
   if [ -n "$CHANGED" ]; then
@@ -28,13 +27,12 @@ if [ "${FIX:-false}" = "true" ]; then
     printf 'has-changes=false\n'
   fi
 else
-    { vendor/bin/phpinsights analyse --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
+  { vendor/bin/phpinsights analyse --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') || true; } | \
     reviewdog \
-        -f=checkstyle \
-        -name="phpinsights" \
-        -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
-        -filter-mode=diff_context \
-        -fail-level=none
+      -f=checkstyle \
+      -name="phpinsights" \
+      -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
+      -filter-mode=diff_context
 
-    printf 'has-changes=false\n'
+  printf 'has-changes=false\n'
 fi

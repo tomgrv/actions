@@ -1,40 +1,18 @@
 <!-- @format -->
 
-# GitHub Action: Validate PR Format
+# Validate PR Format
 
-Validates and optionally normalizes pull request title format against the Conventional Commits specification. When a GitHub token is provided and the title can be normalized, the PR title is updated automatically.
+Validates and optionally normalizes pull request title format.
 
 ## Inputs
 
-### github-token
+- `github-token` (optional): GitHub token used when updating PR title.
 
-**Optional.** GitHub token used to update the PR title when normalization is needed.
-
-## Outputs
-
-This action has no outputs.
-
-## Works well with
-
-- [**check-secret**](../check-secret/README.md) — scan pull request changes for leaked secrets.
-- [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependency security.
-- [**check-security-npm**](../check-security-npm/README.md) — audit npm dependency security.
-
-## Example
+## Usage
 
 ```yaml
-name: PR Format Check
-
-on:
-    pull_request:
-        types: [opened, edited, synchronize, reopened]
-
-jobs:
-    check-pr-format:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Validate PR title format
-              uses: tomgrv/actions/check-pr-format@v1
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+- name: Validate PR title
+  uses: tomgrv/actions/check-pr-format
+  with:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
