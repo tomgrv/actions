@@ -81,8 +81,8 @@ cat ${TMP_DIR}/existing_labels | tr '\t' '|' | while IFS='|' read -r fullname co
 
   name=$(parse_label_name ${fullname})
   
-  # Check if label exists in desired list
-  if ! grep -qE "^[0-9 ]*${name}" "${TMP_DIR}/desired_labels"; then
+  # Check if label exists in desired list (case-insensitive)
+  if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/desired_labels"; then
 
     # Attempt to delete label
     if ! gh label delete "${fullname}" --repo "${REPOSITORY}" --yes >&2; then
@@ -96,19 +96,19 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
 
   name=$(parse_label_name "${fullname}")
   
-  # Check if label exists in existing list
-  if ! grep -qE "^[0-9 ]*${name}" "${TMP_DIR}/existing_labels"; then
+  # Check if label exists in existing list (case-insensitive)
+  if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels"; then
 
      # Attempt to create label
     if ! gh label create "${fullname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" >&2; then
       echo "::warning::Failed to create label: ${fullname}" >&2
     fi
 
-  # If label exists but color or description differ, attempt to update
-  elif ! grep -qE "^[0-9]* ${name}[[:space:]]+${color}[[:space:]]+${desc}$" "${TMP_DIR}/existing_labels"; then
+  # If label exists but color or description differ, attempt to update (case-insensitive name match)
+  elif ! grep -iqE "^([0-9]+ +)?${name}[[:space:]]+${color}[[:space:]]+${desc}$" "${TMP_DIR}/existing_labels"; then
 
     # Get the actual existing label name (in case of case differences or formatting or number prefix)
-    oldname=$(grep -E "^[0-9 ]*${name}" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
+    oldname=$(grep -iE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
 
     # Attempt to update label (color and description)
     if ! gh label edit "${oldname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" --name "${fullname}" >&2; then
