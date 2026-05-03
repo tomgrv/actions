@@ -108,7 +108,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
   elif ! grep -iqE "^[0-9]* ${name}[[:space:]]+${color}[[:space:]]+${desc}$" "${TMP_DIR}/existing_labels"; then
 
     # Get the actual existing label name (in case of case differences or formatting or number prefix)
-    oldname=$(grep -iE "^[0-9 ]*${name}" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
+    oldname=$(grep -iE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
 
     # Attempt to update label (color and description)
     if ! gh label edit "${oldname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" --name "${fullname}" >&2; then
