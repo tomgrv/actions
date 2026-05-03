@@ -97,7 +97,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
   name=$(parse_label_name "${fullname}")
   
   # Check if label exists in existing list (case-insensitive)
-  if ! grep -iqE "^[0-9 ]*${name}" "${TMP_DIR}/existing_labels"; then
+  if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels"; then
 
      # Attempt to create label
     if ! gh label create "${fullname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" >&2; then
