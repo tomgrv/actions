@@ -82,7 +82,7 @@ cat ${TMP_DIR}/existing_labels | tr '\t' '|' | while IFS='|' read -r fullname co
   name=$(parse_label_name ${fullname})
   
   # Check if label exists in desired list (case-insensitive)
-  if ! grep -iqE "^[0-9 ]*${name}" "${TMP_DIR}/desired_labels"; then
+  if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/desired_labels"; then
 
     # Attempt to delete label
     if ! gh label delete "${fullname}" --repo "${REPOSITORY}" --yes >&2; then
