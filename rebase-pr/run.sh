@@ -41,7 +41,7 @@ PR_URL=$(printf '%s'      "${PR_JSON}" | jq -r '.url')
 
 # Detect fork PR and resolve head remote URL
 IS_FORK=$(printf '%s' "${PR_JSON}" | jq -r '.isCrossRepository')
-HEAD_REPO_URL=$(printf '%s' "${PR_JSON}" | jq -r '.headRepository.url')
+HEAD_REPO_URL=$(printf '%s' "${PR_JSON}" | jq -r '.headRepository.url // ""')
 
 if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
   echo "::error::Could not resolve head or base branch for PR #${PR_NUMBER}." >&2
