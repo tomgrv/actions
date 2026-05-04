@@ -33,14 +33,5 @@ runs:
   steps:
     - name: Detect changes
       id: detect
-      shell: bash
-      run: |
-        TARGET="${{ inputs.path }}"
-        if [ -n "${{ inputs.subpath }}" ]; then
-          TARGET="$TARGET/${{ inputs.subpath }}"
-        fi
-
-        echo "has-changes=false" >> "$GITHUB_OUTPUT"
-        if [ -n "$(git status --porcelain ${{ inputs.status-options }} -- "$TARGET")" ]; then
-          echo "has-changes=true" >> "$GITHUB_OUTPUT"
-        fi
+      shell: sh
+      run: sh -c "${{ github.action_path }}/run.sh '${{ inputs.path }}' '${{ inputs.subpath }}' '${{ inputs.status-options }}'"
