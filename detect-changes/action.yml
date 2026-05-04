@@ -14,18 +14,14 @@ inputs:
     description: Base path to check for changes (relative to repo root).
     required: false
     default: '.'
-  subpath:
-    description: Subpath or glob within the base path to narrow the check.
-    required: false
-    default: ''
-  status-options:
+  options:
     description: Additional options passed to `git status` (e.g. --ignored, -u).
     required: false
     default: ''
 
 outputs:
   has-changes:
-    description: "true if changes are detected, false otherwise"
+    description: 'true if changes are detected, false otherwise'
     value: ${{ steps.detect.outputs.has-changes }}
 
 runs:
@@ -34,4 +30,7 @@ runs:
     - name: Detect changes
       id: detect
       shell: sh
-      run: sh -c "${{ github.action_path }}/run.sh '${{ inputs.path }}' '${{ inputs.subpath }}' '${{ inputs.status-options }}'"
+      env:
+        WORKDIR: ${{ github.path }}
+        OPTIONS: ${{ inputs.options }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> $GITHUB_OUTPUT
