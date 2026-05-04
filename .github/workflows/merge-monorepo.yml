@@ -1,6 +1,6 @@
 # @format
 
-name: Degit Packages
+name: Merge Monorepo
 
 on:
   workflow_dispatch:

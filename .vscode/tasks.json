@@ -10,6 +10,42 @@
                 "close": true,
                 "reveal": "always"
             }
+        },
+        {
+            "label": "⏬ Align",
+            "type": "shell",
+            "command": "git align",
+            "problemMatcher": []
+        },
+        {
+            "label": "⤵️ Amend",
+            "type": "shell",
+            "command": "git amend",
+            "problemMatcher": []
+        },
+        {
+            "label": "⏫ Push force",
+            "type": "shell",
+            "command": "git pf",
+            "problemMatcher": []
+        },
+        {
+            "label": "🎈 Beta",
+            "type": "shell",
+            "command": "git release beta",
+            "problemMatcher": []
+        },
+        {
+            "label": "🚑 Hotfix",
+            "type": "shell",
+            "command": "git release hotfix",
+            "problemMatcher": []
+        },
+        {
+            "label": "🚀 Prod",
+            "type": "shell",
+            "command": "git release prod",
+            "problemMatcher": []
         }
     ]
 }

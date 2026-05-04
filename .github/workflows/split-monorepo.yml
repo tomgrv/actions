@@ -1,6 +1,6 @@
 # @format
 
-name: 'Split Packages'
+name: 'Split Monorepo'
 
 on:
   push:
