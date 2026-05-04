@@ -49,5 +49,6 @@ runs:
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install
+      if: ${{ hashFiles('composer.lock') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
