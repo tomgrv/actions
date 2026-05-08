@@ -51,7 +51,7 @@ if [ "${TARGET_PATHS}" = "app" ]; then
 fi
 
 if [ "${FIX}" = "true" ]; then
-    echo "FIX is set to true, running PHPStan with --fix" >&2
+    echo "FIX is set to true, running PHP Insights with --fix" >&2
     FIX_FLAG="--fix"
 else
     FIX_FLAG=""
