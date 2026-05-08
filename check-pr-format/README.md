@@ -20,6 +20,17 @@ This action has no outputs.
 - [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependency security.
 - [**check-security-npm**](../check-security-npm/README.md) — audit npm dependency security.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-check-pr-format
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

@@ -1,0 +1,29 @@
+{
+    "name": "@tomgrv/action-setup-php",
+    "version": "1.1.0",
+    "description": "Shared PHP and Composer setup for PR validation actions.",
+    "bin": {
+        "action-setup-php": "./run.sh"
+    },
+    "files": [
+        "*.sh",
+        "*.jq",
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "setup-php"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/setup-php#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}

@@ -18,6 +18,17 @@ This action has no outputs.
 
 - [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running validation.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-check-composer
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

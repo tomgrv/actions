@@ -1,0 +1,24 @@
+{
+    "name": "@tomgrv/action-setup-node",
+    "version": "1.1.0",
+    "description": "Setup Node.js and npm for CI jobs.",
+    "files": [
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "setup-node"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/setup-node#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "@tomgrv/action-list-packages",
+    "version": "1.1.0",
+    "description": "Discovers Composer and npm workspace packages and emits a JSON matrix array.",
+    "bin": {
+        "action-list-packages": "./run.sh"
+    },
+    "files": [
+        "*.sh",
+        "*.jq",
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "list-packages"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/list-packages#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}

@@ -88,3 +88,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           autosquash: 'true'
 ```
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-rebase-pr
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+

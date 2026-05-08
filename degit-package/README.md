@@ -47,6 +47,17 @@ Imports the tip of a source repository branch into a target repository workspace
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before pushing the prepared branch.
 - [**create-pr**](../create-pr/README.md) — open or update a pull request using `degit-branch` and `degit-workdir` outputs.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-degit-package
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

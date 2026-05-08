@@ -24,6 +24,17 @@ This action has no outputs.
 - [**run-phpstan**](../run-phpstan/README.md) — complement Pint style checks with static analysis.
 - [**run-phptests**](../run-phptests/README.md) — run the full test suite alongside style checks.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-run-pint
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

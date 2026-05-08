@@ -8,11 +8,17 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
+  if [ -z "${GITHUB_TOKEN:-}" ]; then
+    echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    exit 1
+  fi
+  echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
 FIX="${FIX:-false}"
-TARGET_PATHS="${1:-app}"
+TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
 
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
@@ -34,7 +40,7 @@ else
     reviewdog \
       -f=checkstyle \
       -name="phpstan" \
-      -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
+      -reporter="${REVIEWDOG_REPORTER}" \
       -filter-mode=diff_context \
 
   printf 'has-changes=false\n'

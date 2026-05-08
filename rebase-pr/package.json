@@ -1,0 +1,29 @@
+{
+    "name": "@tomgrv/action-rebase-pr",
+    "version": "1.1.0",
+    "description": "Rebase the current pull request branch onto its base branch.",
+    "bin": {
+        "action-rebase-pr": "./run.sh"
+    },
+    "files": [
+        "*.sh",
+        "*.jq",
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "rebase-pr"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/rebase-pr#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}

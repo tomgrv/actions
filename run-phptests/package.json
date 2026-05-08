@@ -1,0 +1,29 @@
+{
+    "name": "@tomgrv/action-run-phptests",
+    "version": "1.1.0",
+    "description": "Run pull request test suite for a PHP project.",
+    "bin": {
+        "action-run-phptests": "./run.sh"
+    },
+    "files": [
+        "*.sh",
+        "*.jq",
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "run-phptests"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/run-phptests#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}

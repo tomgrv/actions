@@ -26,6 +26,17 @@ Configures global Git identity and GitHub authentication for bot commits within 
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; pair with `config-bot` for authenticated pushes.
 - [**split-packages**](../split-packages/README.md) — split a monorepo subtree; pair with `config-bot` to sign the split commits.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-config-bot
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

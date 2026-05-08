@@ -42,6 +42,17 @@ Splits a package from a monorepo a separate repository using [splitsh-lite](http
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before splitting.
 - [**create-pr**](../create-pr/README.md) — open a pull request in the origin repository using `split-branch` and `split-workdir` outputs.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-split-package
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

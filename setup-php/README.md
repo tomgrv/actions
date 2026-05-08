@@ -26,6 +26,17 @@ Shared composite action that prepares PHP, extensions, and Composer for workflow
 - [**run-phptests**](../run-phptests/README.md) — run the test suite after setup.
 - [**list-packages**](../list-packages/README.md) — discover Composer packages after setup.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-setup-php
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

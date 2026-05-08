@@ -23,6 +23,17 @@ JSON array of package objects, each containing `org`, `name`, `path`, and `repos
 - [**setup-php**](../setup-php/README.md) — install Composer dependencies before listing packages.
 - [**setup-node**](../setup-node/README.md) — install npm dependencies before listing packages.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-list-packages
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

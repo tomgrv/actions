@@ -32,6 +32,17 @@ This action has no outputs.
 - [**run-phpstan**](../run-phpstan/README.md) — complement PHPMD with static analysis.
 - [**run-phpinsights**](../run-phpinsights/README.md) — complement PHPMD with code quality insights.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-run-phpmd
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

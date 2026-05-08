@@ -174,3 +174,14 @@ Then use the action:
 ### Idempotency
 
 Running the action multiple times with the same input produces the same result without unnecessary API calls or changes.
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-update-labels
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+

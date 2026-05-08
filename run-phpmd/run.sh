@@ -4,7 +4,7 @@ set -e
 
 PHPMD_RULESET="${PHPMD_RULESET:-cleancode,codesize,controversial,design,naming,unusedcode}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
-PHPMD_PATHS="${1:-app}"
+PHPMD_PATHS="${PHPMD_PATHS:-${1:-app}}"
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   cd "${GITHUB_WORKSPACE}" || exit 1
@@ -12,8 +12,15 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
+  if [ -z "${GITHUB_TOKEN:-}" ]; then
+    echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    exit 1
+  fi
+  echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
+
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
 
 echo "Running PHPmd analysis on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}" >&2
 
@@ -21,6 +28,6 @@ echo "Running PHPmd analysis on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}"
   reviewdog \
     -f=sarif \
     -name="phpmd" \
-    -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
+    -reporter="${REVIEWDOG_REPORTER}" \
     -filter-mode=nofilter \
     -fail-level=none

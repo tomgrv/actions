@@ -8,7 +8,9 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+  fi
 fi
 
 cp .env.example .env || cp .env.testing .env || touch .env

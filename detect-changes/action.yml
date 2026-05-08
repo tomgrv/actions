@@ -31,6 +31,6 @@ runs:
       id: detect
       shell: sh
       env:
-        WORKDIR: ${{ github.path }}
+        WORKDIR: ${{ inputs.path }}
         OPTIONS: ${{ inputs.options }}
       run: sh -c "${{ github.action_path }}/run.sh" >> $GITHUB_OUTPUT

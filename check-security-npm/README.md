@@ -19,6 +19,17 @@ This action has no outputs.
 - [**setup-node**](../setup-node/README.md) — set up Node.js and npm before running the audit.
 - [**check-security-composer**](../check-security-composer/README.md) — also audit Composer dependencies.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-check-security-npm
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

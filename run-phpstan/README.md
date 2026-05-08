@@ -37,6 +37,17 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 - [**create-pr**](../create-pr/README.md) — open a pull request with the generated baseline update.
 - [**run-phpmd**](../run-phpmd/README.md) — complement PHPStan with mess detection.
 
+
+## Local Usage
+
+Each action script can be run directly as a shell utility or via `npx`:
+
+```sh
+npx -yes @tomgrv/action-run-phpstan
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

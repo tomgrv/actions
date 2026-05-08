@@ -1,0 +1,29 @@
+{
+    "name": "@tomgrv/action-create-pr",
+    "version": "1.1.0",
+    "description": "Create or update a pull request from a branch.",
+    "bin": {
+        "action-create-pr": "./run.sh"
+    },
+    "files": [
+        "*.sh",
+        "*.jq",
+        "action.yml",
+        "README.md"
+    ],
+    "license": "MIT",
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git",
+        "directory": "create-pr"
+    },
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
+    },
+    "homepage": "https://github.com/tomgrv/actions/tree/main/create-pr#readme",
+    "keywords": [
+        "github-actions",
+        "actions"
+    ]
+}
