@@ -201,7 +201,7 @@ echo "Running analysis..." >&2
 # Capture reviewdog exit code; do NOT swallow it
 exit_code=0
 # shellcheck disable=SC2086
-tool_command 2>/dev/null | \
+tool_command | \
   reviewdog \
     -f=FORMAT \
     -name="tool-name" \
