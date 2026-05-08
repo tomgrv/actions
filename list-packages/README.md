@@ -26,10 +26,10 @@ JSON array of package objects, each containing `org`, `name`, `path`, and `repos
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-list-packages
+npx @tomgrv/actions list-packages
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-check-composer",
-    "version": "1.1.0",
-    "description": "Run composer validate with reviewdog.",
-    "bin": {
-        "action-check-composer": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "check-composer"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/check-composer#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "check-composer",
+    "private": true,
+    "description": "Run composer validate with reviewdog."
 }

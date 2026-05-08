@@ -15,9 +15,53 @@ Each action should have its own directory with the following files:
 ```
 action-name/
 ├── action.yml          # Action definition (required)
-├── run.sh              # Main execution script (required)
+├── package.json        # Minimal private package for commitlint scope (required)
+├── run.sh              # Main execution script (required for locally-runnable actions)
 ├── setup.sh            # Optional setup script
 └── README.md           # Documentation (required)
+```
+
+### Per-Action package.json
+
+Every action directory must have a minimal `package.json` with:
+- `name`: the folder name (no `@org/` prefix)
+- `private: true` — these packages are never published individually
+- `description`: brief description matching `action.yml`
+
+```json
+{
+    "name": "action-name",
+    "private": true,
+    "description": "Short description of what the action does."
+}
+```
+
+This minimal file is used only to provide the workspace scope for `commitlint`.
+
+The root `@tomgrv/actions` package is the only one published to npm. It includes all action directories and exposes `dispatch.sh` as the `actions` binary.
+
+### Local Usage (dispatch.sh)
+
+All actions with a `run.sh` can be invoked locally via the root `dispatch.sh`:
+
+```sh
+npx @tomgrv/actions <action-name> [args...]
+```
+
+`dispatch.sh` automatically sets sensible defaults for all `GITHUB_*` environment variables. Users only need to supply `GITHUB_TOKEN` for actions that call the GitHub API.
+
+Add a `## Local Usage` section to every action README:
+
+```markdown
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+\`\`\`sh
+npx @tomgrv/actions action-name
+\`\`\`
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
 ```
 
 ### Action Definition (action.yml)

@@ -29,10 +29,10 @@ Shared composite action that prepares PHP, extensions, and Composer for workflow
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-setup-php
+npx @tomgrv/actions setup-php
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-split-package",
-    "version": "1.1.0",
-    "description": "Split a package from a monorepo and push the split branch.",
-    "bin": {
-        "action-split-package": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "split-package"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/split-package#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "split-package",
+    "private": true,
+    "description": "Split a package from a monorepo and push the split branch."
 }

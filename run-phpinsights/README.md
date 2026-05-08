@@ -49,10 +49,10 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-run-phpinsights
+npx @tomgrv/actions run-phpinsights
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

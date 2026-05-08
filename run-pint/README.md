@@ -54,10 +54,10 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-run-pint
+npx @tomgrv/actions run-pint
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

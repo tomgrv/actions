@@ -29,10 +29,10 @@ Configures global Git identity and GitHub authentication for bot commits within 
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-config-bot
+npx @tomgrv/actions config-bot
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

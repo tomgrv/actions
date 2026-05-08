@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-check-security-npm",
-    "version": "1.1.0",
-    "description": "Run npm dependency security audit and report via reviewdog.",
-    "bin": {
-        "action-check-security-npm": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "check-security-npm"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/check-security-npm#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "check-security-npm",
+    "private": true,
+    "description": "Run npm dependency security audit and report via reviewdog."
 }

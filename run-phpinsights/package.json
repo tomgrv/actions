@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-run-phpinsights",
-    "version": "1.1.0",
-    "description": "Run PHP Insights with reviewdog.",
-    "bin": {
-        "action-run-phpinsights": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "run-phpinsights"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/run-phpinsights#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "run-phpinsights",
+    "private": true,
+    "description": "Run PHP Insights with reviewdog."
 }

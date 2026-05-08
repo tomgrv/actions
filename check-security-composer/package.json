@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-check-security-composer",
-    "version": "1.1.0",
-    "description": "Run Composer dependency security audit and report via reviewdog.",
-    "bin": {
-        "action-check-security-composer": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "check-security-composer"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/check-security-composer#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "check-security-composer",
+    "private": true,
+    "description": "Run Composer dependency security audit and report via reviewdog."
 }

@@ -91,10 +91,10 @@ jobs:
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-rebase-pr
+npx @tomgrv/actions rebase-pr
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

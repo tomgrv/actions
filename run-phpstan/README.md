@@ -54,10 +54,10 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-run-phpstan
+npx @tomgrv/actions run-phpstan
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

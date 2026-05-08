@@ -50,10 +50,10 @@ Imports the tip of a source repository branch into a target repository workspace
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-degit-package
+npx @tomgrv/actions degit-package
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

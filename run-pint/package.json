@@ -1,29 +1,5 @@
 {
-    "name": "@tomgrv/action-run-pint",
-    "version": "1.1.0",
-    "description": "Run Laravel Pint with reviewdog.",
-    "bin": {
-        "action-run-pint": "./run.sh"
-    },
-    "files": [
-        "*.sh",
-        "*.jq",
-        "action.yml",
-        "README.md"
-    ],
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git",
-        "directory": "run-pint"
-    },
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "homepage": "https://github.com/tomgrv/actions/tree/main/run-pint#readme",
-    "keywords": [
-        "github-actions",
-        "actions"
-    ]
+    "name": "run-pint",
+    "private": true,
+    "description": "Run Laravel Pint with reviewdog."
 }

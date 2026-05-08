@@ -23,10 +23,10 @@ This action has no outputs.
 
 ## Local Usage
 
-Each action script can be run directly as a shell utility or via `npx`:
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx -yes @tomgrv/action-check-pr-format
+npx @tomgrv/actions check-pr-format
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
