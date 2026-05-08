@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes and produce a list of changed files for downstream steps.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes.
 
 ## Inputs
 
@@ -16,22 +16,36 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ### fix
 
-**Optional.** Enable auto-fix mode instead of reviewdog reporting. Defaults to `false`.
+**Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
-### branch-prefix
+### level
 
-**Optional.** Prefix for the generated branch name when fix mode is enabled. Defaults to `chore/phpinsights-fix`.
+**Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
+
+### reporter
+
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+
+### filter-mode
+
+**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `added`.
+
+### fail-level
+
+**Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`. Defaults to `none`.
+
+### reviewdog-flags
+
+**Optional.** Additional reviewdog flags. Defaults to empty.
 
 ## Outputs
 
 - `has-changes`: Whether fix mode produced local changes.
-- `changed-files`: Comma-separated list of changed files when fix mode is enabled.
 
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHP Insights.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
-
 
 ## Local Usage
 
@@ -98,6 +112,5 @@ jobs:
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   head-branch: chore/phpinsights-fix
-                  commit-files: ${{ steps.insights.outputs.changed-files }}
                   pr-title: 'chore: apply phpinsights fixes'
 ```

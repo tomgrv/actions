@@ -18,21 +18,34 @@ inputs:
     required: false
     default: app
   fix:
-    description: Enable auto-fix mode instead of reviewdog reporting.
+    description: Apply fixes directly instead of reporting via reviewdog.
     required: false
     default: 'false'
-  branch-prefix:
-    description: Prefix for generated branch name when fix mode is enabled.
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
     required: false
-    default: chore/phpinsights-fix
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: added
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
 
 outputs:
   has-changes:
-    description: Whether fix mode produced changes.
+    description: Whether fix mode produced local changes.
     value: ${{ steps.run-phpinsights.outputs.has-changes }}
-  changed-files:
-    description: Comma-separated list of changed files when fix mode is enabled.
-    value: ${{ steps.run-phpinsights.outputs.changed-files }}
 
 runs:
   using: composite
@@ -47,6 +60,11 @@ runs:
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
-        BRANCH_PREFIX: ${{ inputs.branch-prefix }}
-      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

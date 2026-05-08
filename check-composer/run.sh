@@ -17,7 +17,15 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
 fi
 
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
+echo "Running composer validate..." >&2
+
+exit_code=0
+# shellcheck disable=SC2086
 { composer validate --strict 2>/dev/null || true; } | \
   grep -v '^See https://' | \
   grep -v '^# ' | \
@@ -26,5 +34,8 @@ REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
     -f=rdjson \
     -name="composer-validate" \
     -reporter="${REVIEWDOG_REPORTER}" \
-    -filter-mode=nofilter \
-    -fail-level=none
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code

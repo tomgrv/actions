@@ -24,14 +24,23 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
-echo "Running PHPmd analysis on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}" >&2
+echo "Running PHPmd on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}" >&2
 
-{ vendor/bin/phpmd "${PHPMD_PATHS}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority || true; } | \
+exit_code=0
+# shellcheck disable=SC2086
+vendor/bin/phpmd "${PHPMD_PATHS}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority 2>/dev/null | \
   reviewdog \
     -f=sarif \
     -name="phpmd" \
     -reporter="${REVIEWDOG_REPORTER}" \
-    -filter-mode=nofilter \
-    -fail-level=none
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code

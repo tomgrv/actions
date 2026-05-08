@@ -18,33 +18,39 @@ fi
 
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${TARGET_PATHS}" = "app" ]; then
   echo "::notice::TARGET_PATHS not set, using default: app" >&2
 fi
 
-echo "Running PHP Insights analysis on: ${TARGET_PATHS}" >&2
+echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
-if [ "${FIX:-false}" = "true" ]; then
-   CHANGED=$({ vendor/bin/phpinsights analyse --no-interaction --fix --summary --format=github-action -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
-    tee /dev/stderr | \
-    awk -F'file=|,line=' '{print $2}' | sort | uniq | paste -sd "," - | sed 's/^,//' )
-
-  if [ -n "$CHANGED" ]; then
-    printf 'has-changes=true\n'
-    printf 'changed-files=%s\n' "$CHANGED"
-  else
+if [ "${FIX}" = "true" ]; then
+  echo "Running PHP Insights in fix mode." >&2
+  # shellcheck disable=SC2046
+  vendor/bin/phpinsights analyse --no-interaction --fix --summary -- $(echo "${TARGET_PATHS}" | tr ',' ' ') >&2 || true
+  if git diff --quiet; then
     printf 'has-changes=false\n'
+  else
+    printf 'has-changes=true\n'
   fi
 else
-    { vendor/bin/phpinsights analyse --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
+  exit_code=0
+  # shellcheck disable=SC2046,SC2086
+  vendor/bin/phpinsights analyse --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null | \
     reviewdog \
-        -f=checkstyle \
-        -name="phpinsights" \
-        -reporter="${REVIEWDOG_REPORTER}" \
-        -filter-mode=diff_context \
-        -fail-level=none
-
-    printf 'has-changes=false\n'
+      -f=checkstyle \
+      -name="phpinsights" \
+      -reporter="${REVIEWDOG_REPORTER}" \
+      -level="${REVIEWDOG_LEVEL}" \
+      -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+      -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+      ${REVIEWDOG_FLAGS} || exit_code=$?
+  printf 'has-changes=false\n'
+  exit $exit_code
 fi

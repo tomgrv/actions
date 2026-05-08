@@ -10,6 +10,26 @@ Runs `npm audit` against the project's npm dependencies and reports findings inl
 
 **Required.** GitHub token for reviewdog reporting.
 
+### level
+
+**Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
+
+### reporter
+
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+
+### filter-mode
+
+**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`.
+
+### fail-level
+
+**Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`. Defaults to `none`.
+
+### reviewdog-flags
+
+**Optional.** Additional reviewdog flags. Defaults to empty.
+
 ## Outputs
 
 This action has no outputs.
@@ -18,7 +38,6 @@ This action has no outputs.
 
 - [**setup-node**](../setup-node/README.md) — set up Node.js and npm before running the audit.
 - [**check-security-composer**](../check-security-composer/README.md) — also audit Composer dependencies.
-
 
 ## Local Usage
 

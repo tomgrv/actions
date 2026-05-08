@@ -26,6 +26,24 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 1
 fi
 
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+
+echo "Running npm audit..." >&2
+
+exit_code=0
+# shellcheck disable=SC2086
 npm audit --workspaces --audit-level moderate --package-lock-only --json 2>/dev/null \
   | jq -f "$(dirname "$0")/rdjson.jq" \
-  | reviewdog -f=rdjson -name=npm-audit -reporter=github-check -filter-mode=nofilter -fail-level=none
+  | reviewdog \
+      -f=rdjson \
+      -name="npm-audit" \
+      -reporter="${REVIEWDOG_REPORTER}" \
+      -level="${REVIEWDOG_LEVEL}" \
+      -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+      -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+      ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code

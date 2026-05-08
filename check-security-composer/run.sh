@@ -16,8 +16,6 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
-
 if ! command -v reviewdog >/dev/null 2>&1; then
   echo "::error::reviewdog could not be found. Please install it to run this action." >&2
   exit 1
@@ -28,10 +26,23 @@ if ! command -v composer >/dev/null 2>&1; then
   exit 1
 fi
 
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+
+echo "Running composer audit..." >&2
+
+exit_code=0
+# shellcheck disable=SC2086
 { composer audit --locked --quiet 2>/dev/null || true; } | \
   reviewdog \
     -efm="%m" \
     -name="composer-audit" \
     -reporter="${REVIEWDOG_REPORTER}" \
-    -filter-mode=nofilter \
-    -fail-level=none
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code
