@@ -14,6 +14,10 @@ inputs:
     description: Additional options to pass to composer install, such as --no-dev.
     required: false
     default: ''
+  tools:
+    description: Additional tools to install with shivammathur/setup-php, comma-separated.
+    required: false
+    default: ''
 
 outputs:
   php-version:
@@ -45,6 +49,7 @@ runs:
         php-version: ${{ steps.php-version.outputs.version }}
         extensions: ${{ steps.php-extensions.outputs.extensions }}
         coverage: xdebug
+        tools: ${{ inputs.tools }}
 
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3

@@ -54,11 +54,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Ensure Pint is installed
-      shell: sh
-      run: |
-        [ -f vendor/bin/pint ] || composer require --dev laravel/pint --no-interaction --no-progress --quiet
-
     - name: Run Pint
       id: run-pint
       shell: sh

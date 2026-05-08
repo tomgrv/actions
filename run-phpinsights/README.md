@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. This action expects `phpinsights` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Pint
 
-Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findings inline via reviewdog. Can also run in **fix mode** to apply fixes directly.
+Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findings inline via reviewdog. Can also run in **fix mode** to apply fixes directly. This action expects `pint` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 
