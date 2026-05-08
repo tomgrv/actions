@@ -1,0 +1,36 @@
+# @format
+
+# @package tomgrv/actions/detect-changes
+
+name: Detect Changes
+description: Detect uncommitted or untracked changes in a given path using git status.
+author: Perspikapps
+branding:
+  icon: git-commit
+  color: yellow
+
+inputs:
+  path:
+    description: Base path to check for changes (relative to repo root).
+    required: false
+    default: '.'
+  options:
+    description: Additional options passed to `git status` (e.g. --ignored, -u).
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: 'true if changes are detected, false otherwise'
+    value: ${{ steps.detect.outputs.has-changes }}
+
+runs:
+  using: composite
+  steps:
+    - name: Detect changes
+      id: detect
+      shell: sh
+      env:
+        WORKDIR: ${{ inputs.path }}
+        OPTIONS: ${{ inputs.options }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> $GITHUB_OUTPUT

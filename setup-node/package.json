@@ -1,0 +1,5 @@
+{
+    "name": "setup-node",
+    "private": true,
+    "description": "Setup Node.js and npm for CI jobs."
+}

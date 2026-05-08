@@ -1,0 +1,5 @@
+{
+    "name": "detect-changes",
+    "private": true,
+    "description": "Detect uncommitted or untracked changes in a given path using git status."
+}

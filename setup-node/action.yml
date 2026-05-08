@@ -30,5 +30,6 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Install Node dependencies
+      if: ${{ hashFiles('package-lock.json') }}
       shell: sh
       run: npm ci --no-progress --workspaces --package-lock-only

@@ -18,6 +18,17 @@ This action has no outputs.
 - [**run-phpstan**](../run-phpstan/README.md) — complement the test suite with static analysis.
 - [**run-pint**](../run-pint/README.md) — complement the test suite with code style checks.
 
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions run-phptests
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

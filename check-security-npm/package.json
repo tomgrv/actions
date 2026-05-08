@@ -1,0 +1,5 @@
+{
+    "name": "check-security-npm",
+    "private": true,
+    "description": "Run npm dependency security audit and report via reviewdog."
+}

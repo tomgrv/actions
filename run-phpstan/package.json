@@ -1,0 +1,5 @@
+{
+    "name": "run-phpstan",
+    "private": true,
+    "description": "Run PHPStan with reviewdog."
+}

@@ -1,0 +1,5 @@
+{
+    "name": "check-pr-format",
+    "private": true,
+    "description": "Validate and optionally normalize pull request title format."
+}

@@ -14,17 +14,37 @@ inputs:
     description: GitHub token for reviewdog reporting.
     required: true
   paths:
-    description: Paths to analyze with PHPMD, comma-separated. Defaults to `app`
+    description: Paths to analyze with PHPMD, comma-separated. Defaults to `app`.
     required: false
     default: app
   ruleset:
-    description: PHPMD ruleset to use, comma-separated. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`
+    description: PHPMD ruleset to use, comma-separated. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`.
     required: false
     default: cleancode,codesize,controversial,design,naming,unusedcode
   priority:
     description: Priority of issues to report (min/max). Defaults to max.
     required: false
     default: max
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: nofilter
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -46,6 +66,12 @@ runs:
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        PHPMD_PATHS: ${{ inputs.paths }}
         PHPMD_RULESET: ${{ inputs.ruleset }}
         PHPMD_PRIORITY: ${{ inputs.priority }}
-      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh"

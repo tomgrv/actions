@@ -1,0 +1,5 @@
+{
+    "name": "config-bot",
+    "private": true,
+    "description": "Configure Git identity and authentication for bot commits."
+}

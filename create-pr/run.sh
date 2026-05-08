@@ -6,6 +6,10 @@ REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 HEAD_BRANCH="${HEAD_BRANCH:?HEAD_BRANCH is required}"
 WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
+if [ "${WORKING_DIRECTORY}" = "." ]; then
+  echo "::notice::WORKING_DIRECTORY not set, using default: ." >&2
+fi
+
 HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
 
 DEFAULT_BRANCH=$(gh repo view "${REPOSITORY}" --json defaultBranchRef --jq '.defaultBranchRef.name')

@@ -60,6 +60,17 @@ Creates a pull request from a branch, or updates the existing open pull request 
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; feed `degit-branch` and `degit-workdir` outputs into `create-pr`.
 - [**split-packages**](../split-packages/README.md) — split a monorepo subtree; feed `split-branch` and `split-workdir` outputs into `create-pr`.
 
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions create-pr
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+
 ## Example
 
 ```yaml

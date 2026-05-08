@@ -1,0 +1,5 @@
+{
+    "name": "run-phpmd",
+    "private": true,
+    "description": "Run PHPMD with reviewdog."
+}

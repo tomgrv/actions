@@ -14,29 +14,42 @@ inputs:
     description: GitHub token for reviewdog reporting.
     required: true
   paths:
-    description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`
+    description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`.
     required: false
     default: app
   fix:
-    description: Enable baseline generation mode instead of reviewdog reporting.
+    description: Generate a PHPStan baseline file instead of reporting via reviewdog.
     required: false
     default: 'false'
-  branch-prefix:
-    description: Prefix for generated branch name when fix mode is enabled.
-    required: false
-    default: chore/phpstan-fix
   baseline-file:
-    description: Baseline file generated when fix mode is enabled.
+    description: Baseline file to generate when fix mode is enabled.
     required: false
     default: phpstan-baseline.neon
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: added
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
 
 outputs:
   has-changes:
-    description: Whether fix mode produced changes.
-    value: ${{ steps.run-phpstan.outputs.has_changes }}
-  head-branch:
-    description: Generated branch name when fix mode is enabled.
-    value: ${{ steps.run-phpstan.outputs.head_branch }}
+    description: Whether fix mode produced changes to the baseline file.
+    value: ${{ steps.run-phpstan.outputs.has-changes }}
 
 runs:
   using: composite
@@ -47,9 +60,16 @@ runs:
         [ -f vendor/bin/phpstan ] || composer require --dev phpstan/phpstan --no-interaction --no-progress --quiet
 
     - name: Run PHPStan
+      id: run-phpstan
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        PHPSTAN_RULESET: ${{ inputs.ruleset }}
-        PHPSTAN_PRIORITY: ${{ inputs.priority }}
-      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"
+        TARGET_PATHS: ${{ inputs.paths }}
+        FIX: ${{ inputs.fix }}
+        BASELINE_FILE: ${{ inputs.baseline-file }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

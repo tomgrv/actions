@@ -62,6 +62,39 @@ Default: `25 documentation,10 must,20 should,30 could,80 duplicate,90 wont`
 - 60-79: Purple (could/nice-to-have)
 - 80+: Gray (duplicate/won't fix)
 
+## Color Reference
+
+### Smart Color Generation
+
+When labels are defined with a numeric prefix (e.g., `10 must`), the action automatically assigns a color based on the number range. The table below shows the exact hex values used:
+
+| Priority Range | Color Name | Hex Code | Preview                                                    | Example Labels           |
+| -------------- | ---------- | -------- | ---------------------------------------------------------- | ------------------------ |
+| 0 – 19         | Red        | `b60205` | ![#b60205](https://img.shields.io/badge/-%23b60205-b60205) | `10 must`, `15 critical` |
+| 20 – 29        | Yellow     | `fbca04` | ![#fbca04](https://img.shields.io/badge/-%23fbca04-fbca04) | `20 should`              |
+| 30 – 49        | Green      | `0e8a16` | ![#0e8a16](https://img.shields.io/badge/-%230e8a16-0e8a16) | `30 could`               |
+| 50 – 59        | Dark Green | `006b75` | ![#006b75](https://img.shields.io/badge/-%23006b75-006b75) | `50 documentation`       |
+| 60 – 79        | Purple     | `7057ff` | ![#7057ff](https://img.shields.io/badge/-%237057ff-7057ff) | `60 could`, `70 idea`    |
+| 80 – 89        | Light Gray | `cfd3d7` | ![#cfd3d7](https://img.shields.io/badge/-%23cfd3d7-cfd3d7) | `80 duplicate`           |
+| 90+            | Gray       | `808080` | ![#808080](https://img.shields.io/badge/-%23808080-808080) | `90 wont`                |
+
+### Custom Colors in JSON
+
+When using a `labels.json` file, you can specify any valid 6-digit hex color code (without `#`):
+
+| Color Name | Hex Code | Preview                                                   | Common Use                      |
+| ---------- | -------- | --------------------------------------------------------- | ------------------------------- |
+| Red        | `d73a4a` | ![d73a4a](https://img.shields.io/badge/-%23d73a4a-d73a4a) | Bugs, critical issues           |
+| Blue       | `0075ca` | ![0075ca](https://img.shields.io/badge/-%230075ca-0075ca) | Documentation, info             |
+| Green      | `0e8a16` | ![0e8a16](https://img.shields.io/badge/-%230e8a16-0e8a16) | Enhancements, good first issues |
+| Yellow     | `e4e669` | ![e4e669](https://img.shields.io/badge/-%23e4e669-e4e669) | Questions, help wanted          |
+| Purple     | `5319e7` | ![5319e7](https://img.shields.io/badge/-%235319e7-5319e7) | Blocked, needs review           |
+| Teal       | `a2eeef` | ![a2eeef](https://img.shields.io/badge/-%23a2eeef-a2eeef) | Features, requests              |
+| Orange     | `e99695` | ![e99695](https://img.shields.io/badge/-%23e99695-e99695) | Low priority, won't fix         |
+| Gray       | `cfd3d7` | ![cfd3d7](https://img.shields.io/badge/-%23cfd3d7-cfd3d7) | Duplicates, invalid             |
+
+> ℹ️ GitHub label colors must be valid 6-character hex codes **without** the `#` prefix.
+
 ## Outputs
 
 - `labels-created`: Number of labels created.
@@ -141,3 +174,14 @@ Then use the action:
 ### Idempotency
 
 Running the action multiple times with the same input produces the same result without unnecessary API calls or changes.
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions update-labels
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+

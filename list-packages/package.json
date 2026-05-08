@@ -1,0 +1,5 @@
+{
+    "name": "list-packages",
+    "private": true,
+    "description": "Discovers Composer and npm workspace packages and emits a JSON matrix array."
+}

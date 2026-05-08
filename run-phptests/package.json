@@ -1,0 +1,5 @@
+{
+    "name": "run-phptests",
+    "private": true,
+    "description": "Run pull request test suite for a PHP project."
+}
