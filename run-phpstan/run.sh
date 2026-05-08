@@ -20,6 +20,10 @@ FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
 
+if [ "${TARGET_PATHS}" = "app" ]; then
+  echo "::notice::TARGET_PATHS not set, using default: app" >&2
+fi
+
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
 if [ "${FIX:-false}" = "true" ]; then
