@@ -2,13 +2,24 @@
 
 set -e
 
+if ! command -v vendor/bin/phpinsights >/dev/null 2>&1; then
+  echo "::error::PHP Insights could not be found at vendor/bin/phpinsights. Please ensure it is installed." >&2
+  exit 1
+fi
+
+if ! command -v reviewdog >/dev/null 2>&1; then
+  echo "::error::reviewdog could not be found. Please ensure it is installed and in the PATH." >&2
+  exit 1
+fi
+
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   cd "${GITHUB_WORKSPACE}" || exit 1
   git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+  if [ -z "${GITHUB_TOKEN:-}" ]; then
+    echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
     exit 1
   fi
   echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2

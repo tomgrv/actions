@@ -53,6 +53,7 @@ export GITHUB_SHA="${GITHUB_SHA:-$(git rev-parse HEAD 2>/dev/null || echo '')}"
 export GITHUB_EVENT_NAME="${GITHUB_EVENT_NAME:-push}"
 export GITHUB_ACTOR="${GITHUB_ACTOR:-$(git config user.name 2>/dev/null || echo '')}"
 export GITHUB_OUTPUT="${GITHUB_OUTPUT:-/dev/stdout}"
+export GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || echo '')}"
 
 ACTION_DIR="${SCRIPT_DIR}/${ACTION}"
 

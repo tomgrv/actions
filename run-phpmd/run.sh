@@ -2,6 +2,17 @@
 
 set -e
 
+
+if ! command -v vendor/bin/phpmd >/dev/null 2>&1; then
+  echo "::error::PHPMD could not be found at vendor/bin/phpmd. Please ensure it is installed." >&2
+  exit 1
+fi
+
+if ! command -v reviewdog >/dev/null 2>&1; then
+  echo "::error::reviewdog could not be found. Please ensure it is installed and in the PATH." >&2
+  exit 1
+fi
+
 PHPMD_RULESET="${PHPMD_RULESET:-cleancode,codesize,controversial,design,naming,unusedcode}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
 PHPMD_PATHS="${PHPMD_PATHS:-${1:-app}}"
@@ -29,6 +40,7 @@ REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+
 
 echo "Running PHPmd on <${PHPMD_PATHS}> with ruleset: ${PHPMD_RULESET}" >&2
 
