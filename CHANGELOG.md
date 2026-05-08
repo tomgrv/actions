@@ -1,6 +1,23 @@
-<!-- @format -->
-
 # Changelog
+
+## 1.2.0 (2026-05-08)
+
+*Commits from: v1.1.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- 🐛 add conditional for lock files before installing dependencies ([ff4ed52](https://github.com/tomgrv/actions/commit/ff4ed5229c48d7040b9d9780c0c79a27633a1d4d))
+- ✨ add confirm comment action with reaction functionality ([da9e03f](https://github.com/tomgrv/actions/commit/da9e03f31b031d8297948c73edb822f7dca15410))
+- add detect-changes composite action (#19) ([ad019be](https://github.com/tomgrv/actions/commit/ad019be963732ec9daa38307270091fd90311375))
+- ✨ add rebase-pr composite action ([62a4c38](https://github.com/tomgrv/actions/commit/62a4c384062a44f87eab24aa37e597222541dc5e))
+- 🐛 case-insensitive label name matching (#14) ([a0e3970](https://github.com/tomgrv/actions/commit/a0e397026642fb10bf61adff868d556be382be35))
+- Merge tag 'v1.1.0' into develop ([fa4703d](https://github.com/tomgrv/actions/commit/fa4703d9f5be500d72c8405c701af6569034a834))
+- review, test and cleanup (#21) ([59afcda](https://github.com/tomgrv/actions/commit/59afcda7f75c4ada4e71d374b8f49992bdad2694))
+- 🔧 update devcontainer ([94efaf0](https://github.com/tomgrv/actions/commit/94efaf01817e9b2d8a87db0a1ad87d990d35c385))
+- 🔧 update devcontainer ([ffe7ca3](https://github.com/tomgrv/actions/commit/ffe7ca3dba22fcfcf0389db88d5a2712edb45c87))
+- 📚️ update README with badges and color reference (#12) (#13) ([f87b05b](https://github.com/tomgrv/actions/commit/f87b05b1fbb8644fd2f816edbe67ac59698dbf27))
 
 ## 1.1.0 (2026-05-01)
 
@@ -56,6 +73,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
----
 
-_Generated on 2026-05-01 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+---
+*Generated on 2026-05-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
