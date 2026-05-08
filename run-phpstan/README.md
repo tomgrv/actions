@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPStan
 
-Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file and produce a prepared branch for downstream steps.
+Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file.
 
 ## Inputs
 
@@ -16,26 +16,51 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 ### fix
 
-**Optional.** Enable baseline generation mode instead of reviewdog reporting. Defaults to `false`.
-
-### branch-prefix
-
-**Optional.** Prefix for the generated branch name when fix mode is enabled. Defaults to `chore/phpstan-fix`.
+**Optional.** Generate a PHPStan baseline file instead of reporting via reviewdog. Defaults to `false`.
 
 ### baseline-file
 
-**Optional.** Baseline file to generate or update when fix mode is enabled. Defaults to `phpstan-baseline.neon`.
+**Optional.** Baseline file to generate when fix mode is enabled. Defaults to `phpstan-baseline.neon`.
+
+### level
+
+**Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
+
+### reporter
+
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+
+### filter-mode
+
+**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `added`.
+
+### fail-level
+
+**Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`. Defaults to `none`.
+
+### reviewdog-flags
+
+**Optional.** Additional reviewdog flags. Defaults to empty.
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes.
-- `head-branch`: Generated branch name when fix mode is enabled.
+- `has-changes`: Whether fix mode produced changes to the baseline file.
 
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHPStan.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the generated baseline update.
 - [**run-phpmd**](../run-phpmd/README.md) — complement PHPStan with mess detection.
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions run-phpstan
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
 
 ## Example
 
@@ -92,6 +117,6 @@ jobs:
               uses: tomgrv/actions/create-pr@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  head-branch: ${{ steps.phpstan.outputs.head-branch }}
+                  head-branch: chore/phpstan-baseline
                   pr-title: 'chore: update phpstan baseline'
 ```

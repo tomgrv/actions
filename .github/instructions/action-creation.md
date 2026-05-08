@@ -15,9 +15,53 @@ Each action should have its own directory with the following files:
 ```
 action-name/
 ├── action.yml          # Action definition (required)
-├── run.sh              # Main execution script (required)
+├── package.json        # Minimal private package for commitlint scope (required)
+├── run.sh              # Main execution script (required for locally-runnable actions)
 ├── setup.sh            # Optional setup script
 └── README.md           # Documentation (required)
+```
+
+### Per-Action package.json
+
+Every action directory must have a minimal `package.json` with:
+- `name`: the folder name (no `@org/` prefix)
+- `private: true` — these packages are never published individually
+- `description`: brief description matching `action.yml`
+
+```json
+{
+    "name": "action-name",
+    "private": true,
+    "description": "Short description of what the action does."
+}
+```
+
+This minimal file is used only to provide the workspace scope for `commitlint`.
+
+The root `@tomgrv/actions` package is the only one published to npm. It includes all action directories and exposes `dispatch.sh` as the `actions` binary.
+
+### Local Usage (dispatch.sh)
+
+All actions with a `run.sh` can be invoked locally via the root `dispatch.sh`:
+
+```sh
+npx @tomgrv/actions <action-name> [args...]
+```
+
+`dispatch.sh` automatically sets sensible defaults for all `GITHUB_*` environment variables. Users only need to supply `GITHUB_TOKEN` for actions that call the GitHub API.
+
+Add a `## Local Usage` section to every action README:
+
+```markdown
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+\`\`\`sh
+npx @tomgrv/actions action-name
+\`\`\`
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
 ```
 
 ### Action Definition (action.yml)
@@ -142,6 +186,105 @@ Describe how the action behaves, including:
 - What it does when run
 - How it handles edge cases
 - Whether it's idempotent
+```
+
+### Reviewdog-Based Actions
+
+Actions that report findings via reviewdog must follow this pattern:
+
+#### Standard inputs (add to every reviewdog action)
+
+```yaml
+inputs:
+    level:
+        description: 'Report level for reviewdog [info,warning,error].'
+        required: false
+        default: error
+    reporter:
+        description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+        required: false
+        default: github-pr-check
+    filter-mode:
+        description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+        required: false
+        default: added
+    fail-level:
+        description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+        required: false
+        default: none
+    reviewdog-flags:
+        description: Additional reviewdog flags.
+        required: false
+        default: ''
+```
+
+#### Map inputs to env vars in action.yml
+
+```yaml
+env:
+    REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+    REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+    REVIEWDOG_LEVEL: ${{ inputs.level }}
+    REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+    REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+    REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+```
+
+#### Script pattern for reviewdog
+
+```sh
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+
+# All informational messages go to stderr
+echo "Running analysis..." >&2
+
+# Capture reviewdog exit code; do NOT swallow it
+exit_code=0
+# shellcheck disable=SC2086
+tool_command | \
+  reviewdog \
+    -f=FORMAT \
+    -name="tool-name" \
+    -reporter="${REVIEWDOG_REPORTER}" \
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+
+# GITHUB_OUTPUT lines go to stdout (redirected to $GITHUB_OUTPUT in action.yml)
+printf 'has-changes=false\n'
+exit $exit_code
+```
+
+**Key rules:**
+- Pipe tool output **only** to reviewdog or to stderr (`>&2`). Never mix with stdout.
+- All stdout lines must be `key=value` pairs written to `$GITHUB_OUTPUT`.
+- Use `exit_code=0; cmd || exit_code=$?` to capture reviewdog's exit code.
+- Propagate the exit code: `exit $exit_code`.
+
+#### Fix-mode pattern (phpstan, pint, phpinsights)
+
+```sh
+if [ "${FIX}" = "true" ]; then
+  # Run tool in fix mode; all output goes to stderr
+  tool --fix ... >&2 || true
+  # Check for changes via git diff
+  if git diff --quiet; then
+    printf 'has-changes=false\n'
+  else
+    printf 'has-changes=true\n'
+  fi
+else
+  # Normal reviewdog review mode
+  exit_code=0
+  tool ... 2>/dev/null | reviewdog ... || exit_code=$?
+  printf 'has-changes=false\n'
+  exit $exit_code
+fi
 ```
 
 ### Common Patterns

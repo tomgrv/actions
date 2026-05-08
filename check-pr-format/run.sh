@@ -14,6 +14,19 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
+# Validate required environment variables
+if [ -z "${REPO:-}" ]; then
+  echo "::error::REPO (github.repository) is required" >&2
+  exit 1
+fi
+
+# HEAD_REPO_FULL_NAME is set from github.event.pull_request.head.repo.full_name in action.yml;
+# when running locally, it defaults to empty (treated as a fork PR).
+HEAD_REPO_FULL_NAME="${HEAD_REPO_FULL_NAME:-}"
+if [ -z "${HEAD_REPO_FULL_NAME}" ]; then
+  echo "::notice::HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped" >&2
+fi
+
 # Ensure commitlint is available for validating commit messages
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
@@ -23,6 +36,7 @@ fi
 
 # Set up environment variables for reviewdog
 if [ -z "${PR_TITLE:-}" ]; then
+  echo "::notice::PR_TITLE not set, fetching from GitHub API" >&2
   PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
 fi
 
@@ -40,7 +54,7 @@ if [ "${PR_TITLE}" != "${formatted_title}" ]; then
   echo "::error::Current:  ${PR_TITLE}" >&2
   echo "::error::Expected: ${formatted_title}" >&2
 
-  if [ "${HEAD_REPO_FULL_NAME}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
+  if [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
     echo "PR title updated." >&2
   else

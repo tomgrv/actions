@@ -88,3 +88,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           autosquash: 'true'
 ```
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions rebase-pr
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
+

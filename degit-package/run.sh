@@ -17,6 +17,10 @@ TARGET_SUBDIR="${TARGET_SUBDIR:?TARGET_SUBDIR is required}"
 EXCLUDE_PATHS="${EXCLUDE_PATHS:-.github,.devcontainer}"
 HEAD_BRANCH="${HEAD_BRANCH:-}"
 
+if [ "${EXCLUDE_PATHS}" = ".github,.devcontainer" ]; then
+  echo "::notice::EXCLUDE_PATHS not set, using default: .github,.devcontainer" >&2
+fi
+
 if [ -z "${SOURCE_ORG}" ] || [ -z "${SOURCE_NAME}" ]; then
     echo "::error::source-organization and source-repository are required" >&2
     exit 1

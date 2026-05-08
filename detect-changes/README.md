@@ -11,11 +11,7 @@ Outputs a `has-changes` flag that downstream steps can act on.
 
 **Optional.** Base path to check for changes, relative to the repository root. Defaults to `.` (entire repo).
 
-### subpath
-
-**Optional.** Sub-path appended to `path` to narrow the check (e.g. a specific module or package directory).
-
-### status-options
+### options
 
 **Optional.** Additional flags forwarded to `git status` (e.g. `--ignored`, `-u`, `--untracked-files=all`).
 
@@ -31,6 +27,17 @@ Includes both tracked modifications and untracked files.
 - [**create-pr**](../create-pr/README.md) — open a pull request only when changes are present.
 - [**run-pint**](../run-pint/README.md) — run code style checks on changed paths.
 - [**run-phpstan**](../run-phpstan/README.md) — run static analysis only when relevant files changed.
+
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions detect-changes
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
 
 ## Example
 
@@ -53,8 +60,7 @@ jobs:
               uses: tomgrv/actions/detect-changes@v1
               with:
                   path: src
-                  subpath: components
-                  status-options: '--untracked-files=all'
+                  options: '--untracked-files=all'
 
             - name: Create PR if changes found
               if: steps.changes.outputs.has-changes == 'true'

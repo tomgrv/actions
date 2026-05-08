@@ -6,6 +6,10 @@ REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 LABELS_FILE="${LABELS_FILE:-.github/labels.json}"
 LABELS="${LABELS:-50 documentation,10 must,20 should,30 could,80 duplicate,90 wont}"
 
+if [ "${LABELS_FILE}" = ".github/labels.json" ] && [ ! -f "${LABELS_FILE}" ]; then
+  echo "::notice::LABELS_FILE not set and .github/labels.json not found, using default inline labels" >&2
+fi
+
 if [ -z "${GITHUB_TOKEN:-}" ]; then
   echo "::error::GITHUB_TOKEN is required" >&2
   exit 1

@@ -10,6 +10,26 @@ Runs `composer validate --strict` on the repository and reports findings inline 
 
 **Required.** GitHub token for reviewdog reporting.
 
+### level
+
+**Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
+
+### reporter
+
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+
+### filter-mode
+
+**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`.
+
+### fail-level
+
+**Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`. Defaults to `none`.
+
+### reviewdog-flags
+
+**Optional.** Additional reviewdog flags. Defaults to empty.
+
 ## Outputs
 
 This action has no outputs.
@@ -17,6 +37,16 @@ This action has no outputs.
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running validation.
+
+## Local Usage
+
+Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+
+```sh
+npx @tomgrv/actions check-composer
+```
+
+Required environment variables must be set before running. See [Inputs](#inputs) for details.
 
 ## Example
 

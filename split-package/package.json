@@ -1,0 +1,5 @@
+{
+    "name": "split-package",
+    "private": true,
+    "description": "Split a package from a monorepo and push the split branch."
+}

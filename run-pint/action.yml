@@ -14,9 +14,42 @@ inputs:
     description: GitHub token for reviewdog reporting.
     required: true
   paths:
-    description: Comma-separated list of paths to analyze with Pint.
+    description: Comma-separated list of paths to analyze with Pint. Defaults to `app`.
     required: false
     default: app
+  fix:
+    description: Apply fixes directly instead of reporting via reviewdog.
+    required: false
+    default: 'false'
+  preset:
+    description: Pint preset to use (e.g. laravel, default, etc.). Defaults to `laravel`.
+    required: false
+    default: laravel
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: added
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: Whether fix mode produced local changes.
+    value: ${{ steps.run-pint.outputs.has-changes }}
 
 runs:
   using: composite
@@ -27,7 +60,16 @@ runs:
         [ -f vendor/bin/pint ] || composer require --dev laravel/pint --no-interaction --no-progress --quiet
 
     - name: Run Pint
+      id: run-pint
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}"
+        PINT_PATHS: ${{ inputs.paths }}
+        FIX: ${{ inputs.fix }}
+        PINT_PRESET: ${{ inputs.preset }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

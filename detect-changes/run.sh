@@ -10,6 +10,10 @@ fi
 WORKDIR="${WORKDIR:-.}"
 OPTIONS="${OPTIONS:-}"
 
+if [ "${WORKDIR}" = "." ]; then
+  echo "::notice::WORKDIR not set, using default: ." >&2
+fi
+
 echo "Checking for changes in: ${WORKDIR}" >&2
 
 # shellcheck disable=SC2086

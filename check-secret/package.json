@@ -1,0 +1,5 @@
+{
+    "name": "check-secret",
+    "private": true,
+    "description": "Scan pull request changes for secrets."
+}

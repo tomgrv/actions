@@ -1,0 +1,5 @@
+{
+    "name": "run-pint",
+    "private": true,
+    "description": "Run Laravel Pint with reviewdog."
+}
