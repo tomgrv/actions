@@ -29,29 +29,24 @@ if [ "${TARGET_PATHS}" = "app" ]; then
   echo "::notice::TARGET_PATHS not set, using default: app" >&2
 fi
 
+if [ "${FIX}" = "true" ]; then
+  echo "FIX is set to true, running PHPStan with --fix" >&2
+  FIX_FLAG="--fix"
+else
+  FIX_FLAG=""
+fi
+
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
-if [ "${FIX}" = "true" ]; then
-  echo "Generating PHPStan baseline: ${BASELINE_FILE}" >&2
-  # shellcheck disable=SC2046
-  vendor/bin/phpstan analyse --generate-baseline "${BASELINE_FILE}" --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') >&2 || true
-  if git diff --quiet -- "${BASELINE_FILE}"; then
-    printf 'has-changes=false\n'
-  else
-    printf 'has-changes=true\n'
-  fi
-else
-  exit_code=0
-  # shellcheck disable=SC2046,SC2086
-  vendor/bin/phpstan analyse --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null | \
-    reviewdog \
-      -f=checkstyle \
-      -name="phpstan" \
-      -reporter="${REVIEWDOG_REPORTER}" \
-      -level="${REVIEWDOG_LEVEL}" \
-      -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-      -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-      ${REVIEWDOG_FLAGS} || exit_code=$?
-  printf 'has-changes=false\n'
-  exit $exit_code
-fi
+exit_code=0
+vendor/bin/phpstan analyse ${FIX_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null | \
+  reviewdog \
+    -f=checkstyle \
+    -name="phpstan" \
+    -reporter="${REVIEWDOG_REPORTER}" \
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code
+

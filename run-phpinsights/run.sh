@@ -8,8 +8,7 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
     exit 1
   fi
   echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
@@ -28,29 +27,26 @@ if [ "${TARGET_PATHS}" = "app" ]; then
   echo "::notice::TARGET_PATHS not set, using default: app" >&2
 fi
 
+if [ "${FIX}" = "true" ]; then
+  echo "FIX is set to true, running PHPStan with --fix" >&2
+  FIX_FLAG="--fix"
+else
+  FIX_FLAG=""
+fi
+
+
 echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
-if [ "${FIX}" = "true" ]; then
-  echo "Running PHP Insights in fix mode." >&2
-  # shellcheck disable=SC2046
-  vendor/bin/phpinsights analyse --no-interaction --fix --summary -- $(echo "${TARGET_PATHS}" | tr ',' ' ') >&2 || true
-  if git diff --quiet; then
-    printf 'has-changes=false\n'
-  else
-    printf 'has-changes=true\n'
-  fi
-else
-  exit_code=0
-  # shellcheck disable=SC2046,SC2086
-  vendor/bin/phpinsights analyse --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null | \
-    reviewdog \
-      -f=checkstyle \
-      -name="phpinsights" \
-      -reporter="${REVIEWDOG_REPORTER}" \
-      -level="${REVIEWDOG_LEVEL}" \
-      -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-      -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-      ${REVIEWDOG_FLAGS} || exit_code=$?
-  printf 'has-changes=false\n'
-  exit $exit_code
-fi
+exit_code=0
+# shellcheck disable=SC2046,SC2086
+vendor/bin/phpinsights analyse ${FIX_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null | \
+  reviewdog \
+    -f=checkstyle \
+    -name="phpinsights" \
+    -reporter="${REVIEWDOG_REPORTER}" \
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+exit $exit_code
+
