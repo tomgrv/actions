@@ -17,6 +17,18 @@ inputs:
     description: Comma-separated list of paths to analyze with Pint.
     required: false
     default: app
+  fix:
+    description: Enable baseline generation mode instead of reviewdog reporting.
+    required: false
+    default: 'false'
+  branch-prefix:
+    description: Prefix for generated branch name when fix mode is enabled.
+    required: false
+    default: chore/pint-fix
+  preset:
+    description: Pint preset to use (e.g. laravel, default, etc.).
+    required: false
+    default: laravel
 
 runs:
   using: composite
@@ -30,4 +42,6 @@ runs:
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        PINT_PRESET: ${{ inputs.preset }}
+        PINT_FIX: ${{ inputs.fix }}
       run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}"
