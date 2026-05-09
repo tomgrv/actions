@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPMD
 
-Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog.
+Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog. This action expects `phpmd` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 

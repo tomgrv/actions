@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Test Suite
 
-Runs the PHP test suite (`composer test` or the vendor test runner) for a pull request.
+Runs the PHP test suite (`composer test` or the vendor test runner) for a pull request. This action expects `pest` or `phpunit` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 
@@ -17,7 +17,6 @@ This action has no outputs.
 - [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running tests.
 - [**run-phpstan**](../run-phpstan/README.md) — complement the test suite with static analysis.
 - [**run-pint**](../run-pint/README.md) — complement the test suite with code style checks.
-
 
 ## Local Usage
 

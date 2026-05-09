@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPStan
 
-Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file.
+Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file. This action expects `phpstan` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 

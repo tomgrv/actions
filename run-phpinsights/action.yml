@@ -50,11 +50,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Ensure PHP Insights is installed
-      shell: sh
-      run: |
-        [ -f vendor/bin/phpinsights ] || composer require --dev nunomaduro/phpinsights --no-interaction --no-progress --quiet
-
     - name: Run PHP Insights
       id: run-phpinsights
       shell: sh
