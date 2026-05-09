@@ -29,8 +29,8 @@ jobs:
 
       - name: Verify GitUtils aliases
         run: |
-          git config --global --get alias.beta >/dev/null || (echo 'Missing git beta alias' && exit 1)
-          git config --global --get alias.prod >/dev/null || (echo 'Missing git prod alias' && exit 1)
+          git config --global --get alias.beta >/dev/null || (echo 'Missing git beta alias after GitUtils install; check the Install GitUtils step output.' && exit 1)
+          git config --global --get alias.prod >/dev/null || (echo 'Missing git prod alias after GitUtils install; check the Install GitUtils step output.' && exit 1)
 
       - name: Configure git identity
         run: |
