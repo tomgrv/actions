@@ -25,7 +25,7 @@ jobs:
         uses: tomgrv/actions/setup-node@v0
 
       - name: Install GitUtils
-        run: npx --yes -- tomgrv/devcontainer-features -- gitutils || (echo 'GitUtils installation failed; verify npx can fetch tomgrv/devcontainer-features and review this step logs.' && exit 1)
+        run: npx --yes -- tomgrv/devcontainer-features -- gitutils || (echo "GitUtils installation failed; verify npx can fetch tomgrv/devcontainer-features and review this step's logs." && exit 1)
 
       - name: Verify GitUtils aliases
         run: |
@@ -37,7 +37,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Release develop to main
+      - name: Run git beta then git prod
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: git beta && git prod
