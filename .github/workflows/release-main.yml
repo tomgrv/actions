@@ -25,7 +25,7 @@ jobs:
         uses: tomgrv/actions/setup-node@v0
 
       - name: Install GitUtils
-        run: npx --yes -- tomgrv/devcontainer-features -- gitutils || (echo "GitUtils installation failed; verify npx can fetch tomgrv/devcontainer-features and review this step's logs." && exit 1)
+        run: npx tomgrv/devcontainer-features -- gitutils || (echo "GitUtils installation failed; verify the Install GitUtils step logs and repository/network access." && exit 1)
 
       - name: Verify GitUtils aliases
         run: |
@@ -40,4 +40,5 @@ jobs:
       - name: Run git beta then git prod
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # GitUtils provides these aliases to promote develop changes through the release flow toward main.
         run: git beta && git prod
