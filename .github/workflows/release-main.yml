@@ -25,12 +25,12 @@ jobs:
         uses: tomgrv/actions/setup-node@v0
 
       - name: Install GitUtils
-        run: npx --yes tomgrv/devcontainer-features -- gitutils
+        run: npx --yes -- tomgrv/devcontainer-features -- gitutils
 
       - name: Verify GitUtils aliases
         run: |
-          git config --global --get alias.beta >/dev/null
-          git config --global --get alias.prod >/dev/null
+          git config --global --get alias.beta >/dev/null || (echo 'Missing git beta alias' && exit 1)
+          git config --global --get alias.prod >/dev/null || (echo 'Missing git prod alias' && exit 1)
 
       - name: Configure git identity
         run: |
