@@ -7,30 +7,8 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-resolve_test_runner() {
-    if [ -x './vendor/bin/pest' ]; then
-        printf '%s' './vendor/bin/pest'
-        return 0
-    fi
-
-    if command -v pest > /dev/null 2>&1; then
-        command -v pest
-        return 0
-    fi
-
-    if [ -x './vendor/bin/phpunit' ]; then
-        printf '%s' './vendor/bin/phpunit'
-        return 0
-    fi
-
-    if command -v phpunit > /dev/null 2>&1; then
-        command -v phpunit
-        return 0
-    fi
-
-    echo "::error::No test runner found in ./vendor/bin or PATH. Please install Pest or PHPUnit locally or make one available globally." >&2
-    exit 1
-}
+PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
+REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -47,5 +25,13 @@ if [ -f "artisan" ]; then
     php artisan migrate --force
 fi
 
-TEST_RUNNER="$(resolve_test_runner)"
-"${TEST_RUNNER}" --coverage-clover coverage.xml
+for TEST_RUNNER in pest phpunit; do
+    if command -v "${TEST_RUNNER}" > /dev/null 2>&1; then
+        
+        ${TEST_RUNNER} --coverage-clover coverage.xml 2> /dev/null 
+        exit $?
+    fi
+done
+
+echo "::error::Neither Pest nor PHPUnit was found. Please ensure one of them is installed and available in PATH." >&2
+exit 1

@@ -7,27 +7,9 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-resolve_binary() {
-    local_binary="$1"
-    global_binary="$2"
-    display_name="$3"
-
-    if [ -x "./vendor/bin/${local_binary}" ]; then
-        printf './vendor/bin/%s' "${local_binary}"
-        return 0
-    fi
-
-    if command -v "${global_binary}" > /dev/null 2>&1; then
-        command -v "${global_binary}"
-        return 0
-    fi
-
-    echo "::error::${display_name} could not be found in ./vendor/bin/${local_binary} or in PATH. Please install it locally or make it available globally." >&2
-    exit 1
-}
-
-PINT_BIN="$(resolve_binary pint pint Pint)"
-REVIEWDOG_BIN="$(resolve_binary reviewdog reviewdog reviewdog)"
+PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
+PINT_BIN="pint"
+REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then
