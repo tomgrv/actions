@@ -25,7 +25,7 @@ jobs:
         uses: tomgrv/actions/setup-node@v0
 
       - name: Install GitUtils
-        run: npx --yes -- tomgrv/devcontainer-features -- gitutils
+        run: npx --yes -- tomgrv/devcontainer-features -- gitutils || (echo 'GitUtils installation failed; verify npx can fetch tomgrv/devcontainer-features and review this step logs.' && exit 1)
 
       - name: Verify GitUtils aliases
         run: |
