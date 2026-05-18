@@ -1,8 +1,24 @@
+<!-- @format -->
+
 # Changelog
+
+## 1.3.0 (2026-05-18)
+
+_Commits from: v1.2.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- add FilaCheck composite action for Filament checks (#27) ([00d4404](https://github.com/tomgrv/actions/commit/00d440442b9a8f753703da5b036d0e78791e71c5))
+- ♻️ expose php tools and simplify binary resolution (#23) ([3007e11](https://github.com/tomgrv/actions/commit/3007e11e4694cce5eba64544c5b6add654c14503))
+- Merge tag 'v1.2.0' into develop ([45dc494](https://github.com/tomgrv/actions/commit/45dc494600b5195c4713a03b94153a5518fe7748))
+- 🔧 update actions to v1 for setup-php, setup-node, list-packages, config-bot, and split-package ([c2c5820](https://github.com/tomgrv/actions/commit/c2c58201901fb72aae64669c4025cd3abf153f61))
+- ♻️ update file patterns for workspace packages ([cc192e6](https://github.com/tomgrv/actions/commit/cc192e685e6a5966c7a30f6d6805fa9b550b895b))
 
 ## 1.2.0 (2026-05-08)
 
-*Commits from: v1.1.0..HEAD*
+_Commits from: v1.1.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -73,6 +89,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
-
 ---
-*Generated on 2026-05-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+
+_Generated on 2026-05-18 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
