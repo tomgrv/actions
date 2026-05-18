@@ -54,11 +54,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Ensure PHPStan is installed
-      shell: sh
-      run: |
-        [ -f vendor/bin/phpstan ] || composer require --dev phpstan/phpstan --no-interaction --no-progress --quiet
-
     - name: Run PHPStan
       id: run-phpstan
       shell: sh

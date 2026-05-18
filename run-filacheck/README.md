@@ -1,8 +1,8 @@
 <!-- @format -->
 
-# GitHub Action: Validate PR Pint
+# GitHub Action: Validate PR FilaCheck
 
-Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findings inline via reviewdog. Can also run in **fix mode** to apply fixes directly. This action expects `pint` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
+Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. This action expects `filacheck` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
 
 ## Inputs
 
@@ -10,17 +10,29 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 **Required.** GitHub token for reviewdog reporting.
 
-### paths
+### path
 
-**Optional.** Comma-separated list of paths to analyze. Defaults to `app`.
+**Optional.** Path to analyze. Defaults to `app/Filament`.
 
 ### fix
 
 **Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
-### preset
+### detailed
 
-**Optional.** Pint preset to use (e.g. `laravel`, `default`, `symfony`). Defaults to `laravel`.
+**Optional.** Show detailed output with rule categories. Defaults to `false`.
+
+### dirty
+
+**Optional.** Only scan files with uncommitted git changes. Defaults to `false`.
+
+### dry-run
+
+**Optional.** Preview fix changes without modifying files. Defaults to `false`.
+
+### backup
+
+**Optional.** Create backup files when fixing. Defaults to `false`.
 
 ### level
 
@@ -48,16 +60,16 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running Pint.
-- [**run-phpstan**](../run-phpstan/README.md) — complement Pint style checks with static analysis.
+- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running FilaCheck.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+- [**run-pint**](../run-pint/README.md) — complement Filament checks with Laravel Pint.
 
 ## Local Usage
 
 Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-pint
+npx @tomgrv/actions run-filacheck
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
@@ -65,13 +77,13 @@ Required environment variables must be set before running. See [Inputs](#inputs)
 ## Example
 
 ```yaml
-name: PR PHP Checks
+name: PR Filament Checks
 
 on:
     pull_request:
 
 jobs:
-    pint:
+    filacheck:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -79,17 +91,17 @@ jobs:
             - name: Setup PHP toolchain
               uses: tomgrv/actions/setup-php@v1
 
-            - name: Run Pint
-              uses: tomgrv/actions/run-pint@v1
+            - name: Run FilaCheck
+              uses: tomgrv/actions/run-filacheck@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  paths: app,config,routes,tests
+                  path: app/Filament
 ```
 
 ### Fix mode
 
 ```yaml
-name: Pint Fix
+name: FilaCheck Fix
 
 on:
     workflow_dispatch:
@@ -103,19 +115,19 @@ jobs:
             - name: Setup PHP toolchain
               uses: tomgrv/actions/setup-php@v1
 
-            - name: Run Pint in fix mode
-              id: pint
-              uses: tomgrv/actions/run-pint@v1
+            - name: Run FilaCheck in fix mode
+              id: filacheck
+              uses: tomgrv/actions/run-filacheck@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  paths: app,config,routes
+                  path: app/Filament
                   fix: 'true'
 
             - name: Create pull request with fixes
-              if: ${{ steps.pint.outputs.has-changes == 'true' }}
+              if: ${{ steps.filacheck.outputs.has-changes == 'true' }}
               uses: tomgrv/actions/create-pr@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  head-branch: chore/pint-fix
-                  pr-title: 'chore: apply pint fixes'
+                  head-branch: chore/filacheck-fix
+                  pr-title: 'chore: apply filacheck fixes'
 ```

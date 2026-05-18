@@ -1,0 +1,5 @@
+{
+    "name": "run-filacheck",
+    "private": true,
+    "description": "Run FilaCheck with reviewdog."
+}
