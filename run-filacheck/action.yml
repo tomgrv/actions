@@ -1,0 +1,85 @@
+# @format
+
+# @package tomgrv/actions/run-filacheck
+
+name: Validate PR FilaCheck
+description: Run FilaCheck with reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  path:
+    description: Path to analyze with FilaCheck. Defaults to `app/Filament`.
+    required: false
+    default: app/Filament
+  fix:
+    description: Apply fixes directly instead of reporting via reviewdog.
+    required: false
+    default: 'false'
+  detailed:
+    description: Show detailed output with rule categories.
+    required: false
+    default: 'false'
+  dirty:
+    description: Only scan files with uncommitted git changes.
+    required: false
+    default: 'false'
+  dry-run:
+    description: Preview fix changes without modifying files.
+    required: false
+    default: 'false'
+  backup:
+    description: Create backup files when fixing.
+    required: false
+    default: 'false'
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: added
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: Whether fix mode produced local changes.
+    value: ${{ steps.run-filacheck.outputs.has-changes }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run FilaCheck
+      id: run-filacheck
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        FILACHECK_PATH: ${{ inputs.path }}
+        FIX: ${{ inputs.fix }}
+        DETAILED: ${{ inputs.detailed }}
+        DIRTY: ${{ inputs.dirty }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        BACKUP: ${{ inputs.backup }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
