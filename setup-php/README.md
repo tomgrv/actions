@@ -24,6 +24,7 @@ Shared composite action that prepares PHP, extensions, optional PHP tools, and C
 - [**check-composer**](../check-composer/README.md) — validate `composer.json` after setup.
 - [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependencies after setup.
 - [**run-phpinsights**](../run-phpinsights/README.md) — run PHP Insights after setup.
+- [**run-filacheck**](../run-filacheck/README.md) — run FilaCheck after setup.
 - [**run-phpmd**](../run-phpmd/README.md) — run PHPMD after setup.
 - [**run-phpstan**](../run-phpstan/README.md) — run PHPStan after setup.
 - [**run-pint**](../run-pint/README.md) — run Pint after setup.
