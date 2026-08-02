@@ -30,6 +30,28 @@ COVERAGE_FILE="${COVERAGE_FILE:-coverage.xml}"
 JUNIT_FILE="${JUNIT_FILE:-junit.xml}"
 MIGRATE="${MIGRATE:-auto}"
 
+#
+# Report file names end up verbatim in GITHUB_OUTPUT, where a newline would
+# corrupt the file and let extra key/value pairs through.
+#
+_reject_control_chars() {
+    case "$2" in
+        *[[:cntrl:]]*)
+            echo "::error::${1} must not contain control characters or newlines." >&2
+            return 1
+            ;;
+    esac
+
+    return 0
+}
+
+if ! _reject_control_chars 'coverage-file' "${COVERAGE_FILE}" || ! _reject_control_chars 'junit-file' "${JUNIT_FILE}"; then
+    printf 'tests-passed=false\n'
+    printf 'coverage-file=\n'
+    printf 'junit-file=\n'
+    exit 1
+fi
+
 REVIEWDOG_BIN="reviewdog"
 # Test failures usually live in files the pull request did not touch, so the
 # default does not filter on the diff the way the linters in this repo do.
@@ -62,7 +84,15 @@ if [ ! -f vendor/autoload.php ]; then
 
     if [ "${_install}" = 'true' ]; then
         echo "::notice::vendor/autoload.php is missing, installing Composer dependencies" >&2
-        composer install --no-interaction --no-progress --prefer-dist --ansi >&2
+
+        # A failed install must not abort the script under `set -e`: the guard
+        # below is what turns this into an actionable message and still writes
+        # the step outputs.
+        if ! command -v composer > /dev/null 2>&1; then
+            echo "::error::composer was not found in PATH, cannot install dependencies." >&2
+        else
+            composer install --no-interaction --no-progress --prefer-dist --ansi >&2 || echo "::error::composer install failed, see the output above." >&2
+        fi
     fi
 fi
 
@@ -86,6 +116,36 @@ fi
 RUNNER_KIND=''
 RUNNER_BIN=''
 
+#
+# Probe composer for a `test` script. Composer's own chatter is only surfaced
+# when the probe fails, so a broken install shows its root cause instead of
+# hiding behind a generic "no test runner" message.
+#
+_composer_has_test_script() {
+    if [ ! -f composer.json ]; then
+        return 1
+    fi
+
+    if ! command -v composer > /dev/null 2>&1; then
+        echo "::error::composer was not found in PATH." >&2
+        return 1
+    fi
+
+    _probe_err="${TMPDIR:-/tmp}/run-phptests-composer-$$.err"
+    _probe_out=''
+
+    if ! _probe_out="$(composer run-script --list 2> "${_probe_err}")"; then
+        echo "::error::\`composer run-script --list\` failed:" >&2
+        cat "${_probe_err}" >&2
+        rm -f "${_probe_err}"
+        return 1
+    fi
+
+    rm -f "${_probe_err}"
+
+    printf '%s\n' "${_probe_out}" | grep -qE '^[[:space:]]*test[[:space:]]'
+}
+
 _resolve_runner() {
     case "${TEST_RUNNER}" in
         auto)
@@ -97,7 +157,7 @@ _resolve_runner() {
                 fi
             done
 
-            if [ -f composer.json ] && composer run-script --list 2> /dev/null | grep -qE '^[[:space:]]*test[[:space:]]'; then
+            if _composer_has_test_script; then
                 RUNNER_KIND='composer'
                 RUNNER_BIN='composer'
                 return 0
@@ -107,6 +167,11 @@ _resolve_runner() {
             return 1
             ;;
         composer)
+            if ! _composer_has_test_script; then
+                echo "::error::Runner \"composer\" was requested but no \"test\" script is available in composer.json." >&2
+                return 1
+            fi
+
             RUNNER_KIND='composer'
             RUNNER_BIN='composer'
             return 0

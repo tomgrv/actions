@@ -32,12 +32,16 @@ $root = rtrim(getcwd() ?: '.', '/');
 
 /**
  * Make a path relative to the working directory, which is where reviewdog runs.
+ *
+ * `strncmp` rather than `str_starts_with`: the converter runs on whatever PHP
+ * the project under test pins, which may predate 8.0.
  */
 $relative = static function (string $file) use ($root): string {
     $file = (string) (realpath($file) ?: $file);
+    $prefix = $root . '/';
 
-    if ($root !== '' && str_starts_with($file, $root . '/')) {
-        return substr($file, strlen($root) + 1);
+    if ($root !== '' && strncmp($file, $prefix, strlen($prefix)) === 0) {
+        return substr($file, strlen($prefix));
     }
 
     return $file;
@@ -54,7 +58,7 @@ $frameFromMessage = static function (string $message): ?array {
     }
 
     foreach ($matches as $match) {
-        if (!str_contains($match[1], '/vendor/')) {
+        if (strpos($match[1], '/vendor/') === false) {
             return [$match[1], (int) $match[2]];
         }
     }
