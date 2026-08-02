@@ -11,6 +11,7 @@ The action picks the first available runner — `pest`, then `phpunit` (from `ve
 | Name                | Description                                                                                                            | Required | Default      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------ |
 | `working-directory` | Directory to run the test suite in, relative to the workspace.                                                          | No       | `.`          |
+| `install`           | Install Composer dependencies when `vendor/autoload.php` is missing `[auto,true,false]`. `auto` installs when a composer.json is present. | No       | `auto`       |
 | `runner`            | Test runner to use `[auto,pest,phpunit,composer]`. `auto` picks pest, then phpunit, then the composer `test` script.     | No       | `auto`       |
 | `paths`             | Optional paths or filters to pass to the test runner. Defaults to the whole suite.                                      | No       | `''`         |
 | `flags`             | Additional flags to pass to the test runner.                                                                            | No       | `''`         |
@@ -27,6 +28,12 @@ The action picks the first available runner — `pest`, then `phpunit` (from `ve
 | `tests-passed`  | Whether the test suite passed.                                                  |
 | `coverage-file` | Path of the generated coverage report, empty when no report was produced.       |
 | `junit-file`    | Path of the generated JUnit report, empty when no report was produced.          |
+
+## Composer dependencies
+
+The suite cannot run without `vendor/autoload.php` — `artisan`, `pest` and `phpunit` all require it and die with a raw PHP fatal when it is absent. When it is missing, the action installs the dependencies itself (`install: auto`) and, failing that, reports what is missing instead of a stack trace.
+
+Note that [**setup-php**](../setup-php/README.md) installs dependencies from `composer.json`, whether or not a `composer.lock` is committed.
 
 ## Laravel projects
 

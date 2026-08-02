@@ -54,6 +54,9 @@ runs:
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install
-      if: ${{ hashFiles('composer.lock') }}
+      # Keyed on composer.json, not composer.lock: libraries and packages
+      # commonly do not commit a lock file, and skipping the install there
+      # leaves every downstream action without a vendor directory.
+      if: ${{ hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'

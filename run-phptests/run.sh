@@ -24,6 +24,7 @@ export PATH
 TEST_RUNNER="${TEST_RUNNER:-auto}"
 TEST_PATHS="${TEST_PATHS:-${1:-}}"
 TEST_FLAGS="${TEST_FLAGS:-}"
+INSTALL="${INSTALL:-auto}"
 COVERAGE="${COVERAGE:-auto}"
 COVERAGE_FILE="${COVERAGE_FILE:-coverage.xml}"
 JUNIT_FILE="${JUNIT_FILE:-junit.xml}"
@@ -31,6 +32,39 @@ MIGRATE="${MIGRATE:-auto}"
 ANNOTATE="${ANNOTATE:-true}"
 
 ACTION_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+
+#
+# Nothing below works without an autoloader: artisan, pest and phpunit all
+# require vendor/autoload.php and die with a raw PHP fatal when it is missing.
+# Install the dependencies when they are absent rather than failing on a stack
+# trace, since a project without a committed composer.lock is easy to miss.
+#
+if [ ! -f vendor/autoload.php ]; then
+    _install='false'
+
+    case "${INSTALL}" in
+        true) _install='true' ;;
+        auto) [ -f composer.json ] && _install='true' ;;
+    esac
+
+    if [ "${_install}" = 'true' ]; then
+        echo "::notice::vendor/autoload.php is missing, installing Composer dependencies" >&2
+        composer install --no-interaction --no-progress --prefer-dist --ansi >&2
+    fi
+fi
+
+if [ ! -f vendor/autoload.php ]; then
+    if [ -f composer.json ]; then
+        echo "::error::Composer dependencies are not installed (vendor/autoload.php is missing). Run setup-php or composer install before this action, or set install to true." >&2
+    else
+        echo "::error::No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
+    fi
+
+    printf 'tests-passed=false\n'
+    printf 'coverage-file=\n'
+    printf 'junit-file=\n'
+    exit 1
+fi
 
 #
 # Resolve the test runner: an explicit one when asked for, otherwise the first
