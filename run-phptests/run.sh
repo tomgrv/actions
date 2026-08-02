@@ -7,31 +7,212 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
-REVIEWDOG_BIN="reviewdog"
+WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
-if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -n "${GITHUB_TOKEN:-}" ]; then
-        export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+if [ "${WORKING_DIRECTORY}" != "." ]; then
+    if [ ! -d "${WORKING_DIRECTORY}" ]; then
+        echo "::error::Working directory not found: ${WORKING_DIRECTORY}" >&2
+        exit 1
+    fi
+    cd "${WORKING_DIRECTORY}" || exit 1
+fi
+
+COMPOSER_HOME_DIR="$(composer config -g home 2> /dev/null || echo "${HOME:-/root}/.composer")"
+PATH="$(pwd)/vendor/bin:${COMPOSER_HOME_DIR}/vendor/bin:${PATH}"
+export PATH
+
+TEST_RUNNER="${TEST_RUNNER:-auto}"
+TEST_PATHS="${TEST_PATHS:-${1:-}}"
+TEST_FLAGS="${TEST_FLAGS:-}"
+COVERAGE="${COVERAGE:-auto}"
+COVERAGE_FILE="${COVERAGE_FILE:-coverage.xml}"
+JUNIT_FILE="${JUNIT_FILE:-junit.xml}"
+MIGRATE="${MIGRATE:-auto}"
+ANNOTATE="${ANNOTATE:-true}"
+
+ACTION_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+
+#
+# Resolve the test runner: an explicit one when asked for, otherwise the first
+# available of pest / phpunit, falling back to a `test` script in composer.json.
+#
+RUNNER_KIND=''
+RUNNER_BIN=''
+
+_resolve_runner() {
+    case "${TEST_RUNNER}" in
+        auto)
+            for _candidate in pest phpunit; do
+                if command -v "${_candidate}" > /dev/null 2>&1; then
+                    RUNNER_KIND='phpunit'
+                    RUNNER_BIN="${_candidate}"
+                    return 0
+                fi
+            done
+
+            if [ -f composer.json ] && composer run-script --list 2> /dev/null | grep -qE '^[[:space:]]*test[[:space:]]'; then
+                RUNNER_KIND='composer'
+                RUNNER_BIN='composer'
+                return 0
+            fi
+
+            echo "::error::No test runner found. Install pest or phpunit, or declare a \"test\" script in composer.json." >&2
+            return 1
+            ;;
+        composer)
+            RUNNER_KIND='composer'
+            RUNNER_BIN='composer'
+            return 0
+            ;;
+        *)
+            if command -v "${TEST_RUNNER}" > /dev/null 2>&1; then
+                RUNNER_KIND='phpunit'
+                RUNNER_BIN="${TEST_RUNNER}"
+                return 0
+            fi
+
+            echo "::error::Requested test runner not found in PATH: ${TEST_RUNNER}" >&2
+            return 1
+            ;;
+    esac
+}
+
+if ! _resolve_runner; then
+    printf 'tests-passed=false\n'
+    printf 'coverage-file=\n'
+    printf 'junit-file=\n'
+    exit 1
+fi
+
+#
+# Coverage is only requested when a driver can actually produce it: asking for a
+# clover report without xdebug or pcov makes PHPUnit fail with an obscure error.
+#
+_has_coverage_driver() {
+    php -r 'exit(extension_loaded("xdebug") || extension_loaded("pcov") ? 0 : 1);' > /dev/null 2>&1
+}
+
+case "${COVERAGE}" in
+    true)
+        if _has_coverage_driver; then
+            COVERAGE_ENABLED='true'
+        else
+            echo "::error::Coverage was requested but neither xdebug nor pcov is loaded." >&2
+            printf 'tests-passed=false\n'
+            printf 'coverage-file=\n'
+            printf 'junit-file=\n'
+            exit 1
+        fi
+        ;;
+    auto)
+        if _has_coverage_driver; then
+            COVERAGE_ENABLED='true'
+        else
+            echo "::notice::No coverage driver (xdebug/pcov) loaded, running tests without coverage." >&2
+            COVERAGE_ENABLED='false'
+        fi
+        ;;
+    *)
+        COVERAGE_ENABLED='false'
+        ;;
+esac
+
+if [ "${COVERAGE_ENABLED}" = 'true' ] && php -r 'exit(extension_loaded("xdebug") ? 0 : 1);' > /dev/null 2>&1; then
+    export XDEBUG_MODE=coverage
+fi
+
+#
+# Laravel bootstrap. An existing .env is never overwritten: the checkout may
+# carry one on purpose, and clobbering it silently changes what is tested.
+#
+if [ ! -f .env ]; then
+    for _template in .env.example .env.testing .env.ci; do
+        if [ -f "${_template}" ]; then
+            echo "Seeding .env from ${_template}" >&2
+            cp "${_template}" .env
+            break
+        fi
+    done
+
+    if [ ! -f .env ]; then
+        echo "::notice::No .env template found, creating an empty .env" >&2
+        : > .env
     fi
 fi
 
-cp .env.example .env || cp .env.testing .env || touch .env
+if [ -f artisan ]; then
+    php artisan key:generate --ansi --force >&2
 
-if [ -f "artisan" ]; then
-    php artisan key:generate --ansi
-    php artisan config:clear
-    php artisan config:cache
-    php artisan migrate --force
+    # Never `config:cache` before a test run: cached config freezes env() to the
+    # build-time values and silently ignores .env.testing / phpunit.xml overrides.
+    php artisan config:clear >&2
+
+    _should_migrate='false'
+    case "${MIGRATE}" in
+        true) _should_migrate='true' ;;
+        auto)
+            if [ -d database/migrations ] && [ -n "$(find database/migrations -name '*.php' -print -quit 2> /dev/null)" ]; then
+                _should_migrate='true'
+            fi
+            ;;
+    esac
+
+    if [ "${_should_migrate}" = 'true' ]; then
+        echo "Running database migrations" >&2
+        php artisan migrate --force --no-interaction >&2
+    fi
 fi
 
-for TEST_RUNNER in pest phpunit; do
-    if command -v "${TEST_RUNNER}" > /dev/null 2>&1; then
-        
-        ${TEST_RUNNER} --coverage-clover coverage.xml 2> /dev/null 
-        exit $?
-    fi
-done
+#
+# Run the suite. Everything the runner prints is forwarded to stderr so it shows
+# up in the job log while stdout stays reserved for GITHUB_OUTPUT key/values.
+#
+runner_args=''
+junit_written='false'
 
-echo "::error::Neither Pest nor PHPUnit was found. Please ensure one of them is installed and available in PATH." >&2
-exit 1
+if [ "${RUNNER_KIND}" = 'phpunit' ]; then
+    runner_args="${runner_args} --log-junit=${JUNIT_FILE}"
+    junit_written='true'
+
+    if [ "${COVERAGE_ENABLED}" = 'true' ]; then
+        runner_args="${runner_args} --coverage-clover=${COVERAGE_FILE}"
+    fi
+fi
+
+rm -f "${JUNIT_FILE}" "${COVERAGE_FILE}"
+
+echo "Running test suite with ${RUNNER_BIN}" >&2
+
+exit_code=0
+if [ "${RUNNER_KIND}" = 'composer' ]; then
+    # shellcheck disable=SC2086
+    composer run-script --no-interaction test -- ${TEST_FLAGS} ${TEST_PATHS} >&2 || exit_code=$?
+else
+    # shellcheck disable=SC2086
+    "${RUNNER_BIN}" ${runner_args} ${TEST_FLAGS} ${TEST_PATHS} >&2 || exit_code=$?
+fi
+
+if [ "${junit_written}" = 'true' ] && [ "${ANNOTATE}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
+    php "${ACTION_DIR}/annotate.php" "${JUNIT_FILE}" >&2 || true
+fi
+
+if [ "${exit_code}" -eq 0 ]; then
+    printf 'tests-passed=true\n'
+else
+    echo "::error::Test suite failed with exit code ${exit_code}." >&2
+    printf 'tests-passed=false\n'
+fi
+
+if [ -f "${COVERAGE_FILE}" ]; then
+    printf 'coverage-file=%s\n' "${COVERAGE_FILE}"
+else
+    printf 'coverage-file=\n'
+fi
+
+if [ -f "${JUNIT_FILE}" ]; then
+    printf 'junit-file=%s\n' "${JUNIT_FILE}"
+else
+    printf 'junit-file=\n'
+fi
+
+exit "${exit_code}"

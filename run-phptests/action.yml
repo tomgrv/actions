@@ -9,9 +9,69 @@ branding:
   icon: check-circle
   color: blue
 
+inputs:
+  working-directory:
+    description: Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.
+    required: false
+    default: .
+  runner:
+    description: 'Test runner to use [auto,pest,phpunit,composer]. `auto` picks pest, then phpunit, then the composer `test` script.'
+    required: false
+    default: auto
+  paths:
+    description: Optional paths or filters to pass to the test runner. Defaults to the whole suite.
+    required: false
+    default: ''
+  flags:
+    description: Additional flags to pass to the test runner.
+    required: false
+    default: ''
+  coverage:
+    description: 'Generate a clover coverage report [auto,true,false]. `auto` skips coverage when no xdebug/pcov driver is loaded.'
+    required: false
+    default: auto
+  coverage-file:
+    description: Clover coverage report to write when coverage is enabled.
+    required: false
+    default: coverage.xml
+  junit-file:
+    description: JUnit report to write, used to annotate failing tests.
+    required: false
+    default: junit.xml
+  migrate:
+    description: 'Run `artisan migrate` before the suite [auto,true,false]. `auto` migrates when the project has migrations.'
+    required: false
+    default: auto
+  annotate:
+    description: Annotate failing tests on the pull request from the JUnit report.
+    required: false
+    default: 'true'
+
+outputs:
+  tests-passed:
+    description: Whether the test suite passed.
+    value: ${{ steps.run-phptests.outputs.tests-passed }}
+  coverage-file:
+    description: Path of the generated coverage report, empty when no report was produced.
+    value: ${{ steps.run-phptests.outputs.coverage-file }}
+  junit-file:
+    description: Path of the generated JUnit report, empty when no report was produced.
+    value: ${{ steps.run-phptests.outputs.junit-file }}
+
 runs:
   using: composite
   steps:
     - name: Run test suite
+      id: run-phptests
       shell: sh
-      run: sh -c "${{ github.action_path }}/run.sh"
+      env:
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        TEST_RUNNER: ${{ inputs.runner }}
+        TEST_PATHS: ${{ inputs.paths }}
+        TEST_FLAGS: ${{ inputs.flags }}
+        COVERAGE: ${{ inputs.coverage }}
+        COVERAGE_FILE: ${{ inputs.coverage-file }}
+        JUNIT_FILE: ${{ inputs.junit-file }}
+        MIGRATE: ${{ inputs.migrate }}
+        ANNOTATE: ${{ inputs.annotate }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
