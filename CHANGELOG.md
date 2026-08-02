@@ -2,6 +2,23 @@
 
 # Changelog
 
+## 1.4.0 (2026-08-02)
+
+_Commits from: v1.3.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v1.3.0' into develop ([4fc5d32](https://github.com/tomgrv/actions/commit/4fc5d326c6dc366840745090475fc818a5e35443))
+- 🔧 update feature versions for githooks, gitutils, and gitversion ([b0e31c5](https://github.com/tomgrv/actions/commit/b0e31c5b63dede35f2bcd3fdec7dba7181160a11))
+
+### 📦 run-phptests changes
+
+#### Bug Fixes
+
+- 🐛 handle PHP test runs properly (#28) ([9181131](https://github.com/tomgrv/actions/commit/91811311b1d0152dbb3e5febf9afb9718337886b))
+
 ## 1.3.0 (2026-05-18)
 
 _Commits from: v1.2.0..HEAD_
@@ -91,4 +108,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-05-18 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-02 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
