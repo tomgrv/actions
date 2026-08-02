@@ -2,14 +2,17 @@
 
 # GitHub Action: Validate PR Test Suite
 
-Runs the PHP test suite for a pull request and reports failing tests as pull request annotations.
+Runs the PHP test suite for a pull request and reports failing tests with reviewdog.
 
-The action picks the first available runner — `pest`, then `phpunit` (from `vendor/bin` or the global `PATH`), then a `test` script declared in `composer.json`. Test output is streamed to the job log, failures are annotated on the offending file and line from the JUnit report, and a recap table is added to the job summary.
+The action picks the first available runner — `pest`, then `phpunit` (from `vendor/bin` or the global `PATH`), then a `test` script declared in `composer.json`. Test output is streamed to the job log, and the JUnit report is converted to reviewdog diagnostics so each failure lands on the file and line of the first stack frame outside `vendor/`.
+
+Reporting never changes the verdict: the suite's own exit code is what fails the step, so a missing token or a reviewdog problem cannot mask or invent a test result.
 
 ## Inputs
 
 | Name                | Description                                                                                                            | Required | Default      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------ |
+| `github-token`      | GitHub token for reviewdog reporting. Reporting is skipped when empty.                                                  | No       | `${{ github.token }}` |
 | `working-directory` | Directory to run the test suite in, relative to the workspace.                                                          | No       | `.`          |
 | `install`           | Install Composer dependencies when `vendor/autoload.php` is missing `[auto,true,false]`. `auto` installs when a composer.json is present. | No       | `auto`       |
 | `runner`            | Test runner to use `[auto,pest,phpunit,composer]`. `auto` picks pest, then phpunit, then the composer `test` script.     | No       | `auto`       |
@@ -17,9 +20,13 @@ The action picks the first available runner — `pest`, then `phpunit` (from `ve
 | `flags`             | Additional flags to pass to the test runner.                                                                            | No       | `''`         |
 | `coverage`          | Generate a clover coverage report `[auto,true,false]`. `auto` skips coverage when no xdebug/pcov driver is loaded.       | No       | `auto`       |
 | `coverage-file`     | Clover coverage report to write when coverage is enabled.                                                               | No       | `coverage.xml` |
-| `junit-file`        | JUnit report to write, used to annotate failing tests.                                                                  | No       | `junit.xml`  |
+| `junit-file`        | JUnit report to write, used to report failing tests.                                                                    | No       | `junit.xml`  |
 | `migrate`           | Run `artisan migrate` before the suite `[auto,true,false]`. `auto` migrates when the project has migrations.             | No       | `auto`       |
-| `annotate`          | Annotate failing tests on the pull request from the JUnit report.                                                       | No       | `true`       |
+| `level`             | Report level for reviewdog `[info,warning,error]`.                                                                      | No       | `error`      |
+| `reporter`          | Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`.                                         | No       | `github-pr-check` |
+| `filter-mode`       | Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`, as failing tests often sit outside the diff. | No | `nofilter` |
+| `fail-level`        | Exit code for reviewdog if it finds at least the specified level of diagnostic `[none,any,info,warning,error]`.          | No       | `none`       |
+| `reviewdog-flags`   | Additional reviewdog flags.                                                                                             | No       | `''`         |
 
 ## Outputs
 
@@ -57,7 +64,7 @@ Run this action locally using the root `npx @tomgrv/actions` dispatcher:
 npx @tomgrv/actions run-phptests
 ```
 
-Inputs are read from the matching environment variables when running locally: `WORKING_DIRECTORY`, `TEST_RUNNER`, `TEST_PATHS`, `TEST_FLAGS`, `COVERAGE`, `COVERAGE_FILE`, `JUNIT_FILE`, `MIGRATE` and `ANNOTATE`.
+Inputs are read from the matching environment variables when running locally: `WORKING_DIRECTORY`, `INSTALL`, `TEST_RUNNER`, `TEST_PATHS`, `TEST_FLAGS`, `COVERAGE`, `COVERAGE_FILE`, `JUNIT_FILE`, `MIGRATE`, and the usual `REVIEWDOG_*` variables.
 
 ## Example
 

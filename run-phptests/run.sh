@@ -29,7 +29,20 @@ COVERAGE="${COVERAGE:-auto}"
 COVERAGE_FILE="${COVERAGE_FILE:-coverage.xml}"
 JUNIT_FILE="${JUNIT_FILE:-junit.xml}"
 MIGRATE="${MIGRATE:-auto}"
-ANNOTATE="${ANNOTATE:-true}"
+
+REVIEWDOG_BIN="reviewdog"
+# Test failures usually live in files the pull request did not touch, so the
+# default does not filter on the diff the way the linters in this repo do.
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
+REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
+REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+
+if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+fi
 
 ACTION_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
@@ -226,8 +239,27 @@ else
     "${RUNNER_BIN}" ${runner_args} ${TEST_FLAGS} ${TEST_PATHS} >&2 || exit_code=$?
 fi
 
-if [ "${junit_written}" = 'true' ] && [ "${ANNOTATE}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
-    php "${ACTION_DIR}/annotate.php" "${JUNIT_FILE}" >&2 || true
+#
+# Report failing tests through reviewdog. The suite's own exit code is what
+# fails the step, so a reporting problem never masks or invents a test result.
+#
+if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
+    if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
+        echo "::notice::No GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN set, skipping reviewdog reporting." >&2
+    elif ! command -v "${REVIEWDOG_BIN}" > /dev/null 2>&1; then
+        echo "::notice::reviewdog was not found in PATH, skipping reviewdog reporting." >&2
+    else
+        # shellcheck disable=SC2086
+        php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \
+            | "${REVIEWDOG_BIN}" \
+                -f=rdjson \
+                -name="phpunit" \
+                -reporter="${REVIEWDOG_REPORTER}" \
+                -level="${REVIEWDOG_LEVEL}" \
+                -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+                -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+                ${REVIEWDOG_FLAGS} >&2 || true
+    fi
 fi
 
 if [ "${exit_code}" -eq 0 ]; then

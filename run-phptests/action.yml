@@ -10,6 +10,10 @@ branding:
   color: blue
 
 inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting. Reporting is skipped when empty.
+    required: false
+    default: ${{ github.token }}
   working-directory:
     description: Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.
     required: false
@@ -39,17 +43,33 @@ inputs:
     required: false
     default: coverage.xml
   junit-file:
-    description: JUnit report to write, used to annotate failing tests.
+    description: JUnit report to write, used to report failing tests with reviewdog.
     required: false
     default: junit.xml
   migrate:
     description: 'Run `artisan migrate` before the suite [auto,true,false]. `auto` migrates when the project has migrations.'
     required: false
     default: auto
-  annotate:
-    description: Annotate failing tests on the pull request from the JUnit report.
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
     required: false
-    default: 'true'
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter]. Defaults to `nofilter`, as failing tests often sit outside the diff.'
+    required: false
+    default: nofilter
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
 
 outputs:
   tests-passed:
@@ -69,6 +89,12 @@ runs:
       id: run-phptests
       shell: sh
       env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
         WORKING_DIRECTORY: ${{ inputs.working-directory }}
         INSTALL: ${{ inputs.install }}
         TEST_RUNNER: ${{ inputs.runner }}
@@ -78,5 +104,4 @@ runs:
         COVERAGE_FILE: ${{ inputs.coverage-file }}
         JUNIT_FILE: ${{ inputs.junit-file }}
         MIGRATE: ${{ inputs.migrate }}
-        ANNOTATE: ${{ inputs.annotate }}
       run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
