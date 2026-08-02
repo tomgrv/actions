@@ -49,13 +49,28 @@
         "lint": "npx --yes lint-staged",
         "release": "npx --yes commit-and-tag-version --no-verify --",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "update": "npx --yes npm-check-updates -i -u"
+        "update": "npx --yes npm-check-updates -i -u",
+        "update-all": "npm run update -w --root"
     },
     "config": {
         "commitizen": {
             "path": "@commitlint/cz-commitlint"
         }
     },
+    "devDependencies": {
+        "npm-check-updates": "*"
+    },
+    "peerDependencies": {
+        "@commitlint/cli": "*",
+        "@commitlint/config-conventional": "*",
+        "@commitlint/core": "*",
+        "@commitlint/cz-commitlint": "*",
+        "commitizen": "*",
+        "git-precommit-checks": "*",
+        "prettier": "*",
+        "prettier-plugin-sh": "*"
+    },
+    "private": true,
     "workspaces": [
         "check-composer",
         "check-pr-format",
@@ -83,10 +98,24 @@
         "insertPragma": true,
         "overrides": [
             {
+                "files": "*.json",
+                "options": {
+                    "tabWidth": 4,
+                    "useTabs": false
+                }
+            },
+            {
                 "files": "*.yml",
                 "options": {
-                    "useTabs": true,
-                    "tabWidth": 2
+                    "tabWidth": 2,
+                    "useTabs": false
+                }
+            },
+            {
+                "files": "*.yml",
+                "options": {
+                    "tabWidth": 2,
+                    "useTabs": true
                 }
             }
         ],
@@ -97,6 +126,47 @@
         "singleQuote": true,
         "tabWidth": 4,
         "trailingComma": "es5"
+    },
+    "bump-changelog": {
+        "types": [
+            {
+                "type": "feat",
+                "section": "Features"
+            },
+            {
+                "type": "fix",
+                "section": "Bug Fixes"
+            }
+        ]
+    },
+    "bump-version": {
+        "files": [
+            {
+                "filename": "composer.json",
+                "type": "json"
+            },
+            {
+                "filename": "package.json",
+                "type": "json"
+            },
+            {
+                "filename": "package.json",
+                "type": "json@ws"
+            },
+            {
+                "filename": "devcontainer-feature.json",
+                "type": "json@ws"
+            },
+            {
+                "filename": "VERSION",
+                "type": "plain-text"
+            }
+        ]
+    },
+    "commit-and-tag-version": {
+        "scripts": {
+            "prebump": "gitversion -config .gitversion -showvariable SemVer"
+        }
     },
     "commitlint": {
         "extends": [
@@ -118,19 +188,25 @@
     "git-precommit-checks": {
         "rules": [
             {
-                "message": "You've got leftover conflict markers",
-                "regex": "/^[<>|=]{4,}/m"
-            },
-            {
                 "filter": "(^package\\.json|\\.git-precommit-checks.json)$",
                 "message": "You have unfinished devs",
                 "nonBlocking": "true",
                 "regex": "(?:FIXME|TODO)"
+            },
+            {
+                "message": "You've got leftover conflict markers",
+                "regex": "/^[<>|=]{4,}/m"
             }
         ]
     },
     "lint-staged": {
+        "!(*schema).json": [
+            "normalize-json -c -w -a -i -t 4 -f local -l true"
+        ],
         "!(templates/**/*)*.{js,jsx,ts,tsx,md,html,css,vue,yaml,yml}": [
+            "npx --yes prettier --write"
+        ],
+        "!(templates/**/*).{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
             "npx --yes prettier --write"
         ],
         "*.json": [
@@ -140,5 +216,9 @@
         "*.php": [
             "composer lint"
         ]
+    },
+    "validate-branch-name": {
+        "errorMsg": "Cannot push to a branch that does not follow the naming convention.",
+        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release)/.+$"
     }
 }

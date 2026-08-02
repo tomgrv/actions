@@ -3,9 +3,9 @@
     "name": "",
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/tomgrv/devcontainer-features/githooks:5": {},
-        "ghcr.io/tomgrv/devcontainer-features/gitutils:5": {},
-        "ghcr.io/tomgrv/devcontainer-features/gitversion:5": {}
+        "ghcr.io/tomgrv/devcontainer-features/githooks:7": {},
+        "ghcr.io/tomgrv/devcontainer-features/gitutils:7": {},
+        "ghcr.io/tomgrv/devcontainer-features/gitversion:7": {}
     },
     "remoteEnv": {},
     "postCreateCommand": ".devcontainer/create.sh",
