@@ -72,6 +72,7 @@ npx @tomgrv/actions
 - [**check-pr-format**](check-pr-format/README.md) ![stable](https://img.shields.io/badge/stable-green): Validate PR title and body format.
 - [**check-secret**](check-secret/README.md) ![stable](https://img.shields.io/badge/stable-green): Scan pull request changes for leaked secrets.
 - [**check-security-npm**](check-security-npm/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit npm dependencies for known vulnerabilities.
+- [**check-lock**](check-lock/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Validate composer.lock and package-lock.json coherence with their manifests.
 
 ### 🏷️ Repository Management
 

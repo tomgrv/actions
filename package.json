@@ -32,6 +32,7 @@
         "check-secret/*",
         "check-security-composer/*",
         "check-security-npm/*",
+        "check-lock/*",
         "update-labels/*",
         "detect-changes/*",
         "list-packages/*",
@@ -73,6 +74,7 @@
     "private": true,
     "workspaces": [
         "check-composer",
+        "check-lock",
         "check-pr-format",
         "check-secret",
         "check-security-composer",

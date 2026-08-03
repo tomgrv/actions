@@ -1,0 +1,71 @@
+# @format
+
+# @package tomgrv/actions/check-lock
+
+name: Validate PR Lock
+description: Check composer.lock and package-lock.json coherence with their manifests and report via reviewdog.
+author: Perspikapps
+branding:
+  icon: lock
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting.
+    required: true
+  paths:
+    description: Comma-separated list of directories to check for lock files.
+    required: false
+    default: '.'
+  reviewdog-version:
+    description: Version of reviewdog to install.
+    required: false
+    default: v0.20.3
+  level:
+    description: 'Report level for reviewdog [info,warning,error].'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    required: false
+    default: nofilter
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
+    required: false
+    default: error
+  reviewdog-flags:
+    description: Additional reviewdog flags.
+    required: false
+    default: ''
+
+outputs:
+  has-drift:
+    description: 'true if at least one lock file is out of sync, false otherwise'
+    value: ${{ steps.check.outputs.has-drift }}
+  drift-files:
+    description: Comma-separated list of lock files that are out of sync.
+    value: ${{ steps.check.outputs.drift-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: ${{ inputs.reviewdog-version }}
+
+    - name: Check lock coherence
+      id: check
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_LEVEL: ${{ inputs.level }}
+        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
+        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
+        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+      run: sh "${{ github.action_path }}/run.sh" "${{ inputs.paths }}" >> "$GITHUB_OUTPUT"
