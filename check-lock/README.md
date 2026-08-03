@@ -53,11 +53,11 @@ This catches the case where a pull request edits a manifest but forgets to regen
 
 ### has-drift
 
-`true` if at least one lock file is out of sync, `false` otherwise.
+`true` if at least one lock file could not be verified as coherent, `false` otherwise. This covers more than literal drift: it is also `true` when the check itself couldn't run — the required tool is missing from the runner, or the validator command failed for some other reason (malformed manifest, registry/config error, unsupported lockfile version). In every case the annotation on the lock file explains which of these happened.
 
 ### drift-files
 
-Comma-separated list of the lock files that are out of sync.
+Comma-separated list of the lock files that triggered a finding above (out of sync, or unverifiable).
 
 ## Works well with
 

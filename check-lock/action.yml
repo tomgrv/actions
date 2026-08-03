@@ -44,10 +44,10 @@ inputs:
 
 outputs:
   has-drift:
-    description: 'true if at least one lock file is out of sync, false otherwise'
+    description: 'true if at least one lock file could not be verified as coherent — either it is out of sync with its manifest, or the check itself could not run (tool missing, validator failed) — false otherwise'
     value: ${{ steps.check.outputs.has-drift }}
   drift-files:
-    description: Comma-separated list of lock files that are out of sync.
+    description: Comma-separated list of lock files that triggered a finding (out of sync, or unverifiable).
     value: ${{ steps.check.outputs.drift-files }}
 
 runs:

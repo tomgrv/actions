@@ -71,7 +71,11 @@ _check_composer() {
 
   echo "Checking composer lock coherence in ${_dir}..." >&2
 
-  _out=$( (cd "${_dir}" && composer validate --no-check-all --no-check-publish --no-interaction 2>&1) || true)
+  if _out=$(cd "${_dir}" && composer validate --no-check-all --no-check-publish --no-interaction 2>&1); then
+    _exit=0
+  else
+    _exit=$?
+  fi
   printf '%s\n' "${_out}" >&2
 
   _errors=$(printf '%s\n' "${_out}" | awk '
@@ -84,6 +88,9 @@ _check_composer() {
     _add "${_dir}/composer.lock" ERROR "composer.lock is out of sync with composer.json.
 Run \`composer update --lock\` and commit the updated lock file.
 ${_errors}"
+  elif [ "${_exit}" -ne 0 ]; then
+    _add "${_dir}/composer.lock" ERROR "composer validate failed (exit ${_exit}) for a reason other than lock drift, so lock coherence could not be verified.
+${_out}"
   fi
 
   return 0
@@ -113,10 +120,20 @@ _check_npm() {
   echo "Checking npm lock coherence in ${_dir}..." >&2
 
   # shellcheck disable=SC2086
-  _out=$( (cd "${_dir}" && npm ci --dry-run --package-lock-only --no-audit --no-fund ${_workspaces} 2>&1) || true)
+  if _out=$(cd "${_dir}" && npm ci --dry-run --package-lock-only --no-audit --no-fund ${_workspaces} 2>&1); then
+    _exit=0
+  else
+    _exit=$?
+  fi
   printf '%s\n' "${_out}" >&2
 
+  if [ "${_exit}" -eq 0 ]; then
+    return 0
+  fi
+
   if ! printf '%s\n' "${_out}" | grep -q 'can only install packages when your package.json and package-lock.json'; then
+    _add "${_dir}/package-lock.json" ERROR "npm ci --dry-run failed (exit ${_exit}) for a reason other than lock drift, so lock coherence could not be verified.
+${_out}"
     return 0
   fi
 
@@ -142,6 +159,7 @@ echo "Checking lock coherence in: ${PATHS}" >&2
 
 _oldifs=$IFS
 IFS=','
+set -f
 # shellcheck disable=SC2086
 for _target in ${PATHS}; do
   IFS=$_oldifs
@@ -160,6 +178,7 @@ for _target in ${PATHS}; do
 
   IFS=','
 done
+set +f
 IFS=$_oldifs
 
 if [ -s "${FINDINGS}" ]; then
