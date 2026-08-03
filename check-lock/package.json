@@ -1,0 +1,5 @@
+{
+    "name": "check-lock",
+    "private": true,
+    "description": "Validate composer.json/composer.lock and package.json/package-lock.json coherence and report via reviewdog."
+}
