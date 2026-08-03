@@ -21,7 +21,6 @@
         "degit-package/*",
         "create-pr/*",
         "split-package/*",
-        "check-composer/*",
         "check-pr-format/*",
         "run-phpmd/*",
         "run-phpinsights/*",
@@ -73,7 +72,6 @@
     },
     "private": true,
     "workspaces": [
-        "check-composer",
         "check-lock",
         "check-pr-format",
         "check-secret",

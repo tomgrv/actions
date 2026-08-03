@@ -54,42 +54,74 @@ _add() {
   esac
 }
 
-# composer validate reports lock staleness by comparing the content-hash stored in
-# composer.lock against composer.json. Only the "Lock file errors" section is kept
-# here: schema and publish warnings are check-composer's job, not this action's.
+# `composer validate --strict` reports three independent things in one pass: schema
+# errors/warnings, publish-readiness (missing description, license, etc.), and lock
+# staleness (content-hash mismatch, under "# Lock file errors"). composer.lock is not
+# required: packages and libraries commonly don't commit one, and validate still
+# checks the manifest itself in that case.
 _check_composer() {
   _dir="$1"
 
   [ -f "${_dir}/composer.json" ] || return 0
-  [ -f "${_dir}/composer.lock" ] || return 0
 
   if ! command -v composer >/dev/null 2>&1; then
-    _add "${_dir}/composer.lock" ERROR \
-      "composer.lock found but composer is not available on this runner, so lock coherence could not be verified. Add a Composer setup step before this action."
+    _add "${_dir}/composer.json" ERROR \
+      "composer.json found but composer is not available on this runner, so it could not be validated. Add a Composer setup step before this action."
     return 0
   fi
 
-  echo "Checking composer lock coherence in ${_dir}..." >&2
+  echo "Validating composer.json / composer.lock in ${_dir}..." >&2
 
-  if _out=$(cd "${_dir}" && composer validate --no-check-all --no-check-publish --no-interaction 2>&1); then
+  if _out=$(cd "${_dir}" && composer validate --strict --no-interaction 2>&1); then
     _exit=0
   else
     _exit=$?
   fi
   printf '%s\n' "${_out}" >&2
 
-  _errors=$(printf '%s\n' "${_out}" | awk '
-    /^# Lock file errors/ { inlock = 1; next }
-    /^# / { inlock = 0 }
-    inlock && /^- / { sub(/^- /, ""); print }
+  _found=0
+
+  # Composer groups every finding under a "# <Section>" header followed by "- "
+  # bullets (e.g. "# Lock file errors", "# General warnings", "# Publish errors").
+  # Which stream (stdout/stderr) carries that report, and which carries the
+  # root-user/version-detection preamble, differs by composer version and by
+  # whether the result is clean or not — so rather than filtering preamble text
+  # by pattern, extract by this structure instead: it is unaffected by whatever
+  # boilerplate surrounds it. A schema violation severe enough to crash before
+  # composer reaches its own report (bad name pattern, unparseable JSON) prints
+  # an indented "- " with no "# " section around it, so it never matches this
+  # parser and falls through to the generic exit-code fallback below instead of
+  # being torn into unrelated diagnostic lines.
+  _sections=$(printf '%s\n' "${_out}" | awk '
+    /^# / { section = $0; sub(/^# /, "", section); next }
+    /^- / { item = $0; sub(/^- /, "", item); print section "\t" item }
   ')
 
-  if [ -n "${_errors}" ]; then
-    _add "${_dir}/composer.lock" ERROR "composer.lock is out of sync with composer.json.
+  if [ -n "${_sections}" ]; then
+    _lock_errors=$(printf '%s\n' "${_sections}" | awk -F'\t' '$1 == "Lock file errors" { print $2 }')
+    if [ -n "${_lock_errors}" ]; then
+      _found=1
+      _add "${_dir}/composer.lock" ERROR "composer.lock is out of sync with composer.json.
 Run \`composer update --lock\` and commit the updated lock file.
-${_errors}"
-  elif [ "${_exit}" -ne 0 ]; then
-    _add "${_dir}/composer.lock" ERROR "composer validate failed (exit ${_exit}) for a reason other than lock drift, so lock coherence could not be verified.
+${_lock_errors}"
+    fi
+
+    _tab=$(printf '\t')
+    while IFS="${_tab}" read -r _section _item; do
+      [ "${_section}" = "Lock file errors" ] && continue
+      _found=1
+      case "${_section}" in
+        *[Ww]arning*) _severity=WARNING ;;
+        *) _severity=ERROR ;;
+      esac
+      _add "${_dir}/composer.json" "${_severity}" "${_item}"
+    done <<EORD
+${_sections}
+EORD
+  fi
+
+  if [ "${_found}" -eq 0 ] && [ "${_exit}" -ne 0 ]; then
+    _add "${_dir}/composer.json" ERROR "composer validate failed (exit ${_exit}), so composer.json/composer.lock could not be verified.
 ${_out}"
   fi
 

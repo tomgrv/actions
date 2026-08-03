@@ -1,5 +1,0 @@
-{
-    "name": "check-composer",
-    "private": true,
-    "description": "Run composer validate with reviewdog."
-}

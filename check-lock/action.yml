@@ -3,7 +3,7 @@
 # @package tomgrv/actions/check-lock
 
 name: Validate PR Lock
-description: Check composer.lock and package-lock.json coherence with their manifests and report via reviewdog.
+description: Validate composer.json/composer.lock (schema, publish-readiness, lock coherence) and package.json/package-lock.json coherence, and report via reviewdog.
 author: Perspikapps
 branding:
   icon: lock
