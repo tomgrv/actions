@@ -189,6 +189,7 @@ ${_shown}"
 
 echo "Checking lock coherence in: ${PATHS}" >&2
 
+set -f
 _oldifs=$IFS
 IFS=','
 set -f
@@ -212,6 +213,7 @@ for _target in ${PATHS}; do
 done
 set +f
 IFS=$_oldifs
+set +f
 
 if [ -s "${FINDINGS}" ]; then
   echo "Lock coherence findings:" >&2
