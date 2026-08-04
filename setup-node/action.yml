@@ -1,9 +1,9 @@
 # @format
 
-# @package tomgrv/actions/setup-php
+# @package tomgrv/actions/setup-node
 
-name: Setup php
-description: Shared PHP and Composer setup for PR validation actions.
+name: Setup Node.js
+description: Shared Node.js and npm setup for PR validation actions.
 author: Perspikapps
 branding:
   icon: check-circle
@@ -18,6 +18,10 @@ inputs:
     description: Node.js version to set up. Defaults to version specified in package.json or 24.
     required: false
     default: '24'
+  options:
+    description: Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -32,4 +36,4 @@ runs:
     - name: Install Node dependencies
       if: ${{ hashFiles('package-lock.json') }}
       shell: sh
-      run: npm ci --no-progress --workspaces --package-lock-only
+      run: npm ci --no-progress --workspaces ${{ inputs.options }}
