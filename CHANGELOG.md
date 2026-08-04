@@ -2,6 +2,22 @@
 
 # Changelog
 
+## 2.1.0 (2026-08-04)
+
+_Commits from: v2.0.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.0.0' into develop ([bca7431](https://github.com/tomgrv/actions/commit/bca74317a48ef53cceaeca75aebd023578a538ca))
+
+### 📦 setup-node changes
+
+#### Bug Fixes
+
+- 🐛 allow additional install arguments for npm command ([889c8ba](https://github.com/tomgrv/actions/commit/889c8ba136de57fcb24fecc70541913e1551680f))
+
 ## 2.0.0 (2026-08-04)
 
 _Commits from: v1.4.0..HEAD_
