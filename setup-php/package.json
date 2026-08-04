@@ -1,6 +1,6 @@
 {
     "name": "setup-php",
-    "version": "1.4.0",
+    "version": "2.0.0",
     "description": "Shared PHP and Composer setup for PR validation actions.",
     "private": true
 }

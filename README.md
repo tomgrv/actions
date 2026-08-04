@@ -19,8 +19,8 @@ npx @tomgrv/actions <action> [args...]
 For example:
 
 ```sh
-# Run composer validation locally
-GITHUB_TOKEN=ghp_xxx npx @tomgrv/actions check-composer
+# Run lock coherence validation locally
+GITHUB_TOKEN=ghp_xxx npx @tomgrv/actions check-lock
 
 # List monorepo packages
 npx @tomgrv/actions list-packages
@@ -62,7 +62,6 @@ npx @tomgrv/actions
 - [**run-phpmd**](run-phpmd/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHP Mess Detector and report via reviewdog.
 - [**run-pint**](run-pint/README.md) ![stable](https://img.shields.io/badge/stable-green): Run Laravel Pint code style fixer and report via reviewdog.
 - [**run-phptests**](run-phptests/README.md) ![stable](https://img.shields.io/badge/stable-green): Run the PHP test suite.
-- [**check-composer**](check-composer/README.md) ![stable](https://img.shields.io/badge/stable-green): Validate composer.json and composer.lock consistency.
 - [**check-security-composer**](check-security-composer/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit Composer dependencies for known vulnerabilities.
 
 ### 🔀 Pull Request
@@ -72,6 +71,7 @@ npx @tomgrv/actions
 - [**check-pr-format**](check-pr-format/README.md) ![stable](https://img.shields.io/badge/stable-green): Validate PR title and body format.
 - [**check-secret**](check-secret/README.md) ![stable](https://img.shields.io/badge/stable-green): Scan pull request changes for leaked secrets.
 - [**check-security-npm**](check-security-npm/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit npm dependencies for known vulnerabilities.
+- [**check-lock**](check-lock/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Validate composer.json/composer.lock and package.json/package-lock.json — schema, publish-readiness, and lock coherence — via reviewdog.
 
 ### 🏷️ Repository Management
 

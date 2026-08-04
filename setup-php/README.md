@@ -21,7 +21,7 @@ Shared composite action that prepares PHP, extensions, optional PHP tools, and C
 
 ## Works well with
 
-- [**check-composer**](../check-composer/README.md) — validate `composer.json` after setup.
+- [**check-lock**](../check-lock/README.md) — validate `composer.json`/`composer.lock` after setup.
 - [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependencies after setup.
 - [**run-phpinsights**](../run-phpinsights/README.md) — run PHP Insights after setup.
 - [**run-filacheck**](../run-filacheck/README.md) — run FilaCheck after setup.
@@ -61,7 +61,7 @@ jobs:
                   tools: reviewdog,phpstan,phpmd,phpinsights,pint
 
             - name: Validate composer
-              uses: tomgrv/actions/check-composer@v1
+              uses: tomgrv/actions/check-lock@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
