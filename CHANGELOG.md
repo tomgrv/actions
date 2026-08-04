@@ -2,6 +2,20 @@
 
 # Changelog
 
+## 2.0.0 (2026-08-04)
+
+_Commits from: v1.4.0..HEAD_
+
+### 💥 BREAKING CHANGES
+
+- check-composer is deleted. Replace ([6fda6e9](https://github.com/tomgrv/actions/commit/6fda6e9fae686d3b0d8bdeb95b9950284242d52b))
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'vv1.4.0' into develop ([ed6d749](https://github.com/tomgrv/actions/commit/ed6d749c9faa42efa0a4d4a3a622be493b6c44a7))
+
 ## 1.4.0 (2026-08-02)
 
 _Commits from: v1.3.0..HEAD_
@@ -108,4 +122,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-02 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
