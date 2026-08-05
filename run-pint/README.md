@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Pint
 
-Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findings inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
+Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findings inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `pint` itself must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -49,6 +49,7 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**run-phpstan**](../run-phpstan/README.md) — complement Pint style checks with static analysis.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 

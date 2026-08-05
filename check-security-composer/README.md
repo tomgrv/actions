@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Security Composer
 
-Runs `composer audit` against the project's Composer dependencies and reports findings inline via reviewdog. PHP and Composer are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job.
+Runs `composer audit` against the project's Composer dependencies and reports findings inline via reviewdog. PHP and Composer are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
 ## Inputs
 
@@ -37,6 +37,7 @@ This action has no outputs.
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**check-security-npm**](../check-security-npm/README.md) — also audit npm dependencies.
 
 ## Local Usage

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Test Suite
 
-Runs the PHP test suite for a pull request and reports failing tests with reviewdog.
+Runs the PHP test suite for a pull request and reports failing tests with reviewdog. reviewdog is set up automatically via [**setup-reviewdog**](../setup-reviewdog/README.md); the setup is skipped if it already ran earlier in the job.
 
 The action picks the first available runner — `pest`, then `phpunit` (from `vendor/bin` or the global `PATH`), then a `test` script declared in `composer.json`. Test output is streamed to the job log, and the JUnit report is converted to reviewdog diagnostics so each failure lands on the file and line of the first stack frame outside `vendor/`.
 
@@ -51,6 +51,7 @@ When an `artisan` file is present, the action bootstraps the application before 
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**run-phpstan**](../run-phpstan/README.md) — complement the test suite with static analysis.
 - [**run-pint**](../run-pint/README.md) — complement the test suite with code style checks.
 

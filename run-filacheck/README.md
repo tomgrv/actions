@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR FilaCheck
 
-Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
+Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `filacheck` itself must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -61,6 +61,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**run-pint**](../run-pint/README.md) — complement Filament checks with Laravel Pint.
 

@@ -36,7 +36,8 @@
         "detect-changes/*",
         "list-packages/*",
         "rebase-pr/*",
-        "setup-node/*"
+        "setup-node/*",
+        "setup-reviewdog/*"
     ],
     "bin": {
         "actions": "./dispatch.sh"
@@ -91,6 +92,7 @@
         "run-pint",
         "setup-node",
         "setup-php",
+        "setup-reviewdog",
         "split-package",
         "update-labels"
     ],

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpinsights` itself must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -45,6 +45,7 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 ## Works well with
 
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 
 ## Local Usage

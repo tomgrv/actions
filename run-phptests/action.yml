@@ -88,6 +88,9 @@ runs:
     - name: Setup PHP toolchain
       uses: $/setup-php
 
+    - name: Setup reviewdog toolchain
+      uses: $/setup-reviewdog
+
     - name: Run test suite
       id: run-phptests
       shell: sh
