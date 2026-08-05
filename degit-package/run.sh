@@ -46,13 +46,18 @@ fi
 
 TARGET_PATH="./${TARGET_SUBDIR}"
 
-# Build rsync exclude arguments from the comma-separated EXCLUDE_PATHS input
+# Build rsync exclude arguments from the comma-separated EXCLUDE_PATHS input.
+# NOTE: must not pipe into the loop (e.g. via `sort` or `tr | while read`) -
+# that would run the loop in a subshell and lose EXCLUDE_ARGS assignments.
 EXCLUDE_ARGS=""
-echo ".git,${EXCLUDE_PATHS}" | tr ',' '\n' | sort --unique | while read -r exclude; do
+OLD_IFS="${IFS}"
+IFS=','
+for exclude in .git ${EXCLUDE_PATHS}; do
     if [ -n "${exclude}" ]; then
-        EXCLUDE_ARGS="${EXCLUDE_ARGS} --exclude='${exclude}'"
+        EXCLUDE_ARGS="${EXCLUDE_ARGS} --exclude=${exclude}"
     fi
 done
+IFS="${OLD_IFS}"
 
 echo "Syncing files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} (SHA: ${SOURCE_SHA}) to <${TARGET_PATH}> (excluding paths: ${EXCLUDE_PATHS})" >&2
 
