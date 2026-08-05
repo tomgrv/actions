@@ -2,6 +2,26 @@
 
 # Changelog
 
+## 2.2.0 (2026-08-05)
+
+_Commits from: v2.1.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- align PHP/Node/reviewdog setup and add check-laravel/check-filament suite wrappers (#31) ([e7bc605](https://github.com/tomgrv/actions/commit/e7bc6056946dd3ac1f69ae754d4727040aad62a4))
+
+#### Other changes
+
+- Merge tag 'v2.1.0' into develop ([f13f069](https://github.com/tomgrv/actions/commit/f13f069d78a2516bc22c5761cd8b723a45a8cd2e))
+
+### 📦 degit-package changes
+
+#### Bug Fixes
+
+- fix exclude-args subshell bug breaking change detection (#30) ([99b833b](https://github.com/tomgrv/actions/commit/99b833b6a0064aece4b11c94123be9ac05808d9f))
+
 ## 2.1.0 (2026-08-04)
 
 _Commits from: v2.0.0..HEAD_
@@ -138,4 +158,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_

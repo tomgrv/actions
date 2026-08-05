@@ -1,5 +1,6 @@
 {
     "name": "run-pint",
-    "private": true,
-    "description": "Run Laravel Pint with reviewdog."
+    "version": "2.2.0",
+    "description": "Run Laravel Pint with reviewdog.",
+    "private": true
 }
