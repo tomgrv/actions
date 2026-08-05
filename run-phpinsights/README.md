@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. This action expects `phpinsights` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -44,7 +44,7 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHP Insights.
+- [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 
 ## Local Usage
@@ -71,9 +71,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
-
             - name: Run PHP Insights
               uses: tomgrv/actions/run-phpinsights@v1
               with:
@@ -94,9 +91,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
 
             - name: Run PHP Insights in fix mode
               id: insights

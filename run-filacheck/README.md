@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR FilaCheck
 
-Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. This action expects `filacheck` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
+Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -60,7 +60,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running FilaCheck.
+- [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**run-pint**](../run-pint/README.md) — complement Filament checks with Laravel Pint.
 
@@ -88,9 +88,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
-
             - name: Run FilaCheck
               uses: tomgrv/actions/run-filacheck@v1
               with:
@@ -111,9 +108,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
 
             - name: Run FilaCheck in fix mode
               id: filacheck

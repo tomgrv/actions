@@ -54,6 +54,9 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup PHP toolchain
+      uses: $/setup-php
+
     - name: Run PHPStan
       id: run-phpstan
       shell: sh

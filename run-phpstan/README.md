@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPStan
 
-Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file. This action expects `phpstan` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
+Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md); the setup is skipped if it already ran earlier in the job. `reviewdog` must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -48,7 +48,7 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHPStan.
+- [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the generated baseline update.
 - [**run-phpmd**](../run-phpmd/README.md) — complement PHPStan with mess detection.
 
@@ -76,9 +76,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
-
             - name: Run PHPStan
               uses: tomgrv/actions/run-phpstan@v1
               with:
@@ -99,9 +96,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
 
             - name: Update PHPStan baseline
               id: phpstan

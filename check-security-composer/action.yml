@@ -37,6 +37,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup PHP toolchain
+      uses: $/setup-php
+
     - name: Set up reviewdog
       uses: reviewdog/action-setup@v1
       with:

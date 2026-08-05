@@ -37,6 +37,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup Node toolchain
+      uses: $/setup-node
+
     - name: Set up reviewdog
       uses: reviewdog/action-setup@v1
       with:
