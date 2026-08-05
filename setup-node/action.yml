@@ -29,11 +29,19 @@ runs:
     - name: Set up Node
       uses: actions/setup-node@v6
       id: node-setup
+      # Guards against redundant reinstalls when several actions in this
+      # repository each embed setup-node within the same job.
+      if: env.TOMGRV_NODE_SETUP != 'true'
       with:
         cache: ${{ inputs.cache }}
         node-version: ${{ inputs.node-version }}
 
     - name: Install Node dependencies
-      if: ${{ hashFiles('package-lock.json') }}
+      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && hashFiles('package-lock.json') }}
       shell: sh
       run: npm ci --no-progress --workspaces ${{ inputs.options }}
+
+    - name: Mark Node toolchain as ready
+      if: env.TOMGRV_NODE_SETUP != 'true'
+      shell: sh
+      run: echo "TOMGRV_NODE_SETUP=true" >> "$GITHUB_ENV"

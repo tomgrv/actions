@@ -36,7 +36,10 @@
         "detect-changes/*",
         "list-packages/*",
         "rebase-pr/*",
-        "setup-node/*"
+        "setup-node/*",
+        "setup-reviewdog/*",
+        "check-filament/*",
+        "check-laravel/*"
     ],
     "bin": {
         "actions": "./dispatch.sh"
@@ -72,6 +75,8 @@
     },
     "private": true,
     "workspaces": [
+        "check-filament",
+        "check-laravel",
         "check-lock",
         "check-pr-format",
         "check-secret",
@@ -91,6 +96,7 @@
         "run-pint",
         "setup-node",
         "setup-php",
+        "setup-reviewdog",
         "split-package",
         "update-labels"
     ],

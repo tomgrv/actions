@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPMD
 
-Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog. This action expects `phpmd` and `reviewdog` to already be available either in `vendor/bin` or in the global `PATH`.
+Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpmd` itself must be available either in `vendor/bin` or the global `PATH`.
 
 ## Inputs
 
@@ -48,7 +48,9 @@ This action has no outputs.
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running PHPMD.
+- [**check-laravel**](../check-laravel/README.md) — wraps this action as part of the Laravel check suite.
+- [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**run-phpstan**](../run-phpstan/README.md) — complement PHPMD with static analysis.
 - [**run-phpinsights**](../run-phpinsights/README.md) — complement PHPMD with code quality insights.
 
@@ -75,9 +77,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
 
             - name: Run PHPMD
               uses: tomgrv/actions/run-phpmd@v1

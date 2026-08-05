@@ -1,0 +1,5 @@
+{
+    "name": "check-filament",
+    "private": true,
+    "description": "Run Filament-specific checks (FilaCheck) and report via reviewdog."
+}

@@ -4,6 +4,8 @@
 
 Shared composite action that prepares PHP, extensions, optional PHP tools, and Composer for workflow jobs. Reads the required PHP version and extensions from `composer.json`, installs the matching PHP runtime, optionally installs global tools through `shivammathur/setup-php`, and runs `composer install`.
 
+Every PHP-based action in this repository (`run-phpstan`, `run-pint`, `run-phpinsights`, `run-phpmd`, `run-filacheck`, `run-phptests`, `check-security-composer`) includes this action as its first step, so PHP is always ready without an explicit step in your workflow. The actual PHP/Composer install runs once per job: once it has run — whether triggered by an explicit `setup-php` step or by one of the actions above — later invocations in the same job detect the `TOMGRV_PHP_SETUP` environment marker and skip straight through. Add an explicit `setup-php` step yourself only when you need to pass custom `options` or `tools`.
+
 ## Inputs
 
 ### options
@@ -21,14 +23,14 @@ Shared composite action that prepares PHP, extensions, optional PHP tools, and C
 
 ## Works well with
 
-- [**check-lock**](../check-lock/README.md) — validate `composer.json`/`composer.lock` after setup.
-- [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependencies after setup.
-- [**run-phpinsights**](../run-phpinsights/README.md) — run PHP Insights after setup.
-- [**run-filacheck**](../run-filacheck/README.md) — run FilaCheck after setup.
-- [**run-phpmd**](../run-phpmd/README.md) — run PHPMD after setup.
-- [**run-phpstan**](../run-phpstan/README.md) — run PHPStan after setup.
-- [**run-pint**](../run-pint/README.md) — run Pint after setup.
-- [**run-phptests**](../run-phptests/README.md) — run the test suite after setup.
+- [**check-lock**](../check-lock/README.md) — validate `composer.json`/`composer.lock`; run this action first if `composer` needs to be on `PATH`.
+- [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependencies; already included automatically.
+- [**run-phpinsights**](../run-phpinsights/README.md) — run PHP Insights; already included automatically.
+- [**run-filacheck**](../run-filacheck/README.md) — run FilaCheck; already included automatically.
+- [**run-phpmd**](../run-phpmd/README.md) — run PHPMD; already included automatically.
+- [**run-phpstan**](../run-phpstan/README.md) — run PHPStan; already included automatically.
+- [**run-pint**](../run-pint/README.md) — run Pint; already included automatically.
+- [**run-phptests**](../run-phptests/README.md) — run the test suite; already included automatically.
 - [**list-packages**](../list-packages/README.md) — discover Composer packages after setup.
 
 ## Local Usage

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Lock
 
-Checks that a repository's dependency manifests and lock files are coherent, and reports problems inline via reviewdog.
+Checks that a repository's dependency manifests and lock files are coherent, and reports problems inline via reviewdog. reviewdog itself is set up automatically via [**setup-reviewdog**](../setup-reviewdog/README.md); the setup is skipped if it already ran earlier in the job.
 
 For each directory in `paths`, the action runs whichever checks apply:
 
@@ -63,6 +63,7 @@ Comma-separated list of the files that triggered a finding above (`composer.json
 
 ## Works well with
 
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**setup-node**](../setup-node/README.md) — provides `npm`. Note that its dependency install step already runs `npm ci`, so place this action **before** it if you want the readable annotation rather than a raw `EUSAGE` failure.
 - [**setup-php**](../setup-php/README.md) — provides `composer`.
 

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Test Suite
 
-Runs the PHP test suite for a pull request and reports failing tests with reviewdog.
+Runs the PHP test suite for a pull request and reports failing tests with reviewdog. reviewdog is set up automatically via [**setup-reviewdog**](../setup-reviewdog/README.md); the setup is skipped if it already ran earlier in the job.
 
 The action picks the first available runner — `pest`, then `phpunit` (from `vendor/bin` or the global `PATH`), then a `test` script declared in `composer.json`. Test output is streamed to the job log, and the JUnit report is converted to reviewdog diagnostics so each failure lands on the file and line of the first stack frame outside `vendor/`.
 
@@ -38,9 +38,7 @@ Reporting never changes the verdict: the suite's own exit code is what fails the
 
 ## Composer dependencies
 
-The suite cannot run without `vendor/autoload.php` — `artisan`, `pest` and `phpunit` all require it and die with a raw PHP fatal when it is absent. When it is missing, the action installs the dependencies itself (`install: auto`) and, failing that, reports what is missing instead of a stack trace.
-
-Note that [**setup-php**](../setup-php/README.md) installs dependencies from `composer.json`, whether or not a `composer.lock` is committed.
+The suite cannot run without `vendor/autoload.php` — `artisan`, `pest` and `phpunit` all require it and die with a raw PHP fatal when it is absent. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), which installs dependencies from `composer.json` whether or not a `composer.lock` is committed; the setup is skipped if it already ran earlier in the job. If `vendor/autoload.php` is still missing afterward, the action installs the dependencies itself (`install: auto`) and, failing that, reports what is missing instead of a stack trace.
 
 ## Laravel projects
 
@@ -52,7 +50,9 @@ When an `artisan` file is present, the action bootstraps the application before 
 
 ## Works well with
 
-- [**setup-php**](../setup-php/README.md) — set up PHP and Composer before running tests.
+- [**check-laravel**](../check-laravel/README.md) — wraps this action as part of the Laravel check suite.
+- [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**run-phpstan**](../run-phpstan/README.md) — complement the test suite with static analysis.
 - [**run-pint**](../run-pint/README.md) — complement the test suite with code style checks.
 
@@ -79,9 +79,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
 
             - name: Run test suite
               id: tests

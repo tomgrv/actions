@@ -45,6 +45,9 @@ runs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       id: php-setup
+      # Guards against redundant reinstalls when several actions in this
+      # repository each embed setup-php within the same job.
+      if: env.TOMGRV_PHP_SETUP != 'true'
       with:
         php-version: ${{ steps.php-version.outputs.version }}
         extensions: ${{ steps.php-extensions.outputs.extensions }}
@@ -57,6 +60,11 @@ runs:
       # Keyed on composer.json, not composer.lock: libraries and packages
       # commonly do not commit a lock file, and skipping the install there
       # leaves every downstream action without a vendor directory.
-      if: ${{ hashFiles('composer.json') }}
+      if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
+
+    - name: Mark PHP toolchain as ready
+      if: env.TOMGRV_PHP_SETUP != 'true'
+      shell: sh
+      run: echo "TOMGRV_PHP_SETUP=true" >> "$GITHUB_ENV"

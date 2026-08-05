@@ -47,6 +47,7 @@ npx @tomgrv/actions
 - [**config-bot**](config-bot/README.md) ![stable](https://img.shields.io/badge/stable-green): Configure git bot identity and authentication for CI/CD.
 - [**setup-php**](setup-php/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup PHP, Composer, and extensions as per composer for CI jobs.
 - [**setup-node**](setup-node/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup Node.js and npm for CI jobs.
+- [**setup-reviewdog**](setup-reviewdog/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup reviewdog for CI jobs.
 
 ### 📦 Monorepo
 
@@ -56,6 +57,8 @@ npx @tomgrv/actions
 
 ### 🐘 PHP Check
 
+- [**check-laravel**](check-laravel/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.
+- [**check-filament**](check-filament/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run Filament-specific checks (FilaCheck) and report via reviewdog.
 - [**run-phpinsights**](run-phpinsights/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHP Insights via reviewdog for inline code review feedback.
 - [**run-filacheck**](run-filacheck/README.md) ![stable](https://img.shields.io/badge/stable-green): Run FilaCheck via reviewdog for inline Filament code review feedback.
 - [**run-phpstan**](run-phpstan/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHPStan via reviewdog for inline code review feedback.
