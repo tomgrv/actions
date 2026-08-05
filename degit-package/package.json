@@ -1,5 +1,6 @@
 {
     "name": "degit-package",
-    "private": true,
-    "description": "Import the tip of a source branch into a target repository workspace."
+    "version": "2.2.0",
+    "description": "Import the tip of a source branch into a target repository workspace.",
+    "private": true
 }

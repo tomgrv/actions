@@ -1,5 +1,6 @@
 {
     "name": "run-phpinsights",
-    "private": true,
-    "description": "Run PHP Insights with reviewdog."
+    "version": "2.2.0",
+    "description": "Run PHP Insights with reviewdog.",
+    "private": true
 }

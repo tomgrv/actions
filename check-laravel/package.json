@@ -1,5 +1,6 @@
 {
     "name": "check-laravel",
-    "private": true,
-    "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog."
+    "version": "2.2.0",
+    "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.",
+    "private": true
 }
