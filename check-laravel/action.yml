@@ -1,0 +1,187 @@
+# @format
+
+# @package tomgrv/actions/check-laravel
+
+name: Validate PR Laravel
+description: Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token for reviewdog reporting, shared by every wrapped check.
+    required: true
+  paths:
+    description: Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD. Defaults to `app`.
+    required: false
+    default: app
+  fix:
+    description: Apply fixes directly (PHPStan baseline, Pint, PHP Insights) instead of reporting via reviewdog.
+    required: false
+    default: 'false'
+  phpstan:
+    description: Whether to run PHPStan.
+    required: false
+    default: 'true'
+  pint:
+    description: Whether to run Pint.
+    required: false
+    default: 'true'
+  phpinsights:
+    description: Whether to run PHP Insights.
+    required: false
+    default: 'true'
+  phpmd:
+    description: Whether to run PHPMD.
+    required: false
+    default: 'true'
+  tests:
+    description: Whether to run the test suite.
+    required: false
+    default: 'true'
+  level:
+    description: 'Report level for reviewdog [info,warning,error], shared by every wrapped check.'
+    required: false
+    default: error
+  reporter:
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review], shared by every wrapped check.'
+    required: false
+    default: github-pr-check
+  filter-mode:
+    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter], shared by every wrapped check. Leave empty to let each check keep its own tuned default (PHPStan/Pint/PHP Insights use `added`, PHPMD/tests use `nofilter`).'
+    required: false
+    default: ''
+  fail-level:
+    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error], shared by every wrapped check.'
+    required: false
+    default: none
+  reviewdog-flags:
+    description: Additional reviewdog flags, shared by every wrapped check.
+    required: false
+    default: ''
+
+outputs:
+  has-changes:
+    description: Whether fix mode produced local changes in any of PHPStan, Pint or PHP Insights.
+    value: ${{ steps.phpstan.outputs.has-changes == 'true' || steps.pint.outputs.has-changes == 'true' || steps.phpinsights.outputs.has-changes == 'true' }}
+  phpstan-has-changes:
+    description: Whether fix mode produced changes to the PHPStan baseline file.
+    value: ${{ steps.phpstan.outputs.has-changes }}
+  pint-has-changes:
+    description: Whether fix mode produced local changes via Pint.
+    value: ${{ steps.pint.outputs.has-changes }}
+  phpinsights-has-changes:
+    description: Whether fix mode produced local changes via PHP Insights.
+    value: ${{ steps.phpinsights.outputs.has-changes }}
+  tests-passed:
+    description: Whether the test suite passed.
+    value: ${{ steps.tests.outputs.tests-passed }}
+  coverage-file:
+    description: Path of the generated coverage report, empty when no report was produced.
+    value: ${{ steps.tests.outputs.coverage-file }}
+  junit-file:
+    description: Path of the generated JUnit report, empty when no report was produced.
+    value: ${{ steps.tests.outputs.junit-file }}
+
+runs:
+  using: composite
+  steps:
+    # Every wrapped check below forwards the same github-token, level,
+    # reporter, filter-mode, fail-level and reviewdog-flags inputs, so this
+    # action's reviewdog context is inherited consistently rather than each
+    # check silently falling back to its own separately-configured default.
+    # Each of these actions embeds setup-php/setup-reviewdog itself; only the
+    # first one in this job actually installs anything, the rest detect the
+    # TOMGRV_PHP_SETUP/TOMGRV_REVIEWDOG_SETUP markers and skip straight through.
+    - name: Run PHPStan
+      id: phpstan
+      if: inputs.phpstan == 'true'
+      continue-on-error: true
+      uses: $/run-phpstan
+      with:
+        github-token: ${{ inputs.github-token }}
+        paths: ${{ inputs.paths }}
+        fix: ${{ inputs.fix }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
+
+    - name: Run Pint
+      id: pint
+      if: inputs.pint == 'true'
+      continue-on-error: true
+      uses: $/run-pint
+      with:
+        github-token: ${{ inputs.github-token }}
+        paths: ${{ inputs.paths }}
+        fix: ${{ inputs.fix }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
+
+    - name: Run PHP Insights
+      id: phpinsights
+      if: inputs.phpinsights == 'true'
+      continue-on-error: true
+      uses: $/run-phpinsights
+      with:
+        github-token: ${{ inputs.github-token }}
+        paths: ${{ inputs.paths }}
+        fix: ${{ inputs.fix }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
+
+    - name: Run PHPMD
+      id: phpmd
+      if: inputs.phpmd == 'true'
+      continue-on-error: true
+      uses: $/run-phpmd
+      with:
+        github-token: ${{ inputs.github-token }}
+        paths: ${{ inputs.paths }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
+
+    - name: Run test suite
+      id: tests
+      if: inputs.tests == 'true'
+      continue-on-error: true
+      uses: $/run-phptests
+      with:
+        github-token: ${{ inputs.github-token }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
+
+    - name: Fail if any check failed
+      if: always()
+      shell: sh
+      env:
+        PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+        PINT_OUTCOME: ${{ steps.pint.outcome }}
+        PHPINSIGHTS_OUTCOME: ${{ steps.phpinsights.outcome }}
+        PHPMD_OUTCOME: ${{ steps.phpmd.outcome }}
+        TESTS_OUTCOME: ${{ steps.tests.outcome }}
+      run: |
+        failed=false
+        for outcome in "${PHPSTAN_OUTCOME}" "${PINT_OUTCOME}" "${PHPINSIGHTS_OUTCOME}" "${PHPMD_OUTCOME}" "${TESTS_OUTCOME}"; do
+          [ "${outcome}" = "failure" ] && failed=true
+        done
+        if [ "${failed}" = "true" ]; then
+          echo "::error::One or more checks failed. See the individual check annotations above for details." >&2
+          exit 1
+        fi

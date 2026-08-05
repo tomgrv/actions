@@ -53,10 +53,10 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Set up reviewdog
-      uses: reviewdog/action-setup@v1
+    - name: Setup reviewdog toolchain
+      uses: $/setup-reviewdog
       with:
-        reviewdog_version: ${{ inputs.reviewdog-version }}
+        version: ${{ inputs.reviewdog-version }}
 
     - name: Check lock coherence
       id: check

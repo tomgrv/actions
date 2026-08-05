@@ -37,10 +37,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up reviewdog
-      uses: reviewdog/action-setup@v1
-      with:
-        reviewdog_version: v0.20.3
+    - name: Setup PHP toolchain
+      uses: $/setup-php
+
+    - name: Setup reviewdog toolchain
+      uses: $/setup-reviewdog
 
     - name: Run composer security audit
       shell: bash

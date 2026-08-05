@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR Security NPM
 
-Runs `npm audit` against the project's npm dependencies and reports findings inline via reviewdog.
+Runs `npm audit` against the project's npm dependencies and reports findings inline via reviewdog. Node.js and npm are set up automatically via [**setup-node**](../setup-node/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
 ## Inputs
 
@@ -36,7 +36,8 @@ This action has no outputs.
 
 ## Works well with
 
-- [**setup-node**](../setup-node/README.md) — set up Node.js and npm before running the audit.
+- [**setup-node**](../setup-node/README.md) — included automatically; add it explicitly only to pass custom `cache`/`node-version`/`options`, or once at the top of the job to share the setup across several Node actions.
+- [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**check-security-composer**](../check-security-composer/README.md) — also audit Composer dependencies.
 
 ## Local Usage
@@ -62,9 +63,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup Node.js toolchain
-              uses: tomgrv/actions/setup-node@v1
 
             - name: Audit npm dependencies
               uses: tomgrv/actions/check-security-npm@v1

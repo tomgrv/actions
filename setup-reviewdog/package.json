@@ -1,0 +1,6 @@
+{
+    "name": "setup-reviewdog",
+    "version": "2.2.0",
+    "description": "Setup reviewdog for PR validation actions.",
+    "private": true
+}

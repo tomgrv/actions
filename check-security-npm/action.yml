@@ -37,10 +37,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up reviewdog
-      uses: reviewdog/action-setup@v1
-      with:
-        reviewdog_version: v0.20.3
+    - name: Setup Node toolchain
+      uses: $/setup-node
+
+    - name: Setup reviewdog toolchain
+      uses: $/setup-reviewdog
 
     - name: Run npm security audit
       shell: sh

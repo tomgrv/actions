@@ -1,9 +1,9 @@
 # @format
 
-# @package tomgrv/actions/run-filacheck
+# @package tomgrv/actions/check-filament
 
-name: Validate PR FilaCheck
-description: Run FilaCheck with reviewdog.
+name: Validate PR Filament
+description: Run Filament-specific checks (FilaCheck) and report via reviewdog.
 author: Perspikapps
 branding:
   icon: check-circle
@@ -48,7 +48,7 @@ inputs:
   filter-mode:
     description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
     required: false
-    default: added
+    default: ''
   fail-level:
     description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
     required: false
@@ -61,31 +61,28 @@ inputs:
 outputs:
   has-changes:
     description: Whether fix mode produced local changes.
-    value: ${{ steps.run-filacheck.outputs.has-changes }}
+    value: ${{ steps.filacheck.outputs.has-changes }}
 
 runs:
   using: composite
   steps:
-    - name: Setup PHP toolchain
-      uses: $/setup-php
-
-    - name: Setup reviewdog toolchain
-      uses: $/setup-reviewdog
-
+    # Same github-token/level/reporter/filter-mode/fail-level/reviewdog-flags
+    # inputs are forwarded as-is to run-filacheck, so this action's reviewdog
+    # context (and github-token) is always the one actually used by the
+    # underlying tool call, never a separately-defaulted one.
     - name: Run FilaCheck
-      id: run-filacheck
-      shell: sh
-      env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        FILACHECK_PATH: ${{ inputs.path }}
-        FIX: ${{ inputs.fix }}
-        DETAILED: ${{ inputs.detailed }}
-        DIRTY: ${{ inputs.dirty }}
-        DRY_RUN: ${{ inputs.dry-run }}
-        BACKUP: ${{ inputs.backup }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
-        REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
-        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
-        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      id: filacheck
+      uses: $/run-filacheck
+      with:
+        github-token: ${{ inputs.github-token }}
+        path: ${{ inputs.path }}
+        fix: ${{ inputs.fix }}
+        detailed: ${{ inputs.detailed }}
+        dirty: ${{ inputs.dirty }}
+        dry-run: ${{ inputs.dry-run }}
+        backup: ${{ inputs.backup }}
+        level: ${{ inputs.level }}
+        reporter: ${{ inputs.reporter }}
+        filter-mode: ${{ inputs.filter-mode }}
+        fail-level: ${{ inputs.fail-level }}
+        reviewdog-flags: ${{ inputs.reviewdog-flags }}
