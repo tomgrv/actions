@@ -57,6 +57,8 @@ npx @tomgrv/actions
 
 ### 🐘 PHP Check
 
+- [**check-laravel**](check-laravel/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.
+- [**check-filament**](check-filament/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run Filament-specific checks (FilaCheck) and report via reviewdog.
 - [**run-phpinsights**](run-phpinsights/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHP Insights via reviewdog for inline code review feedback.
 - [**run-filacheck**](run-filacheck/README.md) ![stable](https://img.shields.io/badge/stable-green): Run FilaCheck via reviewdog for inline Filament code review feedback.
 - [**run-phpstan**](run-phpstan/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHPStan via reviewdog for inline code review feedback.

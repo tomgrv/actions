@@ -1,0 +1,5 @@
+{
+    "name": "check-laravel",
+    "private": true,
+    "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog."
+}

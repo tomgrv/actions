@@ -60,6 +60,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 ## Works well with
 
+- [**check-filament**](../check-filament/README.md) — wraps this action as the Filament check suite entry point.
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
