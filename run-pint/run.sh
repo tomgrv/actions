@@ -23,6 +23,7 @@ fi
 FIX="${FIX:-false}"
 PINT_PATHS="${PINT_PATHS:-${1:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-pint}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
@@ -52,7 +53,7 @@ else
     "${PINT_BIN}" --test --no-interaction --preset="${PINT_PRESET}" --format=checkstyle -- $(echo "${PINT_PATHS}" | tr ',' ' ') 2> /dev/null \
         | "${REVIEWDOG_BIN}" \
             -f=checkstyle \
-            -name="pint" \
+            -name="${REVIEWDOG_NAME}" \
             -reporter="${REVIEWDOG_REPORTER}" \
             -level="${REVIEWDOG_LEVEL}" \
             -filter-mode="${REVIEWDOG_FILTER_MODE}" \

@@ -40,6 +40,7 @@ fi
 
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpinsights}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
@@ -64,7 +65,7 @@ exit_code=0
 "${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
-        -name="phpinsights" \
+        -name="${REVIEWDOG_NAME}" \
         -reporter="${REVIEWDOG_REPORTER}" \
         -level="${REVIEWDOG_LEVEL}" \
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \

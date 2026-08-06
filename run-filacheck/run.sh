@@ -26,6 +26,7 @@ DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
 DRY_RUN="${DRY_RUN:-false}"
 BACKUP="${BACKUP:-false}"
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
@@ -89,7 +90,7 @@ exit_code=0
     ' \
     | "${REVIEWDOG_BIN}" \
         -efm='%f:%l: %m' \
-        -name="filacheck" \
+        -name="${REVIEWDOG_NAME}" \
         -reporter="${REVIEWDOG_REPORTER}" \
         -level="${REVIEWDOG_LEVEL}" \
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \

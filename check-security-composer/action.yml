@@ -13,6 +13,10 @@ inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
     required: true
+  name:
+    description: Name reported by reviewdog to identify this check.
+    required: false
+    default: composer-audit
   level:
     description: 'Report level for reviewdog [info,warning,error].'
     required: false
@@ -47,6 +51,7 @@ runs:
       shell: bash
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}

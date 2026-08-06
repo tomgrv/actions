@@ -22,6 +22,10 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 **Optional.** Baseline file to generate when fix mode is enabled. Defaults to `phpstan-baseline.neon`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `phpstan`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

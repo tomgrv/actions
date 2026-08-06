@@ -196,6 +196,10 @@ Actions that report findings via reviewdog must follow this pattern:
 
 ```yaml
 inputs:
+    name:
+        description: Name reported by reviewdog to identify this check.
+        required: false
+        default: tool-name # defaults to the tool/check this action wraps
     level:
         description: 'Report level for reviewdog [info,warning,error].'
         required: false
@@ -223,6 +227,7 @@ inputs:
 ```yaml
 env:
     REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+    REVIEWDOG_NAME: ${{ inputs.name }}
     REVIEWDOG_REPORTER: ${{ inputs.reporter }}
     REVIEWDOG_LEVEL: ${{ inputs.level }}
     REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
@@ -233,6 +238,7 @@ env:
 #### Script pattern for reviewdog
 
 ```sh
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-tool-name}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
@@ -248,7 +254,7 @@ exit_code=0
 tool_command | \
   reviewdog \
     -f=FORMAT \
-    -name="tool-name" \
+    -name="${REVIEWDOG_NAME}" \
     -reporter="${REVIEWDOG_REPORTER}" \
     -level="${REVIEWDOG_LEVEL}" \
     -filter-mode="${REVIEWDOG_FILTER_MODE}" \
