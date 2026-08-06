@@ -10,6 +10,10 @@ Runs `npm audit` against the project's npm dependencies and reports findings inl
 
 **Required.** GitHub token for reviewdog reporting.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `npm-audit`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

@@ -34,6 +34,10 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 **Optional.** Create backup files when fixing. Defaults to `false`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `filacheck`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

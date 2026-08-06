@@ -55,6 +55,7 @@ fi
 REVIEWDOG_BIN="reviewdog"
 # Test failures usually live in files the pull request did not touch, so the
 # default does not filter on the diff the way the linters in this repo do.
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpunit}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
@@ -318,7 +319,7 @@ if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
         php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \
             | "${REVIEWDOG_BIN}" \
                 -f=rdjson \
-                -name="phpunit" \
+                -name="${REVIEWDOG_NAME}" \
                 -reporter="${REVIEWDOG_REPORTER}" \
                 -level="${REVIEWDOG_LEVEL}" \
                 -filter-mode="${REVIEWDOG_FILTER_MODE}" \

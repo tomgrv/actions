@@ -10,6 +10,10 @@ Runs `composer audit` against the project's Composer dependencies and reports fi
 
 **Required.** GitHub token for reviewdog reporting.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `composer-audit`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

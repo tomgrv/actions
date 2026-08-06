@@ -22,6 +22,10 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 **Optional.** Pint preset to use (e.g. `laravel`, `default`, `symfony`). Defaults to `laravel`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `pint`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

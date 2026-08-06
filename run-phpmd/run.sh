@@ -28,6 +28,7 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpmd}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
@@ -41,7 +42,7 @@ exit_code=0
 "${PHPMD_BIN}" "${PHPMD_PATHS}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=sarif \
-        -name="phpmd" \
+        -name="${REVIEWDOG_NAME}" \
         -reporter="${REVIEWDOG_REPORTER}" \
         -level="${REVIEWDOG_LEVEL}" \
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \

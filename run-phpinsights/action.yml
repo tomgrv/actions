@@ -21,6 +21,10 @@ inputs:
     description: Apply fixes directly instead of reporting via reviewdog.
     required: false
     default: 'false'
+  name:
+    description: Name reported by reviewdog to identify this check.
+    required: false
+    default: phpinsights
   level:
     description: 'Report level for reviewdog [info,warning,error].'
     required: false
@@ -63,6 +67,7 @@ runs:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
+        REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}

@@ -22,6 +22,7 @@ Reporting never changes the verdict: the suite's own exit code is what fails the
 | `coverage-file`     | Clover coverage report to write when coverage is enabled.                                                               | No       | `coverage.xml` |
 | `junit-file`        | JUnit report to write, used to report failing tests.                                                                    | No       | `junit.xml`  |
 | `migrate`           | Run `artisan migrate` before the suite `[auto,true,false]`. `auto` migrates when the project has migrations.             | No       | `auto`       |
+| `name`              | Name reported by reviewdog to identify this check.                                                                      | No       | `phpunit`    |
 | `level`             | Report level for reviewdog `[info,warning,error]`.                                                                      | No       | `error`      |
 | `reporter`          | Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`.                                         | No       | `github-pr-check` |
 | `filter-mode`       | Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`, as failing tests often sit outside the diff. | No | `nofilter` |

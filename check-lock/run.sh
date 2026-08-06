@@ -26,6 +26,7 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-lock-coherence}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
@@ -225,7 +226,7 @@ exit_code=0
 jq -R -s -f "$(dirname "$0")/rdjson.jq" <"${FINDINGS}" | \
   reviewdog \
     -f=rdjson \
-    -name="lock-coherence" \
+    -name="${REVIEWDOG_NAME}" \
     -reporter="${REVIEWDOG_REPORTER}" \
     -level="${REVIEWDOG_LEVEL}" \
     -filter-mode="${REVIEWDOG_FILTER_MODE}" \

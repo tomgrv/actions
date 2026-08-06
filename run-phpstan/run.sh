@@ -23,6 +23,7 @@ fi
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 BASELINE_FILE="${BASELINE_FILE:-phpstan-baseline.neon}"
+REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpstan}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
@@ -47,7 +48,7 @@ exit_code=0
 "${PHPSTAN_BIN}" analyse ${FIX_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
-        -name="phpstan" \
+        -name="${REVIEWDOG_NAME}" \
         -reporter="${REVIEWDOG_REPORTER}" \
         -level="${REVIEWDOG_LEVEL}" \
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \
