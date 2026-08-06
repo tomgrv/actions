@@ -26,6 +26,11 @@ if ! command -v composer >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v jq >/dev/null 2>&1; then
+  echo "::error::jq could not be found. Please install it to run this action." >&2
+  exit 1
+fi
+
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-composer-audit}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -37,9 +42,10 @@ echo "Running composer audit..." >&2
 
 exit_code=0
 # shellcheck disable=SC2086
-{ composer audit --locked --quiet 2>/dev/null || true; } | \
+{ composer audit --locked --format=json --no-interaction 2>/dev/null || true; } | \
+  jq -f "$(dirname "$0")/rdjson.jq" | \
   reviewdog \
-    -efm="%m" \
+    -f=rdjson \
     -name="${REVIEWDOG_NAME}" \
     -reporter="${REVIEWDOG_REPORTER}" \
     -level="${REVIEWDOG_LEVEL}" \
