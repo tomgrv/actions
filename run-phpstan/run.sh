@@ -23,6 +23,7 @@ fi
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 BASELINE_FILE="${BASELINE_FILE:-phpstan-baseline.neon}"
+PHPSTAN_CONFIG="${PHPSTAN_CONFIG:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpstan}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -41,11 +42,22 @@ else
     FIX_FLAG=""
 fi
 
+if [ -n "${PHPSTAN_CONFIG}" ]; then
+    if [ ! -f "${PHPSTAN_CONFIG}" ]; then
+        echo "::error::config file not found: ${PHPSTAN_CONFIG}" >&2
+        exit 1
+    fi
+    echo "Using custom PHPStan configuration: ${PHPSTAN_CONFIG}" >&2
+    CONFIG_FLAG="-c ${PHPSTAN_CONFIG}"
+else
+    CONFIG_FLAG=""
+fi
+
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
 exit_code=0
 # shellcheck disable=SC2086
-"${PHPSTAN_BIN}" analyse ${FIX_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
+"${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
         -name="${REVIEWDOG_NAME}" \

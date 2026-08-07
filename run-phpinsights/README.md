@@ -18,6 +18,10 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 **Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
+### config-path
+
+**Optional.** Path to a custom PHP Insights configuration file. Leave empty to let PHP Insights auto-detect `phpinsights.json` (or `config/insights.php` in Laravel apps) at the repository root, or fall back to its own defaults otherwise.
+
 ### name
 
 **Optional.** Name reported by reviewdog to identify this check. Defaults to `phpinsights`.

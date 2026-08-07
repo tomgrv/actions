@@ -16,7 +16,7 @@ Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via rev
 
 ### ruleset
 
-**Optional.** Comma-separated PHPMD ruleset to apply. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`.
+**Optional.** Comma-separated rule set names (e.g. `cleancode,codesize`) and/or paths to custom ruleset XML files. Leave empty to automatically use `phpmd.xml` from the repository root when present, or fall back to the default ruleset (`cleancode,codesize,controversial,design,naming,unusedcode`) otherwise.
 
 ### priority
 

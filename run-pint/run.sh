@@ -23,6 +23,7 @@ fi
 FIX="${FIX:-false}"
 PINT_PATHS="${PINT_PATHS:-${1:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
+PINT_CONFIG="${PINT_CONFIG:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-pint}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -34,13 +35,23 @@ if [ "${PINT_PATHS}" = "app" ]; then
     echo "::notice::PINT_PATHS not set, using default: app" >&2
 fi
 
-echo "Running Pint on: ${PINT_PATHS} with preset: ${PINT_PRESET}" >&2
+if [ -n "${PINT_CONFIG}" ]; then
+    if [ ! -f "${PINT_CONFIG}" ]; then
+        echo "::error::config file not found: ${PINT_CONFIG}" >&2
+        exit 1
+    fi
+    echo "Running Pint on: ${PINT_PATHS} with config: ${PINT_CONFIG}" >&2
+    RULES_FLAG="--config=${PINT_CONFIG}"
+else
+    echo "Running Pint on: ${PINT_PATHS} with preset: ${PINT_PRESET}" >&2
+    RULES_FLAG="--preset=${PINT_PRESET}"
+fi
 
 if [ "${FIX}" = "true" ]; then
     echo "Running Pint in fix mode." >&2
     # Word splitting is intentional: tr converts commas to spaces so each path becomes a separate argument.
     # shellcheck disable=SC2046
-    "${PINT_BIN}" --no-interaction --preset="${PINT_PRESET}" -- $(echo "${PINT_PATHS}" | tr ',' ' ') >&2 || true
+    "${PINT_BIN}" --no-interaction "${RULES_FLAG}" -- $(echo "${PINT_PATHS}" | tr ',' ' ') >&2 || true
     if git diff --quiet; then
         printf 'has-changes=false\n'
     else
@@ -50,7 +61,7 @@ else
     echo "Running Pint in test mode (no fixes will be applied)." >&2
     exit_code=0
     # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --test --no-interaction --preset="${PINT_PRESET}" --format=checkstyle -- $(echo "${PINT_PATHS}" | tr ',' ' ') 2> /dev/null \
+    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- $(echo "${PINT_PATHS}" | tr ',' ' ') 2> /dev/null \
         | "${REVIEWDOG_BIN}" \
             -f=checkstyle \
             -name="${REVIEWDOG_NAME}" \

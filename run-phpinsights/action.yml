@@ -21,6 +21,14 @@ inputs:
     description: Apply fixes directly instead of reporting via reviewdog.
     required: false
     default: 'false'
+  config-path:
+    description: >-
+      Path to a custom PHP Insights configuration file. Leave empty to let PHP
+      Insights auto-detect `phpinsights.json` (or `config/insights.php` in
+      Laravel apps) at the repository root, or fall back to its own defaults
+      otherwise.
+    required: false
+    default: ''
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
@@ -67,6 +75,7 @@ runs:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
+        PHPINSIGHTS_CONFIG_PATH: ${{ inputs.config-path }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

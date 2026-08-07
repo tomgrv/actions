@@ -22,6 +22,10 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 **Optional.** Baseline file to generate when fix mode is enabled. Defaults to `phpstan-baseline.neon`.
 
+### config
+
+**Optional.** Path to a custom PHPStan configuration file. Leave empty to let PHPStan auto-detect `phpstan.neon`/`phpstan.neon.dist`/`phpstan.dist.neon` at the repository root, or fall back to its own defaults otherwise.
+
 ### name
 
 **Optional.** Name reported by reviewdog to identify this check. Defaults to `phpstan`.
