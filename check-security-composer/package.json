@@ -1,6 +1,6 @@
 {
     "name": "check-security-composer",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "description": "Run Composer dependency security audit and report via reviewdog.",
     "private": true
 }
