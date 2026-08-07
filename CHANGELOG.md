@@ -2,6 +2,26 @@
 
 # Changelog
 
+## 2.3.0 (2026-08-07)
+
+_Commits from: v2.2.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- allow overriding reviewdog check name across reviewdog-based actions (#32) ([612003d](https://github.com/tomgrv/actions/commit/612003d00f06e18537cbdce29de23644733f5b3c))
+
+#### Other changes
+
+- Merge tag 'v2.2.0' into develop ([628c1fb](https://github.com/tomgrv/actions/commit/628c1fbb41c967179525afe42edbe0aeadc300c1))
+
+### 📦 check-security changes
+
+#### Bug Fixes
+
+- rationalize audit annotations and suggest version fixes (#33) ([2cda0a1](https://github.com/tomgrv/actions/commit/2cda0a1e8538f32afdb4ee1e87179ad9becd1e69))
+
 ## 2.2.0 (2026-08-05)
 
 _Commits from: v2.1.0..HEAD_
@@ -158,4 +178,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
