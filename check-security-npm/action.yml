@@ -40,7 +40,7 @@ inputs:
   max-diagnostics:
     description: "Maximum number of vulnerability diagnostics to report, most severe first. Extra findings are collapsed into a single summary diagnostic to stay under GitHub's annotation limits."
     required: false
-    default: '40'
+    default: '10'
 
 runs:
   using: composite
