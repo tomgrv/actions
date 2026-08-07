@@ -37,6 +37,7 @@ REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+MAX_DIAGNOSTICS="${MAX_DIAGNOSTICS:-40}"
 
 echo "Running npm audit..." >&2
 
@@ -49,7 +50,7 @@ fi
 exit_code=0
 # shellcheck disable=SC2086
 npm audit --workspaces --audit-level moderate --package-lock-only --json 2>/dev/null \
-  | jq -f "$(dirname "$0")/rdjson.jq" --rawfile pkgjson "${PACKAGE_JSON_PATH}" \
+  | jq -f "$(dirname "$0")/rdjson.jq" --rawfile pkgjson "${PACKAGE_JSON_PATH}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" \
   | reviewdog \
       -f=rdjson \
       -name="${REVIEWDOG_NAME}" \

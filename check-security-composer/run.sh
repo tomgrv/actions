@@ -37,6 +37,7 @@ REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+MAX_DIAGNOSTICS="${MAX_DIAGNOSTICS:-40}"
 
 echo "Running composer audit..." >&2
 
@@ -56,7 +57,7 @@ fi
 exit_code=0
 # shellcheck disable=SC2086
 { composer audit --locked --format=json --no-interaction 2>/dev/null || true; } | \
-  jq -f "$(dirname "$0")/rdjson.jq" --rawfile composerjson "${COMPOSER_JSON_PATH}" --argjson locked "${LOCKED_JSON}" | \
+  jq -f "$(dirname "$0")/rdjson.jq" --rawfile composerjson "${COMPOSER_JSON_PATH}" --argjson locked "${LOCKED_JSON}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" | \
   reviewdog \
     -f=rdjson \
     -name="${REVIEWDOG_NAME}" \
