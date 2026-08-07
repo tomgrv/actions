@@ -22,6 +22,10 @@ Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via rev
 
 **Optional.** Minimum issue priority to report (`min`/`max`). Defaults to `max`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `phpmd`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

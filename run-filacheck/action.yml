@@ -37,6 +37,10 @@ inputs:
     description: Create backup files when fixing.
     required: false
     default: 'false'
+  name:
+    description: Name reported by reviewdog to identify this check.
+    required: false
+    default: filacheck
   level:
     description: 'Report level for reviewdog [info,warning,error].'
     required: false
@@ -83,6 +87,7 @@ runs:
         DIRTY: ${{ inputs.dirty }}
         DRY_RUN: ${{ inputs.dry-run }}
         BACKUP: ${{ inputs.backup }}
+        REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}

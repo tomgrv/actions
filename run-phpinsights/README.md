@@ -18,6 +18,10 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 **Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `phpinsights`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.

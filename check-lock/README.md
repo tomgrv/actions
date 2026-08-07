@@ -31,6 +31,10 @@ This catches the case where a pull request edits a manifest but forgets to regen
 
 **Optional.** Version of reviewdog to install. Defaults to `v0.20.3`.
 
+### name
+
+**Optional.** Name reported by reviewdog to identify this check. Defaults to `lock-coherence`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
