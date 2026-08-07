@@ -18,9 +18,13 @@ inputs:
     required: false
     default: app
   ruleset:
-    description: PHPMD ruleset to use, comma-separated. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`.
+    description: >-
+      PHPMD ruleset to use: comma-separated rule set names (e.g. `cleancode,codesize`)
+      and/or paths to custom ruleset XML files. Leave empty to automatically use
+      `phpmd.xml` from the repository root when present, or fall back to the default
+      ruleset (`cleancode,codesize,controversial,design,naming,unusedcode`) otherwise.
     required: false
-    default: cleancode,codesize,controversial,design,naming,unusedcode
+    default: ''
   priority:
     description: Priority of issues to report (min/max). Defaults to max.
     required: false

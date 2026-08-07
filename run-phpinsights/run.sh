@@ -40,6 +40,7 @@ fi
 
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+PHPINSIGHTS_CONFIG_PATH="${PHPINSIGHTS_CONFIG_PATH:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpinsights}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -58,11 +59,22 @@ else
     FIX_FLAG=""
 fi
 
+if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
+    if [ ! -f "${PHPINSIGHTS_CONFIG_PATH}" ]; then
+        echo "::error::config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}" >&2
+        exit 1
+    fi
+    echo "Using custom PHP Insights configuration: ${PHPINSIGHTS_CONFIG_PATH}" >&2
+    CONFIG_FLAG="--config-path=${PHPINSIGHTS_CONFIG_PATH}"
+else
+    CONFIG_FLAG=""
+fi
+
 echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
 exit_code=0
 # shellcheck disable=SC2046,SC2086
-"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
+"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
         -name="${REVIEWDOG_NAME}" \

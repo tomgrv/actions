@@ -20,7 +20,11 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 ### preset
 
-**Optional.** Pint preset to use (e.g. `laravel`, `default`, `symfony`). Defaults to `laravel`.
+**Optional.** Pint preset to use (e.g. `laravel`, `default`, `symfony`). Defaults to `laravel`. Ignored when `config` is set.
+
+### config
+
+**Optional.** Path to a custom Pint configuration file. Leave empty to let Pint auto-detect `pint.json` at the repository root, or fall back to `preset` otherwise.
 
 ### name
 
