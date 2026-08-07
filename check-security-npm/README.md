@@ -4,6 +4,8 @@
 
 Runs `npm audit` against the project's npm dependencies and reports findings inline via reviewdog. Node.js and npm are set up automatically via [**setup-node**](../setup-node/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
+Each vulnerable dependency is reported once, combining all of its advisories. For direct dependencies where npm knows a non-breaking fix (`fixAvailable`), the finding is posted as a review on `package.json` with a suggested version bump you can apply directly from the GitHub UI.
+
 ## Inputs
 
 ### github-token
@@ -20,7 +22,7 @@ Runs `npm audit` against the project's npm dependencies and reports findings inl
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-review` so recommended version upgrades are posted as applyable suggestions.
 
 ### filter-mode
 

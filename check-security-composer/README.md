@@ -4,6 +4,8 @@
 
 Runs `composer audit` against the project's Composer dependencies and reports findings inline via reviewdog. PHP and Composer are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
+Each vulnerable package is reported once, combining all of its advisories. The action works out the lowest version that clears every advisory range affecting the currently locked version and, when the package is required directly in `composer.json`, posts the finding as a review with a suggested version bump you can apply directly from the GitHub UI.
+
 ## Inputs
 
 ### github-token
@@ -20,7 +22,7 @@ Runs `composer audit` against the project's Composer dependencies and reports fi
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-review` so recommended version upgrades are posted as applyable suggestions.
 
 ### filter-mode
 
