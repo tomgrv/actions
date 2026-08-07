@@ -175,9 +175,36 @@ def recommended_fix(advisories; installed):
           }
       )
   ) as $abandonedDiagnostics
+| ($advisoryDiagnostics + $abandonedDiagnostics) as $allDiagnostics
+| (
+    def severity_rank:
+      if . == "ERROR" then 0
+      elif . == "WARNING" then 1
+      else 2
+      end;
+    $allDiagnostics | sort_by(.severity | severity_rank)
+  ) as $diagnostics
+| ($maxDiagnostics // 40) as $maxDiagnostics
+| ($diagnostics | length) as $total
+| (if $total > $maxDiagnostics then $maxDiagnostics - 1 else $total end) as $limit
+| ($diagnostics[0:$limit]) as $kept
+| (
+    if $total > $limit then
+      $kept + [{
+        message: (
+          "\($total - $limit) additional finding(s) omitted to stay under GitHub's annotation limits.\n"
+          + "Run `composer audit --locked` locally, or check the full job log, to see the rest."
+        ),
+        severity: "INFO",
+        location: { path: "composer.json", range: { start: { line: 1, column: 1 } } }
+      }]
+    else
+      $kept
+    end
+  ) as $finalDiagnostics
 | {
     source: {
       name: "composer-audit"
     },
-    diagnostics: ($advisoryDiagnostics + $abandonedDiagnostics)
+    diagnostics: $finalDiagnostics
   }

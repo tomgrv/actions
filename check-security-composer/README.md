@@ -6,6 +6,8 @@ Runs `composer audit` against the project's Composer dependencies and reports fi
 
 Each vulnerable package is reported once, combining all of its advisories. The action works out the lowest version that clears every advisory range affecting the currently locked version and, when the package is required directly in `composer.json`, posts the finding as a review with a suggested version bump you can apply directly from the GitHub UI.
 
+Findings (advisories and abandoned packages) are sorted most severe first and capped at `max-diagnostics` (default `40`); any remainder is rolled up into a single summary diagnostic so the check stays within GitHub's per-step/per-job annotation limits.
+
 ## Inputs
 
 ### github-token
@@ -35,6 +37,10 @@ Each vulnerable package is reported once, combining all of its advisories. The a
 ### reviewdog-flags
 
 **Optional.** Additional reviewdog flags. Defaults to empty.
+
+### max-diagnostics
+
+**Optional.** Maximum number of vulnerability diagnostics to report, most severe first. Defaults to `40`. When `composer audit` finds more findings than this, the extra ones are collapsed into a single summary diagnostic instead of one per finding, to stay under [GitHub's annotation limits](https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#about-workflow-commands) (10 error/10 warning annotations per step, 50 per job).
 
 ## Outputs
 
