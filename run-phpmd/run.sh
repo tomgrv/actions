@@ -2,7 +2,7 @@
 
 set -e
 
-PHPMD_RULESET="${PHPMD_RULESET:-cleancode,codesize,controversial,design,naming,unusedcode}"
+PHPMD_RULESET="${PHPMD_RULESET:-}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
 PHPMD_PATHS="${PHPMD_PATHS:-${1:-app}}"
 
@@ -13,6 +13,16 @@ fi
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     cd "${GITHUB_WORKSPACE}" || exit 1
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
+fi
+
+if [ -z "${PHPMD_RULESET}" ]; then
+    if [ -f "phpmd.xml" ]; then
+        PHPMD_RULESET="phpmd.xml"
+        echo "::notice::ruleset not set, using phpmd.xml found at repository root" >&2
+    else
+        PHPMD_RULESET="cleancode,codesize,controversial,design,naming,unusedcode"
+        echo "::notice::ruleset not set and no phpmd.xml found, using default ruleset: ${PHPMD_RULESET}" >&2
+    fi
 fi
 
 PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
