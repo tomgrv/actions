@@ -26,8 +26,13 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v jq >/dev/null 2>&1; then
+  echo "::error::jq could not be found. Please install it to run this action." >&2
+  exit 1
+fi
+
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-npm-audit}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-review}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -35,10 +40,16 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 echo "Running npm audit..." >&2
 
+PACKAGE_JSON_PATH="package.json"
+if [ ! -f "${PACKAGE_JSON_PATH}" ]; then
+  PACKAGE_JSON_PATH="$(mktemp)"
+  trap 'rm -f "${PACKAGE_JSON_PATH}"' EXIT
+fi
+
 exit_code=0
 # shellcheck disable=SC2086
 npm audit --workspaces --audit-level moderate --package-lock-only --json 2>/dev/null \
-  | jq -f "$(dirname "$0")/rdjson.jq" \
+  | jq -f "$(dirname "$0")/rdjson.jq" --rawfile pkgjson "${PACKAGE_JSON_PATH}" \
   | reviewdog \
       -f=rdjson \
       -name="${REVIEWDOG_NAME}" \

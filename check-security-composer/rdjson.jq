@@ -1,0 +1,183 @@
+def rxesc:
+  gsub("(?<c>[.^$|()\\[\\]{}*+?\\\\])"; "\\(.c)");
+
+def verparts:
+  ltrimstr("v")
+  | (capture("^(?<core>[0-9]+(?:\\.[0-9]+)*)")? // {core: "0"}).core
+  | split(".")
+  | map(tonumber);
+
+def cmpver(a; b):
+  (a | verparts) as $a
+  | (b | verparts) as $b
+  | ([($a | length), ($b | length)] | max) as $n
+  | reduce range(0; $n) as $i
+      (0; if . != 0 then . else (($a[$i] // 0) - ($b[$i] // 0)) end);
+
+def parse_cond:
+  (capture("^\\s*(?<op>>=|<=|==|!=|>|<)?\\s*(?<ver>[^,\\s]+)\\s*$")? // {op: null, ver: "0"})
+  | { op: (.op // "=="), ver: .ver };
+
+def cond_holds(cond; installed):
+  if cond.op == ">=" then cmpver(installed; cond.ver) >= 0
+  elif cond.op == "<=" then cmpver(installed; cond.ver) <= 0
+  elif cond.op == ">" then cmpver(installed; cond.ver) > 0
+  elif cond.op == "<" then cmpver(installed; cond.ver) < 0
+  elif cond.op == "!=" then cmpver(installed; cond.ver) != 0
+  else cmpver(installed; cond.ver) == 0
+  end;
+
+def clause_conds:
+  split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0)) | map(parse_cond);
+
+def clause_holds(installed):
+  clause_conds as $conds | ($conds | all(cond_holds(.; installed)));
+
+def clause_upper:
+  clause_conds as $conds
+  | ($conds | map(select(.op == "<" or .op == "<=")) | map(.ver)) as $uppers
+  | if ($uppers | length) > 0 then
+      ($uppers | sort_by(verparts) | .[0])
+    else
+      null
+    end;
+
+def find_loc(name; lines):
+  ("\"" + (name | rxesc) + "\"\\s*:\\s*\"([^\"]*)\"") as $pat
+  | (
+      lines
+      | to_entries
+      | map({ line: (.key + 1), matches: [.value | match($pat; "")] })
+      | map(select((.matches | length) > 0))
+      | first
+    );
+
+def recommended_fix(advisories; installed):
+  [
+    advisories[]
+    | (.affectedVersions // "" | split("|") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))) as $clauses
+    | $clauses[]
+    | select(clause_holds(installed))
+    | clause_upper
+  ] as $uppers
+  | {
+      hasOpenEnded: (
+        [
+          advisories[]
+          | (.affectedVersions // "" | split("|") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))) as $clauses
+          | $clauses[]
+          | select(clause_holds(installed) and (clause_upper == null))
+        ] | length > 0
+      ),
+      version: (
+        ($uppers | map(select(. != null))) as $known
+        | if ($known | length) > 0 then ($known | sort_by(verparts) | .[-1]) else null end
+      )
+    };
+
+. as $input
+| ($composerjson | rtrimstr("\n") | split("\n")) as $composerlines
+| ($locked // {}) as $locked
+| (
+    ($input.advisories // {})
+    | to_entries
+    | map(
+        .key as $name
+        | .value as $advisories
+        | ($locked[$name]) as $installed
+        | (if $installed then recommended_fix($advisories; $installed) else { hasOpenEnded: false, version: null } end) as $fix
+        | (
+            if ($advisories | map(.severity) | any(. == "critical" or . == "high")) then "ERROR"
+            elif ($advisories | map(.severity) | any(. == "medium")) then "WARNING"
+            else "INFO"
+            end
+          ) as $severity
+        | find_loc($name; $composerlines) as $loc
+        | (
+            if $loc then
+              {
+                path: "composer.json",
+                range: {
+                  start: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + 1) },
+                  end: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + $loc.matches[0].captures[0].length + 1) }
+                }
+              }
+            else
+              {
+                path: "composer.json",
+                range: { start: { line: 1, column: 1 } }
+              }
+            end
+          ) as $location
+        | {
+            message: (
+              $name + (if $installed then " " + $installed else "" end) + "\n"
+              + (
+                  $advisories
+                  | map(
+                      .title
+                      + (if .cve then " (" + .cve + ")" else "" end)
+                      + (if .link then "\n" + .link else "" end)
+                    )
+                  | join("\n")
+                ) + "\n"
+              + "Severity: " + $severity + "\n"
+              + (
+                  if $fix.version then
+                    "Recommended fix: upgrade " + $name + " to ^" + $fix.version
+                    + (if $fix.hasOpenEnded then " (verify against the open-ended advisory range above; a newer release may still be required)" else "" end)
+                  elif $fix.hasOpenEnded then
+                    "No upper-bound fix version is published yet for this advisory; check the advisory link and consider a manual upgrade or replacement."
+                  elif $installed then
+                    "Could not determine a recommended fix version automatically; check the advisory link(s) above."
+                  else
+                    "Package is not present in composer.lock; could not determine installed version or a recommended fix."
+                  end
+                )
+            ),
+            severity: $severity,
+            location: $location
+          }
+          + (
+              if $loc and $fix.version then
+                { suggestions: [ { range: $location.range, text: ("^" + $fix.version) } ] }
+              else
+                {}
+              end
+            )
+      )
+  ) as $advisoryDiagnostics
+| (
+    ($input.abandoned // {})
+    | to_entries
+    | map(
+        .key as $name
+        | find_loc($name; $composerlines) as $loc
+        | {
+            message: (
+              $name + " is abandoned"
+              + (if .value then ", use " + .value + " instead" else "" end)
+            ),
+            severity: "WARNING",
+            location: (
+              if $loc then
+                {
+                  path: "composer.json",
+                  range: { start: { line: $loc.line, column: 1 } }
+                }
+              else
+                {
+                  path: "composer.json",
+                  range: { start: { line: 1, column: 1 } }
+                }
+              end
+            )
+          }
+      )
+  ) as $abandonedDiagnostics
+| {
+    source: {
+      name: "composer-audit"
+    },
+    diagnostics: ($advisoryDiagnostics + $abandonedDiagnostics)
+  }

@@ -22,9 +22,9 @@ inputs:
     required: false
     default: error
   reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to github-pr-review so recommended version upgrades are posted as applyable suggestions.'
     required: false
-    default: github-pr-check
+    default: github-pr-review
   filter-mode:
     description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
     required: false
