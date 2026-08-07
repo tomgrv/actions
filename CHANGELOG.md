@@ -2,6 +2,30 @@
 
 # Changelog
 
+## 2.4.0 (2026-08-07)
+
+_Commits from: v2.3.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 reduce max diagnostics to comply with GitHub annotation limits ([81bd1f1](https://github.com/tomgrv/actions/commit/81bd1f135d8f4f03c895ba5e19dc77ce6ba05359))
+
+#### Features
+
+- auto-detect root config files for phpmd, phpstan, pint and phpinsights (#35) ([a046aa3](https://github.com/tomgrv/actions/commit/a046aa345b8561548bdb0a35c870f682f5e420ee))
+
+#### Other changes
+
+- Merge tag 'v2.3.0' into develop ([7a4bd26](https://github.com/tomgrv/actions/commit/7a4bd267e39a48b2ab6835a4d57998f0f4e80924))
+
+### 📦 check-security-npm, check-security-composer changes
+
+#### Bug Fixes
+
+- cap reviewdog diagnostics to avoid annotation limit (#34) ([2bcc88e](https://github.com/tomgrv/actions/commit/2bcc88e6d083e540047e4086ef262dd31c06e249))
+
 ## 2.3.0 (2026-08-07)
 
 _Commits from: v2.2.0..HEAD_
