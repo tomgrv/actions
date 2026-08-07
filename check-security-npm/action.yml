@@ -37,6 +37,10 @@ inputs:
     description: Additional reviewdog flags.
     required: false
     default: ''
+  max-diagnostics:
+    description: "Maximum number of vulnerability diagnostics to report, most severe first. Extra findings are collapsed into a single summary diagnostic to stay under GitHub's annotation limits."
+    required: false
+    default: '40'
 
 runs:
   using: composite
@@ -57,4 +61,5 @@ runs:
         REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
+        MAX_DIAGNOSTICS: ${{ inputs.max-diagnostics }}
       run: sh "${{ github.action_path }}/run.sh"

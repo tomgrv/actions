@@ -6,6 +6,8 @@ Runs `npm audit` against the project's npm dependencies and reports findings inl
 
 Each vulnerable dependency is reported once, combining all of its advisories. For direct dependencies where npm knows a non-breaking fix (`fixAvailable`), the finding is posted as a review on `package.json` with a suggested version bump you can apply directly from the GitHub UI.
 
+Findings are sorted most severe first and capped at `max-diagnostics` (default `40`); any remainder is rolled up into a single summary diagnostic so the check stays within GitHub's per-step/per-job annotation limits.
+
 ## Inputs
 
 ### github-token
@@ -35,6 +37,10 @@ Each vulnerable dependency is reported once, combining all of its advisories. Fo
 ### reviewdog-flags
 
 **Optional.** Additional reviewdog flags. Defaults to empty.
+
+### max-diagnostics
+
+**Optional.** Maximum number of vulnerability diagnostics to report, most severe first. Defaults to `40`. When `npm audit` finds more vulnerable packages than this, the extra findings are collapsed into a single summary diagnostic instead of one per package, to stay under [GitHub's annotation limits](https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#about-workflow-commands) (10 error/10 warning annotations per step, 50 per job).
 
 ## Outputs
 
