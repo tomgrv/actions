@@ -8,7 +8,7 @@ This action rebases the head branch of a pull request onto its base branch using
 
 ### github-token
 
-**Required.** GitHub token with `pull_requests: write` and `contents: write` permissions.
+**Optional.** GitHub token with `pull_requests: write` and `contents: write` permissions. Defaults to `github.token`.
 
 ### repository
 

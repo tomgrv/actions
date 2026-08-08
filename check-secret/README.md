@@ -8,7 +8,7 @@ Scans pull request changes for leaked secrets using [gitleaks](https://github.co
 
 ### github-token
 
-**Required.** GitHub token for the gitleaks action.
+**Optional.** GitHub token for the gitleaks action. Defaults to `github.token`.
 
 ### gitleaks-license
 

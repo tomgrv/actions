@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
-    required: true
+    required: false
+    default: ${{ github.token }}
   paths:
     description: Comma-separated list of paths to analyze with Pint. Defaults to `app`.
     required: false

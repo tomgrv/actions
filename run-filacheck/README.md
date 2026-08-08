@@ -8,7 +8,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### path
 

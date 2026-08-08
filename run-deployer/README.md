@@ -53,7 +53,7 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.
+**Optional.** GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations. Defaults to `github.token`.
 
 ### reviewdog-version
 

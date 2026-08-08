@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token used for authenticated Git operations.
-    required: true
+    required: false
+    default: ${{ github.token }}
   github-app-slug:
     description: GitHub App slug for the bot. Defaults to the current action's app slug.
     required: false

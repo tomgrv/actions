@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for gitleaks action.
-    required: true
+    required: false
+    default: ${{ github.token }}
   gitleaks-license:
     description: Gitleaks license key for private repositories. Not required for public repositories.
     required: false

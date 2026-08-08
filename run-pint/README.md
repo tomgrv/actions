@@ -8,7 +8,7 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### paths
 
