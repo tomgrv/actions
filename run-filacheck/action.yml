@@ -100,7 +100,7 @@ runs:
       uses: $/list-wip
       with:
         path: ${{ inputs.path }}
-        extensions: php
+        extensions: php,blade.php
         base-ref: ${{ inputs.wip-base-ref }}
 
     - name: Run FilaCheck
