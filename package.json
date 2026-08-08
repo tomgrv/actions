@@ -39,7 +39,9 @@
         "setup-node/*",
         "setup-reviewdog/*",
         "check-filament/*",
-        "check-laravel/*"
+        "check-laravel/*",
+        "run-deployer/*",
+        "resolve-environment/*"
     ],
     "bin": {
         "actions": "./dispatch.sh"
@@ -88,6 +90,8 @@
         "detect-changes",
         "list-packages",
         "rebase-pr",
+        "resolve-environment",
+        "run-deployer",
         "run-phpinsights",
         "run-filacheck",
         "run-phpmd",

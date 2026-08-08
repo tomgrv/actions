@@ -1,0 +1,5 @@
+{
+    "name": "resolve-environment",
+    "private": true,
+    "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event."
+}

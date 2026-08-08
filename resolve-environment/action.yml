@@ -1,0 +1,45 @@
+# @format
+
+# @package tomgrv/actions/resolve-environment
+
+name: Resolve Deploy Environment
+description: Resolve the deploy branch, tag, and environment from the triggering GitHub event.
+author: Perspikapps
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  dep:
+    description: 'The deployer command being run. When "deploy" and no other rule matches, falls back to the current branch ref with no environment guess.'
+    required: false
+    default: 'deploy'
+
+outputs:
+  branch:
+    description: Resolved --branch value for Deployer, if any.
+    value: ${{ steps.resolve.outputs.branch }}
+  tag:
+    description: Resolved --tag value for Deployer, if any.
+    value: ${{ steps.resolve.outputs.tag }}
+  environment:
+    description: Resolved environment name (unstable/staging/production), if any.
+    value: ${{ steps.resolve.outputs.env }}
+
+runs:
+  using: composite
+  steps:
+    # Intentionally the ONLY place that inspects github.event_name/github.ref, so
+    # every trigger (push, PR review, tag, or workflow_dispatch/unlock with no
+    # matching ref) is covered by a single, always-executed rule set.
+    - name: Resolve deploy target
+      id: resolve
+      shell: sh
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        EVENT_ACTION: ${{ github.event.action }}
+        REF: ${{ github.ref }}
+        REF_NAME: ${{ github.ref_name }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        DEP: ${{ inputs.dep }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
