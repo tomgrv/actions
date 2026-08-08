@@ -34,9 +34,17 @@ fi
 # it back to a plain '&' here rather than relying on the caller leaving the
 # value unquoted for us - quoting below is otherwise correct and safer.
 selector=$(printf '%s' "${SELECTOR}" | sed 's/\\&/\&/g')
-if [ -n "${environment}" ]; then
-    selector="${selector}&env=${environment}"
-fi
+# Only append env=<environment> when the caller hasn't already filtered by
+# env themselves (e.g. selector: env=production) - appending unconditionally
+# would produce a duplicated env= term that can change Deployer's host match.
+case "${selector}" in
+    *env=*) ;;
+    *)
+        if [ -n "${environment}" ]; then
+            selector="${selector}&env=${environment}"
+        fi
+        ;;
+esac
 
 echo "Running Deployer command: ${args} -- ${selector}" >&2
 

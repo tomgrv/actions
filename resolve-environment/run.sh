@@ -35,7 +35,7 @@ if [ "${EVENT_NAME}" = "pull_request" ] && [ "${EVENT_ACTION}" = "review_request
     # pull_request.head.sha is the actual head commit, reachable via the branch's own ref.
     branch="${PR_HEAD_SHA}"
     env="unstable"
-elif starts_with "refs/heads/release" "${REF}"; then
+elif starts_with "refs/heads/release/" "${REF}"; then
     branch="${REF_NAME}"
     env="staging"
 elif [ "${REF}" = "refs/heads/main" ]; then
