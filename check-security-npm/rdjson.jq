@@ -20,7 +20,7 @@ def severity_rank:
   end;
 
 ($maxDiagnostics // 40) as $maxDiagnostics
-| .vulnerabilities
+| (.vulnerabilities // {})
 | to_entries
 | map(
     .key as $name

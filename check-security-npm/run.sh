@@ -1,6 +1,9 @@
 #!/usr/bin/sh
 
 set -e
+if (set -o pipefail) 2>/dev/null; then
+  set -o pipefail
+fi
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   cd "${GITHUB_WORKSPACE}" || exit 1
@@ -47,9 +50,14 @@ if [ ! -f "${PACKAGE_JSON_PATH}" ]; then
   trap 'rm -f "${PACKAGE_JSON_PATH}"' EXIT
 fi
 
+WORKSPACES_FLAGS=""
+if [ -f "package.json" ] && jq -e '.workspaces' package.json >/dev/null 2>&1; then
+  WORKSPACES_FLAGS="--workspaces"
+fi
+
 exit_code=0
 # shellcheck disable=SC2086
-npm audit --workspaces --audit-level moderate --package-lock-only --json 2>/dev/null \
+{ npm audit ${WORKSPACES_FLAGS} --audit-level moderate --package-lock-only --json 2>/dev/null || true; } \
   | jq -f "$(dirname "$0")/rdjson.jq" --rawfile pkgjson "${PACKAGE_JSON_PATH}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" \
   | reviewdog \
       -f=rdjson \
