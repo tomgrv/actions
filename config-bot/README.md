@@ -2,7 +2,7 @@
 
 # GitHub Action: Configure Git Bot
 
-Configures global Git identity and GitHub authentication for bot commits within a workflow job. Resolves the GitHub App bot user ID from its slug and writes the matching `user.name`, `user.email`, and token authentication header into the runner's Git configuration.
+Configures global Git identity for bot commits within a workflow job. Resolves the GitHub App bot user ID from its slug and writes the matching `user.name` and `user.email` into the runner's Git configuration.
 
 ## Inputs
 
