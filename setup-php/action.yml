@@ -18,6 +18,15 @@ inputs:
     description: Additional tools to install with shivammathur/setup-php, comma-separated.
     required: false
     default: ''
+  require:
+    description: >-
+      Composer packages to install globally (`composer global require`), comma-separated,
+      each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`).
+      Runs on every invocation of this action within a job, regardless of whether the PHP/Composer
+      setup itself was skipped as a duplicate - each caller may need a different global package.
+      Packages already installed globally are skipped.
+    required: false
+    default: ''
 
 outputs:
   php-version:
@@ -53,6 +62,15 @@ runs:
         extensions: ${{ steps.php-extensions.outputs.extensions }}
         coverage: xdebug
         tools: ${{ inputs.tools }}
+
+    # Global package installs are per-caller, not per-job: even when the PHP/Composer
+    # setup above is skipped as a duplicate, a different action embedding setup-php may
+    # still need its own global tool installed, so this always runs.
+    - name: Install global Composer requirements
+      shell: sh
+      env:
+        REQUIRE: ${{ inputs.require }}
+      run: sh "${{ github.action_path }}/require.sh"
 
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3

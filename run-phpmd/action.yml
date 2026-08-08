@@ -59,6 +59,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: phpmd/phpmd
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

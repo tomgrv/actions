@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHP Insights
 
-Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpinsights` itself must be available either in `vendor/bin` or the global `PATH`.
+Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via reviewdog. Can also run in **fix mode** to automatically apply fixes. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpinsights` itself is installed globally via `setup-php`'s `require` input (`nunomaduro/phpinsights`), unless already installed globally; a project-local `vendor/bin/phpinsights` (e.g. from a `composer.json` dev dependency) still takes precedence at run time.
 
 ## Inputs
 

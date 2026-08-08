@@ -72,6 +72,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: laraveldaily/filacheck
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
