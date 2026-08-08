@@ -28,7 +28,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 ### wip
 
-**Optional.** Only scan files changed on the current pull request, relative to its base branch. FilaCheck has no native flag for this (unlike `dirty`), so it is emulated by resolving the changed files and passing that explicit list in place of `path`. Defaults to `false`.
+**Optional.** Only scan files changed on the current pull request, relative to its base branch. FilaCheck has no native flag for this (unlike `dirty`), so it is emulated: [**list-wip**](../list-wip/README.md) resolves the changed files and this action passes that explicit list in place of `path`. Defaults to `false`.
 
 ### wip-base-ref
 
@@ -77,6 +77,7 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 - [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**run-pint**](../run-pint/README.md) — complement Filament checks with Laravel Pint.
+- [**list-wip**](../list-wip/README.md) — included automatically behind `wip`.
 
 ## Local Usage
 

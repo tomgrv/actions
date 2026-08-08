@@ -7,7 +7,8 @@ PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
 PHPMD_PATHS="${PHPMD_PATHS:-${1:-app}}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
-WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
+DIRTY_FILES="${DIRTY_FILES:-}"
+WIP_FILES="${WIP_FILES:-}"
 
 if [ "${PHPMD_PATHS}" = "app" ]; then
     echo "::notice::PHPMD_PATHS not set, using default: app" >&2
@@ -48,44 +49,11 @@ REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
-#
-# Emulate dirty/wip when the tool itself has no such flag: collapse the
-# directory-based path list down to only the files that actually changed, so
-# unrelated files are never even handed to the tool.
-#
-_changed_files() {
-    _files=""
-
-    if [ "${DIRTY}" = "true" ]; then
-        _files="${_files}
-$(git diff --name-only --diff-filter=ACMR -- .)
-$(git diff --name-only --cached --diff-filter=ACMR -- .)
-$(git ls-files --others --exclude-standard -- .)"
-    fi
-
-    if [ "${WIP}" = "true" ]; then
-        if [ -z "${WIP_BASE_REF}" ]; then
-            echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
-            return 1
-        fi
-        git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
-        _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
-        _files="${_files}
-$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- .)"
-    fi
-
-    printf '%s\n' "${_files}" | sed '/^$/d' | sort -u
-}
-
-# Restrict PHPMD_PATHS to only the changed files under them. PHPMD's input
-# path argument accepts a comma-separated list of files/directories.
-_filter_changed_paths() {
-    _base_regex="^($(printf '%s' "${PHPMD_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
-    _changed_files | grep -E "${_base_regex}" | grep -E '\.php$' | paste -sd, -
-}
-
+# dirty/wip are resolved upstream by the list-dirty/list-wip actions; combine
+# their file lists into the explicit target list PHPMD actually analyzes.
+# PHPMD's input path argument accepts a comma-separated list of files/dirs.
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
-    PHPMD_TARGET="$(_filter_changed_paths)" || exit 1
+    PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
         echo "::notice::No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD." >&2
         exit 0

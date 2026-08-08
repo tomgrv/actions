@@ -80,6 +80,7 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 - [**check-security-composer**](../check-security-composer/README.md) — complement the suite with a Composer dependency audit.
 - [**check-lock**](../check-lock/README.md) — complement the suite with lock coherence validation.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+- [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Example
 

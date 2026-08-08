@@ -26,7 +26,8 @@ BASELINE_FILE="${BASELINE_FILE:-phpstan-baseline.neon}"
 PHPSTAN_CONFIG="${PHPSTAN_CONFIG:-}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
-WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
+DIRTY_FILES="${DIRTY_FILES:-}"
+WIP_FILES="${WIP_FILES:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpstan}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -38,43 +39,10 @@ if [ "${TARGET_PATHS}" = "app" ]; then
     echo "::notice::TARGET_PATHS not set, using default: app" >&2
 fi
 
-#
-# Emulate dirty/wip when the tool itself has no such flag: collapse the
-# directory-based path list down to only the files that actually changed, so
-# unrelated files are never even handed to the tool.
-#
-_changed_files() {
-    _files=""
-
-    if [ "${DIRTY}" = "true" ]; then
-        _files="${_files}
-$(git diff --name-only --diff-filter=ACMR -- .)
-$(git diff --name-only --cached --diff-filter=ACMR -- .)
-$(git ls-files --others --exclude-standard -- .)"
-    fi
-
-    if [ "${WIP}" = "true" ]; then
-        if [ -z "${WIP_BASE_REF}" ]; then
-            echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
-            return 1
-        fi
-        git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
-        _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
-        _files="${_files}
-$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- .)"
-    fi
-
-    printf '%s\n' "${_files}" | sed '/^$/d' | sort -u
-}
-
-# Restrict TARGET_PATHS to only the changed files under them, space-joined.
-_filter_changed_paths() {
-    _base_regex="^($(printf '%s' "${TARGET_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
-    _changed_files | grep -E "${_base_regex}" | grep -E '\.php$' | tr '\n' ' '
-}
-
+# dirty/wip are resolved upstream by the list-dirty/list-wip actions; combine
+# their file lists into the explicit target list PHPStan actually analyzes.
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
-    TARGET_ARGS="$(_filter_changed_paths)" || exit 1
+    TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
         echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan." >&2
         printf 'has-changes=false\n'

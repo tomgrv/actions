@@ -94,6 +94,15 @@ runs:
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
 
+    - name: List WIP files
+      id: list-wip
+      if: inputs.wip == 'true'
+      uses: $/list-wip
+      with:
+        path: ${{ inputs.path }}
+        extensions: php
+        base-ref: ${{ inputs.wip-base-ref }}
+
     - name: Run FilaCheck
       id: run-filacheck
       shell: sh
@@ -104,7 +113,7 @@ runs:
         DETAILED: ${{ inputs.detailed }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
-        WIP_BASE_REF: ${{ inputs.wip-base-ref }}
+        WIP_FILES: ${{ steps.list-wip.outputs.files }}
         DRY_RUN: ${{ inputs.dry-run }}
         BACKUP: ${{ inputs.backup }}
         REVIEWDOG_NAME: ${{ inputs.name }}

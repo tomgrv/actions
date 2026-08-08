@@ -1,0 +1,49 @@
+# @format
+
+# @package tomgrv/actions/list-wip
+
+name: List WIP Files
+description: List files changed on the current pull request, relative to its base branch, optionally filtered by path and extension.
+author: Perspikapps
+branding:
+  icon: git-pull-request
+  color: yellow
+
+inputs:
+  path:
+    description: Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).
+    required: false
+    default: '.'
+  extensions:
+    description: Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.
+    required: false
+    default: php
+  base-ref:
+    description: >-
+      Base branch/ref to diff against. Defaults to `GITHUB_BASE_REF`, which
+      GitHub Actions sets automatically on `pull_request` events.
+    required: false
+    default: ''
+
+outputs:
+  files:
+    description: Newline-separated list of matching changed files. Empty when none match.
+    value: ${{ steps.list.outputs.files }}
+  count:
+    description: Number of matching files.
+    value: ${{ steps.list.outputs.count }}
+  has-files:
+    description: 'true if at least one file matches, false otherwise.'
+    value: ${{ steps.list.outputs.has-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: List WIP files
+      id: list
+      shell: sh
+      env:
+        LIST_PATHS: ${{ inputs.path }}
+        LIST_EXTENSIONS: ${{ inputs.extensions }}
+        LIST_BASE_REF: ${{ inputs.base-ref }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

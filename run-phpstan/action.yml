@@ -89,6 +89,23 @@ runs:
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
 
+    - name: List dirty files
+      id: list-dirty
+      if: inputs.dirty == 'true'
+      uses: $/list-dirty
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+
+    - name: List WIP files
+      id: list-wip
+      if: inputs.wip == 'true'
+      uses: $/list-wip
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+        base-ref: ${{ inputs.wip-base-ref }}
+
     - name: Run PHPStan
       id: run-phpstan
       shell: sh
@@ -99,7 +116,8 @@ runs:
         BASELINE_FILE: ${{ inputs.baseline-file }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
-        WIP_BASE_REF: ${{ inputs.wip-base-ref }}
+        DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}
+        WIP_FILES: ${{ steps.list-wip.outputs.files }}
         PHPSTAN_CONFIG: ${{ inputs.config }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}

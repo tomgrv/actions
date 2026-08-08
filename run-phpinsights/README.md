@@ -24,11 +24,11 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ### dirty
 
-**Optional.** Only analyze files with uncommitted git changes (staged, unstaged, or untracked). PHP Insights has no native flag for this, so it is emulated by resolving the changed files and passing that explicit list in place of `paths`. Defaults to `false`.
+**Optional.** Only analyze files with uncommitted git changes (staged, unstaged, or untracked). PHP Insights has no native flag for this, so it is emulated: [**list-dirty**](../list-dirty/README.md) resolves the changed files and this action passes that explicit list in place of `paths`. Defaults to `false`.
 
 ### wip
 
-**Optional.** Only analyze files changed on the current pull request, relative to its base branch. Emulated the same way as `dirty`, diffing against the merge-base of `wip-base-ref`. Defaults to `false`.
+**Optional.** Only analyze files changed on the current pull request, relative to its base branch. Emulated the same way as `dirty`, via [**list-wip**](../list-wip/README.md) diffing against the merge-base of `wip-base-ref`. Defaults to `false`.
 
 ### wip-base-ref
 
@@ -68,6 +68,7 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+- [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Local Usage
 

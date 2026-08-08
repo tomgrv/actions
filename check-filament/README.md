@@ -72,6 +72,7 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 - [**check-laravel**](../check-laravel/README.md) — run the general Laravel PHP suite alongside the Filament-specific one.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+- [**list-wip**](../list-wip/README.md) — included automatically behind `wip`.
 
 ## Example
 

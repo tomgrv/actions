@@ -25,7 +25,7 @@ FIX="${FIX:-false}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
-WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
+WIP_FILES="${WIP_FILES:-}"
 DRY_RUN="${DRY_RUN:-false}"
 BACKUP="${BACKUP:-false}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
@@ -41,19 +41,12 @@ fi
 
 #
 # FilaCheck has no native flag for `wip` (unlike `dirty`, which it accepts
-# natively as `--dirty` and is passed straight through below). Emulate it by
-# resolving the files changed on this pull request and passing that explicit
-# list in place of the target path.
+# natively as `--dirty` and is passed straight through below). Emulate it
+# using the file list resolved upstream by the list-wip action, passed in
+# place of the target path.
 #
 if [ "${WIP}" = "true" ]; then
-    if [ -z "${WIP_BASE_REF}" ]; then
-        echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
-        exit 1
-    fi
-    git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
-    _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
-    _base_regex="^($(printf '%s' "${FILACHECK_PATH}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
-    FILACHECK_TARGET="$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- . | grep -E "${_base_regex}" | grep -E '\.(blade\.php|php)$' | tr '\n' ' ')"
+    FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
         echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
         printf 'has-changes=false\n'

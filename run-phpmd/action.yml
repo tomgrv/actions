@@ -89,6 +89,23 @@ runs:
         restore-keys: |
           ${{ runner.os }}-phpmd-
 
+    - name: List dirty files
+      id: list-dirty
+      if: inputs.dirty == 'true'
+      uses: $/list-dirty
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+
+    - name: List WIP files
+      id: list-wip
+      if: inputs.wip == 'true'
+      uses: $/list-wip
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+        base-ref: ${{ inputs.wip-base-ref }}
+
     - name: Run PHPMD
       shell: sh
       env:
@@ -98,7 +115,8 @@ runs:
         PHPMD_PRIORITY: ${{ inputs.priority }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
-        WIP_BASE_REF: ${{ inputs.wip-base-ref }}
+        DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}
+        WIP_FILES: ${{ steps.list-wip.outputs.files }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
