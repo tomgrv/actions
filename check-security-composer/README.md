@@ -4,7 +4,7 @@
 
 Runs `composer audit` against the project's Composer dependencies and reports findings inline via reviewdog. PHP and Composer are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
-Each vulnerable package is reported once, combining all of its advisories. The action works out the lowest version that clears every advisory range affecting the currently locked version and, when the package is required directly in `composer.json`, includes the suggested version bump in the finding.
+Each vulnerable package is reported once, combining all of its advisories. The action works out the lowest version that clears every advisory range affecting the currently locked version and, when the package is required directly by a manifest (the root `composer.json` or a local path repository's `composer.json`), includes the suggested version bump in the finding, attributed to that manifest.
 
 By default (`reporter: github-pr-check`) findings are posted as Check annotations, which show up on every PR regardless of whether it touches `composer.json`. Switch `reporter` to `github-pr-review` to get applyable one-click suggestion boxes instead — but GitHub can only attach those to lines already part of the PR's diff, so on PRs that don't modify `composer.json` (the common case) findings fall back to a generic rolled-up comment instead of an inline suggestion.
 
