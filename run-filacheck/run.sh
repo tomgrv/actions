@@ -24,6 +24,8 @@ FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
 FIX="${FIX:-false}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
+WIP="${WIP:-false}"
+WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
 DRY_RUN="${DRY_RUN:-false}"
 BACKUP="${BACKUP:-false}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
@@ -35,6 +37,31 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${FILACHECK_PATH}" = "app/Filament" ]; then
     echo "::notice::FILACHECK_PATH not set, using default: app/Filament" >&2
+fi
+
+#
+# FilaCheck has no native flag for `wip` (unlike `dirty`, which it accepts
+# natively as `--dirty` and is passed straight through below). Emulate it by
+# resolving the files changed on this pull request and passing that explicit
+# list in place of the target path.
+#
+if [ "${WIP}" = "true" ]; then
+    if [ -z "${WIP_BASE_REF}" ]; then
+        echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
+        exit 1
+    fi
+    git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
+    _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
+    _base_regex="^($(printf '%s' "${FILACHECK_PATH}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
+    FILACHECK_TARGET="$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- . | grep -E "${_base_regex}" | grep -E '\.(blade\.php|php)$' | tr '\n' ' ')"
+    if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
+        echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
+        printf 'has-changes=false\n'
+        exit 0
+    fi
+    echo "Restricting FilaCheck to changed files: ${FILACHECK_TARGET}" >&2
+else
+    FILACHECK_TARGET="${FILACHECK_PATH}"
 fi
 
 echo "Running FilaCheck on: ${FILACHECK_PATH}" >&2
@@ -58,7 +85,7 @@ fi
 
 exit_code=0
 # shellcheck disable=SC2086
-"${FILACHECK_BIN}" ${filacheck_args} -- "${FILACHECK_PATH}" 2> /dev/null \
+"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2> /dev/null \
     | awk '
         /^[[:space:]]+[^[:space:]].*\.(blade\.php|php)$/ {
             current_file=$0

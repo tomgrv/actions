@@ -22,6 +22,18 @@ Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via rev
 
 **Optional.** Minimum issue priority to report (`min`/`max`). Defaults to `max`.
 
+### dirty
+
+**Optional.** Only analyze files with uncommitted git changes (staged, unstaged, or untracked). PHPMD has no native flag for this, so it is emulated by resolving the changed files and passing that explicit list in place of `paths`. Defaults to `false`.
+
+### wip
+
+**Optional.** Only analyze files changed on the current pull request, relative to its base branch. Emulated the same way as `dirty`, diffing against the merge-base of `wip-base-ref`. Defaults to `false`.
+
+### wip-base-ref
+
+**Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
+
 ### name
 
 **Optional.** Name reported by reviewdog to identify this check. Defaults to `phpmd`.

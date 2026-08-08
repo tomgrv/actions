@@ -41,6 +41,9 @@ fi
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 PHPINSIGHTS_CONFIG_PATH="${PHPINSIGHTS_CONFIG_PATH:-}"
+DIRTY="${DIRTY:-false}"
+WIP="${WIP:-false}"
+WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpinsights}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -50,6 +53,53 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${TARGET_PATHS}" = "app" ]; then
     echo "::notice::TARGET_PATHS not set, using default: app" >&2
+fi
+
+#
+# Emulate dirty/wip when the tool itself has no such flag: collapse the
+# directory-based path list down to only the files that actually changed, so
+# unrelated files are never even handed to the tool.
+#
+_changed_files() {
+    _files=""
+
+    if [ "${DIRTY}" = "true" ]; then
+        _files="${_files}
+$(git diff --name-only --diff-filter=ACMR -- .)
+$(git diff --name-only --cached --diff-filter=ACMR -- .)
+$(git ls-files --others --exclude-standard -- .)"
+    fi
+
+    if [ "${WIP}" = "true" ]; then
+        if [ -z "${WIP_BASE_REF}" ]; then
+            echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
+            return 1
+        fi
+        git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
+        _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
+        _files="${_files}
+$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- .)"
+    fi
+
+    printf '%s\n' "${_files}" | sed '/^$/d' | sort -u
+}
+
+# Restrict TARGET_PATHS to only the changed files under them, space-joined.
+_filter_changed_paths() {
+    _base_regex="^($(printf '%s' "${TARGET_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
+    _changed_files | grep -E "${_base_regex}" | grep -E '\.php$' | tr '\n' ' '
+}
+
+if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
+    TARGET_ARGS="$(_filter_changed_paths)" || exit 1
+    if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
+        echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights." >&2
+        printf 'has-changes=false\n'
+        exit 0
+    fi
+    echo "Restricting PHP Insights to changed files: ${TARGET_ARGS}" >&2
+else
+    TARGET_ARGS="$(echo "${TARGET_PATHS}" | tr ',' ' ')"
 fi
 
 if [ "${FIX}" = "true" ]; then
@@ -74,7 +124,7 @@ echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
 exit_code=0
 # shellcheck disable=SC2046,SC2086
-"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
+"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
         -name="${REVIEWDOG_NAME}" \

@@ -24,6 +24,9 @@ FIX="${FIX:-false}"
 PINT_PATHS="${PINT_PATHS:-${1:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
 PINT_CONFIG="${PINT_CONFIG:-}"
+DIRTY="${DIRTY:-false}"
+WIP="${WIP:-false}"
+WIP_BASE_REF="${WIP_BASE_REF:-${GITHUB_BASE_REF:-}}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-pint}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -33,6 +36,53 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${PINT_PATHS}" = "app" ]; then
     echo "::notice::PINT_PATHS not set, using default: app" >&2
+fi
+
+#
+# Emulate dirty/wip when the tool itself has no such flag: collapse the
+# directory-based path list down to only the files that actually changed, so
+# unrelated files are never even handed to the tool.
+#
+_changed_files() {
+    _files=""
+
+    if [ "${DIRTY}" = "true" ]; then
+        _files="${_files}
+$(git diff --name-only --diff-filter=ACMR -- .)
+$(git diff --name-only --cached --diff-filter=ACMR -- .)
+$(git ls-files --others --exclude-standard -- .)"
+    fi
+
+    if [ "${WIP}" = "true" ]; then
+        if [ -z "${WIP_BASE_REF}" ]; then
+            echo "::error::wip requires a base ref: set GITHUB_BASE_REF (automatic on pull_request events) or the wip-base-ref input" >&2
+            return 1
+        fi
+        git fetch --depth=1 origin "${WIP_BASE_REF}" > /dev/null 2>&1 || true
+        _merge_base="$(git merge-base "origin/${WIP_BASE_REF}" HEAD 2> /dev/null || echo "${WIP_BASE_REF}")"
+        _files="${_files}
+$(git diff --name-only --diff-filter=ACMR "${_merge_base}" -- .)"
+    fi
+
+    printf '%s\n' "${_files}" | sed '/^$/d' | sort -u
+}
+
+# Restrict PINT_PATHS to only the changed files under them, space-joined.
+_filter_changed_paths() {
+    _base_regex="^($(printf '%s' "${PINT_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
+    _changed_files | grep -E "${_base_regex}" | grep -E '\.php$' | tr '\n' ' '
+}
+
+if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
+    PINT_ARGS="$(_filter_changed_paths)" || exit 1
+    if [ -z "$(printf '%s' "${PINT_ARGS}" | tr -d '[:space:]')" ]; then
+        echo "::notice::No changed PHP files under: ${PINT_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping Pint." >&2
+        printf 'has-changes=false\n'
+        exit 0
+    fi
+    echo "Restricting Pint to changed files: ${PINT_ARGS}" >&2
+else
+    PINT_ARGS="$(echo "${PINT_PATHS}" | tr ',' ' ')"
 fi
 
 if [ -n "${PINT_CONFIG}" ]; then
@@ -49,9 +99,9 @@ fi
 
 if [ "${FIX}" = "true" ]; then
     echo "Running Pint in fix mode." >&2
-    # Word splitting is intentional: tr converts commas to spaces so each path becomes a separate argument.
-    # shellcheck disable=SC2046
-    "${PINT_BIN}" --no-interaction "${RULES_FLAG}" -- $(echo "${PINT_PATHS}" | tr ',' ' ') >&2 || true
+    # Word splitting is intentional: PINT_ARGS is a space-separated list of paths/files.
+    # shellcheck disable=SC2046,SC2086
+    "${PINT_BIN}" --no-interaction "${RULES_FLAG}" -- ${PINT_ARGS} >&2 || true
     if git diff --quiet; then
         printf 'has-changes=false\n'
     else
@@ -61,7 +111,7 @@ else
     echo "Running Pint in test mode (no fixes will be applied)." >&2
     exit_code=0
     # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- $(echo "${PINT_PATHS}" | tr ',' ' ') 2> /dev/null \
+    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2> /dev/null \
         | "${REVIEWDOG_BIN}" \
             -f=checkstyle \
             -name="${REVIEWDOG_NAME}" \

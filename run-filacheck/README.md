@@ -26,6 +26,14 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 **Optional.** Only scan files with uncommitted git changes. Defaults to `false`.
 
+### wip
+
+**Optional.** Only scan files changed on the current pull request, relative to its base branch. FilaCheck has no native flag for this (unlike `dirty`), so it is emulated by resolving the changed files and passing that explicit list in place of `path`. Defaults to `false`.
+
+### wip-base-ref
+
+**Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
+
 ### dry-run
 
 **Optional.** Preview fix changes without modifying files. Defaults to `false`.

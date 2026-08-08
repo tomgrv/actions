@@ -26,6 +26,21 @@ inputs:
     description: Baseline file to generate when fix mode is enabled.
     required: false
     default: phpstan-baseline.neon
+  dirty:
+    description: Only analyze files with uncommitted git changes (staged, unstaged, or untracked).
+    required: false
+    default: 'false'
+  wip:
+    description: Only analyze files changed on the current pull request (relative to its base branch).
+    required: false
+    default: 'false'
+  wip-base-ref:
+    description: >-
+      Base branch/ref to diff against when `wip` is enabled. Defaults to
+      `GITHUB_BASE_REF`, which GitHub Actions sets automatically on
+      `pull_request` events.
+    required: false
+    default: ''
   config:
     description: >-
       Path to a custom PHPStan configuration file. Leave empty to let PHPStan
@@ -82,6 +97,9 @@ runs:
         TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
         BASELINE_FILE: ${{ inputs.baseline-file }}
+        DIRTY: ${{ inputs.dirty }}
+        WIP: ${{ inputs.wip }}
+        WIP_BASE_REF: ${{ inputs.wip-base-ref }}
         PHPSTAN_CONFIG: ${{ inputs.config }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}

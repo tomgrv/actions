@@ -30,6 +30,21 @@ inputs:
       otherwise.
     required: false
     default: ''
+  dirty:
+    description: Only analyze files with uncommitted git changes (staged, unstaged, or untracked).
+    required: false
+    default: 'false'
+  wip:
+    description: Only analyze files changed on the current pull request (relative to its base branch).
+    required: false
+    default: 'false'
+  wip-base-ref:
+    description: >-
+      Base branch/ref to diff against when `wip` is enabled. Defaults to
+      `GITHUB_BASE_REF`, which GitHub Actions sets automatically on
+      `pull_request` events.
+    required: false
+    default: ''
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
@@ -79,6 +94,9 @@ runs:
         TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
         PHPINSIGHTS_CONFIG_PATH: ${{ inputs.config-path }}
+        DIRTY: ${{ inputs.dirty }}
+        WIP: ${{ inputs.wip }}
+        WIP_BASE_REF: ${{ inputs.wip-base-ref }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

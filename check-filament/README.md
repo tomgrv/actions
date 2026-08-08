@@ -28,6 +28,14 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 **Optional.** Only scan files with uncommitted git changes. Defaults to `false`.
 
+### wip
+
+**Optional.** Only scan files changed on the current pull request, relative to its base branch. Defaults to `false`.
+
+### wip-base-ref
+
+**Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
+
 ### dry-run
 
 **Optional.** Preview fix changes without modifying files. Defaults to `false`.
