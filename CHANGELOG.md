@@ -2,6 +2,21 @@
 
 # Changelog
 
+## 2.5.0 (2026-08-08)
+
+_Commits from: v2.4.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- add run-deployer composite action (#36) ([56ee1e8](https://github.com/tomgrv/actions/commit/56ee1e88c82c3f4318724eeff383b857b5ed013a))
+
+#### Other changes
+
+- Merge tag 'v2.4.0' into develop ([ecd4152](https://github.com/tomgrv/actions/commit/ecd4152b83a8bb181faad4122d40ae507e472b25))
+- ♻️ update devcontainer ([d070805](https://github.com/tomgrv/actions/commit/d070805f63dcfc9fde226cd9e4791ce3abcfb08a))
+
 ## 2.4.0 (2026-08-07)
 
 _Commits from: v2.3.0..HEAD_
@@ -202,4 +217,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
