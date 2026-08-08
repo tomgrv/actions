@@ -8,7 +8,7 @@ Configures global Git identity and GitHub authentication for bot commits within 
 
 ### github-token
 
-**Required.** GitHub token used for authenticated Git operations.
+**Optional.** GitHub token used for authenticated Git operations. Defaults to `github.token`.
 
 ### github-app-slug
 

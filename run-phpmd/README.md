@@ -8,7 +8,7 @@ Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via rev
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### paths
 

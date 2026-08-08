@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
-    required: true
+    required: false
+    default: ${{ github.token }}
   paths:
     description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`.
     required: false

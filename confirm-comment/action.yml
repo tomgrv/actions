@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token with permission to add reactions.
-    required: true
+    required: false
+    default: ${{ github.token }}
   repository:
     description: Repository in the format "owner/name". Used when comment-url is not provided.
     required: false

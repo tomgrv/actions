@@ -18,7 +18,7 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting, shared by every wrapped check.
+**Optional.** GitHub token for reviewdog reporting, shared by every wrapped check. Defaults to `github.token`.
 
 ### paths
 

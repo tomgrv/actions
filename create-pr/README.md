@@ -8,7 +8,7 @@ Creates a pull request from a branch, or updates the existing open pull request 
 
 ### github-token
 
-**Required.** GitHub token with pull request permissions.
+**Optional.** GitHub token with pull request permissions. Defaults to `github.token`.
 
 ### repository
 

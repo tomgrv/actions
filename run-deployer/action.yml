@@ -43,7 +43,8 @@ inputs:
     default: ''
   github-token:
     description: 'GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.'
-    required: true
+    required: false
+    default: ${{ github.token }}
   reviewdog-version:
     description: 'The version of reviewdog to install.'
     required: false

@@ -8,7 +8,7 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### paths
 

@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token with pull request and contents permissions.
-    required: true
+    required: false
+    default: ${{ github.token }}
   repository:
     description: Repository in the format "owner/name". Defaults to the current repository.
     required: false

@@ -12,7 +12,7 @@ Findings (advisories and abandoned packages) are sorted most severe first and ca
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### name
 
