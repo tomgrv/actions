@@ -48,6 +48,8 @@ npx @tomgrv/actions
 - [**setup-php**](setup-php/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup PHP, Composer, and extensions as per composer for CI jobs.
 - [**setup-node**](setup-node/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup Node.js and npm for CI jobs.
 - [**setup-reviewdog**](setup-reviewdog/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup reviewdog for CI jobs.
+- [**resolve-environment**](resolve-environment/README.md) ![experimental](https://img.shields.io/badge/experimental-orange): Resolve the deploy branch, tag, and environment from the triggering GitHub event.
+- [**run-deployer**](run-deployer/README.md) ![experimental](https://img.shields.io/badge/experimental-orange): Install PHP Deployer and run a `dep` command, reporting warnings/errors via reviewdog.
 
 ### 📦 Monorepo
 

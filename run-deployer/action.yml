@@ -1,0 +1,115 @@
+# @format
+
+# @package tomgrv/actions/run-deployer
+
+name: 'Run PHP Deployer'
+description: 'Setup  & run PHP Deployer'
+author: Perspikapps
+branding:
+  icon: 'check'
+  color: 'blue'
+inputs:
+  version:
+    description: 'The version of Deployer to install. If not specified, the latest version will be used.'
+    required: false
+  dep:
+    description: 'The deployer command to run. If not specified, the default is "deploy".'
+    required: true
+    default: 'deploy'
+  options:
+    description: 'Options to pass to the deployer command.'
+    required: false
+  selector:
+    description: 'The selector to use for the deployer command. If not specified, the default is "all".'
+    required: false
+    default: 'all'
+  environment:
+    description: 'The environment to use for the deployer command. If not specified, the default is determined by git branch.'
+    required: false
+    default: ''
+  branch-scope:
+    description: 'Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.'
+    required: false
+    default: ''
+  ssh-private-key:
+    description: 'SSH private key for deployment'
+    required: true
+  known-hosts:
+    description: 'Known hosts for SSH'
+    required: true
+  ssh-config:
+    description: 'SSH configuration'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.'
+    required: true
+  reviewdog-version:
+    description: 'The version of reviewdog to install.'
+    required: false
+    default: 'v0.20.3'
+outputs:
+  deploy-url:
+    description: 'The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package''s own workflows do via matrix + alias=<host>) to get an unambiguous value.'
+    value: ${{ steps.run.outputs.deploy-url }}
+runs:
+  using: composite
+  steps:
+    - name: Setup PHP toolchain
+      uses: $/setup-php
+      with:
+        options: '--no-dev'
+
+    # Install deployer/deployer globally and add it to the path
+    - name: Install Deployer
+      shell: sh
+      run: |
+        if [ -z "${{ inputs.version }}" ]; then
+          echo "No version specified, installing the latest version of Deployer"
+          composer global require deployer/deployer
+        else
+          echo "Installing Deployer version ${{ inputs.version }}"
+          composer global require deployer/deployer:${{ inputs.version }}
+        fi
+        echo "Adding Deployer to PATH"
+        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
+    - name: Setup reviewdog toolchain
+      uses: $/setup-reviewdog
+      with:
+        version: ${{ inputs.reviewdog-version }}
+
+    # Add the SSH private key to the SSH agent
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh-private-key }}
+        known_hosts: ${{ inputs.known-hosts }}
+        config: ${{ inputs.ssh-config }} # ssh_config; optional
+        if_key_exists: ignore # replace / ignore / fail
+
+    # Delegates all github.event_name/github.ref inspection to a dedicated
+    # action so every trigger (push, PR review, tag, or workflow_dispatch)
+    # is covered by one rule set instead of inline logic here.
+    - name: Resolve deploy target
+      id: target
+      uses: $/resolve-environment
+      with:
+        dep: ${{ inputs.dep }}
+
+    # Run the deployer command. Unconditional: every event type is already
+    # accounted for by the resolve-environment step above.
+    - name: Run Deployer
+      id: run
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+        DEP: ${{ inputs.dep }}
+        OPTIONS: ${{ inputs.options }}
+        SELECTOR: ${{ inputs.selector }}
+        TARGET_BRANCH: ${{ steps.target.outputs.branch }}
+        TARGET_TAG: ${{ steps.target.outputs.tag }}
+        TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
+        BRANCH_SCOPE: ${{ inputs.branch-scope }}
+        ENVIRONMENT: ${{ inputs.environment }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

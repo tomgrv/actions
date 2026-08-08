@@ -1,0 +1,6 @@
+{
+    "name": "run-deployer",
+    "version": "2.5.0",
+    "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
+    "private": true
+}
