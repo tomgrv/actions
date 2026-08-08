@@ -23,9 +23,9 @@ inputs:
     required: false
     default: error
   reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to github-pr-review so recommended version upgrades are posted as applyable suggestions.'
+    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to github-pr-check, which posts a Check annotation for every finding regardless of whether the PR touches the manifest file. github-pr-review posts applyable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment.'
     required: false
-    default: github-pr-review
+    default: github-pr-check
   filter-mode:
     description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
     required: false
