@@ -42,15 +42,23 @@ def clause_upper:
       null
     end;
 
-def find_loc(name; lines):
+def find_locs(name; files):
   ("\"" + (name | rxesc) + "\"\\s*:\\s*\"([^\"]*)\"") as $pat
-  | (
-      lines
-      | to_entries
-      | map({ line: (.key + 1), matches: [.value | match($pat; "")] })
-      | map(select((.matches | length) > 0))
-      | first
-    );
+  | [
+      files
+      | to_entries[]
+      | .key as $path
+      | (.value | rtrimstr("\n") | split("\n")) as $lines
+      | (
+          $lines
+          | to_entries
+          | map({ line: (.key + 1), matches: [.value | match($pat; "")] })
+          | map(select((.matches | length) > 0))
+          | first
+        ) as $loc
+      | select($loc != null)
+      | { path: $path, line: $loc.line, matches: $loc.matches }
+    ];
 
 def recommended_fix(advisories; installed):
   [
@@ -76,7 +84,10 @@ def recommended_fix(advisories; installed):
     };
 
 . as $input
-| ($composerjson | rtrimstr("\n") | split("\n")) as $composerlines
+# $filesJsonArr: [{ "<path relative to repo root>": "<raw file content>" }]
+# for composer.json plus every local path-repository package's composer.json,
+# so requirements declared in a path repo (not just the root manifest) are found.
+| (($filesJsonArr // [{}])[0] // {}) as $files
 | ($locked // {}) as $locked
 | (
     ($input.advisories // {})
@@ -92,88 +103,104 @@ def recommended_fix(advisories; installed):
             else "INFO"
             end
           ) as $severity
-        | find_loc($name; $composerlines) as $loc
         | (
-            if $loc then
-              {
-                path: "composer.json",
-                range: {
-                  start: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + 1) },
-                  end: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + $loc.matches[0].captures[0].length + 1) }
-                }
-              }
-            else
-              {
-                path: "composer.json",
-                range: { start: { line: 1, column: 1 } }
-              }
-            end
-          ) as $location
-        | {
-            message: (
-              $name + (if $installed then " " + $installed else "" end) + "\n"
-              + (
-                  $advisories
-                  | map(
-                      .title
-                      + (if .cve then " (" + .cve + ")" else "" end)
-                      + (if .link then "\n" + .link else "" end)
-                    )
-                  | join("\n")
-                ) + "\n"
-              + "Severity: " + $severity + "\n"
-              + (
-                  if $fix.version then
-                    "Recommended fix: upgrade " + $name + " to ^" + $fix.version
-                    + (if $fix.hasOpenEnded then " (verify against the open-ended advisory range above; a newer release may still be required)" else "" end)
-                  elif $fix.hasOpenEnded then
-                    "No upper-bound fix version is published yet for this advisory; check the advisory link and consider a manual upgrade or replacement."
-                  elif $installed then
-                    "Could not determine a recommended fix version automatically; check the advisory link(s) above."
-                  else
-                    "Package is not present in composer.lock; could not determine installed version or a recommended fix."
-                  end
+            $name + (if $installed then " " + $installed else "" end) + "\n"
+            + (
+                $advisories
+                | map(
+                    .title
+                    + (if .cve then " (" + .cve + ")" else "" end)
+                    + (if .link then "\n" + .link else "" end)
+                  )
+                | join("\n")
+              ) + "\n"
+            + "Severity: " + $severity + "\n"
+            + (
+                if $fix.version then
+                  "Recommended fix: upgrade " + $name + " to ^" + $fix.version
+                  + (if $fix.hasOpenEnded then " (verify against the open-ended advisory range above; a newer release may still be required)" else "" end)
+                elif $fix.hasOpenEnded then
+                  "No upper-bound fix version is published yet for this advisory; check the advisory link and consider a manual upgrade or replacement."
+                elif $installed then
+                  "Could not determine a recommended fix version automatically; check the advisory link(s) above."
+                else
+                  "Package is not present in composer.lock; could not determine installed version or a recommended fix."
+                end
+              )
+          ) as $message
+        | find_locs($name; $files) as $locs
+        | (
+            if ($locs | length) > 0 then
+              $locs
+              | map(
+                  . as $loc
+                  | {
+                      path: $loc.path,
+                      range: {
+                        start: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + 1) },
+                        end: { line: $loc.line, column: ($loc.matches[0].captures[0].offset + $loc.matches[0].captures[0].length + 1) }
+                      }
+                    }
+                  | {
+                      message: $message,
+                      severity: $severity,
+                      location: .
+                    }
+                    + (
+                        if $fix.version then
+                          { suggestions: [ { range: .range, text: ("^" + $fix.version) } ] }
+                        else
+                          {}
+                        end
+                      )
                 )
-            ),
-            severity: $severity,
-            location: $location
-          }
-          + (
-              if $loc and $fix.version then
-                { suggestions: [ { range: $location.range, text: ("^" + $fix.version) } ] }
-              else
-                {}
-              end
-            )
+            else
+              [
+                {
+                  message: $message,
+                  severity: $severity,
+                  location: { path: "composer.json", range: { start: { line: 1, column: 1 } } }
+                }
+              ]
+            end
+          )
       )
+    | flatten(1)
   ) as $advisoryDiagnostics
 | (
     ($input.abandoned // {})
     | to_entries
     | map(
         .key as $name
-        | find_loc($name; $composerlines) as $loc
-        | {
-            message: (
-              $name + " is abandoned"
-              + (if .value then ", use " + .value + " instead" else "" end)
-            ),
-            severity: "WARNING",
-            location: (
-              if $loc then
+        | find_locs($name; $files) as $locs
+        | (
+            if ($locs | length) > 0 then
+              $locs
+              | map(
+                  {
+                    message: (
+                      $name + " is abandoned"
+                      + (if $input.abandoned[$name] then ", use " + $input.abandoned[$name] + " instead" else "" end)
+                    ),
+                    severity: "WARNING",
+                    location: { path: .path, range: { start: { line: .line, column: 1 } } }
+                  }
+                )
+            else
+              [
                 {
-                  path: "composer.json",
-                  range: { start: { line: $loc.line, column: 1 } }
+                  message: (
+                    $name + " is abandoned"
+                    + (if $input.abandoned[$name] then ", use " + $input.abandoned[$name] + " instead" else "" end)
+                  ),
+                  severity: "WARNING",
+                  location: { path: "composer.json", range: { start: { line: 1, column: 1 } } }
                 }
-              else
-                {
-                  path: "composer.json",
-                  range: { start: { line: 1, column: 1 } }
-                }
-              end
-            )
-          }
+              ]
+            end
+          )
       )
+    | flatten(1)
   ) as $abandonedDiagnostics
 | ($advisoryDiagnostics + $abandonedDiagnostics) as $allDiagnostics
 | (
