@@ -1,0 +1,214 @@
+# @format
+
+# @package tomgrv/actions/run-deployer
+
+name: 'Run PHP Deployer'
+description: 'Setup  & run PHP Deployer'
+author: Perspikapps
+branding:
+  icon: 'check'
+  color: 'blue'
+inputs:
+  version:
+    description: 'The version of Deployer to install. If not specified, the latest version will be used.'
+    required: false
+  dep:
+    description: 'The deployer command to run. If not specified, the default is "deploy".'
+    required: true
+    default: 'deploy'
+  options:
+    description: 'Options to pass to the deployer command.'
+    required: false
+  selector:
+    description: 'The selector to use for the deployer command. If not specified, the default is "all".'
+    required: false
+    default: 'all'
+  environment:
+    description: 'The environment to use for the deployer command. If not specified, the default is determined by git branch.'
+    required: false
+    default: ''
+  branch-scope:
+    description: 'Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.'
+    required: false
+    default: ''
+  ssh-private-key:
+    description: 'SSH private key for deployment'
+    required: true
+  known-hosts:
+    description: 'Known hosts for SSH'
+    required: true
+    default: ''
+  ssh-config:
+    description: 'SSH configuration'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.'
+    required: true
+  reviewdog-version:
+    description: 'The version of reviewdog to install.'
+    required: false
+    default: 'v0.20.3'
+outputs:
+  deploy-url:
+    description: 'The deployed URL (https://<alias>), captured from the deploy:report_url marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package''s own workflows do via matrix + alias=<host>) to get an unambiguous value.'
+    value: ${{ steps.run.outputs.deploy-url }}
+runs:
+  using: composite
+  steps:
+    # Delegates PHP-version/extension detection, shivammathur/setup-php, and
+    # ramsey/composer-install to tomgrv/actions, so this action stays
+    # self-sufficient (no caller-side setup assumed) without duplicating that
+    # logic: https://github.com/tomgrv/actions/tree/main/setup-php
+    - name: Setup PHP & Composer Dependencies
+      uses: tomgrv/actions/setup-php@v0
+      with:
+        options: '--no-dev'
+
+    # Install deployer/deployer globally and add it to the path
+    - name: Install Deployer
+      shell: sh
+      run: |
+        if [ -z "${{ inputs.version }}" ]; then
+          echo "No version specified, installing the latest version of Deployer"
+          composer global require deployer/deployer
+        else
+          echo "Installing Deployer version ${{ inputs.version }}"
+          composer global require deployer/deployer:${{ inputs.version }}
+        fi
+        echo "Adding Deployer to PATH"
+        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
+    # Install reviewdog so Deployer warnings/errors can be reported as check annotations
+    - name: Set up reviewdog
+      uses: tomgrv/actions/setup-reviewdog@v0
+      with:
+        version: ${{ inputs.reviewdog-version }}
+
+    # Add the SSH private key to the SSH agent
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh-private-key }}
+        known_hosts: ${{ inputs.known-hosts }}
+        config: ${{ inputs.ssh-config }} # ssh_config; optional
+        if_key_exists: ignore # replace / ignore / fail
+
+    # Resolve what to check out (--branch/--tag) and the environment fallback
+    # from the triggering event. This is intentionally the ONLY place that
+    # inspects github.event_name/github.ref, so every trigger (push, PR
+    # review, tag, or workflow_dispatch/unlock with no matching ref) is
+    # covered by a single, always-executed "Run Deployer" step below —
+    # instead of several mutually-exclusive `if:` steps that silently run
+    # nothing at all when none of them match (as happened previously for
+    # `main` pushes and for workflow_dispatch-triggered runs like unlock).
+    - name: Resolve deploy target
+      id: target
+      shell: sh
+      run: |
+        branch=""
+        tag=""
+        env=""
+
+        if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" = "review_requested" ]; then
+          # PR review requested → deploy the exact reviewed commit to the unstable environment.
+          # NOTE: github.sha is NOT the PR's head commit for pull_request events - GitHub sets
+          # it to an ephemeral auto-generated merge commit (refs/pull/<n>/merge) that a normal
+          # mirror clone never fetches, so `git archive` on it fails with "not a tree object".
+          # pull_request.head.sha is the actual head commit, reachable via the branch's own ref.
+          branch="${{ github.event.pull_request.head.sha }}"
+          env="unstable"
+        elif [ "${{ startsWith(github.ref, 'refs/heads/release') }}" = "true" ]; then
+          branch="${{ github.ref_name }}"
+          env="staging"
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          branch="${{ github.ref_name }}"
+          env="production"
+        elif [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ] && [ "${{ contains(github.ref_name, '-') }}" = "true" ]; then
+          tag="${{ github.ref_name }}"
+          env="staging"
+        elif [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
+          tag="${{ github.ref_name }}"
+          env="production"
+        elif [ "${{ inputs.dep }}" = "deploy" ]; then
+          # Fallback for any other branch push, or a workflow_dispatch run
+          # against a specific branch (e.g. an MCP-triggered on-demand
+          # deploy): deploy whatever ref the workflow itself ran on. No
+          # environment guess is made here — the caller must supply one via
+          # the `environment` input.
+          case "${{ github.ref }}" in
+            refs/heads/*) branch="${{ github.ref_name }}" ;;
+          esac
+        fi
+
+        echo "branch=$branch" >> $GITHUB_OUTPUT
+        echo "tag=$tag" >> $GITHUB_OUTPUT
+        echo "env=$env" >> $GITHUB_OUTPUT
+
+    # Run the deployer command. Unconditional: every event type is already
+    # accounted for by the resolution step above.
+    - name: Run Deployer
+      id: run
+      shell: sh
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
+      run: |
+        set -eu
+
+        args="${{ inputs.dep }} ${{ inputs.options }}"
+
+        if [ -n "${{ steps.target.outputs.branch }}" ]; then
+          args="$args --branch=${{ steps.target.outputs.branch }}"
+        fi
+        if [ -n "${{ steps.target.outputs.tag }}" ]; then
+          args="$args --tag=${{ steps.target.outputs.tag }}"
+        fi
+        if [ -n "${{ inputs.branch-scope }}" ]; then
+          args="$args --branch-scope=${{ inputs.branch-scope }}"
+        fi
+
+        environment="${{ inputs.environment }}"
+        if [ -z "$environment" ]; then
+          environment="${{ steps.target.outputs.env }}"
+        fi
+
+        # Callers backslash-escape '&' in their selector inputs (e.g.
+        # "alias=host\&all") so GitHub Actions/YAML don't mangle it before it
+        # reaches this shell. Normalize it back to a plain '&' here rather
+        # than relying on the caller leaving the value unquoted for us -
+        # quoting below is otherwise correct and safer.
+        selector="${{ inputs.selector || 'all' }}"
+        selector=$(printf '%s' "$selector" | sed 's/\\&/\&/g')
+        if [ -n "$environment" ]; then
+          selector="$selector&env=$environment"
+        fi
+
+        echo "Running Deployer command: $args -- $selector"
+
+        # Redirect (not pipe) to a log file so `dep`'s own exit status is
+        # captured directly and portably (no bash-only pipefail needed),
+        # then replay the log so it still appears in the job output.
+        log_file=$(mktemp)
+        set +e
+        $HOME/.composer/vendor/bin/dep $args -- "$selector" >"$log_file" 2>&1
+        status=$?
+        set -e
+
+        cat "$log_file"
+
+        # Report Deployer warnings/errors as reviewdog check annotations. Best-effort:
+        # never let reviewdog's own outcome affect the step's exit status below.
+        jq -R -s -f "${{ github.action_path }}/rdjson.jq" <"$log_file" | \
+          reviewdog \
+            -f=rdjson \
+            -name="deployer" \
+            -reporter=${REVIEWDOG_REPORTER:-github-check} \
+            -filter-mode=nofilter \
+            -fail-level=none >&2 || true
+
+        url=$(grep -o '##KLICK_DEPLOY_URL##.*' "$log_file" | tail -n1 | sed 's/##KLICK_DEPLOY_URL##//')
+        if [ -n "$url" ]; then
+          echo "deploy-url=$url" >> "$GITHUB_OUTPUT"
+        fi
+
+        exit $status

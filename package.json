@@ -39,7 +39,8 @@
         "setup-node/*",
         "setup-reviewdog/*",
         "check-filament/*",
-        "check-laravel/*"
+        "check-laravel/*",
+        "run-deployer/*"
     ],
     "bin": {
         "actions": "./dispatch.sh"
