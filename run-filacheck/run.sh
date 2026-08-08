@@ -57,7 +57,7 @@ else
     FILACHECK_TARGET="${FILACHECK_PATH}"
 fi
 
-echo "Running FilaCheck on: ${FILACHECK_PATH}" >&2
+echo "Running FilaCheck on: ${FILACHECK_TARGET}" >&2
 
 filacheck_args=""
 if [ "${FIX}" = "true" ]; then
