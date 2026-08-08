@@ -63,15 +63,6 @@ runs:
         coverage: xdebug
         tools: ${{ inputs.tools }}
 
-    # Global package installs are per-caller, not per-job: even when the PHP/Composer
-    # setup above is skipped as a duplicate, a different action embedding setup-php may
-    # still need its own global tool installed, so this always runs.
-    - name: Install global Composer requirements
-      shell: sh
-      env:
-        REQUIRE: ${{ inputs.require }}
-      run: sh "${{ github.action_path }}/require.sh"
-
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install
@@ -81,6 +72,17 @@ runs:
       if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
+
+    # Global package installs are per-caller, not per-job: even when the PHP/Composer
+    # setup above is skipped as a duplicate, a different action embedding setup-php may
+    # still need its own global tool installed, so this always runs. Runs after the
+    # project's own `composer install` so require.sh can skip packages already present
+    # locally in vendor/, avoiding a redundant (and slower) global install.
+    - name: Install global Composer requirements
+      shell: sh
+      env:
+        REQUIRE: ${{ inputs.require }}
+      run: sh "${{ github.action_path }}/require.sh"
 
     - name: Mark PHP toolchain as ready
       if: env.TOMGRV_PHP_SETUP != 'true'

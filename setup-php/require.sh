@@ -19,6 +19,11 @@ for pkg in ${REQUIRE}; do
 
     pkg_name="${pkg%%:*}"
 
+    if [ -f composer.json ] && composer show "${pkg_name}" > /dev/null 2>&1; then
+        echo "::notice::${pkg_name} is already installed locally in vendor/, skipping global install" >&2
+        continue
+    fi
+
     if composer global show "${pkg_name}" > /dev/null 2>&1; then
         echo "::notice::${pkg_name} is already installed globally, skipping" >&2
         continue

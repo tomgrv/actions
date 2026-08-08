@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR FilaCheck
 
-Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `filacheck` itself is installed globally via `setup-php`'s `require` input (`laraveldaily/filacheck`), unless already installed globally; a project-local `vendor/bin/filacheck` (e.g. from a `composer.json` dev dependency) still takes precedence at run time.
+Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `filacheck` itself is installed globally via `setup-php`'s `require` input (`laraveldaily/filacheck`), unless already required locally in `composer.json` (and thus in `vendor/`) or already installed globally.
 
 ## Inputs
 

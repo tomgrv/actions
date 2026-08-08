@@ -18,7 +18,7 @@ Every PHP-based action in this repository (`run-phpstan`, `run-pint`, `run-phpin
 
 ### require
 
-**Optional.** Comma-separated Composer packages to install globally (`composer global require`), each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`). Runs on every invocation of this action within a job, even when the PHP/Composer setup itself was skipped as an already-ran duplicate, since a different caller may need a different global package. Packages already installed globally are skipped. Defaults to none.
+**Optional.** Comma-separated Composer packages to install globally (`composer global require`), each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`). Runs after `composer install`, on every invocation of this action within a job, even when the PHP/Composer setup itself was skipped as an already-ran duplicate, since a different caller may need a different global package. A package already present in the project's own `vendor/` (via `composer.json`), or already installed globally, is skipped. Defaults to none.
 
 ## Outputs
 
