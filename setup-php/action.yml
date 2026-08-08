@@ -41,6 +41,7 @@ runs:
   steps:
     - name: Extract PHP version from composer.json
       id: php-version
+      if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       shell: sh
       run: |
         version=$(jq -r '.require.php // empty' composer.json | sed 's/[^0-9.]//g' | cut -d. -f1,2)
@@ -48,6 +49,7 @@ runs:
 
     - name: Extract php extensions from composer.json
       id: php-extensions
+      if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       shell: sh
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
 
