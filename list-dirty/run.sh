@@ -14,8 +14,12 @@ if [ "${LIST_PATHS}" = "." ]; then
     echo "::notice::path not set, using default: ." >&2
 fi
 
-_base_regex="^($(printf '%s' "${LIST_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
-_ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))\$"
+if [ "${LIST_PATHS}" = "." ]; then
+    _base_regex="."
+else
+    _base_regex="^($(printf '%s' "${LIST_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))(/|$)"
+fi
+_ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))\$"
 
 echo "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})" >&2
 
