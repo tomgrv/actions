@@ -26,8 +26,12 @@ fi
 git fetch --depth=1 origin "${LIST_BASE_REF}" > /dev/null 2>&1 || true
 MERGE_BASE="$(git merge-base "origin/${LIST_BASE_REF}" HEAD 2> /dev/null || echo "${LIST_BASE_REF}")"
 
-_base_regex="^($(printf '%s' "${LIST_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))(/|$)"
-_ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g'))\$"
+if [ "${LIST_PATHS}" = "." ]; then
+    _base_regex="."
+else
+    _base_regex="^($(printf '%s' "${LIST_PATHS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))(/|$)"
+fi
+_ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))\$"
 
 echo "Listing files changed since ${LIST_BASE_REF} (merge-base ${MERGE_BASE}) under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})" >&2
 
