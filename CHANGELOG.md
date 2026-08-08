@@ -2,6 +2,26 @@
 
 # Changelog
 
+## 2.6.0 (2026-08-08)
+
+_Commits from: v2.5.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- scope git auth header to degit-package clone, not global config (#40) ([cff6ba8](https://github.com/tomgrv/actions/commit/cff6ba80e57772fd802bcde03b86ded1a4960de4))
+
+#### Features
+
+- default github-token input to github.token across actions (#38) ([940053b](https://github.com/tomgrv/actions/commit/940053bc9fbeff129be8e7de7de06ca7e92d7733))
+- ✨ move global php tool installs into setup-php's require.sh (#37) ([1a010a2](https://github.com/tomgrv/actions/commit/1a010a26354f3515716f78614da846f0f7ce61dc))
+
+#### Other changes
+
+- Merge tag 'v2.5.0' into develop ([b6600c2](https://github.com/tomgrv/actions/commit/b6600c2a26eb523b01d08dacb57d65c19890e61e))
+- 🔧 update devcontainer ([b4749f0](https://github.com/tomgrv/actions/commit/b4749f095d8237884b072a61e841ff60aeed2ffe))
+
 ## 2.5.0 (2026-08-08)
 
 _Commits from: v2.4.0..HEAD_

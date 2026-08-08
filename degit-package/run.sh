@@ -28,12 +28,19 @@ fi
 
 SOURCE_URL="https://github.com/${SOURCE_ORG}/${SOURCE_NAME}.git"
 
+BASIC_CREDENTIAL=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+AUTH_HEADER="AUTHORIZATION: basic ${BASIC_CREDENTIAL}"
+
 WORKDIR=$(mktemp -d)
 git config --global --add safe.directory "${WORKDIR}" >/dev/null 2>&1 || true
 
 echo "Cloning ${SOURCE_URL}/tree/${SOURCE_BRANCH} to temporary directory..." >&2
 
-if ! git clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
+# Pass the auth header scoped to this single invocation (-c) instead of
+# writing it to global git config: a global http.extraheader would still be
+# active for later steps in the job (e.g. actions/checkout's push), causing
+# git to send two Authorization headers and get rejected.
+if ! git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
     echo "::error::Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access." >&2
     exit 1
 fi

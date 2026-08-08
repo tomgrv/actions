@@ -43,7 +43,8 @@ inputs:
     default: ''
   github-token:
     description: 'GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.'
-    required: true
+    required: false
+    default: ${{ github.token }}
   reviewdog-version:
     description: 'The version of reviewdog to install.'
     required: false
@@ -55,24 +56,12 @@ outputs:
 runs:
   using: composite
   steps:
+    # Installs deployer/deployer globally (via setup-php's require.sh) and adds it to PATH.
     - name: Setup PHP toolchain
       uses: $/setup-php
       with:
         options: '--no-dev'
-
-    # Install deployer/deployer globally and add it to the path
-    - name: Install Deployer
-      shell: sh
-      run: |
-        if [ -z "${{ inputs.version }}" ]; then
-          echo "No version specified, installing the latest version of Deployer"
-          composer global require deployer/deployer
-        else
-          echo "Installing Deployer version ${{ inputs.version }}"
-          composer global require deployer/deployer:${{ inputs.version }}
-        fi
-        echo "Adding Deployer to PATH"
-        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+        require: deployer/deployer${{ inputs.version && format(':{0}', inputs.version) || '' }}
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

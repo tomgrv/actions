@@ -16,7 +16,7 @@ This action creates or updates GitHub repository labels from a JSON file (`.gith
 
 ### github-token
 
-**Required.** GitHub token with repository permissions.
+**Optional.** GitHub token with repository permissions. Defaults to `github.token`.
 
 ### repository
 

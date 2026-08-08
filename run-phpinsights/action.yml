@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
-    required: true
+    required: false
+    default: ${{ github.token }}
   paths:
     description: Paths to analyze with PHP Insights, comma-separated. Defaults to `app`.
     required: false
@@ -64,6 +65,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: nunomaduro/phpinsights
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

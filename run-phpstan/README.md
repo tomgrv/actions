@@ -2,13 +2,13 @@
 
 # GitHub Action: Validate PR PHPStan
 
-Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpstan` itself must be available either in `vendor/bin` or the global `PATH`.
+Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. Can also run in **fix mode** to generate or update a PHPStan baseline file. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpstan` itself is installed globally via `setup-php`'s `require` input (`phpstan/phpstan`), unless already required locally in `composer.json` (and thus in `vendor/`) or already installed globally.
 
 ## Inputs
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### paths
 

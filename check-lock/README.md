@@ -21,7 +21,7 @@ This catches the case where a pull request edits a manifest but forgets to regen
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### paths
 

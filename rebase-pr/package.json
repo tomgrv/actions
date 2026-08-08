@@ -1,5 +1,6 @@
 {
     "name": "rebase-pr",
-    "private": true,
-    "description": "Rebase the current pull request branch onto its base branch."
+    "version": "2.6.0",
+    "description": "Rebase the current pull request branch onto its base branch.",
+    "private": true
 }

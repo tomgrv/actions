@@ -8,7 +8,7 @@ Validates and optionally normalizes pull request title format against the Conven
 
 ### github-token
 
-**Optional.** GitHub token used to update the PR title when normalization is needed.
+**Optional.** GitHub token used to update the PR title when normalization is needed. Defaults to `github.token`.
 
 ## Outputs
 

@@ -12,7 +12,7 @@ Findings are sorted most severe first and capped at `max-diagnostics` (default `
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting.
+**Optional.** GitHub token for reviewdog reporting. Defaults to `github.token`.
 
 ### name
 

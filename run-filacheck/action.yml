@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
-    required: true
+    required: false
+    default: ${{ github.token }}
   path:
     description: Path to analyze with FilaCheck. Defaults to `app/Filament`.
     required: false
@@ -72,6 +73,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: laraveldaily/filacheck
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

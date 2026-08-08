@@ -12,7 +12,8 @@ branding:
 inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
-    required: true
+    required: false
+    default: ${{ github.token }}
   name:
     description: Name reported by reviewdog to identify this check.
     required: false

@@ -16,6 +16,10 @@ Every PHP-based action in this repository (`run-phpstan`, `run-pint`, `run-phpin
 
 **Optional.** Comma-separated tools to install with `shivammathur/setup-php`, such as `reviewdog,phpstan,phpmd`. Defaults to none.
 
+### require
+
+**Optional.** Comma-separated Composer packages to install globally (`composer global require`), each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`). Runs after `composer install`, on every invocation of this action within a job, even when the PHP/Composer setup itself was skipped as an already-ran duplicate, since a different caller may need a different global package. A package already present in the project's own `vendor/` (via `composer.json`), or already installed globally, is skipped. Defaults to none.
+
 ## Outputs
 
 - `php-version`: Detected PHP version from `composer.json`, or the default (`8.3`).

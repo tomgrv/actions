@@ -6,7 +6,7 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 
 ## What It Does
 
-- Sets up PHP/Composer via [`setup-php`](../setup-php/README.md), installs `deployer/deployer`, and adds it to `PATH`.
+- Sets up PHP/Composer via [`setup-php`](../setup-php/README.md), which globally installs `deployer/deployer` (via its `require` input) and adds it to `PATH`.
 - Installs reviewdog via [`setup-reviewdog`](../setup-reviewdog/README.md).
 - Installs the SSH key used to reach the deploy target.
 - Resolves `--branch`/`--tag` and the environment via [`resolve-environment`](../resolve-environment/README.md).
@@ -53,7 +53,7 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 
 ### github-token
 
-**Required.** GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.
+**Optional.** GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations. Defaults to `github.token`.
 
 ### reviewdog-version
 
