@@ -4,7 +4,7 @@
 
 Runs `npm audit` against the project's npm dependencies and reports findings inline via reviewdog. Node.js and npm are set up automatically via [**setup-node**](../setup-node/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job.
 
-Each vulnerable dependency is reported once, combining all of its advisories. For direct dependencies where npm knows a non-breaking fix (`fixAvailable`), the finding is posted as a review on `package.json` with a suggested version bump you can apply directly from the GitHub UI.
+Each vulnerable dependency is reported once per manifest it's directly declared in, combining all of its advisories. For direct dependencies where npm knows a non-breaking fix (`fixAvailable`), the finding is posted as a review on the owning `package.json` (the root manifest, or the relevant npm workspace member's manifest) with a suggested version bump you can apply directly from the GitHub UI.
 
 Findings are sorted most severe first and capped at `max-diagnostics` (default `40`); any remainder is rolled up into a single summary diagnostic so the check stays within GitHub's per-step/per-job annotation limits.
 
