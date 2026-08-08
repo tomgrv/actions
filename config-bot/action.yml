@@ -43,7 +43,6 @@ runs:
       id: configure-bot
       shell: sh
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
         BOT_NAME: ${{ inputs.github-app-slug }}[bot]
         BOT_EMAIL: ${{ steps.get-user-id.outputs.user_id || '341898282' }}+${{ inputs.github-app-slug || 'github-actions' }}[bot]@users.noreply.github.com
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
