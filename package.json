@@ -1,6 +1,6 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.5.0",
+    "version": "0.0.1",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
     "keywords": [
         "github-actions",
@@ -15,213 +15,31 @@
     "license": "MIT",
     "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
     "files": [
-        "dispatch.sh",
-        "setup-php/*",
-        "config-bot/*",
-        "degit-package/*",
-        "create-pr/*",
-        "split-package/*",
-        "check-pr-format/*",
-        "run-phpmd/*",
-        "run-phpinsights/*",
-        "run-filacheck/*",
-        "run-phpstan/*",
-        "run-phptests/*",
-        "run-pint/*",
-        "check-secret/*",
-        "check-security-composer/*",
-        "check-security-npm/*",
-        "check-lock/*",
-        "update-labels/*",
-        "detect-changes/*",
-        "list-packages/*",
-        "rebase-pr/*",
-        "setup-node/*",
-        "setup-reviewdog/*",
-        "check-filament/*",
-        "check-laravel/*",
-        "run-deployer/*",
-        "resolve-environment/*"
+        "setup-php",
+        "config-bot",
+        "degit-package",
+        "create-pr",
+        "split-package",
+        "check-composer",
+        "check-pr-format",
+        "run-phpmd",
+        "run-phpinsights",
+        "run-phpstan",
+        "run-phptests",
+        "run-pint",
+        "check-secret",
+        "check-security-composer",
+        "check-security-npm",
+        "run-deployer",
+        "setup-reviewdog"
     ],
-    "bin": {
-        "actions": "./dispatch.sh"
-    },
     "repository": {
         "type": "git",
         "url": "https://github.com/tomgrv/actions"
     },
     "scripts": {
         "lint": "npx --yes lint-staged",
-        "release": "npx --yes commit-and-tag-version --no-verify --",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "update": "npx --yes npm-check-updates -i -u",
-        "update-all": "npm run update -w --root"
-    },
-    "config": {
-        "commitizen": {
-            "path": "@commitlint/cz-commitlint"
-        }
-    },
-    "devDependencies": {
-        "npm-check-updates": "*"
-    },
-    "peerDependencies": {
-        "@commitlint/cli": "*",
-        "@commitlint/config-conventional": "*",
-        "@commitlint/core": "*",
-        "@commitlint/cz-commitlint": "*",
-        "commitizen": "*",
-        "git-precommit-checks": "*",
-        "prettier": "*",
-        "prettier-plugin-sh": "*"
-    },
-    "private": true,
-    "workspaces": [
-        "check-filament",
-        "check-laravel",
-        "check-lock",
-        "check-pr-format",
-        "check-secret",
-        "check-security-composer",
-        "check-security-npm",
-        "config-bot",
-        "create-pr",
-        "degit-package",
-        "detect-changes",
-        "list-packages",
-        "rebase-pr",
-        "resolve-environment",
-        "run-deployer",
-        "run-phpinsights",
-        "run-filacheck",
-        "run-phpmd",
-        "run-phpstan",
-        "run-phptests",
-        "run-pint",
-        "setup-node",
-        "setup-php",
-        "setup-reviewdog",
-        "split-package",
-        "update-labels"
-    ],
-    "prettier": {
-        "insertPragma": true,
-        "overrides": [
-            {
-                "files": "*.json",
-                "options": {
-                    "tabWidth": 4,
-                    "useTabs": false
-                }
-            },
-            {
-                "files": "*.yml",
-                "options": {
-                    "tabWidth": 2,
-                    "useTabs": false
-                }
-            },
-            {
-                "files": "*.yml",
-                "options": {
-                    "tabWidth": 2,
-                    "useTabs": true
-                }
-            }
-        ],
-        "plugins": [
-            "prettier-plugin-sh"
-        ],
-        "semi": false,
-        "singleQuote": true,
-        "tabWidth": 4,
-        "trailingComma": "es5"
-    },
-    "bump-changelog": {
-        "types": [
-            {
-                "type": "fix",
-                "section": "Bug Fixes"
-            },
-            {
-                "type": "feat",
-                "section": "Features"
-            }
-        ]
-    },
-    "bump-version": {
-        "files": [
-            {
-                "filename": "VERSION",
-                "type": "plain-text"
-            },
-            {
-                "filename": "composer.json",
-                "type": "json"
-            },
-            {
-                "filename": "devcontainer-feature.json",
-                "type": "json@ws"
-            },
-            {
-                "filename": "package.json",
-                "type": "json"
-            },
-            {
-                "filename": "package.json",
-                "type": "json@ws"
-            }
-        ]
-    },
-    "commit-and-tag-version": {
-        "scripts": {
-            "prebump": "gitversion -config .gitversion -showvariable SemVer"
-        }
-    },
-    "commitlint": {
-        "extends": [
-            "@commitlint/config-conventional",
-            "@commitlint/config-workspace-scopes"
-        ],
-        "rules": {
-            "subject-case": [
-                2,
-                "never",
-                [
-                    "start-case",
-                    "pascal-case",
-                    "upper-case"
-                ]
-            ]
-        }
-    },
-    "git-precommit-checks": {
-        "rules": [
-            {
-                "filter": "(^package\\.json|\\.git-precommit-checks.json)$",
-                "message": "You have unfinished devs",
-                "nonBlocking": "true",
-                "regex": "(?:FIXME|TODO)"
-            },
-            {
-                "message": "You've got leftover conflict markers",
-                "regex": "/^[<>|=]{4,}/m"
-            }
-        ]
-    },
-    "lint-staged": {
-        "!(*schema).json": [
-            "normalize-json -c -w -a -i -t 4 -f local -l true"
-        ],
-        "!(templates/**/*).{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
-            "npx --yes prettier --write"
-        ],
-        "*.php": [
-            "composer lint"
-        ]
-    },
-    "validate-branch-name": {
-        "errorMsg": "Cannot push to a branch that does not follow the naming convention.",
-        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release)/.+$"
+        "update": "npx --yes npm-check-updates -i -u"
     }
 }

@@ -1,0 +1,49 @@
+# @format
+
+# @package tomgrv/actions/create-pr-comment
+
+name: Create PR Comment
+description: Create or update a pull request comment, keyed by a stable marker so repeated calls edit the same comment instead of creating duplicates.
+author: Perspikapps
+branding:
+  icon: message-square
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token with pull-requests write permission.
+    required: true
+  pr-number:
+    description: Pull request number to comment on.
+    required: true
+  key:
+    description: Stable key identifying this comment. Reused calls with the same key update the same comment instead of creating a new one.
+    required: true
+  body:
+    description: Markdown body of the comment.
+    required: true
+
+outputs:
+  action:
+    description: Whether the comment was "created" or "updated".
+    value: ${{ steps.create-pr-comment.outputs.action }}
+  comment-id:
+    description: ID of the created or updated comment.
+    value: ${{ steps.create-pr-comment.outputs.comment-id }}
+  comment-url:
+    description: HTML URL of the created or updated comment.
+    value: ${{ steps.create-pr-comment.outputs.comment-url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create or update PR comment
+      id: create-pr-comment
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        KEY: ${{ inputs.key }}
+        BODY: ${{ inputs.body }}
+        REPO: ${{ github.repository }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

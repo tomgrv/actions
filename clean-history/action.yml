@@ -1,0 +1,40 @@
+# @format
+
+# @package tomgrv/actions/clean-history
+
+name: Clean Workflow History
+description: Remove old workflow run history, keeping at least a minimum number of days and runs per workflow.
+author: Perspikapps
+branding:
+  icon: trash-2
+  color: red
+
+inputs:
+  github-token:
+    description: GitHub token with actions:read and actions:write permissions.
+    required: true
+  min-days:
+    description: Minimum number of complete days of history to keep per workflow.
+    required: false
+    default: '10'
+  min-runs:
+    description: Minimum number of most-recent runs to keep per workflow, regardless of age.
+    required: false
+    default: '10'
+  workflows:
+    description: Comma-separated list of workflow file names to clean (e.g. deploy.yml,clean.yml). Defaults to all workflows in the repository.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Clean workflow run history
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        MIN_DAYS: ${{ inputs.min-days }}
+        MIN_RUNS: ${{ inputs.min-runs }}
+        WORKFLOWS: ${{ inputs.workflows }}
+        REPO: ${{ github.repository }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

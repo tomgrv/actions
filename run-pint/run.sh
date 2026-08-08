@@ -3,73 +3,36 @@
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
-    cd "${GITHUB_WORKSPACE}" || exit 1
-    git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
+  cd "${GITHUB_WORKSPACE}" || exit 1
+  git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
-
-PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
-PINT_BIN="pint"
-REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-        exit 1
-    fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+  export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
-FIX="${FIX:-false}"
-PINT_PATHS="${PINT_PATHS:-${1:-app}}"
-PINT_PRESET="${PINT_PRESET:-laravel}"
-PINT_CONFIG="${PINT_CONFIG:-}"
-REVIEWDOG_NAME="${REVIEWDOG_NAME:-pint}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
-REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
-REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
-REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
+TARGET_PATHS="${1:-app}"
 
-if [ "${PINT_PATHS}" = "app" ]; then
-    echo "::notice::PINT_PATHS not set, using default: app" >&2
-fi
+echo "Running Pint analysis on: ${TARGET_PATHS}" >&2
 
-if [ -n "${PINT_CONFIG}" ]; then
-    if [ ! -f "${PINT_CONFIG}" ]; then
-        echo "::error::config file not found: ${PINT_CONFIG}" >&2
-        exit 1
-    fi
-    echo "Running Pint on: ${PINT_PATHS} with config: ${PINT_CONFIG}" >&2
-    RULES_FLAG="--config=${PINT_CONFIG}"
-else
-    echo "Running Pint on: ${PINT_PATHS} with preset: ${PINT_PRESET}" >&2
-    RULES_FLAG="--preset=${PINT_PRESET}"
-fi
+if [ "${FIX:-false}" = "true" ]; then
+  CHANGED=$({ vendor/bin/pint --no-interaction -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
+    tee /dev/stderr | \
+    awk -F'  *\\.+ ' '/FIXED/{print $1}' | sed 's/^ *//' | paste -sd "," -)
 
-if [ "${FIX}" = "true" ]; then
-    echo "Running Pint in fix mode." >&2
-    # Word splitting is intentional: tr converts commas to spaces so each path becomes a separate argument.
-    # shellcheck disable=SC2046
-    "${PINT_BIN}" --no-interaction "${RULES_FLAG}" -- $(echo "${PINT_PATHS}" | tr ',' ' ') >&2 || true
-    if git diff --quiet; then
-        printf 'has-changes=false\n'
-    else
-        printf 'has-changes=true\n'
-    fi
-else
-    echo "Running Pint in test mode (no fixes will be applied)." >&2
-    exit_code=0
-    # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- $(echo "${PINT_PATHS}" | tr ',' ' ') 2> /dev/null \
-        | "${REVIEWDOG_BIN}" \
-            -f=checkstyle \
-            -name="${REVIEWDOG_NAME}" \
-            -reporter="${REVIEWDOG_REPORTER}" \
-            -level="${REVIEWDOG_LEVEL}" \
-            -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-            -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-            ${REVIEWDOG_FLAGS} || exit_code=$?
+  if [ -n "$CHANGED" ]; then
+    printf 'has-changes=true\n'
+    printf 'changed-files=%s\n' "$CHANGED"
+  else
     printf 'has-changes=false\n'
-    exit $exit_code
+  fi
+else
+  { vendor/bin/pint --test --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2>/dev/null || true; } | \
+    reviewdog \
+      -f=checkstyle \
+      -name="pint" \
+      -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
+      -fail-level=none
+
+  printf 'has-changes=false\n'
 fi

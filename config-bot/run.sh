@@ -10,13 +10,6 @@ fi
 BOT_NAME="${BOT_NAME:-github-actions[bot]}"
 BOT_EMAIL="${BOT_EMAIL:-341898282+github-actions[bot]@users.noreply.github.com}"
 
-if [ "${BOT_NAME}" = "github-actions[bot]" ]; then
-  echo "::notice::BOT_NAME not set, using default: github-actions[bot]" >&2
-fi
-if [ "${BOT_EMAIL}" = "341898282+github-actions[bot]@users.noreply.github.com" ]; then
-  echo "::notice::BOT_EMAIL not set, using default: 341898282+github-actions[bot]@users.noreply.github.com" >&2
-fi
-
 BASIC_CREDENTIAL=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
 AUTH_HEADER="AUTHORIZATION: basic ${BASIC_CREDENTIAL}"
 

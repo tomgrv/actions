@@ -1,6 +1,0 @@
-{
-    "name": "run-filacheck",
-    "version": "2.3.0",
-    "description": "Run FilaCheck with reviewdog.",
-    "private": true
-}

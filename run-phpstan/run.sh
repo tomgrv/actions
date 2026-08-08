@@ -3,67 +3,40 @@
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
-    cd "${GITHUB_WORKSPACE}" || exit 1
-    git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
+  cd "${GITHUB_WORKSPACE}" || exit 1
+  git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
-PHPSTAN_BIN="phpstan"
-REVIEWDOG_BIN="reviewdog"
-
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-        exit 1
-    fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+  export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
 FIX="${FIX:-false}"
-TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+TARGET_PATHS="${1:-app}"
 BASELINE_FILE="${BASELINE_FILE:-phpstan-baseline.neon}"
-PHPSTAN_CONFIG="${PHPSTAN_CONFIG:-}"
-REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpstan}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
-REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
-REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
-REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
-
-if [ "${TARGET_PATHS}" = "app" ]; then
-    echo "::notice::TARGET_PATHS not set, using default: app" >&2
-fi
-
-if [ "${FIX}" = "true" ]; then
-    echo "FIX is set to true, running PHPStan with --fix" >&2
-    FIX_FLAG="--fix"
-else
-    FIX_FLAG=""
-fi
-
-if [ -n "${PHPSTAN_CONFIG}" ]; then
-    if [ ! -f "${PHPSTAN_CONFIG}" ]; then
-        echo "::error::config file not found: ${PHPSTAN_CONFIG}" >&2
-        exit 1
-    fi
-    echo "Using custom PHPStan configuration: ${PHPSTAN_CONFIG}" >&2
-    CONFIG_FLAG="-c ${PHPSTAN_CONFIG}"
-else
-    CONFIG_FLAG=""
-fi
 
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
-exit_code=0
-# shellcheck disable=SC2086
-"${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
-    | "${REVIEWDOG_BIN}" \
-        -f=checkstyle \
-        -name="${REVIEWDOG_NAME}" \
-        -reporter="${REVIEWDOG_REPORTER}" \
-        -level="${REVIEWDOG_LEVEL}" \
-        -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-        -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-        ${REVIEWDOG_FLAGS} || exit_code=$?
-exit $exit_code
+if [ "${FIX:-false}" = "true" ]; then
+  vendor/bin/phpstan analyse --generate-baseline="${BASELINE_FILE}" --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') >&2 || true
+
+  CHANGED=$(git diff --name-only -- "${BASELINE_FILE}" | tee /dev/stderr | paste -sd "," -)
+
+  if [ -n "$CHANGED" ]; then
+    printf 'has-changes=true\n'
+    printf 'changed-files=%s\n' "$CHANGED"
+  else
+    printf 'has-changes=false\n'
+  fi
+
+else
+
+  { vendor/bin/phpstan analyse --error-format=checkstyle --memory-limit=512M --no-progress -- $(echo "${TARGET_PATHS}" | tr ',' ' ') || true; } | \
+    reviewdog \
+      -f=checkstyle \
+      -name="phpstan" \
+      -reporter=${REVIEWDOG_REPORTER:-github-pr-review} \
+      -filter-mode=diff_context
+
+  printf 'has-changes=false\n'
+fi

@@ -14,76 +14,34 @@ inputs:
     description: GitHub token for reviewdog reporting.
     required: true
   paths:
-    description: Comma-separated list of paths to analyze with Pint. Defaults to `app`.
+    description: Comma-separated list of paths to analyze with Pint.
     required: false
     default: app
   fix:
-    description: Apply fixes directly instead of reporting via reviewdog.
+    description: Apply Pint fixes instead of reviewdog reporting.
     required: false
     default: 'false'
-  preset:
-    description: Pint preset to use (e.g. laravel, default, etc.). Defaults to `laravel`. Ignored when `config` is set.
-    required: false
-    default: laravel
-  config:
-    description: >-
-      Path to a custom Pint configuration file. Leave empty to let Pint
-      auto-detect `pint.json` at the repository root, or fall back to `preset`
-      otherwise.
-    required: false
-    default: ''
-  name:
-    description: Name reported by reviewdog to identify this check.
-    required: false
-    default: pint
-  level:
-    description: 'Report level for reviewdog [info,warning,error].'
-    required: false
-    default: error
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
-    required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: added
-  fail-level:
-    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
-    required: false
-    default: none
-  reviewdog-flags:
-    description: Additional reviewdog flags.
-    required: false
-    default: ''
 
 outputs:
   has-changes:
-    description: Whether fix mode produced local changes.
+    description: Whether fix mode produced changes.
     value: ${{ steps.run-pint.outputs.has-changes }}
+  changed-files:
+    description: Comma-separated list of files touched by fix mode.
+    value: ${{ steps.run-pint.outputs.changed-files }}
 
 runs:
   using: composite
   steps:
-    - name: Setup PHP toolchain
-      uses: $/setup-php
-
-    - name: Setup reviewdog toolchain
-      uses: $/setup-reviewdog
+    - name: Ensure Pint is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/pint ] || composer require --dev laravel/pint --no-interaction --no-progress --quiet
 
     - name: Run Pint
       id: run-pint
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        PINT_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
-        PINT_PRESET: ${{ inputs.preset }}
-        PINT_CONFIG: ${{ inputs.config }}
-        REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
-        REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
-        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
-        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

@@ -18,68 +18,35 @@ inputs:
     required: false
     default: app
   fix:
-    description: Apply fixes directly instead of reporting via reviewdog.
+    description: Enable auto-fix mode instead of reviewdog reporting.
     required: false
     default: 'false'
-  config-path:
-    description: >-
-      Path to a custom PHP Insights configuration file. Leave empty to let PHP
-      Insights auto-detect `phpinsights.json` (or `config/insights.php` in
-      Laravel apps) at the repository root, or fall back to its own defaults
-      otherwise.
+  branch-prefix:
+    description: Prefix for generated branch name when fix mode is enabled.
     required: false
-    default: ''
-  name:
-    description: Name reported by reviewdog to identify this check.
-    required: false
-    default: phpinsights
-  level:
-    description: 'Report level for reviewdog [info,warning,error].'
-    required: false
-    default: error
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
-    required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: added
-  fail-level:
-    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
-    required: false
-    default: none
-  reviewdog-flags:
-    description: Additional reviewdog flags.
-    required: false
-    default: ''
+    default: chore/phpinsights-fix
 
 outputs:
   has-changes:
-    description: Whether fix mode produced local changes.
+    description: Whether fix mode produced changes.
     value: ${{ steps.run-phpinsights.outputs.has-changes }}
+  changed-files:
+    description: Comma-separated list of changed files when fix mode is enabled.
+    value: ${{ steps.run-phpinsights.outputs.changed-files }}
 
 runs:
   using: composite
   steps:
-    - name: Setup PHP toolchain
-      uses: $/setup-php
-
-    - name: Setup reviewdog toolchain
-      uses: $/setup-reviewdog
+    - name: Ensure PHP Insights is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpinsights ] || composer require --dev nunomaduro/phpinsights --no-interaction --no-progress --quiet
 
     - name: Run PHP Insights
       id: run-phpinsights
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
-        PHPINSIGHTS_CONFIG_PATH: ${{ inputs.config-path }}
-        REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
-        REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
-        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
-        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+        BRANCH_PREFIX: ${{ inputs.branch-prefix }}
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

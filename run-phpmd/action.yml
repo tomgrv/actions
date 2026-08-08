@@ -14,54 +14,25 @@ inputs:
     description: GitHub token for reviewdog reporting.
     required: true
   paths:
-    description: Paths to analyze with PHPMD, comma-separated. Defaults to `app`.
+    description: Paths to analyze with PHPMD, comma-separated. Defaults to `app`
     required: false
     default: app
   ruleset:
-    description: >-
-      PHPMD ruleset to use: comma-separated rule set names (e.g. `cleancode,codesize`)
-      and/or paths to custom ruleset XML files. Leave empty to automatically use
-      `phpmd.xml` from the repository root when present, or fall back to the default
-      ruleset (`cleancode,codesize,controversial,design,naming,unusedcode`) otherwise.
+    description: PHPMD ruleset to use, comma-separated. Defaults to `cleancode,codesize,controversial,design,naming,unusedcode`
     required: false
-    default: ''
+    default: cleancode,codesize,controversial,design,naming,unusedcode
   priority:
     description: Priority of issues to report (min/max). Defaults to max.
     required: false
     default: max
-  name:
-    description: Name reported by reviewdog to identify this check.
-    required: false
-    default: phpmd
-  level:
-    description: 'Report level for reviewdog [info,warning,error].'
-    required: false
-    default: error
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
-    required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: nofilter
-  fail-level:
-    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
-    required: false
-    default: none
-  reviewdog-flags:
-    description: Additional reviewdog flags.
-    required: false
-    default: ''
 
 runs:
   using: composite
   steps:
-    - name: Setup PHP toolchain
-      uses: $/setup-php
-
-    - name: Setup reviewdog toolchain
-      uses: $/setup-reviewdog
+    - name: Ensure PHPMD is installed
+      shell: sh
+      run: |
+        [ -f vendor/bin/phpmd ] || composer require --dev phpmd/phpmd --no-interaction --no-progress --quiet
 
     - name: Cache baseline report
       uses: actions/cache@v5
@@ -75,13 +46,6 @@ runs:
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        PHPMD_PATHS: ${{ inputs.paths }}
         PHPMD_RULESET: ${{ inputs.ruleset }}
         PHPMD_PRIORITY: ${{ inputs.priority }}
-        REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
-        REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
-        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
-        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh "${{ github.action_path }}/run.sh"
+      run: sh -c "${{ github.action_path }}/run.sh ${{inputs.paths}}" >> "$GITHUB_OUTPUT"

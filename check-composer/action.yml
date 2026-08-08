@@ -1,9 +1,9 @@
 # @format
 
-# @package tomgrv/actions/check-security-npm
+# @package tomgrv/actions/check-composer
 
-name: Validate PR Security NPM
-description: Run npm dependency security audit and report via reviewdog.
+name: Validate PR Composer Validate
+description: Run composer validate with reviewdog.
 author: Perspikapps
 branding:
   icon: check-circle
@@ -17,12 +17,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up reviewdog
-      uses: reviewdog/action-setup@v1
-      with:
-        reviewdog_version: v0.20.3
-
-    - name: Run npm security audit
+    - name: Run composer validate
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}

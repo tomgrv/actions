@@ -13,53 +13,17 @@ inputs:
   github-token:
     description: GitHub token for reviewdog reporting.
     required: true
-  name:
-    description: Name reported by reviewdog to identify this check.
-    required: false
-    default: composer-audit
-  level:
-    description: 'Report level for reviewdog [info,warning,error].'
-    required: false
-    default: error
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to github-pr-review so recommended version upgrades are posted as applyable suggestions.'
-    required: false
-    default: github-pr-review
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: nofilter
-  fail-level:
-    description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
-    required: false
-    default: none
-  reviewdog-flags:
-    description: Additional reviewdog flags.
-    required: false
-    default: ''
-  max-diagnostics:
-    description: "Maximum number of vulnerability diagnostics to report, most severe first. Extra findings are collapsed into a single summary diagnostic to stay under GitHub's annotation limits."
-    required: false
-    default: '10'
 
 runs:
   using: composite
   steps:
-    - name: Setup PHP toolchain
-      uses: $/setup-php
-
-    - name: Setup reviewdog toolchain
-      uses: $/setup-reviewdog
+    - name: Set up reviewdog
+      uses: reviewdog/action-setup@v1
+      with:
+        reviewdog_version: v0.20.3
 
     - name: Run composer security audit
       shell: bash
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
-        REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
-        REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
-        REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
-        REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-        MAX_DIAGNOSTICS: ${{ inputs.max-diagnostics }}
       run: bash "${{ github.action_path }}/run.sh"

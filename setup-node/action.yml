@@ -1,9 +1,9 @@
 # @format
 
-# @package tomgrv/actions/setup-node
+# @package tomgrv/actions/setup-php
 
-name: Setup Node.js
-description: Shared Node.js and npm setup for PR validation actions.
+name: Setup php
+description: Shared PHP and Composer setup for PR validation actions.
 author: Perspikapps
 branding:
   icon: check-circle
@@ -18,10 +18,6 @@ inputs:
     description: Node.js version to set up. Defaults to version specified in package.json or 24.
     required: false
     default: '24'
-  options:
-    description: Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.
-    required: false
-    default: ''
 
 runs:
   using: composite
@@ -29,19 +25,10 @@ runs:
     - name: Set up Node
       uses: actions/setup-node@v6
       id: node-setup
-      # Guards against redundant reinstalls when several actions in this
-      # repository each embed setup-node within the same job.
-      if: env.TOMGRV_NODE_SETUP != 'true'
       with:
         cache: ${{ inputs.cache }}
         node-version: ${{ inputs.node-version }}
 
     - name: Install Node dependencies
-      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && hashFiles('package-lock.json') }}
       shell: sh
-      run: npm ci --no-progress --workspaces ${{ inputs.options }}
-
-    - name: Mark Node toolchain as ready
-      if: env.TOMGRV_NODE_SETUP != 'true'
-      shell: sh
-      run: echo "TOMGRV_NODE_SETUP=true" >> "$GITHUB_ENV"
+      run: npm ci --no-progress --workspaces --package-lock-only

@@ -3,7 +3,7 @@
 # @package tomgrv/actions/setup-reviewdog
 
 name: Setup reviewdog
-description: Shared reviewdog setup for PR validation actions.
+description: Install reviewdog for actions that report findings as annotations/comments.
 author: Perspikapps
 branding:
   icon: check-circle
@@ -11,7 +11,7 @@ branding:
 
 inputs:
   version:
-    description: Version of reviewdog to install.
+    description: The version of reviewdog to install.
     required: false
     default: v0.20.3
 
@@ -20,14 +20,5 @@ runs:
   steps:
     - name: Set up reviewdog
       uses: reviewdog/action-setup@v1
-      id: reviewdog-setup
-      # Guards against redundant reinstalls when several actions in this
-      # repository each embed setup-reviewdog within the same job.
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
       with:
         reviewdog_version: ${{ inputs.version }}
-
-    - name: Mark reviewdog toolchain as ready
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
-      shell: sh
-      run: echo "TOMGRV_REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"

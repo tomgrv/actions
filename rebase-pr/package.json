@@ -1,5 +1,0 @@
-{
-    "name": "rebase-pr",
-    "private": true,
-    "description": "Rebase the current pull request branch onto its base branch."
-}

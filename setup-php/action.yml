@@ -14,10 +14,6 @@ inputs:
     description: Additional options to pass to composer install, such as --no-dev.
     required: false
     default: ''
-  tools:
-    description: Additional tools to install with shivammathur/setup-php, comma-separated.
-    required: false
-    default: ''
 
 outputs:
   php-version:
@@ -45,26 +41,13 @@ runs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       id: php-setup
-      # Guards against redundant reinstalls when several actions in this
-      # repository each embed setup-php within the same job.
-      if: env.TOMGRV_PHP_SETUP != 'true'
       with:
         php-version: ${{ steps.php-version.outputs.version }}
         extensions: ${{ steps.php-extensions.outputs.extensions }}
         coverage: xdebug
-        tools: ${{ inputs.tools }}
 
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install
-      # Keyed on composer.json, not composer.lock: libraries and packages
-      # commonly do not commit a lock file, and skipping the install there
-      # leaves every downstream action without a vendor directory.
-      if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
-
-    - name: Mark PHP toolchain as ready
-      if: env.TOMGRV_PHP_SETUP != 'true'
-      shell: sh
-      run: echo "TOMGRV_PHP_SETUP=true" >> "$GITHUB_ENV"
