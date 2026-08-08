@@ -140,36 +140,36 @@
     "bump-changelog": {
         "types": [
             {
-                "type": "feat",
-                "section": "Features"
-            },
-            {
                 "type": "fix",
                 "section": "Bug Fixes"
+            },
+            {
+                "type": "feat",
+                "section": "Features"
             }
         ]
     },
     "bump-version": {
         "files": [
             {
+                "filename": "VERSION",
+                "type": "plain-text"
+            },
+            {
                 "filename": "composer.json",
                 "type": "json"
-            },
-            {
-                "filename": "package.json",
-                "type": "json"
-            },
-            {
-                "filename": "package.json",
-                "type": "json@ws"
             },
             {
                 "filename": "devcontainer-feature.json",
                 "type": "json@ws"
             },
             {
-                "filename": "VERSION",
-                "type": "plain-text"
+                "filename": "package.json",
+                "type": "json"
+            },
+            {
+                "filename": "package.json",
+                "type": "json@ws"
             }
         ]
     },
@@ -213,14 +213,7 @@
         "!(*schema).json": [
             "normalize-json -c -w -a -i -t 4 -f local -l true"
         ],
-        "!(templates/**/*)*.{js,jsx,ts,tsx,md,html,css,vue,yaml,yml}": [
-            "npx --yes prettier --write"
-        ],
         "!(templates/**/*).{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
-            "npx --yes prettier --write"
-        ],
-        "*.json": [
-            "normalize-json -c -w -a -i -f local -l true",
             "npx --yes prettier --write"
         ],
         "*.php": [
