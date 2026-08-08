@@ -70,6 +70,7 @@
         "@commitlint/config-conventional": "*",
         "@commitlint/core": "*",
         "@commitlint/cz-commitlint": "*",
+        "@tomgrv-devcontainer-features/common-utils": "^5",
         "commitizen": "*",
         "git-precommit-checks": "*",
         "prettier": "*",
