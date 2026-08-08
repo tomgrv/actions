@@ -64,6 +64,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: nunomaduro/phpinsights
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

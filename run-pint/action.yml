@@ -67,6 +67,8 @@ runs:
   steps:
     - name: Setup PHP toolchain
       uses: $/setup-php
+      with:
+        require: laravel/pint
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog

@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR PHPMD
 
-Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpmd` itself must be available either in `vendor/bin` or the global `PATH`.
+Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via reviewdog. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `phpmd` itself is installed globally via `setup-php`'s `require` input (`phpmd/phpmd`), unless already required locally in `composer.json` (and thus in `vendor/`) or already installed globally.
 
 ## Inputs
 
