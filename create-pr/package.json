@@ -1,5 +1,6 @@
 {
     "name": "create-pr",
-    "private": true,
-    "description": "Create or update a pull request from a branch."
+    "version": "2.6.0",
+    "description": "Create or update a pull request from a branch.",
+    "private": true
 }

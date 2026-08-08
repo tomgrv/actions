@@ -1,5 +1,6 @@
 {
     "name": "update-labels",
-    "private": true,
-    "description": "Create or update GitHub repository labels from a JSON file or inline list."
+    "version": "2.6.0",
+    "description": "Create or update GitHub repository labels from a JSON file or inline list.",
+    "private": true
 }

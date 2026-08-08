@@ -1,6 +1,6 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
     "keywords": [
         "github-actions",
@@ -70,7 +70,6 @@
         "@commitlint/config-conventional": "*",
         "@commitlint/core": "*",
         "@commitlint/cz-commitlint": "*",
-        "@tomgrv-devcontainer-features/common-utils": "^5",
         "commitizen": "*",
         "git-precommit-checks": "*",
         "prettier": "*",
