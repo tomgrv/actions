@@ -2,6 +2,25 @@
 
 # Changelog
 
+## 2.7.0 (2026-08-09)
+
+_Commits from: v2.6.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- find and report version fixes reliably (#41) ([0189b29](https://github.com/tomgrv/actions/commit/0189b294a2e9aaf1bcfde51e00392db66d48f2e8))
+- 🐛 add conditional checks for PHP version and extensions extraction ([a6c750b](https://github.com/tomgrv/actions/commit/a6c750b089070950e11d146759c7d1c6ca85ad01))
+
+#### Features
+
+- ✨ add dirty/wip flags to PHP check actions (#42) ([17925db](https://github.com/tomgrv/actions/commit/17925dbd1f55a56830b58becc87a4d2bb5563ccc))
+
+#### Other changes
+
+- Merge tag 'v2.6.0' into develop ([f5f796c](https://github.com/tomgrv/actions/commit/f5f796ce7b893ef43a92a9f466e90592fa9ffe5e))
+
 ## 2.6.0 (2026-08-08)
 
 _Commits from: v2.5.0..HEAD_
@@ -237,4 +256,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-09 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
