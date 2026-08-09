@@ -84,6 +84,7 @@ runs:
     # underlying tool call, never a separately-defaulted one.
     - name: Run FilaCheck
       id: filacheck
+      if: ${{hashFiles( inputs.path)}}
       uses: $/run-filacheck
       with:
         github-token: ${{ inputs.github-token }}

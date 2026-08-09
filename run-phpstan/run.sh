@@ -75,15 +75,39 @@ fi
 
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
+# ensure binaries exist
+command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { echo "::error::${PHPSTAN_BIN} not found in PATH" >&2; exit 1; }
+command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { echo "::error::${REVIEWDOG_BIN} not found in PATH" >&2; exit 1; }
+
 exit_code=0
+# Run PHPStan to a temp file so we can validate its output before passing to reviewdog
+tmpfile=$(mktemp)
+trap 'rm -f "${tmpfile}"' EXIT INT TERM
 # shellcheck disable=SC2086
-"${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} 2> /dev/null \
-    | "${REVIEWDOG_BIN}" \
-        -f=checkstyle \
-        -name="${REVIEWDOG_NAME}" \
-        -reporter="${REVIEWDOG_REPORTER}" \
-        -level="${REVIEWDOG_LEVEL}" \
-        -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-        -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-        ${REVIEWDOG_FLAGS} || exit_code=$?
+"${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || exit_code=$?
+
+if [ ! -s "${tmpfile}" ]; then
+    echo "::error::PHPStan produced no output (exit=${exit_code})." >&2
+    echo "PHPStan stderr/stdout (first 200 chars):" >&2
+    head -c 200 "${tmpfile}" >&2 || true
+    exit $exit_code
+fi
+
+# quick sanity check for checkstyle XML
+if ! head -c 5 "${tmpfile}" | grep -q "<?xml"; then
+    echo "::error::PHPStan output does not appear to be valid checkstyle XML." >&2
+    echo "PHPStan output (first 200 chars):" >&2
+    head -c 200 "${tmpfile}" >&2 || true
+    exit $exit_code
+fi
+
+cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
+    -f=checkstyle \
+    -name="${REVIEWDOG_NAME}" \
+    -reporter="${REVIEWDOG_REPORTER}" \
+    -level="${REVIEWDOG_LEVEL}" \
+    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+
 exit $exit_code

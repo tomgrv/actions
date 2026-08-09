@@ -1,6 +1,6 @@
 {
     "name": "check-laravel",
-    "version": "2.7.0",
+    "version": "2.8.0",
     "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.",
     "private": true
 }

@@ -2,6 +2,58 @@
 
 # Changelog
 
+## 2.8.0 (2026-08-09)
+
+_Commits from: v2.7.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.7.0' into develop ([f7a0c10](https://github.com/tomgrv/actions/commit/f7a0c109ed254c84d49d0260644f50a29290aced))
+
+### 📦 check-filament changes
+
+#### Bug Fixes
+
+- 🐛 add conditional execution for FilaCheck based on input path ([83f1998](https://github.com/tomgrv/actions/commit/83f1998e8aee267c8e0d2dc77f19a0e7aead5a14))
+
+### 📦 check-laravel changes
+
+#### Bug Fixes
+
+- 🐛 change default for tests input to false ([0caeabf](https://github.com/tomgrv/actions/commit/0caeabfb5c398a4eb131ed8598391e3fb5c52ba8))
+- 🐛 set default for phpinsights to false ([fd0c809](https://github.com/tomgrv/actions/commit/fd0c809f8eb2b6cc8ead12c93817e556b458b2f0))
+- 🐛 update paths input description to clarify filtering behavior ([6439f94](https://github.com/tomgrv/actions/commit/6439f94ad582d59c62ad1bfc989fb40032e21b9e))
+
+#### Features
+
+- ✨ add PR creation step for automatic fixes in fix mode ([d42c427](https://github.com/tomgrv/actions/commit/d42c4274f2929184a322784bc8a5d0e696bcf317))
+
+### 📦 check-lock changes
+
+#### Features
+
+- ✨ add setup steps for PHP and Node toolchains ([195981f](https://github.com/tomgrv/actions/commit/195981facb931ed74bda335f75689661d6ca6a44))
+
+### 📦 run-phpstan changes
+
+#### Bug Fixes
+
+- 🐛 validate PHPStan output and ensure binaries exist ([766fa87](https://github.com/tomgrv/actions/commit/766fa87da66e7cf56a635a4b687c8ad73cb151b3))
+
+### 📦 setup-node changes
+
+#### Features
+
+- ✨ add bare input option to skip npm ci step ([436071a](https://github.com/tomgrv/actions/commit/436071a1101508a23c041bd92447480540d51cb4))
+
+### 📦 setup-php changes
+
+#### Features
+
+- ✨ add bare input option to skip composer install step ([1655386](https://github.com/tomgrv/actions/commit/1655386f48b5907af9b15ca92944c2eaae2e13d0))
+
 ## 2.7.0 (2026-08-09)
 
 _Commits from: v2.6.0..HEAD_
