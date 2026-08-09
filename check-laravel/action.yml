@@ -15,7 +15,10 @@ inputs:
     required: false
     default: ${{ github.token }}
   paths:
-    description: Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD. Defaults to `app`.
+    description: >-
+      Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD. 
+      Defaults to `app`, filtered by `dirty` and `wip` if enabled. 
+      Shared by every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD).
     required: false
     default: app
   fix:
