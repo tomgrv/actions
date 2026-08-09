@@ -2,6 +2,22 @@
 
 # Changelog
 
+## 2.9.0 (2026-08-09)
+
+_Commits from: v2.8.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.8.0' into develop ([2c9d9ca](https://github.com/tomgrv/actions/commit/2c9d9ca0a04347921a9ac1d4180d020496317519))
+
+### 📦 run-phpstan changes
+
+#### Bug Fixes
+
+- 🐛 handle PHPStan output errors and warnings ([5e01ffa](https://github.com/tomgrv/actions/commit/5e01ffa1d266b1aac85b582e24e63c9b7228b067))
+
 ## 2.8.0 (2026-08-09)
 
 _Commits from: v2.7.0..HEAD_
