@@ -31,10 +31,10 @@ Includes both tracked modifications and untracked files.
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions detect-changes
+./dispatch.sh detect-changes
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

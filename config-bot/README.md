@@ -29,10 +29,10 @@ Configures global Git identity for bot commits within a workflow job. Resolves t
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions config-bot
+./dispatch.sh config-bot
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

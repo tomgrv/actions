@@ -39,10 +39,10 @@ Every PHP-based action in this repository (`run-phpstan`, `run-pint`, `run-phpin
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions setup-php
+./dispatch.sh setup-php
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

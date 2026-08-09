@@ -41,5 +41,15 @@
         "color": "d4c5f9",
         "description": "Tasks that could be delegated to IA or interns when capacity allows",
         "name": "leftover"
+    },
+    {
+        "color": "0366d6",
+        "description": "Pull requests that update a dependency file",
+        "name": "dependencies"
+    },
+    {
+        "color": "000000",
+        "description": "Pull requests that update a GitHub Actions dependency",
+        "name": "github-actions"
     }
 ]

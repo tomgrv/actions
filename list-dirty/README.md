@@ -27,10 +27,10 @@ Lists files with uncommitted git changes — staged, unstaged, or untracked — 
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions list-dirty
+./dispatch.sh list-dirty
 ```
 
 ## Example

@@ -10,29 +10,29 @@ Reusable GitHub Actions
 
 tomgrv/actions is a suite of modular, reusable GitHub composite actions designed to automate code quality, PR management, and package maintenance for monorepos and composer-based projects. Each action is self-contained, follows strict output/logging conventions, and is documented for easy integration into your workflows.
 
-Each action is also available as a standalone CLI via the root npm package `@tomgrv/actions`. Use `dispatch.sh` to run any action locally with sensible defaults:
+Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository via the bundled `dispatch.sh`, which sets sensible `GITHUB_*` defaults:
 
 ```sh
-npx @tomgrv/actions <action> [args...]
+./dispatch.sh <action> [args...]
 ```
 
 For example:
 
 ```sh
 # Run lock coherence validation locally
-GITHUB_TOKEN=ghp_xxx npx @tomgrv/actions check-lock
+GITHUB_TOKEN=ghp_xxx ./dispatch.sh check-lock
 
 # List monorepo packages
-npx @tomgrv/actions list-packages
+./dispatch.sh list-packages
 
 # Detect uncommitted changes
-npx @tomgrv/actions detect-changes
+./dispatch.sh detect-changes
 ```
 
 Run without arguments to see all available actions:
 
 ```sh
-npx @tomgrv/actions
+./dispatch.sh
 ```
 
 ## Available Actions

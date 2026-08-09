@@ -77,10 +77,10 @@ Runs [PHPStan](https://phpstan.org/) and reports findings inline via reviewdog. 
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-phpstan
+./dispatch.sh run-phpstan
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

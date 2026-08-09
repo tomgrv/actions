@@ -59,10 +59,10 @@ When an `artisan` file is present, the action bootstraps the application before 
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-phptests
+./dispatch.sh run-phptests
 ```
 
 Inputs are read from the matching environment variables when running locally: `WORKING_DIRECTORY`, `INSTALL`, `TEST_RUNNER`, `TEST_PATHS`, `TEST_FLAGS`, `COVERAGE`, `COVERAGE_FILE`, `JUNIT_FILE`, `MIGRATE`, and the usual `REVIEWDOG_*` variables.

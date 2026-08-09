@@ -45,10 +45,10 @@ Splits a package from a monorepo a separate repository using [splitsh-lite](http
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions split-package
+./dispatch.sh split-package
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

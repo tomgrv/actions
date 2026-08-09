@@ -1,6 +1,6 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.9.0",
+    "version": "2.10.0",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
     "keywords": [
         "github-actions",
@@ -14,40 +14,6 @@
     },
     "license": "MIT",
     "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "files": [
-        "dispatch.sh",
-        "setup-php/*",
-        "config-bot/*",
-        "degit-package/*",
-        "create-pr/*",
-        "split-package/*",
-        "check-pr-format/*",
-        "run-phpmd/*",
-        "run-phpinsights/*",
-        "run-filacheck/*",
-        "run-phpstan/*",
-        "run-phptests/*",
-        "run-pint/*",
-        "check-secret/*",
-        "check-security-composer/*",
-        "check-security-npm/*",
-        "check-lock/*",
-        "update-labels/*",
-        "detect-changes/*",
-        "list-packages/*",
-        "list-dirty/*",
-        "list-wip/*",
-        "rebase-pr/*",
-        "setup-node/*",
-        "setup-reviewdog/*",
-        "check-filament/*",
-        "check-laravel/*",
-        "run-deployer/*",
-        "resolve-environment/*"
-    ],
-    "bin": {
-        "actions": "./dispatch.sh"
-    },
     "repository": {
         "type": "git",
         "url": "https://github.com/tomgrv/actions"

@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+# Run PHPStan static analysis and report findings via reviewdog.
+#
 # noglob: TARGET_ARGS may be an unquoted, word-split list of git-diff-derived
 # filenames (dirty/wip mode) and must never undergo pathname expansion.
 set -ef
@@ -13,12 +15,14 @@ PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${
 PHPSTAN_BIN="phpstan"
 REVIEWDOG_BIN="reviewdog"
 
+# Token/tooling resolution is a setup concern, not a PHPStan finding: plain
+# log only, no GitHub annotation (see .github/instructions/action-creation.md).
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
         exit 1
     fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
@@ -38,7 +42,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${TARGET_PATHS}" = "app" ]; then
-    echo "::notice::TARGET_PATHS not set, using default: app" >&2
+    echo "TARGET_PATHS not set, using default: app" >&2
 fi
 
 # dirty/wip are resolved upstream by the list-dirty/list-wip actions; combine
@@ -46,6 +50,8 @@ fi
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
+        # Functional: nothing in the analyzed repo matches the filter. Keep as
+        # a notice, unlike the setup-related messages above.
         echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan." >&2
         printf 'has-changes=false\n'
         exit 0
@@ -64,7 +70,7 @@ fi
 
 if [ -n "${PHPSTAN_CONFIG}" ]; then
     if [ ! -f "${PHPSTAN_CONFIG}" ]; then
-        echo "::error::config file not found: ${PHPSTAN_CONFIG}" >&2
+        echo "Error: config file not found: ${PHPSTAN_CONFIG}" >&2
         exit 1
     fi
     echo "Using custom PHPStan configuration: ${PHPSTAN_CONFIG}" >&2
@@ -75,9 +81,9 @@ fi
 
 echo "Running PHPStan analysis on: ${TARGET_PATHS}" >&2
 
-# ensure binaries exist
-command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { echo "::error::${PHPSTAN_BIN} not found in PATH" >&2; exit 1; }
-command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { echo "::error::${REVIEWDOG_BIN} not found in PATH" >&2; exit 1; }
+# ensure binaries exist (setup concern: plain log, not a PHPStan finding)
+command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { echo "Error: ${PHPSTAN_BIN} not found in PATH" >&2; exit 1; }
+command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { echo "Error: ${REVIEWDOG_BIN} not found in PATH" >&2; exit 1; }
 
 exit_code=0
 # Run PHPStan to a temp file so we can validate its output before passing to reviewdog
@@ -86,17 +92,18 @@ trap 'rm -f "${tmpfile}"' EXIT INT TERM
 # shellcheck disable=SC2086
 "${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || exit_code=$?
 
-# If PHPStan produced no output, treat as an error and exit with its exit code
+# PHPStan crashing before producing any report is a tooling/setup failure,
+# not an analysis finding: plain log only.
 if [ ! -s "${tmpfile}" ]; then
-    echo "::error::PHPStan produced no output (exit=${exit_code})." >&2
+    echo "Error: PHPStan produced no output (exit=${exit_code})." >&2
     echo "PHPStan stderr/stdout (first 200 chars):" >&2
     head -c 200 "${tmpfile}" >&2 || true
     exit $exit_code
 fi
 
-# If PHPStan reports no files to analyse, treat as non-blocking and exit successfully
+# Functional: no files in the analyzed repo matched the target paths.
 if grep -qi "no files found to analyse" "${tmpfile}"; then
-    echo "::warning::PHPStan: No files found to analyse; nothing to do." >&2
+    echo "::notice::PHPStan: No files found to analyse; nothing to do." >&2
     printf 'has-changes=false\n'
     exit 0
 fi

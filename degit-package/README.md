@@ -50,10 +50,10 @@ Imports the tip of a source repository branch into a target repository workspace
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions degit-package
+./dispatch.sh degit-package
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

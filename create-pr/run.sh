@@ -1,13 +1,17 @@
 #!/usr/bin/sh
 
+# Commit any pending changes in the working directory and open or update a
+# pull request for them.
+
 set -eu
 
 REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 HEAD_BRANCH="${HEAD_BRANCH:?HEAD_BRANCH is required}"
 WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
+# Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${WORKING_DIRECTORY}" = "." ]; then
-  echo "::notice::WORKING_DIRECTORY not set, using default: ." >&2
+  echo "WORKING_DIRECTORY not set, using default: ." >&2
 fi
 
 HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
@@ -26,14 +30,14 @@ PR_BODY="${PR_BODY:-${DEFAULT_TITLE}} \
 _This pull request was created automatically by [tomgrv/actions/create-pr](https://github.com/tomgrv/actions/create-pr)_"
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "::error::GITHUB_TOKEN is required" >&2
+  echo "Error: GITHUB_TOKEN is required" >&2
   exit 1
 fi
 
 export GH_TOKEN="${GITHUB_TOKEN}"
 
 cd "${WORKING_DIRECTORY}" || {
-  echo "::error::Working directory '${WORKING_DIRECTORY}' does not exist" >&2
+  echo "Error: Working directory '${WORKING_DIRECTORY}' does not exist" >&2
   exit 1
 }
 
@@ -49,7 +53,7 @@ if [ -z "$(git status --porcelain)" ]; then
 fi
 
 if [ -z "${COMMIT_MESSAGE}" ]; then
-    echo "::error::commit-message is required when commit-all is true" >&2
+    echo "Error: commit-message is required when commit-all is true" >&2
     exit 1
 fi
 

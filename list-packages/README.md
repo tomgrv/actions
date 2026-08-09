@@ -26,10 +26,10 @@ JSON array of package objects, each containing `org`, `name`, `path`, and `repos
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions list-packages
+./dispatch.sh list-packages
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

@@ -1,6 +1,6 @@
 {
     "name": "run-phpstan",
-    "version": "2.9.0",
+    "version": "2.10.0",
     "description": "Run PHPStan with reviewdog.",
     "private": true
 }
