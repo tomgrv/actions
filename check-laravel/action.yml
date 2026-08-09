@@ -189,6 +189,18 @@ runs:
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 
+    - name: Open a PR with changes from fix mode
+      if: inputs.fix == 'true' && (steps.phpstan.outputs.has-changes == 'true' || steps.pint.outputs.has-changes == 'true' || steps.phpinsights.outputs.has-changes == 'true')
+      uses: $/create-pr
+      with:
+        github-token: ${{ inputs.github-token }}
+        repository: ${{ github.repository }}
+        head-branch: 'check-laravel-fixes-${{ github.run_id }}'
+        base-branch: ${{ github.base_ref || github.ref_name }}
+        workdir: ${{ github.workspace }}
+        pr-title: 'fix: apply fixes from check-laravel'
+        pr-body: 'This PR applies automatic fixes from the check-laravel action (PHPStan baseline, Pint, PHP Insights).'
+
     - name: Fail if any check failed
       if: always()
       shell: sh
