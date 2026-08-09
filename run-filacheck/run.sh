@@ -1,6 +1,9 @@
 #!/usr/bin/sh
 
-set -e
+# noglob: FILACHECK_TARGET may be an unquoted, word-split list of
+# git-diff-derived filenames (wip mode) and must never undergo pathname
+# expansion.
+set -ef
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     cd "${GITHUB_WORKSPACE}" || exit 1
@@ -24,6 +27,8 @@ FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
 FIX="${FIX:-false}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
+WIP="${WIP:-false}"
+WIP_FILES="${WIP_FILES:-}"
 DRY_RUN="${DRY_RUN:-false}"
 BACKUP="${BACKUP:-false}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
@@ -37,7 +42,25 @@ if [ "${FILACHECK_PATH}" = "app/Filament" ]; then
     echo "::notice::FILACHECK_PATH not set, using default: app/Filament" >&2
 fi
 
-echo "Running FilaCheck on: ${FILACHECK_PATH}" >&2
+#
+# FilaCheck has no native flag for `wip` (unlike `dirty`, which it accepts
+# natively as `--dirty` and is passed straight through below). Emulate it
+# using the file list resolved upstream by the list-wip action, passed in
+# place of the target path.
+#
+if [ "${WIP}" = "true" ]; then
+    FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
+    if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
+        echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
+        printf 'has-changes=false\n'
+        exit 0
+    fi
+    echo "Restricting FilaCheck to changed files: ${FILACHECK_TARGET}" >&2
+else
+    FILACHECK_TARGET="${FILACHECK_PATH}"
+fi
+
+echo "Running FilaCheck on: ${FILACHECK_TARGET}" >&2
 
 filacheck_args=""
 if [ "${FIX}" = "true" ]; then
@@ -58,7 +81,7 @@ fi
 
 exit_code=0
 # shellcheck disable=SC2086
-"${FILACHECK_BIN}" ${filacheck_args} -- "${FILACHECK_PATH}" 2> /dev/null \
+"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2> /dev/null \
     | awk '
         /^[[:space:]]+[^[:space:]].*\.(blade\.php|php)$/ {
             current_file=$0

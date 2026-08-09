@@ -28,6 +28,18 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 **Optional.** Apply fixes directly (PHPStan baseline, Pint, PHP Insights) instead of reporting via reviewdog. Defaults to `false`.
 
+### dirty
+
+**Optional.** Only analyze files with uncommitted git changes, forwarded to every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD — see each action's own README for how it's emulated). Defaults to `false`.
+
+### wip
+
+**Optional.** Only analyze files changed on the current pull request, relative to its base branch, forwarded the same way as `dirty`. Defaults to `false`.
+
+### wip-base-ref
+
+**Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
+
 ### phpstan / pint / phpinsights / phpmd / tests
 
 **Optional.** Whether to run each check. Defaults to `true`.
@@ -68,6 +80,7 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 - [**check-security-composer**](../check-security-composer/README.md) — complement the suite with a Composer dependency audit.
 - [**check-lock**](../check-lock/README.md) — complement the suite with lock coherence validation.
 - [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
+- [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Example
 

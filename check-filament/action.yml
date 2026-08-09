@@ -30,6 +30,17 @@ inputs:
     description: Only scan files with uncommitted git changes.
     required: false
     default: 'false'
+  wip:
+    description: Only scan files changed on the current pull request (relative to its base branch).
+    required: false
+    default: 'false'
+  wip-base-ref:
+    description: >-
+      Base branch/ref to diff against when `wip` is enabled. Defaults to
+      `GITHUB_BASE_REF`, which GitHub Actions sets automatically on
+      `pull_request` events.
+    required: false
+    default: ''
   dry-run:
     description: Preview fix changes without modifying files.
     required: false
@@ -80,6 +91,8 @@ runs:
         fix: ${{ inputs.fix }}
         detailed: ${{ inputs.detailed }}
         dirty: ${{ inputs.dirty }}
+        wip: ${{ inputs.wip }}
+        wip-base-ref: ${{ inputs.wip-base-ref }}
         dry-run: ${{ inputs.dry-run }}
         backup: ${{ inputs.backup }}
         level: ${{ inputs.level }}

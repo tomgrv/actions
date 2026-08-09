@@ -1,0 +1,5 @@
+{
+    "name": "list-dirty",
+    "private": true,
+    "description": "List files with uncommitted git changes (staged, unstaged, or untracked), optionally filtered by path and extension."
+}

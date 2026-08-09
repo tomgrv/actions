@@ -68,6 +68,8 @@ npx @tomgrv/actions
 - [**run-pint**](run-pint/README.md) ![stable](https://img.shields.io/badge/stable-green): Run Laravel Pint code style fixer and report via reviewdog.
 - [**run-phptests**](run-phptests/README.md) ![stable](https://img.shields.io/badge/stable-green): Run the PHP test suite.
 - [**check-security-composer**](check-security-composer/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit Composer dependencies for known vulnerabilities.
+- [**list-dirty**](list-dirty/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List files with uncommitted git changes, used by the PHP checks' `dirty` input.
+- [**list-wip**](list-wip/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List files changed on the current pull request, used by the PHP checks' `wip` input.
 
 ### 🔀 Pull Request
 

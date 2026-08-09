@@ -1,0 +1,5 @@
+{
+    "name": "list-wip",
+    "private": true,
+    "description": "List files changed on the current pull request, relative to its base branch, optionally filtered by path and extension."
+}

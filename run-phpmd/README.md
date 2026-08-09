@@ -22,6 +22,18 @@ Runs [PHP Mess Detector](https://phpmd.org/) and reports findings inline via rev
 
 **Optional.** Minimum issue priority to report (`min`/`max`). Defaults to `max`.
 
+### dirty
+
+**Optional.** Only analyze files with uncommitted git changes (staged, unstaged, or untracked). PHPMD has no native flag for this, so it is emulated: [**list-dirty**](../list-dirty/README.md) resolves the changed files and this action passes that explicit list in place of `paths`. Defaults to `false`.
+
+### wip
+
+**Optional.** Only analyze files changed on the current pull request, relative to its base branch. Emulated the same way as `dirty`, via [**list-wip**](../list-wip/README.md) diffing against the merge-base of `wip-base-ref`. Defaults to `false`.
+
+### wip-base-ref
+
+**Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
+
 ### name
 
 **Optional.** Name reported by reviewdog to identify this check. Defaults to `phpmd`.
@@ -57,6 +69,7 @@ This action has no outputs.
 - [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
 - [**run-phpstan**](../run-phpstan/README.md) — complement PHPMD with static analysis.
 - [**run-phpinsights**](../run-phpinsights/README.md) — complement PHPMD with code quality insights.
+- [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Local Usage
 

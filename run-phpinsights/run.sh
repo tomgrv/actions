@@ -1,6 +1,8 @@
 #!/usr/bin/sh
 
-set -e
+# noglob: TARGET_ARGS may be an unquoted, word-split list of git-diff-derived
+# filenames (dirty/wip mode) and must never undergo pathname expansion.
+set -ef
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     cd "${GITHUB_WORKSPACE}" || exit 1
@@ -41,6 +43,10 @@ fi
 FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 PHPINSIGHTS_CONFIG_PATH="${PHPINSIGHTS_CONFIG_PATH:-}"
+DIRTY="${DIRTY:-false}"
+WIP="${WIP:-false}"
+DIRTY_FILES="${DIRTY_FILES:-}"
+WIP_FILES="${WIP_FILES:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpinsights}"
 REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
@@ -50,6 +56,20 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${TARGET_PATHS}" = "app" ]; then
     echo "::notice::TARGET_PATHS not set, using default: app" >&2
+fi
+
+# dirty/wip are resolved upstream by the list-dirty/list-wip actions; combine
+# their file lists into the explicit target list PHP Insights actually analyzes.
+if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
+    TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
+    if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
+        echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights." >&2
+        printf 'has-changes=false\n'
+        exit 0
+    fi
+    echo "Restricting PHP Insights to changed files: ${TARGET_ARGS}" >&2
+else
+    TARGET_ARGS="$(echo "${TARGET_PATHS}" | tr ',' ' ')"
 fi
 
 if [ "${FIX}" = "true" ]; then
@@ -74,7 +94,7 @@ echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
 exit_code=0
 # shellcheck disable=SC2046,SC2086
-"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- $(echo "${TARGET_PATHS}" | tr ',' ' ') 2> /dev/null \
+"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2> /dev/null \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
         -name="${REVIEWDOG_NAME}" \
