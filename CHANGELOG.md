@@ -2,6 +2,17 @@
 
 # Changelog
 
+## 2.10.0 (2026-08-09)
+
+_Commits from: v2.9.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.9.0' into develop ([61351ab](https://github.com/tomgrv/actions/commit/61351ab212a93ea7213ac72c13f8615ef975bb23))
+- uniformize logging, drop npm CLI distribution, add actions dependabot (#43) ([a9f7d8b](https://github.com/tomgrv/actions/commit/a9f7d8b7e0332b22f9a4f04e7cb0db24fa1e6dd2))
+
 ## 2.9.0 (2026-08-09)
 
 _Commits from: v2.8.0..HEAD_

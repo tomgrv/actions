@@ -1,6 +1,6 @@
 {
     "name": "config-bot",
-    "version": "2.6.0",
+    "version": "2.10.0",
     "description": "Configure Git identity and authentication for bot commits.",
     "private": true
 }
