@@ -1,6 +1,9 @@
 #!/usr/bin/sh
 
-set -e
+# noglob: FILACHECK_TARGET may be an unquoted, word-split list of
+# git-diff-derived filenames (wip mode) and must never undergo pathname
+# expansion.
+set -ef
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     cd "${GITHUB_WORKSPACE}" || exit 1
