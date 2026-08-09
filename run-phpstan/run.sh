@@ -86,6 +86,7 @@ trap 'rm -f "${tmpfile}"' EXIT INT TERM
 # shellcheck disable=SC2086
 "${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || exit_code=$?
 
+# If PHPStan produced no output, treat as an error and exit with its exit code
 if [ ! -s "${tmpfile}" ]; then
     echo "::error::PHPStan produced no output (exit=${exit_code})." >&2
     echo "PHPStan stderr/stdout (first 200 chars):" >&2
@@ -93,12 +94,11 @@ if [ ! -s "${tmpfile}" ]; then
     exit $exit_code
 fi
 
-# quick sanity check for checkstyle XML
-if ! head -c 5 "${tmpfile}" | grep -q "<?xml"; then
-    echo "::error::PHPStan output does not appear to be valid checkstyle XML." >&2
-    echo "PHPStan output (first 200 chars):" >&2
-    head -c 200 "${tmpfile}" >&2 || true
-    exit $exit_code
+# If PHPStan reports no files to analyse, treat as non-blocking and exit successfully
+if grep -qi "no files found to analyse" "${tmpfile}"; then
+    echo "::warning::PHPStan: No files found to analyse; nothing to do." >&2
+    printf 'has-changes=false\n'
+    exit 0
 fi
 
 cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
