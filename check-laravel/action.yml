@@ -48,11 +48,11 @@ inputs:
   phpinsights:
     description: Whether to run PHP Insights.
     required: false
-    default: 'true'
+    default: 'false'
   phpmd:
     description: Whether to run PHPMD.
     required: false
-    default: 'true'
+    default: 'false'
   tests:
     description: Whether to run the test suite.
     required: false
@@ -61,10 +61,6 @@ inputs:
     description: 'Report level for reviewdog [info,warning,error], shared by every wrapped check.'
     required: false
     default: error
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review], shared by every wrapped check.'
-    required: false
-    default: github-pr-check
   filter-mode:
     description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter], shared by every wrapped check. Leave empty to let each check keep its own tuned default (PHPStan/Pint/PHP Insights use `added`, PHPMD/tests use `nofilter`).'
     required: false
@@ -124,7 +120,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        reporter: ${{ inputs.reporter }}
         filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
@@ -142,7 +137,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        reporter: ${{ inputs.reporter }}
         filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
@@ -160,7 +154,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        reporter: ${{ inputs.reporter }}
         filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
@@ -177,7 +170,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        reporter: ${{ inputs.reporter }}
         filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
@@ -190,7 +182,6 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         level: ${{ inputs.level }}
-        reporter: ${{ inputs.reporter }}
         filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
