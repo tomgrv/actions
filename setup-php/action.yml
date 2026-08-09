@@ -10,6 +10,12 @@ branding:
   color: blue
 
 inputs:
+  bare:
+    description: >-
+      If true, skips the `composer install` step. Useful for actions that only need
+      PHP and Composer available, but not the project's dependencies.
+    required: false
+    default: 'false'
   options:
     description: Additional options to pass to composer install, such as --no-dev.
     required: false
@@ -54,8 +60,8 @@ runs:
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
 
     - name: Set up PHP
-      uses: shivammathur/setup-php@v2
       id: php-setup
+      uses: shivammathur/setup-php@v2
       # Guards against redundant reinstalls when several actions in this
       # repository each embed setup-php within the same job.
       if: env.TOMGRV_PHP_SETUP != 'true'
@@ -71,7 +77,7 @@ runs:
       # Keyed on composer.json, not composer.lock: libraries and packages
       # commonly do not commit a lock file, and skipping the install there
       # leaves every downstream action without a vendor directory.
-      if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
+      if: ${{  env.TOMGRV_PHP_SETUP != 'true' && inputs.bare != 'true' && hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
 
@@ -81,10 +87,12 @@ runs:
     # project's own `composer install` so require.sh can skip packages already present
     # locally in vendor/, avoiding a redundant (and slower) global install.
     - name: Install global Composer requirements
+      id: composer-require
+      if: ${{ inputs.require != '' && inputs.bare != 'true' }}
       shell: sh
       env:
         REQUIRE: ${{ inputs.require }}
-      run: sh "${{ github.action_path }}/require.sh"
+      run: sh -c "${{ github.action_path }}/require.sh" >> "$GITHUB_OUTPUT"
 
     - name: Mark PHP toolchain as ready
       if: env.TOMGRV_PHP_SETUP != 'true'
