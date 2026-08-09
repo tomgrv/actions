@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+# Report whether the working directory has uncommitted or untracked changes.
+
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -10,8 +12,9 @@ fi
 WORKDIR="${WORKDIR:-.}"
 OPTIONS="${OPTIONS:-}"
 
+# Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${WORKDIR}" = "." ]; then
-  echo "::notice::WORKDIR not set, using default: ." >&2
+  echo "WORKDIR not set, using default: ." >&2
 fi
 
 echo "Checking for changes in: ${WORKDIR}" >&2

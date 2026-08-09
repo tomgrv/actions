@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+# Run PHP Mess Detector and report findings via reviewdog.
+
 set -e
 
 PHPMD_RULESET="${PHPMD_RULESET:-}"
@@ -10,8 +12,10 @@ WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
 WIP_FILES="${WIP_FILES:-}"
 
+# Input/ruleset defaulting is a setup detail, not a PHPMD finding: plain log
+# only, no GitHub annotation (see .github/instructions/action-creation.md).
 if [ "${PHPMD_PATHS}" = "app" ]; then
-    echo "::notice::PHPMD_PATHS not set, using default: app" >&2
+    echo "PHPMD_PATHS not set, using default: app" >&2
 fi
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -22,10 +26,10 @@ fi
 if [ -z "${PHPMD_RULESET}" ]; then
     if [ -f "phpmd.xml" ]; then
         PHPMD_RULESET="phpmd.xml"
-        echo "::notice::ruleset not set, using phpmd.xml found at repository root" >&2
+        echo "ruleset not set, using phpmd.xml found at repository root" >&2
     else
         PHPMD_RULESET="cleancode,codesize,controversial,design,naming,unusedcode"
-        echo "::notice::ruleset not set and no phpmd.xml found, using default ruleset: ${PHPMD_RULESET}" >&2
+        echo "ruleset not set and no phpmd.xml found, using default ruleset: ${PHPMD_RULESET}" >&2
     fi
 fi
 
@@ -35,10 +39,10 @@ REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
         exit 1
     fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
@@ -55,6 +59,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
+        # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD." >&2
         exit 0
     fi

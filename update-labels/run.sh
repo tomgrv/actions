@@ -1,17 +1,21 @@
 #!/usr/bin/sh
 
+# Create or update repository labels from a JSON file or comma-separated list,
+# and delete labels no longer in the desired set.
+
 set -eu
 
 REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 LABELS_FILE="${LABELS_FILE:-.github/labels.json}"
 LABELS="${LABELS:-50 documentation,10 must,20 should,30 could,80 duplicate,90 wont}"
 
+# Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LABELS_FILE}" = ".github/labels.json" ] && [ ! -f "${LABELS_FILE}" ]; then
-  echo "::notice::LABELS_FILE not set and .github/labels.json not found, using default inline labels" >&2
+  echo "LABELS_FILE not set and .github/labels.json not found, using default inline labels" >&2
 fi
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "::error::GITHUB_TOKEN is required" >&2
+  echo "Error: GITHUB_TOKEN is required" >&2
   exit 1
 fi
 
@@ -59,7 +63,7 @@ if [ -f "${LABELS_FILE}" ]; then
   # Parse JSON file (array of objects with name, color, description)
   # Expected format: [{"name":"label-name","color":"hex","description":"desc"},...]
   if ! command -v jq >/dev/null 2>&1; then
-    echo "::error::jq is required to parse JSON labels file" >&2
+    echo "Error: jq is required to parse JSON labels file" >&2
     exit 1
   fi
 

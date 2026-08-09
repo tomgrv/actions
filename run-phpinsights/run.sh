@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+# Run PHP Insights and report findings via reviewdog.
+#
 # noglob: TARGET_ARGS may be an unquoted, word-split list of git-diff-derived
 # filenames (dirty/wip mode) and must never undergo pathname expansion.
 set -ef
@@ -9,6 +11,8 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
+# Missing binaries are a setup concern, not a PHP Insights finding: plain
+# log only, no GitHub annotation.
 resolve_binary() {
     local_binary="$1"
     global_binary="$2"
@@ -24,7 +28,7 @@ resolve_binary() {
         return 0
     fi
 
-    echo "::error::${display_name} could not be found in ./vendor/bin/${local_binary} or in PATH. Please install it locally or make it available globally." >&2
+    echo "Error: ${display_name} could not be found in ./vendor/bin/${local_binary} or in PATH. Please install it locally or make it available globally." >&2
     exit 1
 }
 
@@ -33,10 +37,10 @@ REVIEWDOG_BIN="$(resolve_binary reviewdog reviewdog reviewdog)"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
         exit 1
     fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
@@ -55,7 +59,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${TARGET_PATHS}" = "app" ]; then
-    echo "::notice::TARGET_PATHS not set, using default: app" >&2
+    echo "TARGET_PATHS not set, using default: app" >&2
 fi
 
 # dirty/wip are resolved upstream by the list-dirty/list-wip actions; combine
@@ -63,6 +67,7 @@ fi
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
+        # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights." >&2
         printf 'has-changes=false\n'
         exit 0
@@ -81,7 +86,7 @@ fi
 
 if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
     if [ ! -f "${PHPINSIGHTS_CONFIG_PATH}" ]; then
-        echo "::error::config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}" >&2
+        echo "Error: config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}" >&2
         exit 1
     fi
     echo "Using custom PHP Insights configuration: ${PHPINSIGHTS_CONFIG_PATH}" >&2

@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Extract the `ext-*` PHP extensions required by composer.lock (preferred) or
+# composer.json, for use by shivammathur/setup-php.
+
 set -e
 
 extensions=''

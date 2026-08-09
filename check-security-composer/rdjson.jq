@@ -1,3 +1,6 @@
+# Convert `composer audit --format=json` output into a reviewdog rdjson
+# diagnostic report, resolving each advisory to the manifest line that
+# declares the affected package.
 def rxesc:
   gsub("(?<c>[.^$|()\\[\\]{}*+?\\\\])"; "\\(.c)");
 

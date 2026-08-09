@@ -20,10 +20,10 @@ Used by [`run-deployer`](../run-deployer/README.md) to determine what to check o
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions resolve-environment
+./dispatch.sh resolve-environment
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

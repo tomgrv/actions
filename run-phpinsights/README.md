@@ -72,10 +72,10 @@ Runs [PHP Insights](https://phpinsights.com/) and reports findings inline via re
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-phpinsights
+./dispatch.sh run-phpinsights
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

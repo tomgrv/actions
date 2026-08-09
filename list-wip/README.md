@@ -31,10 +31,10 @@ Lists files changed on the current pull request — diffed against the merge-bas
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-GITHUB_BASE_REF=main npx @tomgrv/actions list-wip
+GITHUB_BASE_REF=main ./dispatch.sh list-wip
 ```
 
 ## Example

@@ -1,15 +1,20 @@
 #!/usr/bin/sh
 
+# Configure the git bot identity (user.name/user.email) used by later steps
+# in the job to author commits.
+
 set -eu
 
 BOT_NAME="${BOT_NAME:-github-actions[bot]}"
 BOT_EMAIL="${BOT_EMAIL:-341898282+github-actions[bot]@users.noreply.github.com}"
 
+# Input defaulting is a setup detail, not a finding: plain log only, no
+# GitHub annotation.
 if [ "${BOT_NAME}" = "github-actions[bot]" ]; then
-  echo "::notice::BOT_NAME not set, using default: github-actions[bot]" >&2
+  echo "BOT_NAME not set, using default: github-actions[bot]" >&2
 fi
 if [ "${BOT_EMAIL}" = "341898282+github-actions[bot]@users.noreply.github.com" ]; then
-  echo "::notice::BOT_EMAIL not set, using default: 341898282+github-actions[bot]@users.noreply.github.com" >&2
+  echo "BOT_EMAIL not set, using default: 341898282+github-actions[bot]@users.noreply.github.com" >&2
 fi
 
 echo "Setting git user name and email for bot as ${BOT_NAME} <${BOT_EMAIL}>" >&2
