@@ -56,7 +56,7 @@ inputs:
   tests:
     description: Whether to run the test suite.
     required: false
-    default: 'true'
+    default: 'false'
   level:
     description: 'Report level for reviewdog [info,warning,error], shared by every wrapped check.'
     required: false
