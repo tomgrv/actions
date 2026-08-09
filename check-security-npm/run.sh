@@ -1,6 +1,9 @@
 #!/usr/bin/sh
 
 set -e
+if (set -o pipefail) 2>/dev/null; then
+  set -o pipefail
+fi
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   cd "${GITHUB_WORKSPACE}" || exit 1
@@ -41,16 +44,39 @@ MAX_DIAGNOSTICS="${MAX_DIAGNOSTICS:-40}"
 
 echo "Running npm audit..." >&2
 
-PACKAGE_JSON_PATH="package.json"
-if [ ! -f "${PACKAGE_JSON_PATH}" ]; then
-  PACKAGE_JSON_PATH="$(mktemp)"
-  trap 'rm -f "${PACKAGE_JSON_PATH}"' EXIT
+WORKSPACES_FLAGS=""
+if [ -f "package.json" ] && jq -e '.workspaces' package.json >/dev/null 2>&1; then
+  WORKSPACES_FLAGS="--workspaces"
 fi
+
+# Direct dependencies can be declared in a workspace member's package.json
+# rather than (or in addition to) the root one, so collect every manifest
+# reachable from package-lock.json to locate suggestions correctly.
+MANIFEST_PATHS="package.json"
+if [ -n "${WORKSPACES_FLAGS}" ] && [ -f "package-lock.json" ]; then
+  WORKSPACE_MANIFESTS="$(jq -r '
+      (.packages // {})
+      | keys[]
+      | select(. != "" and (test("(^|/)node_modules(/|$)") | not))
+      | . + "/package.json"
+    ' package-lock.json 2>/dev/null || true)"
+  if [ -n "${WORKSPACE_MANIFESTS}" ]; then
+    MANIFEST_PATHS="$(printf '%s\n%s\n' "${MANIFEST_PATHS}" "${WORKSPACE_MANIFESTS}")"
+  fi
+fi
+
+FILES_JSON_TMP="$(mktemp)"
+trap 'rm -f "${FILES_JSON_TMP}"' EXIT
+printf '%s\n' "${MANIFEST_PATHS}" | while IFS= read -r manifest; do
+  [ -n "${manifest}" ] || continue
+  [ -f "${manifest}" ] || continue
+  jq -n --arg p "${manifest}" --rawfile c "${manifest}" '{($p): $c}'
+done | jq -s 'add // {}' > "${FILES_JSON_TMP}"
 
 exit_code=0
 # shellcheck disable=SC2086
-npm audit --workspaces --audit-level moderate --package-lock-only --json 2>/dev/null \
-  | jq -f "$(dirname "$0")/rdjson.jq" --rawfile pkgjson "${PACKAGE_JSON_PATH}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" \
+{ npm audit ${WORKSPACES_FLAGS} --audit-level moderate --package-lock-only --json 2>/dev/null || true; } \
+  | jq -f "$(dirname "$0")/rdjson.jq" --slurpfile filesJsonArr "${FILES_JSON_TMP}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" \
   | reviewdog \
       -f=rdjson \
       -name="${REVIEWDOG_NAME}" \

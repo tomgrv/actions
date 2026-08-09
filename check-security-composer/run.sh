@@ -1,6 +1,9 @@
 #!/usr/bin/sh
 
 set -e
+if (set -o pipefail) 2>/dev/null; then
+  set -o pipefail
+fi
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   cd "${GITHUB_WORKSPACE}" || exit 1
@@ -48,16 +51,34 @@ LOCKED_JSON="$(composer show --locked --format=json --no-interaction 2>/dev/null
   | jq -c '[(.locked // [])[] | {key: .name, value: .version}] | from_entries' 2>/dev/null || true)"
 [ -n "${LOCKED_JSON}" ] || LOCKED_JSON='{}'
 
-COMPOSER_JSON_PATH="composer.json"
-if [ ! -f "${COMPOSER_JSON_PATH}" ]; then
-  COMPOSER_JSON_PATH="$(mktemp)"
-  trap 'rm -f "${COMPOSER_JSON_PATH}"' EXIT
+# Requirements can be declared in a local path repository's composer.json
+# rather than (or in addition to) the root one, so collect every manifest
+# reachable from composer.lock to locate suggestions correctly.
+MANIFEST_PATHS="composer.json"
+if [ -f "composer.lock" ]; then
+  PATH_REPO_MANIFESTS="$(jq -r '
+      ((.packages // []) + (."packages-dev" // []))
+      | .[]
+      | select(.dist.type == "path" and (.dist.url // "") != "")
+      | .dist.url + "/composer.json"
+    ' composer.lock 2>/dev/null || true)"
+  if [ -n "${PATH_REPO_MANIFESTS}" ]; then
+    MANIFEST_PATHS="$(printf '%s\n%s\n' "${MANIFEST_PATHS}" "${PATH_REPO_MANIFESTS}")"
+  fi
 fi
+
+FILES_JSON_TMP="$(mktemp)"
+trap 'rm -f "${FILES_JSON_TMP}"' EXIT
+printf '%s\n' "${MANIFEST_PATHS}" | while IFS= read -r manifest; do
+  [ -n "${manifest}" ] || continue
+  [ -f "${manifest}" ] || continue
+  jq -n --arg p "${manifest}" --rawfile c "${manifest}" '{($p): $c}'
+done | jq -s 'add // {}' > "${FILES_JSON_TMP}"
 
 exit_code=0
 # shellcheck disable=SC2086
 { composer audit --locked --format=json --no-interaction 2>/dev/null || true; } | \
-  jq -f "$(dirname "$0")/rdjson.jq" --rawfile composerjson "${COMPOSER_JSON_PATH}" --argjson locked "${LOCKED_JSON}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" | \
+  jq -f "$(dirname "$0")/rdjson.jq" --slurpfile filesJsonArr "${FILES_JSON_TMP}" --argjson locked "${LOCKED_JSON}" --argjson maxDiagnostics "${MAX_DIAGNOSTICS}" | \
   reviewdog \
     -f=rdjson \
     -name="${REVIEWDOG_NAME}" \

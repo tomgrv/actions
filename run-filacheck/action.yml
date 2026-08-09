@@ -30,6 +30,21 @@ inputs:
     description: Only scan files with uncommitted git changes.
     required: false
     default: 'false'
+  wip:
+    description: >-
+      Only scan files changed on the current pull request (relative to its
+      base branch). FilaCheck has no native flag for this, so it is
+      emulated by resolving the changed files and passing that explicit
+      list in place of `path`.
+    required: false
+    default: 'false'
+  wip-base-ref:
+    description: >-
+      Base branch/ref to diff against when `wip` is enabled. Defaults to
+      `GITHUB_BASE_REF`, which GitHub Actions sets automatically on
+      `pull_request` events.
+    required: false
+    default: ''
   dry-run:
     description: Preview fix changes without modifying files.
     required: false
@@ -79,6 +94,15 @@ runs:
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
 
+    - name: List WIP files
+      id: list-wip
+      if: inputs.wip == 'true'
+      uses: $/list-wip
+      with:
+        path: ${{ inputs.path }}
+        extensions: php,blade.php
+        base-ref: ${{ inputs.wip-base-ref }}
+
     - name: Run FilaCheck
       id: run-filacheck
       shell: sh
@@ -88,6 +112,8 @@ runs:
         FIX: ${{ inputs.fix }}
         DETAILED: ${{ inputs.detailed }}
         DIRTY: ${{ inputs.dirty }}
+        WIP: ${{ inputs.wip }}
+        WIP_FILES: ${{ steps.list-wip.outputs.files }}
         DRY_RUN: ${{ inputs.dry-run }}
         BACKUP: ${{ inputs.backup }}
         REVIEWDOG_NAME: ${{ inputs.name }}

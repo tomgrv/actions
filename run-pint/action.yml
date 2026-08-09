@@ -33,6 +33,21 @@ inputs:
       otherwise.
     required: false
     default: ''
+  dirty:
+    description: Only analyze files with uncommitted git changes (staged, unstaged, or untracked).
+    required: false
+    default: 'false'
+  wip:
+    description: Only analyze files changed on the current pull request (relative to its base branch).
+    required: false
+    default: 'false'
+  wip-base-ref:
+    description: >-
+      Base branch/ref to diff against when `wip` is enabled. Defaults to
+      `GITHUB_BASE_REF`, which GitHub Actions sets automatically on
+      `pull_request` events.
+    required: false
+    default: ''
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
@@ -74,6 +89,23 @@ runs:
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
 
+    - name: List dirty files
+      id: list-dirty
+      if: inputs.dirty == 'true'
+      uses: $/list-dirty
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+
+    - name: List WIP files
+      id: list-wip
+      if: inputs.wip == 'true'
+      uses: $/list-wip
+      with:
+        path: ${{ inputs.paths }}
+        extensions: php
+        base-ref: ${{ inputs.wip-base-ref }}
+
     - name: Run Pint
       id: run-pint
       shell: sh
@@ -83,6 +115,10 @@ runs:
         FIX: ${{ inputs.fix }}
         PINT_PRESET: ${{ inputs.preset }}
         PINT_CONFIG: ${{ inputs.config }}
+        DIRTY: ${{ inputs.dirty }}
+        WIP: ${{ inputs.wip }}
+        DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}
+        WIP_FILES: ${{ steps.list-wip.outputs.files }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

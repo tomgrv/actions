@@ -1,0 +1,42 @@
+# @format
+
+# @package tomgrv/actions/list-dirty
+
+name: List Dirty Files
+description: List files with uncommitted git changes (staged, unstaged, or untracked), optionally filtered by path and extension.
+author: Perspikapps
+branding:
+  icon: git-commit
+  color: yellow
+
+inputs:
+  path:
+    description: Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).
+    required: false
+    default: '.'
+  extensions:
+    description: Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.
+    required: false
+    default: php
+
+outputs:
+  files:
+    description: Newline-separated list of matching dirty files. Empty when none match.
+    value: ${{ steps.list.outputs.files }}
+  count:
+    description: Number of matching files.
+    value: ${{ steps.list.outputs.count }}
+  has-files:
+    description: 'true if at least one file matches, false otherwise.'
+    value: ${{ steps.list.outputs.has-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: List dirty files
+      id: list
+      shell: sh
+      env:
+        LIST_PATHS: ${{ inputs.path }}
+        LIST_EXTENSIONS: ${{ inputs.extensions }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
