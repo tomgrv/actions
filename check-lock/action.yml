@@ -58,13 +58,25 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup PHP toolchain
+      id: setup-php
+      if: ${{ hashFiles('**/composer.json') || hashFiles('**/composer.lock') }}
+      uses: $/setup-php
+
+    - name: Setup Node toolchain
+      id: setup-node
+      if: ${{ hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
+      uses: $/setup-node
+
     - name: Setup reviewdog toolchain
+      id: setup-reviewdog
       uses: $/setup-reviewdog
       with:
         version: ${{ inputs.reviewdog-version }}
 
     - name: Check lock coherence
       id: check
+      if: ${{ hashFiles('**/composer.json') || hashFiles('**/composer.lock') || hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
       shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
