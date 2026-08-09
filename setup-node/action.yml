@@ -22,6 +22,12 @@ inputs:
     description: Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.
     required: false
     default: ''
+  bare:
+    description: >-
+      If true, skips the `npm ci` step. Useful for actions that only need
+      Node.js and npm available, but not the project's dependencies.
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -37,7 +43,7 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Install Node dependencies
-      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && hashFiles('package-lock.json') }}
+      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && inputs.bare != 'true' && hashFiles('package-lock.json') }}
       shell: sh
       run: npm ci --no-progress --workspaces ${{ inputs.options }}
 
