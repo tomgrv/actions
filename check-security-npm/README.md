@@ -56,10 +56,10 @@ This action has no outputs.
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions check-security-npm
+./dispatch.sh check-security-npm
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

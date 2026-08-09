@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# List files with uncommitted git changes (staged, unstaged, or untracked)
+# under a given path, filtered by extension.
+
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -10,8 +13,9 @@ fi
 LIST_PATHS="${LIST_PATHS:-${1:-.}}"
 LIST_EXTENSIONS="${LIST_EXTENSIONS:-php}"
 
+# Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LIST_PATHS}" = "." ]; then
-    echo "::notice::path not set, using default: ." >&2
+    echo "path not set, using default: ." >&2
 fi
 
 if [ "${LIST_PATHS}" = "." ]; then

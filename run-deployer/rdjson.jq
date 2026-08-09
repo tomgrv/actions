@@ -1,3 +1,5 @@
+# Convert PHP Deployer's log output into a reviewdog rdjson diagnostic
+# report, one diagnostic per warning/error line.
 def diag($severity; $message): {
   message: $message,
   severity: $severity,

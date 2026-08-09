@@ -177,10 +177,10 @@ Running the action multiple times with the same input produces the same result w
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions update-labels
+./dispatch.sh update-labels
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

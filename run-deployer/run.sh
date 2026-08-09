@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Build and run a PHP Deployer (`dep`) command, reporting its warnings/errors
+# as reviewdog check annotations.
+
 set -eu
 
 DEP="${DEP:-deploy}"

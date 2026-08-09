@@ -77,10 +77,10 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-pint
+./dispatch.sh run-pint
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

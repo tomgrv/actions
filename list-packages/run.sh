@@ -42,7 +42,8 @@ if command -v composer >/dev/null 2>&1; then
             ]')
 
 else
-    echo "::warning::Composer not found, skipping Composer package discovery." >&2
+    # Missing binary is a setup concern, not a finding: plain log only.
+    echo "Composer not found, skipping Composer package discovery." >&2
 fi
 
 if [ -f "$WORKDIR/package.json" ]; then
@@ -83,7 +84,8 @@ if [ -f "$WORKDIR/package.json" ]; then
             done
         done | jq -cs '.')
 else
-    echo "::warning::Root package.json not found, skipping workspace package discovery." >&2
+    # Functional: absence of a file to analyze in the target repo is a notice.
+    echo "::notice::Root package.json not found, skipping workspace package discovery." >&2
 fi
 
 echo "Combining and normalizing package data..." >&2

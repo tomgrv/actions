@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Validate composer.json/composer.lock and package.json/package-lock.json
+# coherence (schema, publish-readiness, lock drift) and report via reviewdog.
+
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -7,22 +10,24 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
+# Token/tooling resolution is a setup concern, not a lock-coherence finding:
+# plain log only, no GitHub annotation (see .github/instructions/action-creation.md).
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
   if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
     exit 1
   fi
-  echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+  echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
 if ! command -v reviewdog >/dev/null 2>&1; then
-  echo "::error::reviewdog could not be found. Please install it to run this action." >&2
+  echo "Error: reviewdog could not be found. Please install it to run this action." >&2
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "::error::jq could not be found. Please install it to run this action." >&2
+  echo "Error: jq could not be found. Please install it to run this action." >&2
   exit 1
 fi
 
@@ -202,7 +207,9 @@ for _target in ${PATHS}; do
   _target="${_target:-.}"
 
   if [ ! -d "${_target}" ]; then
-    echo "::warning::Directory not found, skipping: ${_target}" >&2
+    # Functional: absence of a target to analyze is a notice about the
+    # analyzed repo, not a setup error.
+    echo "::notice::Directory not found, skipping: ${_target}" >&2
     IFS=','
     continue
   fi

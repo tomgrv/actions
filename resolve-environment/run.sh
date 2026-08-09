@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Resolve the deploy branch, tag, and environment from the triggering GitHub
+# event (push, PR review request, tag, or workflow_dispatch).
+
 set -eu
 
 starts_with() {

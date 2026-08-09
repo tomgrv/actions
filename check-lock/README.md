@@ -75,11 +75,11 @@ If a lock file's tool is not on the runner, the action reports that as an error 
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions check-lock
-npx @tomgrv/actions check-lock .,packages/foo
+./dispatch.sh check-lock
+./dispatch.sh check-lock .,packages/foo
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

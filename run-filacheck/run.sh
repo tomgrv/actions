@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+# Run FilaCheck (Filament-specific checks) and report findings via reviewdog.
+#
 # noglob: FILACHECK_TARGET may be an unquoted, word-split list of
 # git-diff-derived filenames (wip mode) and must never undergo pathname
 # expansion.
@@ -14,12 +16,14 @@ PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${
 FILACHECK_BIN="filacheck"
 REVIEWDOG_BIN="reviewdog"
 
+# Token resolution is a setup concern, not a FilaCheck finding: plain log
+# only, no GitHub annotation (see .github/instructions/action-creation.md).
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "::error::GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
         exit 1
     fi
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
@@ -39,7 +43,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ "${FILACHECK_PATH}" = "app/Filament" ]; then
-    echo "::notice::FILACHECK_PATH not set, using default: app/Filament" >&2
+    echo "FILACHECK_PATH not set, using default: app/Filament" >&2
 fi
 
 #
@@ -51,6 +55,7 @@ fi
 if [ "${WIP}" = "true" ]; then
     FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
+        # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
         printf 'has-changes=false\n'
         exit 0

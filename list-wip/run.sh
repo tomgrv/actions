@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# List files changed on the current branch relative to a base ref, filtered
+# by path and extension.
+
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -11,12 +14,15 @@ LIST_PATHS="${LIST_PATHS:-${1:-.}}"
 LIST_EXTENSIONS="${LIST_EXTENSIONS:-php}"
 LIST_BASE_REF="${LIST_BASE_REF:-${GITHUB_BASE_REF:-}}"
 
+# Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LIST_PATHS}" = "." ]; then
-    echo "::notice::path not set, using default: ." >&2
+    echo "path not set, using default: ." >&2
 fi
 
+# Missing base-ref is a setup/configuration problem, not a finding about the
+# analyzed repository: plain log only, no GitHub annotation.
 if [ -z "${LIST_BASE_REF}" ]; then
-    echo "::error::base-ref is required: set GITHUB_BASE_REF (automatic on pull_request events) or the base-ref input" >&2
+    echo "Error: base-ref is required: set GITHUB_BASE_REF (automatic on pull_request events) or the base-ref input" >&2
     printf 'files<<GH_LIST_WIP_EOF\nGH_LIST_WIP_EOF\n'
     printf 'count=0\n'
     printf 'has-files=false\n'

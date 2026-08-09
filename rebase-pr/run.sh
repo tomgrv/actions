@@ -1,20 +1,22 @@
 #!/usr/bin/sh
+# Rebase a pull request's head branch onto its base branch.
 # No Python dependency: all processing done via sh, jq, and awk.
 
 set -eu
 
+# Missing tooling/tokens are setup concerns: plain log only.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "::error::GITHUB_TOKEN is required" >&2
+  echo "Error: GITHUB_TOKEN is required" >&2
   exit 1
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo "::error::gh CLI could not be found. Please install it." >&2
+  echo "Error: gh CLI could not be found. Please install it." >&2
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "::error::jq could not be found. Please install it." >&2
+  echo "Error: jq could not be found. Please install it." >&2
   exit 1
 fi
 

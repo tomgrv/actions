@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Run the PHP test suite (pest/phpunit/composer script), bootstrapping a
+# Laravel app when needed, and report failures via reviewdog.
+
 set -e
 
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
@@ -9,9 +12,12 @@ fi
 
 WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
+# Setup/input problems below are plain logs, not GitHub annotations (see
+# .github/instructions/action-creation.md); only the test suite's own result
+# at the end of this script is a finding worth annotating.
 if [ "${WORKING_DIRECTORY}" != "." ]; then
     if [ ! -d "${WORKING_DIRECTORY}" ]; then
-        echo "::error::Working directory not found: ${WORKING_DIRECTORY}" >&2
+        echo "Error: Working directory not found: ${WORKING_DIRECTORY}" >&2
         exit 1
     fi
     cd "${WORKING_DIRECTORY}" || exit 1
@@ -37,7 +43,7 @@ MIGRATE="${MIGRATE:-auto}"
 _reject_control_chars() {
     case "$2" in
         *[[:cntrl:]]*)
-            echo "::error::${1} must not contain control characters or newlines." >&2
+            echo "Error: ${1} must not contain control characters or newlines." >&2
             return 1
             ;;
     esac
@@ -63,7 +69,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "::notice::REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
+    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
     export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
 fi
 
@@ -84,24 +90,24 @@ if [ ! -f vendor/autoload.php ]; then
     esac
 
     if [ "${_install}" = 'true' ]; then
-        echo "::notice::vendor/autoload.php is missing, installing Composer dependencies" >&2
+        echo "vendor/autoload.php is missing, installing Composer dependencies" >&2
 
         # A failed install must not abort the script under `set -e`: the guard
         # below is what turns this into an actionable message and still writes
         # the step outputs.
         if ! command -v composer > /dev/null 2>&1; then
-            echo "::error::composer was not found in PATH, cannot install dependencies." >&2
+            echo "Error: composer was not found in PATH, cannot install dependencies." >&2
         else
-            composer install --no-interaction --no-progress --prefer-dist --ansi >&2 || echo "::error::composer install failed, see the output above." >&2
+            composer install --no-interaction --no-progress --prefer-dist --ansi >&2 || echo "Error: composer install failed, see the output above." >&2
         fi
     fi
 fi
 
 if [ ! -f vendor/autoload.php ]; then
     if [ -f composer.json ]; then
-        echo "::error::Composer dependencies are not installed (vendor/autoload.php is missing). Run setup-php or composer install before this action, or set install to true." >&2
+        echo "Error: Composer dependencies are not installed (vendor/autoload.php is missing). Run setup-php or composer install before this action, or set install to true." >&2
     else
-        echo "::error::No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
+        echo "Error: No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
     fi
 
     printf 'tests-passed=false\n'
@@ -128,7 +134,7 @@ _composer_has_test_script() {
     fi
 
     if ! command -v composer > /dev/null 2>&1; then
-        echo "::error::composer was not found in PATH." >&2
+        echo "Error: composer was not found in PATH." >&2
         return 1
     fi
 
@@ -136,7 +142,7 @@ _composer_has_test_script() {
     _probe_out=''
 
     if ! _probe_out="$(composer run-script --list 2> "${_probe_err}")"; then
-        echo "::error::\`composer run-script --list\` failed:" >&2
+        echo "Error: \`composer run-script --list\` failed:" >&2
         cat "${_probe_err}" >&2
         rm -f "${_probe_err}"
         return 1
@@ -164,12 +170,12 @@ _resolve_runner() {
                 return 0
             fi
 
-            echo "::error::No test runner found. Install pest or phpunit, or declare a \"test\" script in composer.json." >&2
+            echo "Error: No test runner found. Install pest or phpunit, or declare a \"test\" script in composer.json." >&2
             return 1
             ;;
         composer)
             if ! _composer_has_test_script; then
-                echo "::error::Runner \"composer\" was requested but no \"test\" script is available in composer.json." >&2
+                echo "Error: Runner \"composer\" was requested but no \"test\" script is available in composer.json." >&2
                 return 1
             fi
 
@@ -184,7 +190,7 @@ _resolve_runner() {
                 return 0
             fi
 
-            echo "::error::Requested test runner not found in PATH: ${TEST_RUNNER}" >&2
+            echo "Error: Requested test runner not found in PATH: ${TEST_RUNNER}" >&2
             return 1
             ;;
     esac
@@ -210,7 +216,7 @@ case "${COVERAGE}" in
         if _has_coverage_driver; then
             COVERAGE_ENABLED='true'
         else
-            echo "::error::Coverage was requested but neither xdebug nor pcov is loaded." >&2
+            echo "Error: Coverage was requested but neither xdebug nor pcov is loaded." >&2
             printf 'tests-passed=false\n'
             printf 'coverage-file=\n'
             printf 'junit-file=\n'
@@ -221,7 +227,7 @@ case "${COVERAGE}" in
         if _has_coverage_driver; then
             COVERAGE_ENABLED='true'
         else
-            echo "::notice::No coverage driver (xdebug/pcov) loaded, running tests without coverage." >&2
+            echo "No coverage driver (xdebug/pcov) loaded, running tests without coverage." >&2
             COVERAGE_ENABLED='false'
         fi
         ;;
@@ -248,7 +254,7 @@ if [ ! -f .env ]; then
     done
 
     if [ ! -f .env ]; then
-        echo "::notice::No .env template found, creating an empty .env" >&2
+        echo "No .env template found, creating an empty .env" >&2
         : > .env
     fi
 fi
@@ -311,9 +317,9 @@ fi
 #
 if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
     if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-        echo "::notice::No GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN set, skipping reviewdog reporting." >&2
+        echo "No GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN set, skipping reviewdog reporting." >&2
     elif ! command -v "${REVIEWDOG_BIN}" > /dev/null 2>&1; then
-        echo "::notice::reviewdog was not found in PATH, skipping reviewdog reporting." >&2
+        echo "reviewdog was not found in PATH, skipping reviewdog reporting." >&2
     else
         # shellcheck disable=SC2086
         php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \

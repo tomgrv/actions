@@ -1,3 +1,5 @@
+# Convert the TSV findings emitted by run.sh's `_add` helper (path, severity,
+# message) into a reviewdog rdjson diagnostic report.
 (split("\n") | map(select(length > 0))) as $lines
 | {
     source: {

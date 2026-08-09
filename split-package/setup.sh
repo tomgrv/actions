@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Download and install the splitsh-lite binary used by split-package's run.sh,
+# unless it is already present.
+
 SPLITSH_BINARY="/usr/local/bin/splitsh-lite"
 SPLITSH_VERSION="${1:-${SPLITSH_VERSION-v1.0.1}}"
 SPLITSH_ARCH="${2:-${SPLITSH_ARCH:-linux_amd64}}"

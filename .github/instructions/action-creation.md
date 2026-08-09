@@ -38,14 +38,14 @@ Every action directory must have a minimal `package.json` with:
 
 This minimal file is used only to provide the workspace scope for `commitlint`.
 
-The root `@tomgrv/actions` package is the only one published to npm. It includes all action directories and exposes `dispatch.sh` as the `actions` binary.
+Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; `dispatch.sh` is a local, unpublished helper for running an action's `run.sh` directly from a clone of this repository (see below).
 
 ### Local Usage (dispatch.sh)
 
 All actions with a `run.sh` can be invoked locally via the root `dispatch.sh`:
 
 ```sh
-npx @tomgrv/actions <action-name> [args...]
+./dispatch.sh <action-name> [args...]
 ```
 
 `dispatch.sh` automatically sets sensible defaults for all `GITHUB_*` environment variables. Users only need to supply `GITHUB_TOKEN` for actions that call the GitHub API.
@@ -55,10 +55,10 @@ Add a `## Local Usage` section to every action README:
 ```markdown
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 \`\`\`sh
-npx @tomgrv/actions action-name
+./dispatch.sh action-name
 \`\`\`
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
@@ -109,15 +109,18 @@ runs:
 ```bash
 #!/usr/bin/sh
 
+# One-line description of what this script does.
+
 set -eu
 
 # Environment variable handling with defaults
 REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 PARAMETER="${PARAMETER:-default-value}"
 
-# Validate required inputs
+# Setup problems (missing token/binary, bad input, defaulted values) are
+# plain logs, not GitHub annotations - see "Logging conventions" below.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "::error::GITHUB_TOKEN is required" >&2
+    echo "Error: GITHUB_TOKEN is required" >&2
     exit 1
 fi
 
@@ -130,8 +133,9 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-# Main logic here
-echo "::notice::Processing..." >&2
+# Main logic here. A notice is warranted because this is a fact about the
+# analyzed repository (e.g. nothing matched the filter), not about setup.
+echo "::notice::Nothing to process, target path is empty." >&2
 
 # Output to GITHUB_OUTPUT
 printf 'output-name=%s\n' "${value}"
@@ -140,14 +144,23 @@ printf 'output-name=%s\n' "${value}"
 **Key conventions:**
 
 1. Use `#!/usr/bin/sh` shebang for portability
-2. Use `set -eu` to exit on errors and undefined variables
-3. Use `${VAR:-default}` for optional variables with defaults
-4. Use `${VAR:?error message}` for required variables
-5. Send user messages to stderr (`>&2`)
-6. Use GitHub annotations: `::notice::`, `::warning::`, `::error::`
-7. Output variables using `printf` format
-8. Make script executable: `chmod +x run.sh`
-9. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
+2. Start with a one-to-three line comment stating what the script does
+3. Use `set -eu` (or `set -ef`/`set -e` when a `noglob`/pipefail comment explains the exception) to exit on errors and undefined variables
+4. Use `${VAR:-default}` for optional variables with defaults
+5. Use `${VAR:?error message}` for required variables
+6. Send user messages to stderr (`>&2`)
+7. Follow the **logging conventions** below for `::notice::`/`::warning::`/`::error::` vs. plain logs
+8. Output variables using `printf` format
+9. Make script executable: `chmod +x run.sh`
+10. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
+
+### Logging Conventions
+
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. Reserve them for facts about that repository - the thing being analyzed or acted upon - not for this toolkit's own setup:
+
+- **Setup/config points stay in plain logs** (`echo "..." >&2`, prefixed `Error:` when fatal): missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), an input left at its default (`"PATHS not set, using default: app"`), or a bad/missing config file path. These are exactly as actionable printed in the job log as they would be as an annotation, but they are not something about the analyzed repository's code, so they must not be tagged `::error::`/`::warning::`/`::notice::`. Still `exit 1` when fatal - only the annotation is dropped, not the failure.
+- **`::notice::` for facts about the analyzed repository**: no files matched the target path/filter, a target directory or manifest is absent, nothing changed, a PR is already up to date. Example: "no PHP files to analyze" is a notice; "the `phpstan` binary is missing" is a plain log.
+- **`::warning::`/`::error::` for the analysis outcome itself**: this is usually produced by the wrapped tool via reviewdog (checkstyle/sarif/rdjson piped through `reviewdog`), not by an `echo` in `run.sh`. Where `run.sh` does emit one directly (e.g. a test suite failing, a PR title failing commitlint), it must be reporting the actual result of checking the target, not a wrapper-script problem.
 
 ### Documentation (README.md)
 
@@ -313,9 +326,9 @@ gh label create "${NAME}" --color "${COLOR}" --force
 #### Working with JSON (using jq)
 
 ```bash
-# Check if jq is available
+# Check if jq is available (setup concern: plain log, see "Logging conventions")
 if ! command -v jq > /dev/null 2>&1; then
-    echo "::error::jq is required" >&2
+    echo "Error: jq is required" >&2
     exit 1
 fi
 

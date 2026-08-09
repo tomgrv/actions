@@ -63,10 +63,10 @@ Creates a pull request from a branch, or updates the existing open pull request 
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions create-pr
+./dispatch.sh create-pr
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

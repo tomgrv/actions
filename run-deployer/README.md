@@ -65,10 +65,10 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 
 ## Local Usage
 
-Run this action locally using the root `npx @tomgrv/actions` dispatcher:
+Run this action locally using the root `./dispatch.sh` dispatcher:
 
 ```sh
-npx @tomgrv/actions run-deployer
+./dispatch.sh run-deployer
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
