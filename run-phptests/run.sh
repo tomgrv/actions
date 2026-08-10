@@ -317,6 +317,9 @@ if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
     elif ! command -v "${REVIEWDOG_BIN}" > /dev/null 2>&1; then
         echo "reviewdog was not found in PATH, skipping reviewdog reporting." >&2
     else
+        echo "Reviewdog parameters: -f=rdjson -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
+        echo "JUnit tempfile source size: $(wc -c < "${JUNIT_FILE}") bytes" >&2
+
         # shellcheck disable=SC2086
         php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \
             | "${REVIEWDOG_BIN}" \

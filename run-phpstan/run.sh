@@ -107,6 +107,9 @@ if grep -qi "no files found to analyse" "${tmpfile}"; then
     exit 0
 fi
 
+echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
+echo "PHPStan tempfile source size: $(wc -c < "${tmpfile}") bytes" >&2
+
 cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
     -f=checkstyle \
     -name="${REVIEWDOG_NAME}" \

@@ -93,8 +93,12 @@ fi
 echo "Running PHP Insights on: ${TARGET_PATHS}" >&2
 
 exit_code=0
+phpinsights_log=$(mktemp)
+trap 'rm -f "${phpinsights_log}"' EXIT INT TERM
+echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
 # shellcheck disable=SC2046,SC2086
-"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2> /dev/null \
+"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2>"${phpinsights_log}" \
+    | tee -a "${phpinsights_log}" \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
         -name="${REVIEWDOG_NAME}" \
@@ -103,4 +107,6 @@ exit_code=0
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \
         -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
         ${REVIEWDOG_FLAGS} || exit_code=$?
+echo "PHP Insights stdout/stderr log:" >&2
+cat "${phpinsights_log}" >&2
 exit $exit_code

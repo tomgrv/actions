@@ -84,8 +84,12 @@ if [ "${FIX}" = "true" ]; then
 else
     echo "Running Pint in test mode (no fixes will be applied)." >&2
     exit_code=0
+    pint_log=$(mktemp)
+    trap 'rm -f "${pint_log}"' EXIT INT TERM
+    echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
     # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2> /dev/null \
+    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2>"${pint_log}" \
+        | tee -a "${pint_log}" \
         | "${REVIEWDOG_BIN}" \
             -f=checkstyle \
             -name="${REVIEWDOG_NAME}" \
@@ -94,6 +98,8 @@ else
             -filter-mode="${REVIEWDOG_FILTER_MODE}" \
             -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
             ${REVIEWDOG_FLAGS} || exit_code=$?
+    echo "Pint stdout/stderr log:" >&2
+    cat "${pint_log}" >&2
     printf 'has-changes=false\n'
     exit $exit_code
 fi

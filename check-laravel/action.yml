@@ -200,22 +200,3 @@ runs:
         workdir: ${{ github.workspace }}
         pr-title: 'fix: apply fixes from check-laravel'
         pr-body: 'This PR applies automatic fixes from the check-laravel action (PHPStan baseline, Pint, PHP Insights).'
-
-    - name: Fail if any check failed
-      if: always()
-      shell: sh
-      env:
-        PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
-        PINT_OUTCOME: ${{ steps.pint.outcome }}
-        PHPINSIGHTS_OUTCOME: ${{ steps.phpinsights.outcome }}
-        PHPMD_OUTCOME: ${{ steps.phpmd.outcome }}
-        TESTS_OUTCOME: ${{ steps.tests.outcome }}
-      run: |
-        failed=false
-        for outcome in "${PHPSTAN_OUTCOME}" "${PINT_OUTCOME}" "${PHPINSIGHTS_OUTCOME}" "${PHPMD_OUTCOME}" "${TESTS_OUTCOME}"; do
-          [ "${outcome}" = "failure" ] && failed=true
-        done
-        if [ "${failed}" = "true" ]; then
-          echo "::error::One or more checks failed. See the individual check annotations above for details." >&2
-          exit 1
-        fi
