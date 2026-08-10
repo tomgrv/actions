@@ -71,7 +71,7 @@ inputs:
   reviewdog-flags:
     description: Additional reviewdog flags.
     required: false
-    default: ''
+    default: '-tee'
 
 outputs:
   has-changes:
