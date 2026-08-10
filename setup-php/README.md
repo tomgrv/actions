@@ -6,6 +6,8 @@ Shared composite action that prepares PHP, extensions, optional PHP tools, and C
 
 Every PHP-based action in this repository (`run-phpstan`, `run-pint`, `run-phpinsights`, `run-phpmd`, `run-filacheck`, `run-phptests`, `check-security-composer`) includes this action as its first step, so PHP is always ready without an explicit step in your workflow. The actual PHP/Composer install runs once per job: once it has run — whether triggered by an explicit `setup-php` step or by one of the actions above — later invocations in the same job detect the `TOMGRV_PHP_SETUP` environment marker and skip straight through. Add an explicit `setup-php` step yourself only when you need to pass custom `options` or `tools`.
 
+This action also puts `vendor/bin` (project-local) and the global Composer bin directory (`composer config -g home`) on `PATH`, once per job. Every action that embeds `setup-php` can therefore call its tool (`pest`, `phpunit`, `pint`, `phpstan`, `phpmd`, `phpinsights`, `filacheck`, `dep`, ...) by bare name instead of resolving the path itself.
+
 ## Inputs
 
 ### options
