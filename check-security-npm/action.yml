@@ -63,4 +63,4 @@ runs:
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
         MAX_DIAGNOSTICS: ${{ inputs.max-diagnostics }}
-      run: sh "${{ github.action_path }}/run.sh"
+      run: sh -c "${{ github.action_path }}/run.sh"

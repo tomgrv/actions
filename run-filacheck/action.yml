@@ -122,4 +122,4 @@ runs:
         REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

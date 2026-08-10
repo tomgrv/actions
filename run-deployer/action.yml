@@ -51,7 +51,7 @@ inputs:
     default: 'v0.20.3'
 outputs:
   deploy-url:
-    description: 'The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package''s own workflows do via matrix + alias=<host>) to get an unambiguous value.'
+    description: "The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package's own workflows do via matrix + alias=<host>) to get an unambiguous value."
     value: ${{ steps.run.outputs.deploy-url }}
 runs:
   using: composite
@@ -102,4 +102,4 @@ runs:
         TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         BRANCH_SCOPE: ${{ inputs.branch-scope }}
         ENVIRONMENT: ${{ inputs.environment }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
