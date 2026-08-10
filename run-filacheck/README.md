@@ -2,7 +2,7 @@
 
 # GitHub Action: Validate PR FilaCheck
 
-Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. Can also run in **fix mode** to apply fixes directly. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `filacheck` itself is installed globally via `setup-php`'s `require` input (`laraveldaily/filacheck`), unless already required locally in `composer.json` (and thus in `vendor/`) or already installed globally.
+Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament code issues inline via reviewdog. PHP and Composer dependencies are set up automatically via [**setup-php**](../setup-php/README.md), and reviewdog via [**setup-reviewdog**](../setup-reviewdog/README.md); both are skipped if they already ran earlier in the job. `filacheck` itself is installed globally via `setup-php`'s `require` input (`laraveldaily/filacheck`), unless already required locally in `composer.json` (and thus in `vendor/`) or already installed globally.
 
 ## Inputs
 
@@ -13,10 +13,6 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 ### path
 
 **Optional.** Path to analyze. Defaults to `app/Filament`.
-
-### fix
-
-**Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
 ### detailed
 
@@ -33,14 +29,6 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 ### wip-base-ref
 
 **Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
-
-### dry-run
-
-**Optional.** Preview fix changes without modifying files. Defaults to `false`.
-
-### backup
-
-**Optional.** Create backup files when fixing. Defaults to `false`.
 
 ### name
 
@@ -68,14 +56,13 @@ Fixed to `file`: this action operates on files, not the whole repository, so rev
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes.
+This action has no outputs.
 
 ## Works well with
 
 - [**check-filament**](../check-filament/README.md) — wraps this action as the Filament check suite entry point.
 - [**setup-php**](../setup-php/README.md) — included automatically; add it explicitly only to pass custom `options`/`tools`, or once at the top of the job to share the setup across several PHP actions.
 - [**setup-reviewdog**](../setup-reviewdog/README.md) — included automatically; add it explicitly only to pass a custom `version`.
-- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**run-pint**](../run-pint/README.md) — complement Filament checks with Laravel Pint.
 - [**list-wip**](../list-wip/README.md) — included automatically behind `wip`.
 
@@ -110,33 +97,3 @@ jobs:
                   path: app/Filament
 ```
 
-### Fix mode
-
-```yaml
-name: FilaCheck Fix
-
-on:
-    workflow_dispatch:
-
-jobs:
-    fix:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Run FilaCheck in fix mode
-              id: filacheck
-              uses: tomgrv/actions/run-filacheck@v1
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  path: app/Filament
-                  fix: 'true'
-
-            - name: Create pull request with fixes
-              if: ${{ steps.filacheck.outputs.has-changes == 'true' }}
-              uses: tomgrv/actions/create-pr@v1
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  head-branch: chore/filacheck-fix
-                  pr-title: 'chore: apply filacheck fixes'
-```

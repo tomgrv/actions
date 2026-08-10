@@ -27,7 +27,7 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-lock-coherence}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="nofilter"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
@@ -236,11 +236,11 @@ jq -R -s -f "$(dirname "$0")/rdjson.jq" <"${FINDINGS}" | \
     ${REVIEWDOG_FLAGS} >&2 || exit_code=$?
 
 if [ -s "${FINDINGS}" ]; then
-  printf 'has-drift=true\n'
+  printf 'has-drift=true\n' >> "${GITHUB_OUTPUT}"
 else
   echo "All lock files are in sync." >&2
-  printf 'has-drift=false\n'
+  printf 'has-drift=false\n' >> "${GITHUB_OUTPUT}"
 fi
-printf 'drift-files=%s\n' "${DRIFT_FILES}"
+printf 'drift-files=%s\n' "${DRIFT_FILES}" >> "${GITHUB_OUTPUT}"
 
 exit $exit_code

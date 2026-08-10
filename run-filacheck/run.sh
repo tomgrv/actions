@@ -22,15 +22,12 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
 fi
 
 FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
-FIX="${FIX:-false}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
 WIP_FILES="${WIP_FILES:-}"
-DRY_RUN="${DRY_RUN:-false}"
-BACKUP="${BACKUP:-false}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -51,7 +48,6 @@ if [ "${WIP}" = "true" ]; then
     if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
         # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
-        printf 'has-changes=false\n'
         exit 0
     fi
     echo "Restricting FilaCheck to changed files: ${FILACHECK_TARGET}" >&2
@@ -62,20 +58,11 @@ fi
 echo "Running FilaCheck on: ${FILACHECK_TARGET}" >&2
 
 filacheck_args=""
-if [ "${FIX}" = "true" ]; then
-    filacheck_args="${filacheck_args} --fix"
-fi
 if [ "${DETAILED}" = "true" ]; then
     filacheck_args="${filacheck_args} --detailed"
 fi
 if [ "${DIRTY}" = "true" ]; then
     filacheck_args="${filacheck_args} --dirty"
-fi
-if [ "${DRY_RUN}" = "true" ]; then
-    filacheck_args="${filacheck_args} --dry-run"
-fi
-if [ "${BACKUP}" = "true" ]; then
-    filacheck_args="${filacheck_args} --backup"
 fi
 
 exit_code=0
@@ -125,15 +112,5 @@ echo "Reviewdog parameters: -efm='%f:%l: %m' -name=${REVIEWDOG_NAME} -reporter=$
 
 echo "FilaCheck stdout/stderr log:" >&2
 cat "${filacheck_log}" >&2
-
-if [ "${FIX}" = "true" ] && [ "${DRY_RUN}" != "true" ]; then
-    if git diff --quiet; then
-        printf 'has-changes=false\n'
-    else
-        printf 'has-changes=true\n'
-    fi
-else
-    printf 'has-changes=false\n'
-fi
 
 exit $exit_code

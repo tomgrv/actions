@@ -62,7 +62,7 @@ runs:
       shell: sh
       env:
         REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}

@@ -24,10 +24,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 **Optional.** Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD. Defaults to `app`.
 
-### fix
-
-**Optional.** Apply fixes directly (PHPStan baseline, Pint, PHP Insights) instead of reporting via reviewdog. Defaults to `false`.
-
 ### dirty
 
 **Optional.** Only analyze files with uncommitted git changes, forwarded to every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD — see each action's own README for how it's emulated). Defaults to `false`.
@@ -58,10 +54,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes in any of PHPStan, Pint or PHP Insights.
-- `phpstan-has-changes`: Whether fix mode produced changes to the PHPStan baseline file.
-- `pint-has-changes`: Whether fix mode produced local changes via Pint.
-- `phpinsights-has-changes`: Whether fix mode produced local changes via PHP Insights.
 - `tests-passed`: Whether the test suite passed.
 - `coverage-file`: Path of the generated coverage report, empty when no report was produced.
 - `junit-file`: Path of the generated JUnit report, empty when no report was produced.
@@ -71,7 +63,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 - [**check-filament**](../check-filament/README.md) — run the Filament-specific suite alongside the general Laravel one.
 - [**check-security-composer**](../check-security-composer/README.md) — complement the suite with a Composer dependency audit.
 - [**check-lock**](../check-lock/README.md) — complement the suite with lock coherence validation.
-- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Example

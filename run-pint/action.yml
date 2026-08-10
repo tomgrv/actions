@@ -18,10 +18,6 @@ inputs:
     description: Comma-separated list of paths to analyze with Pint. Defaults to `app`.
     required: false
     default: app
-  fix:
-    description: Apply fixes directly instead of reporting via reviewdog.
-    required: false
-    default: 'false'
   preset:
     description: Pint preset to use (e.g. laravel, default, etc.). Defaults to `laravel`. Ignored when `config` is set.
     required: false
@@ -72,11 +68,6 @@ inputs:
     required: false
     default: ''
 
-outputs:
-  has-changes:
-    description: Whether fix mode produced local changes.
-    value: ${{ steps.run-pint.outputs.has-changes }}
-
 runs:
   using: composite
   steps:
@@ -112,7 +103,6 @@ runs:
       shell: sh
       env:
         PINT_PATHS: ${{ inputs.paths }}
-        FIX: ${{ inputs.fix }}
         PINT_PRESET: ${{ inputs.preset }}
         PINT_CONFIG: ${{ inputs.config }}
         DIRTY: ${{ inputs.dirty }}
@@ -120,7 +110,7 @@ runs:
         DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}
         WIP_FILES: ${{ steps.list-wip.outputs.files }}
         REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}

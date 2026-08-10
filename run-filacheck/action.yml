@@ -18,10 +18,6 @@ inputs:
     description: Path to analyze with FilaCheck. Defaults to `app/Filament`.
     required: false
     default: app/Filament
-  fix:
-    description: Apply fixes directly instead of reporting via reviewdog.
-    required: false
-    default: 'false'
   detailed:
     description: Show detailed output with rule categories.
     required: false
@@ -45,14 +41,6 @@ inputs:
       `pull_request` events.
     required: false
     default: ''
-  dry-run:
-    description: Preview fix changes without modifying files.
-    required: false
-    default: 'false'
-  backup:
-    description: Create backup files when fixing.
-    required: false
-    default: 'false'
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
@@ -76,11 +64,6 @@ inputs:
     description: Additional reviewdog flags.
     required: false
     default: ''
-
-outputs:
-  has-changes:
-    description: Whether fix mode produced local changes.
-    value: ${{ steps.run-filacheck.outputs.has-changes }}
 
 runs:
   using: composite
@@ -109,15 +92,12 @@ runs:
       shell: sh
       env:
         FILACHECK_PATH: ${{ inputs.path }}
-        FIX: ${{ inputs.fix }}
         DETAILED: ${{ inputs.detailed }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
         WIP_FILES: ${{ steps.list-wip.outputs.files }}
-        DRY_RUN: ${{ inputs.dry-run }}
-        BACKUP: ${{ inputs.backup }}
         REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}

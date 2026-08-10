@@ -79,7 +79,7 @@ jq -R -s -f "${GITHUB_ACTION_PATH}/rdjson.jq" <"${log_file}" |
 
 url=$(grep -o '##KLICK_DEPLOY_URL##.*' "${log_file}" | tail -n1 | sed 's/##KLICK_DEPLOY_URL##//')
 if [ -n "${url}" ]; then
-    printf 'deploy-url=%s\n' "${url}"
+    printf 'deploy-url=%s\n' "${url}" >> "${GITHUB_OUTPUT}"
 fi
 
 exit "${status}"

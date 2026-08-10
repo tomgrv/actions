@@ -48,15 +48,15 @@ _reject_control_chars() {
 }
 
 if ! _reject_control_chars 'coverage-file' "${COVERAGE_FILE}" || ! _reject_control_chars 'junit-file' "${JUNIT_FILE}"; then
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
 REVIEWDOG_BIN="reviewdog"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpunit}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -99,9 +99,9 @@ if [ ! -f vendor/autoload.php ]; then
         echo "Error: No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
     fi
 
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
@@ -186,9 +186,9 @@ _resolve_runner() {
 }
 
 if ! _resolve_runner; then
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
@@ -206,9 +206,9 @@ case "${COVERAGE}" in
             COVERAGE_ENABLED='true'
         else
             echo "Error: Coverage was requested but neither xdebug nor pcov is loaded." >&2
-            printf 'tests-passed=false\n'
-            printf 'coverage-file=\n'
-            printf 'junit-file=\n'
+            printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+            printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+            printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
             exit 1
         fi
         ;;
@@ -327,22 +327,22 @@ if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
 fi
 
 if [ "${exit_code}" -eq 0 ]; then
-    printf 'tests-passed=true\n'
+    printf 'tests-passed=true\n' >> "${GITHUB_OUTPUT}"
 else
     echo "::error::Test suite failed with exit code ${exit_code}." >&2
-    printf 'tests-passed=false\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
 fi
 
 if [ -f "${COVERAGE_FILE}" ]; then
-    printf 'coverage-file=%s\n' "${COVERAGE_FILE}"
+    printf 'coverage-file=%s\n' "${COVERAGE_FILE}" >> "${GITHUB_OUTPUT}"
 else
-    printf 'coverage-file=\n'
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
 fi
 
 if [ -f "${JUNIT_FILE}" ]; then
-    printf 'junit-file=%s\n' "${JUNIT_FILE}"
+    printf 'junit-file=%s\n' "${JUNIT_FILE}" >> "${GITHUB_OUTPUT}"
 else
-    printf 'junit-file=\n'
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
 fi
 
 exit "${exit_code}"

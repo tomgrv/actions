@@ -22,16 +22,14 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
-BASELINE_FILE="${BASELINE_FILE:-phpstan-baseline.neon}"
 PHPSTAN_CONFIG="${PHPSTAN_CONFIG:-}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
 WIP_FILES="${WIP_FILES:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpstan}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -49,19 +47,11 @@ if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
         # Functional: nothing in the analyzed repo matches the filter. Keep as
         # a notice, unlike the setup-related messages above.
         echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan." >&2
-        printf 'has-changes=false\n'
         exit 0
     fi
     echo "Restricting PHPStan to changed files: ${TARGET_ARGS}" >&2
 else
     TARGET_ARGS="$(echo "${TARGET_PATHS}" | tr ',' ' ')"
-fi
-
-if [ "${FIX}" = "true" ]; then
-    echo "FIX is set to true, running PHPStan with --fix" >&2
-    FIX_FLAG="--fix"
-else
-    FIX_FLAG=""
 fi
 
 if [ -n "${PHPSTAN_CONFIG}" ]; then
@@ -86,7 +76,7 @@ exit_code=0
 tmpfile=$(mktemp)
 trap 'rm -f "${tmpfile}"' EXIT INT TERM
 # shellcheck disable=SC2086
-"${PHPSTAN_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || exit_code=$?
+"${PHPSTAN_BIN}" analyse ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || exit_code=$?
 
 # PHPStan crashing before producing any report is a tooling/setup failure,
 # not an analysis finding: plain log only.
@@ -100,7 +90,6 @@ fi
 # Functional: no files in the analyzed repo matched the target paths.
 if grep -qi "no files found to analyse" "${tmpfile}"; then
     echo "::notice::PHPStan: No files found to analyse; nothing to do." >&2
-    printf 'has-changes=false\n'
     exit 0
 fi
 

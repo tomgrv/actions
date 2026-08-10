@@ -22,7 +22,6 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-FIX="${FIX:-false}"
 PINT_PATHS="${PINT_PATHS:-${1:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
 PINT_CONFIG="${PINT_CONFIG:-}"
@@ -31,7 +30,7 @@ WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
 WIP_FILES="${WIP_FILES:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-pint}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -48,7 +47,6 @@ if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     if [ -z "$(printf '%s' "${PINT_ARGS}" | tr -d '[:space:]')" ]; then
         # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed PHP files under: ${PINT_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping Pint." >&2
-        printf 'has-changes=false\n'
         exit 0
     fi
     echo "Restricting Pint to changed files: ${PINT_ARGS}" >&2
@@ -68,35 +66,21 @@ else
     RULES_FLAG="--preset=${PINT_PRESET}"
 fi
 
-if [ "${FIX}" = "true" ]; then
-    echo "Running Pint in fix mode." >&2
-    # Word splitting is intentional: PINT_ARGS is a space-separated list of paths/files.
-    # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --no-interaction "${RULES_FLAG}" -- ${PINT_ARGS} >&2 || true
-    if git diff --quiet; then
-        printf 'has-changes=false\n'
-    else
-        printf 'has-changes=true\n'
-    fi
-else
-    echo "Running Pint in test mode (no fixes will be applied)." >&2
-    exit_code=0
-    pint_log=$(mktemp)
-    trap 'rm -f "${pint_log}"' EXIT INT TERM
-    echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
-    # shellcheck disable=SC2046,SC2086
-    "${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2>"${pint_log}" \
-        | tee -a "${pint_log}" \
-        | "${REVIEWDOG_BIN}" \
-            -f=checkstyle \
-            -name="${REVIEWDOG_NAME}" \
-            -reporter="${REVIEWDOG_REPORTER}" \
-            -level="${REVIEWDOG_LEVEL}" \
-            -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-            -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-            ${REVIEWDOG_FLAGS} || exit_code=$?
-    echo "Pint stdout/stderr log:" >&2
-    cat "${pint_log}" >&2
-    printf 'has-changes=false\n'
-    exit $exit_code
-fi
+exit_code=0
+pint_log=$(mktemp)
+trap 'rm -f "${pint_log}"' EXIT INT TERM
+echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
+# shellcheck disable=SC2046,SC2086
+"${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2>"${pint_log}" \
+    | tee -a "${pint_log}" \
+    | "${REVIEWDOG_BIN}" \
+        -f=checkstyle \
+        -name="${REVIEWDOG_NAME}" \
+        -reporter="${REVIEWDOG_REPORTER}" \
+        -level="${REVIEWDOG_LEVEL}" \
+        -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+        -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+        ${REVIEWDOG_FLAGS} || exit_code=$?
+echo "Pint stdout/stderr log:" >&2
+cat "${pint_log}" >&2
+exit $exit_code

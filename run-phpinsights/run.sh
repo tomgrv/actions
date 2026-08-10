@@ -36,7 +36,6 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-FIX="${FIX:-false}"
 TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
 PHPINSIGHTS_CONFIG_PATH="${PHPINSIGHTS_CONFIG_PATH:-}"
 DIRTY="${DIRTY:-false}"
@@ -44,7 +43,7 @@ WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
 WIP_FILES="${WIP_FILES:-}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpinsights}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
 REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
@@ -61,19 +60,11 @@ if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
         # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights." >&2
-        printf 'has-changes=false\n'
         exit 0
     fi
     echo "Restricting PHP Insights to changed files: ${TARGET_ARGS}" >&2
 else
     TARGET_ARGS="$(echo "${TARGET_PATHS}" | tr ',' ' ')"
-fi
-
-if [ "${FIX}" = "true" ]; then
-    echo "FIX is set to true, running PHP Insights with --fix" >&2
-    FIX_FLAG="--fix"
-else
-    FIX_FLAG=""
 fi
 
 if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
@@ -94,7 +85,7 @@ phpinsights_log=$(mktemp)
 trap 'rm -f "${phpinsights_log}"' EXIT INT TERM
 echo "Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
 # shellcheck disable=SC2046,SC2086
-"${PHPINSIGHTS_BIN}" analyse ${FIX_FLAG} ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2>"${phpinsights_log}" \
+"${PHPINSIGHTS_BIN}" analyse ${CONFIG_FLAG} --no-interaction --format=checkstyle -- ${TARGET_ARGS} 2>"${phpinsights_log}" \
     | tee -a "${phpinsights_log}" \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \

@@ -16,10 +16,6 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 **Optional.** Path to analyze with FilaCheck. Defaults to `app/Filament`.
 
-### fix
-
-**Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
-
 ### detailed
 
 **Optional.** Show detailed output with rule categories. Defaults to `false`.
@@ -35,14 +31,6 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 ### wip-base-ref
 
 **Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
-
-### dry-run
-
-**Optional.** Preview fix changes without modifying files. Defaults to `false`.
-
-### backup
-
-**Optional.** Create backup files when fixing. Defaults to `false`.
 
 ### level
 
@@ -62,12 +50,11 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes.
+This action has no outputs.
 
 ## Works well with
 
 - [**check-laravel**](../check-laravel/README.md) — run the general Laravel PHP suite alongside the Filament-specific one.
-- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**list-wip**](../list-wip/README.md) — included automatically behind `wip`.
 
 ## Example
