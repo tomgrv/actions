@@ -81,7 +81,7 @@ trap 'rm -f "${tmpfile}"' EXIT INT TERM
 # PHPStan crashing before producing any report is a tooling/setup failure,
 # not an analysis finding: plain log only.
 if [ ! -s "${tmpfile}" ]; then
-    echo "Error: PHPStan produced no output (exit=${exit_code})." >&2
+    echo "Error: PHPStan produced no output." >&2
     echo "PHPStan stderr/stdout (first 200 chars):" >&2
     head -c 200 "${tmpfile}" >&2 || true
     exit $exit_code
@@ -93,9 +93,9 @@ if grep -qi "no files found to analyse" "${tmpfile}"; then
     exit 0
 fi
 
-echo "(exit=${exit_code}) Reviewdog parameters: -f=checkstyle -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
-echo "PHPStan tempfile source size: $(wc -c < "${tmpfile}") bytes" >&2
+echo "PHPStan exit code: ${exit_code}" >&2
 
+# Do not fail the action if PHPStan found issues, but do fail if reviewdog fails to process the report.
 cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
     -f=checkstyle \
     -name="${REVIEWDOG_NAME}" \
@@ -103,9 +103,4 @@ cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
     -level="${REVIEWDOG_LEVEL}" \
     -filter-mode="${REVIEWDOG_FILTER_MODE}" \
     -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-    ${REVIEWDOG_FLAGS} || exit_code=$?
-
-echo "PHPStan stdout/stderr log (exit=${exit_code}):" >&2
-cat "${tmpfile}" >&2
-
-exit $exit_code
+    ${REVIEWDOG_FLAGS} 
