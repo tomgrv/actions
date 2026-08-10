@@ -53,7 +53,7 @@ runs:
         version=$(jq -r '.require.php // empty' composer.json | sed 's/[^0-9.]//g' | cut -d. -f1,2)
         echo "version=${version:-8.3}" >> "$GITHUB_OUTPUT"
 
-    - name: Extract php extensions from composer.json
+    - name: Extract PHP extensions from composer.json
       id: php-extensions
       if: ${{ env.TOMGRV_PHP_SETUP != 'true' && hashFiles('composer.json') }}
       shell: sh
