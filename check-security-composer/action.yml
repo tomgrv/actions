@@ -53,7 +53,7 @@ runs:
       uses: $/setup-reviewdog
 
     - name: Run composer security audit
-      shell: bash
+      shell: sh
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         REVIEWDOG_NAME: ${{ inputs.name }}
@@ -63,4 +63,4 @@ runs:
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
         MAX_DIAGNOSTICS: ${{ inputs.max-diagnostics }}
-      run: bash "${{ github.action_path }}/run.sh"
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
