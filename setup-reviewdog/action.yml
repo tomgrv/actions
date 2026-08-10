@@ -30,14 +30,14 @@ runs:
       id: reviewdog-setup
       # Guards against redundant reinstalls when several actions in this
       # repository each embed setup-reviewdog within the same job.
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
+      if: env.REVIEWDOG_SETUP != 'true'
       with:
         reviewdog_version: ${{ inputs.version }}
 
     - name: Mark reviewdog toolchain as ready
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
+      if: env.REVIEWDOG_SETUP != 'true'
       shell: sh
-      run: echo "TOMGRV_REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
+      run: echo "REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
 
     - name: Determine reviewdog reporter for this run context
       # Same redundant-reinstall guard as above: several actions in this
@@ -46,7 +46,7 @@ runs:
       # request to attach to; `github-check` is the only reporter that works
       # outside one, so non-PR events (push, workflow_dispatch, schedule...)
       # fall back to it.
-      if: env.TOMGRV_REVIEWDOG_REPORTER == ''
+      if: env.REVIEWDOG_REPORTER == ''
       shell: sh
       run: |
         case "${GITHUB_EVENT_NAME}" in
@@ -57,7 +57,7 @@ runs:
             reporter=github-check
             ;;
         esac
-        echo "TOMGRV_REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
+        echo "REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
 
     - name: Resolve reviewdog GitHub API token
       # Same redundant-reinstall guard as above, keyed on the target env var
