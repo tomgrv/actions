@@ -59,19 +59,19 @@ command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { echo "Error: ${REVIEWDOG_BIN}
 
 # Run PHPStan to a temp file so its report can be validated before passing it
 # to reviewdog.
-tmpfile=$(mktemp)
-trap 'rm -f "${tmpfile}"' EXIT INT TERM
+phpstan_log=$(mktemp)
+trap 'rm -f "${phpstan_log}"' EXIT INT TERM
 # shellcheck disable=SC2086
-"${PHPSTAN_BIN}" analyse ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${tmpfile}" 2>&1 || true
+"${PHPSTAN_BIN}" analyse ${CONFIG_FLAG} --error-format=checkstyle --memory-limit=512M --no-progress -- ${TARGET_ARGS} >"${phpstan_log}" 2>&1 || true
 
 # PHPStan crashing before producing any report is a tooling/setup failure,
 # not an analysis finding.
-if [ ! -s "${tmpfile}" ]; then
+if [ ! -s "${phpstan_log}" ]; then
     echo "Error: PHPStan produced no output." >&2
     exit 1
 fi
 
-if grep -qi "no files found to analyse" "${tmpfile}"; then
+if grep -qi "no files found to analyse" "${phpstan_log}"; then
     echo "::notice::PHPStan: No files found to analyse; nothing to do." >&2
     exit 0
 fi
@@ -79,11 +79,14 @@ fi
 # Do not fail the action if PHPStan found issues, but do fail if reviewdog
 # fails to process the report: PHPStan's own exit code is discarded above,
 # so the step's exit status is reviewdog's.
-cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
+cat "${phpstan_log}" | "${REVIEWDOG_BIN}" \
     -f=checkstyle \
     -name="${REVIEWDOG_NAME}" \
     -reporter="${REVIEWDOG_REPORTER}" \
     -level="${REVIEWDOG_LEVEL}" \
     -filter-mode="${REVIEWDOG_FILTER_MODE}" \
     -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-    ${REVIEWDOG_FLAGS}
+    ${REVIEWDOG_FLAGS} || exit_code=$?
+
+cat "${phpstan_log}" >&2
+exit $exit_code
