@@ -17,8 +17,8 @@ inputs:
   type:
     description: >-
       Report type: check (github-check), review (github-pr-review), or
-      annotation (github-pr-check). When unset, auto-detects based on event
-      context (PR events use annotation, others use check).
+      annotations (github-pr-check). When unset, auto-detects based on event
+      context (PR events use annotations, others use check).
     required: false
     default: ''
   github-token:
@@ -48,40 +48,50 @@ runs:
 
     - name: Determine reviewdog reporter for this run context
       # When type is set, use it to determine reporter. Otherwise, auto-detect
-      # based on event: `github-pr-check`/`github-pr-review` need a pull request;
-      # `github-check` is the only reporter that works outside one, so non-PR
-      # events (push, workflow_dispatch, schedule...) fall back to it.
+      # based on event and reporter prefix: `github-pr-*` reporters need a pull
+      # request; `github-check` is the only reporter that works outside one, so
+      # non-PR events (push, workflow_dispatch, schedule...) fall back to it.
       if: env.REVIEWDOG_REPORTER == ''
       shell: sh
       env:
         TYPE_INPUT: ${{ inputs.type }}
       run: |
+        # Determine prefix based on event context
+        case "${GITHUB_EVENT_NAME}" in
+          pull_request | pull_request_target)
+            prefix=github-pr
+            ;;
+          *)
+            prefix=github
+            ;;
+        esac
+
+        # Determine suffix based on type
         if [ -n "${TYPE_INPUT}" ]; then
-          case "${TYPE_INPUT}" in
-            check)
-              reporter=github-check
-              ;;
-            review)
-              reporter=github-pr-review
-              ;;
-            annotation)
-              reporter=github-pr-check
-              ;;
-            *)
-              echo "Invalid type: ${TYPE_INPUT}. Must be check, review, or annotation." >&2
-              exit 1
-              ;;
-          esac
+          suffix="${TYPE_INPUT}"
         else
-          case "${GITHUB_EVENT_NAME}" in
-            pull_request | pull_request_target)
-              reporter=github-pr-check
+          # Default suffix when type is unset
+          case "${prefix}" in
+            github-pr)
+              suffix=check
               ;;
             *)
-              reporter=github-check
+              suffix=check
               ;;
           esac
         fi
+
+        # Form reporter from prefix and suffix
+        case "${suffix}" in
+          check | review | annotations)
+            reporter="${prefix}-${suffix}"
+            ;;
+          *)
+            echo "Invalid type: ${suffix}. Must be check, review, or annotations." >&2
+            exit 1
+            ;;
+        esac
+
         echo "REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
 
     - name: Resolve reviewdog GitHub API token
