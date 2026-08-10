@@ -14,6 +14,13 @@ inputs:
     description: Version of reviewdog to install.
     required: false
     default: v0.20.3
+  type:
+    description: >-
+      Report type: check (github-check), review (github-pr-review), or
+      annotation (github-pr-check). When unset, auto-detects based on event
+      context (PR events use annotation, others use check).
+    required: false
+    default: ''
   github-token:
     description: >-
       GitHub token for reviewdog reporting. Falls back to GITHUB_TOKEN when
@@ -40,23 +47,41 @@ runs:
       run: echo "REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
 
     - name: Determine reviewdog reporter for this run context
-      # Same redundant-reinstall guard as above: several actions in this
-      # repository each embed setup-reviewdog within the same job, so only
-      # compute this once. `github-pr-check`/`github-pr-review` need a pull
-      # request to attach to; `github-check` is the only reporter that works
-      # outside one, so non-PR events (push, workflow_dispatch, schedule...)
-      # fall back to it.
+      # When type is set, use it to determine reporter. Otherwise, auto-detect
+      # based on event: `github-pr-check`/`github-pr-review` need a pull request;
+      # `github-check` is the only reporter that works outside one, so non-PR
+      # events (push, workflow_dispatch, schedule...) fall back to it.
       if: env.REVIEWDOG_REPORTER == ''
       shell: sh
+      env:
+        TYPE_INPUT: ${{ inputs.type }}
       run: |
-        case "${GITHUB_EVENT_NAME}" in
-          pull_request | pull_request_target)
-            reporter=github-pr-check
-            ;;
-          *)
-            reporter=github-check
-            ;;
-        esac
+        if [ -n "${TYPE_INPUT}" ]; then
+          case "${TYPE_INPUT}" in
+            check)
+              reporter=github-check
+              ;;
+            review)
+              reporter=github-pr-review
+              ;;
+            annotation)
+              reporter=github-pr-check
+              ;;
+            *)
+              echo "Invalid type: ${TYPE_INPUT}. Must be check, review, or annotation." >&2
+              exit 1
+              ;;
+          esac
+        else
+          case "${GITHUB_EVENT_NAME}" in
+            pull_request | pull_request_target)
+              reporter=github-pr-check
+              ;;
+            *)
+              reporter=github-check
+              ;;
+          esac
+        fi
         echo "REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
 
     - name: Resolve reviewdog GitHub API token
