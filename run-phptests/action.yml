@@ -114,4 +114,4 @@ runs:
         COVERAGE_FILE: ${{ inputs.coverage-file }}
         JUNIT_FILE: ${{ inputs.junit-file }}
         MIGRATE: ${{ inputs.migrate }}
-      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh"

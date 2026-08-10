@@ -102,4 +102,4 @@ runs:
         TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         BRANCH_SCOPE: ${{ inputs.branch-scope }}
         ENVIRONMENT: ${{ inputs.environment }}
-      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh"
