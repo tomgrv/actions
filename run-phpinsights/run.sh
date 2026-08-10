@@ -12,28 +12,23 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 # Missing binaries are a setup concern, not a PHP Insights finding: plain
-# log only, no GitHub annotation.
+# log only, no GitHub annotation. setup-php puts both ./vendor/bin and the
+# global Composer bin directory on PATH, so a plain PATH lookup covers both.
 resolve_binary() {
-    local_binary="$1"
-    global_binary="$2"
-    display_name="$3"
+    binary="$1"
+    display_name="$2"
 
-    if [ -x "./vendor/bin/${local_binary}" ]; then
-        printf './vendor/bin/%s' "${local_binary}"
+    if command -v "${binary}" > /dev/null 2>&1; then
+        command -v "${binary}"
         return 0
     fi
 
-    if command -v "${global_binary}" > /dev/null 2>&1; then
-        command -v "${global_binary}"
-        return 0
-    fi
-
-    echo "Error: ${display_name} could not be found in ./vendor/bin/${local_binary} or in PATH. Please install it locally or make it available globally." >&2
+    echo "Error: ${display_name} could not be found in vendor/bin or in PATH. Please install it locally or make it available globally." >&2
     exit 1
 }
 
-PHPINSIGHTS_BIN="$(resolve_binary phpinsights phpinsights 'PHP Insights')"
-REVIEWDOG_BIN="$(resolve_binary reviewdog reviewdog reviewdog)"
+PHPINSIGHTS_BIN="$(resolve_binary phpinsights 'PHP Insights')"
+REVIEWDOG_BIN="$(resolve_binary reviewdog reviewdog)"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     if [ -z "${GITHUB_TOKEN:-}" ]; then

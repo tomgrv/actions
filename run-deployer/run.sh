@@ -53,11 +53,12 @@ echo "Running Deployer command: ${args} -- ${selector}" >&2
 
 # Redirect (not pipe) to a log file so `dep`'s own exit status is captured
 # directly and portably (no bash-only pipefail needed), then replay the log
-# so it still appears in the job output.
+# so it still appears in the job output. `dep` is found via PATH, which
+# setup-php already points at the global Composer bin directory.
 log_file=$(mktemp)
 set +e
 # shellcheck disable=SC2086
-"${HOME}/.composer/vendor/bin/dep" ${args} -- "${selector}" >"${log_file}" 2>&1
+dep ${args} -- "${selector}" >"${log_file}" 2>&1
 status=$?
 set -e
 

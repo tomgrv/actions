@@ -55,6 +55,14 @@ export GITHUB_ACTOR="${GITHUB_ACTOR:-$(git config user.name 2>/dev/null || echo 
 export GITHUB_OUTPUT="${GITHUB_OUTPUT:-/dev/stdout}"
 export GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || echo '')}"
 
+# Mirror setup-php's PATH additions: the composite-action flow puts
+# vendor/bin and the global Composer bin directory on PATH once per job, so
+# individual run.sh scripts no longer do it themselves. dispatch.sh never
+# runs setup-php, so it stands in for that step here.
+if command -v composer >/dev/null 2>&1; then
+  export PATH="${GITHUB_WORKSPACE}/vendor/bin:$(composer config -g home 2>/dev/null || echo "${HOME:-/root}/.composer")/vendor/bin:${PATH}"
+fi
+
 ACTION_DIR="${SCRIPT_DIR}/${ACTION}"
 
 if [ ! -d "$ACTION_DIR" ]; then
