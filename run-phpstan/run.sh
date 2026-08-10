@@ -116,7 +116,7 @@ cat "${tmpfile}" | "${REVIEWDOG_BIN}" \
     -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
     ${REVIEWDOG_FLAGS} || exit_code=$?
 
-echo "PHPStan stdout/stderr log:" >&2
+echo "PHPStan stdout/stderr log (exit=${exit_code}):" >&2
 cat "${tmpfile}" >&2
 
 exit $exit_code
