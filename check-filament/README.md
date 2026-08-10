@@ -4,7 +4,7 @@
 
 Runs the Filament-specific check suite — currently [FilaCheck](https://github.com/LaravelDaily/FilaCheck) — and reports findings inline via reviewdog. This is a thin wrapper around [**run-filacheck**](../run-filacheck/README.md), kept as its own action so Filament checks can grow independently of the general Laravel suite in [**check-laravel**](../check-laravel/README.md).
 
-Every input is forwarded as-is to the wrapped `run-filacheck` call, including `github-token` and the reviewdog options (`level`, `reporter`, `filter-mode`, `fail-level`, `reviewdog-flags`), so the reviewdog context you configure on `check-filament` is exactly what the underlying check uses — never a separately-defaulted one. PHP, Composer and reviewdog are set up automatically (via `run-filacheck`'s own embedded `setup-php`/`setup-reviewdog`), skipped if they already ran earlier in the job.
+Every input is forwarded as-is to the wrapped `run-filacheck` call, including `github-token` and the reviewdog options (`level`, `reporter`, `fail-level`, `reviewdog-flags`), so the reviewdog context you configure on `check-filament` is exactly what the underlying check uses — never a separately-defaulted one. `filter-mode` is not forwarded: `run-filacheck` fixes it to `file`, since the wrapped check operates on files. PHP, Composer and reviewdog are set up automatically (via `run-filacheck`'s own embedded `setup-php`/`setup-reviewdog`), skipped if they already ran earlier in the job.
 
 ## Inputs
 
@@ -15,10 +15,6 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 ### path
 
 **Optional.** Path to analyze with FilaCheck. Defaults to `app/Filament`.
-
-### fix
-
-**Optional.** Apply fixes directly instead of reporting via reviewdog. Defaults to `false`.
 
 ### detailed
 
@@ -36,25 +32,13 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 **Optional.** Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.
 
-### dry-run
-
-**Optional.** Preview fix changes without modifying files. Defaults to `false`.
-
-### backup
-
-**Optional.** Create backup files when fixing. Defaults to `false`.
-
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`. Defaults to `error`.
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
-
-### filter-mode
-
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to empty, which keeps `run-filacheck`'s own default (`added`).
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
 ### fail-level
 
@@ -66,12 +50,11 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes.
+This action has no outputs.
 
 ## Works well with
 
 - [**check-laravel**](../check-laravel/README.md) — run the general Laravel PHP suite alongside the Filament-specific one.
-- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**list-wip**](../list-wip/README.md) — included automatically behind `wip`.
 
 ## Example

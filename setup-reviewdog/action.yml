@@ -14,6 +14,13 @@ inputs:
     description: Version of reviewdog to install.
     required: false
     default: v0.20.3
+  github-token:
+    description: >-
+      GitHub token for reviewdog reporting. Falls back to GITHUB_TOKEN when
+      empty. Left unset when neither is available; callers that require a
+      token for reporting are responsible for erroring on that themselves.
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: composite
@@ -23,11 +30,49 @@ runs:
       id: reviewdog-setup
       # Guards against redundant reinstalls when several actions in this
       # repository each embed setup-reviewdog within the same job.
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
+      if: env.REVIEWDOG_SETUP != 'true'
       with:
         reviewdog_version: ${{ inputs.version }}
 
     - name: Mark reviewdog toolchain as ready
-      if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
+      if: env.REVIEWDOG_SETUP != 'true'
       shell: sh
-      run: echo "TOMGRV_REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
+      run: echo "REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
+
+    - name: Determine reviewdog reporter for this run context
+      # Same redundant-reinstall guard as above: several actions in this
+      # repository each embed setup-reviewdog within the same job, so only
+      # compute this once. `github-pr-check`/`github-pr-review` need a pull
+      # request to attach to; `github-check` is the only reporter that works
+      # outside one, so non-PR events (push, workflow_dispatch, schedule...)
+      # fall back to it.
+      if: env.REVIEWDOG_REPORTER == ''
+      shell: sh
+      run: |
+        case "${GITHUB_EVENT_NAME}" in
+          pull_request | pull_request_target)
+            reporter=github-pr-check
+            ;;
+          *)
+            reporter=github-check
+            ;;
+        esac
+        echo "REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
+
+    - name: Resolve reviewdog GitHub API token
+      # Same redundant-reinstall guard as above, keyed on the target env var
+      # itself: once set, later setup-reviewdog steps in the same job skip
+      # straight through instead of re-resolving. Left unset (not an error)
+      # when neither source has a token: some callers (e.g. run-phptests)
+      # treat a missing token as "skip reporting" rather than a hard failure,
+      # so that decision stays with them.
+      if: env.REVIEWDOG_GITHUB_API_TOKEN == ''
+      shell: sh
+      env:
+        GITHUB_TOKEN_INPUT: ${{ inputs.github-token }}
+      run: |
+        token="${GITHUB_TOKEN_INPUT:-${GITHUB_TOKEN:-}}"
+        if [ -n "${token}" ]; then
+          echo "::add-mask::${token}"
+          echo "REVIEWDOG_GITHUB_API_TOKEN=${token}" >> "$GITHUB_ENV"
+        fi

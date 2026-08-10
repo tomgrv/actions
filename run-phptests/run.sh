@@ -48,26 +48,19 @@ _reject_control_chars() {
 }
 
 if ! _reject_control_chars 'coverage-file' "${COVERAGE_FILE}" || ! _reject_control_chars 'junit-file' "${JUNIT_FILE}"; then
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
 REVIEWDOG_BIN="reviewdog"
-# Test failures usually live in files the pull request did not touch, so the
-# default does not filter on the diff the way the linters in this repo do.
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpunit}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
-
-if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
-fi
 
 ACTION_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
@@ -106,9 +99,9 @@ if [ ! -f vendor/autoload.php ]; then
         echo "Error: No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
     fi
 
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
@@ -193,9 +186,9 @@ _resolve_runner() {
 }
 
 if ! _resolve_runner; then
-    printf 'tests-passed=false\n'
-    printf 'coverage-file=\n'
-    printf 'junit-file=\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
     exit 1
 fi
 
@@ -213,9 +206,9 @@ case "${COVERAGE}" in
             COVERAGE_ENABLED='true'
         else
             echo "Error: Coverage was requested but neither xdebug nor pcov is loaded." >&2
-            printf 'tests-passed=false\n'
-            printf 'coverage-file=\n'
-            printf 'junit-file=\n'
+            printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
+            printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
+            printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
             exit 1
         fi
         ;;
@@ -317,9 +310,6 @@ if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
     elif ! command -v "${REVIEWDOG_BIN}" > /dev/null 2>&1; then
         echo "reviewdog was not found in PATH, skipping reviewdog reporting." >&2
     else
-        echo "Reviewdog parameters: -f=rdjson -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
-        echo "JUnit tempfile source size: $(wc -c < "${JUNIT_FILE}") bytes" >&2
-
         # shellcheck disable=SC2086
         php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \
             | "${REVIEWDOG_BIN}" \
@@ -334,22 +324,22 @@ if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
 fi
 
 if [ "${exit_code}" -eq 0 ]; then
-    printf 'tests-passed=true\n'
+    printf 'tests-passed=true\n' >> "${GITHUB_OUTPUT}"
 else
     echo "::error::Test suite failed with exit code ${exit_code}." >&2
-    printf 'tests-passed=false\n'
+    printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
 fi
 
 if [ -f "${COVERAGE_FILE}" ]; then
-    printf 'coverage-file=%s\n' "${COVERAGE_FILE}"
+    printf 'coverage-file=%s\n' "${COVERAGE_FILE}" >> "${GITHUB_OUTPUT}"
 else
-    printf 'coverage-file=\n'
+    printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
 fi
 
 if [ -f "${JUNIT_FILE}" ]; then
-    printf 'junit-file=%s\n' "${JUNIT_FILE}"
+    printf 'junit-file=%s\n' "${JUNIT_FILE}" >> "${GITHUB_OUTPUT}"
 else
-    printf 'junit-file=\n'
+    printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
 fi
 
 exit "${exit_code}"

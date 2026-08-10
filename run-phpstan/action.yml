@@ -18,14 +18,6 @@ inputs:
     description: Paths to analyze with PHPStan, comma-separated. Defaults to `app`.
     required: false
     default: app
-  fix:
-    description: Generate a PHPStan baseline file instead of reporting via reviewdog.
-    required: false
-    default: 'false'
-  baseline-file:
-    description: Baseline file to generate when fix mode is enabled.
-    required: false
-    default: phpstan-baseline.neon
   dirty:
     description: Only analyze files with uncommitted git changes (staged, unstaged, or untracked).
     required: false
@@ -57,13 +49,12 @@ inputs:
     required: false
     default: error
   reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
+    description: >-
+      Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].
+      Defaults to the reporter resolved by setup-reviewdog for this run's
+      context (github-pr-check on pull requests, github-check otherwise).
     required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: added
+    default: ''
   fail-level:
     description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
     required: false
@@ -73,11 +64,6 @@ inputs:
     required: false
     default: '-tee'
 
-outputs:
-  has-changes:
-    description: Whether fix mode produced changes to the baseline file.
-    value: ${{ steps.run-phpstan.outputs.has-changes }}
-
 runs:
   using: composite
   steps:
@@ -86,8 +72,10 @@ runs:
       with:
         require: phpstan/phpstan
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: List dirty files
       id: list-dirty
@@ -110,19 +98,15 @@ runs:
       id: run-phpstan
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         TARGET_PATHS: ${{ inputs.paths }}
-        FIX: ${{ inputs.fix }}
-        BASELINE_FILE: ${{ inputs.baseline-file }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
         DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}
         WIP_FILES: ${{ steps.list-wip.outputs.files }}
         PHPSTAN_CONFIG: ${{ inputs.config }}
         REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
-      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh"

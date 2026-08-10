@@ -64,10 +64,11 @@ runs:
         options: '--no-dev'
         require: deployer/deployer${{ inputs.version && format(':{0}', inputs.version) || '' }}
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
       with:
         version: ${{ inputs.reviewdog-version }}
+        github-token: ${{ inputs.github-token }}
 
     # Add the SSH private key to the SSH agent
     - name: Install SSH key
@@ -93,7 +94,6 @@ runs:
       id: run
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         DEP: ${{ inputs.dep }}
         OPTIONS: ${{ inputs.options }}
         SELECTOR: ${{ inputs.selector }}
@@ -102,4 +102,4 @@ runs:
         TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         BRANCH_SCOPE: ${{ inputs.branch-scope }}
         ENVIRONMENT: ${{ inputs.environment }}
-      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh"

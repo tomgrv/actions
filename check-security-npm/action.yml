@@ -17,19 +17,23 @@ inputs:
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
-    default: npm-audit
+    default: ${{ github.action }}
   level:
     description: 'Report level for reviewdog [info,warning,error].'
     required: false
     default: error
   reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to github-pr-check, which posts a Check annotation for every finding regardless of whether the PR touches the manifest file. github-pr-review posts applyable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment.'
+    description: >-
+      Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].
+      Defaults to the reporter resolved by setup-reviewdog for this run's
+      context (github-pr-check on pull requests, github-check otherwise),
+      which posts a Check annotation for every finding regardless of whether
+      the PR touches the manifest file. Set explicitly to github-pr-review to
+      post applyable version-bump suggestions instead, but only for findings
+      on lines already part of the PR diff; everything else is dropped to a
+      generic rolled-up comment.
     required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
-    required: false
-    default: nofilter
+    default: ''
   fail-level:
     description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].'
     required: false
@@ -49,17 +53,17 @@ runs:
     - name: Setup Node toolchain
       uses: $/setup-node
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: Run npm security audit
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         REVIEWDOG_NAME: ${{ inputs.name }}
-        REVIEWDOG_REPORTER: ${{ inputs.reporter }}
+        REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}
-        REVIEWDOG_FILTER_MODE: ${{ inputs.filter-mode }}
         REVIEWDOG_FAIL_LEVEL: ${{ inputs.fail-level }}
         REVIEWDOG_FLAGS: ${{ inputs.reviewdog-flags }}
         MAX_DIAGNOSTICS: ${{ inputs.max-diagnostics }}

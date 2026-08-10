@@ -192,6 +192,6 @@
     },
     "validate-branch-name": {
         "errorMsg": "Cannot push to a branch that does not follow the naming convention.",
-        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release)/.+$"
+        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release|claude)/.+$"
     }
 }

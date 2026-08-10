@@ -12,12 +12,6 @@ WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
 WIP_FILES="${WIP_FILES:-}"
 
-# Input/ruleset defaulting is a setup detail, not a PHPMD finding: plain log
-# only, no GitHub annotation (see .github/instructions/action-creation.md).
-if [ "${PHPMD_PATHS}" = "app" ]; then
-    echo "PHPMD_PATHS not set, using default: app" >&2
-fi
-
 if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     cd "${GITHUB_WORKSPACE}" || exit 1
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
@@ -26,10 +20,8 @@ fi
 if [ -z "${PHPMD_RULESET}" ]; then
     if [ -f "phpmd.xml" ]; then
         PHPMD_RULESET="phpmd.xml"
-        echo "ruleset not set, using phpmd.xml found at repository root" >&2
     else
         PHPMD_RULESET="cleancode,codesize,controversial,design,naming,unusedcode"
-        echo "ruleset not set and no phpmd.xml found, using default ruleset: ${PHPMD_RULESET}" >&2
     fi
 fi
 
@@ -37,18 +29,14 @@ PHPMD_BIN="phpmd"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-        exit 1
-    fi
-    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    exit 1
 fi
 
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpmd}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
@@ -58,21 +46,20 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
-        # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD." >&2
         exit 0
     fi
-    echo "Restricting PHPMD to changed files: ${PHPMD_TARGET}" >&2
 else
     PHPMD_TARGET="${PHPMD_PATHS}"
 fi
 
-echo "Running PHPmd on <${PHPMD_TARGET}> with ruleset: ${PHPMD_RULESET}" >&2
-
+# --ignore-errors-on-exit/--ignore-violations-on-exit keep PHPMD's own exit
+# code out of the picture: findings are reviewdog's job to gate (via
+# fail-level), not a script failure. The pipe's exit code below is
+# reviewdog's, since it is the last command in it.
 exit_code=0
 phpmd_log=$(mktemp)
 trap 'rm -f "${phpmd_log}"' EXIT INT TERM
-echo "Reviewdog parameters: -f=sarif -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
 # shellcheck disable=SC2086
 "${PHPMD_BIN}" "${PHPMD_TARGET}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority 2>"${phpmd_log}" \
     | tee -a "${phpmd_log}" \
@@ -84,6 +71,6 @@ echo "Reviewdog parameters: -f=sarif -name=${REVIEWDOG_NAME} -reporter=${REVIEWD
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \
         -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
         ${REVIEWDOG_FLAGS} || exit_code=$?
-echo "PHPMD stdout/stderr log:" >&2
+
 cat "${phpmd_log}" >&2
 exit $exit_code

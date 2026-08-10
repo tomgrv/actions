@@ -35,6 +35,10 @@ Run without arguments to see all available actions:
 ./dispatch.sh
 ```
 
+## Naming convention
+
+`run-*` actions analyze specific files (a `paths`/`path` input scoped to what changed) and report via reviewdog with `-filter-mode=file`: findings are limited to files that are actually part of the run's scope, but not further restricted to changed lines. `check-*` actions validate repository- or PR-wide state (manifests, lock files, secrets, PR metadata) that isn't tied to a specific set of files, and report with `-filter-mode=nofilter`. Both are fixed by the action itself and are not exposed as a configurable input; only `reporter` remains configurable, and it defaults to the value [**setup-reviewdog**](setup-reviewdog/README.md) resolves for the run's context.
+
 ## Available Actions
 
 > **Badge legend:**
@@ -65,7 +69,7 @@ Run without arguments to see all available actions:
 - [**run-filacheck**](run-filacheck/README.md) ![stable](https://img.shields.io/badge/stable-green): Run FilaCheck via reviewdog for inline Filament code review feedback.
 - [**run-phpstan**](run-phpstan/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHPStan via reviewdog for inline code review feedback.
 - [**run-phpmd**](run-phpmd/README.md) ![stable](https://img.shields.io/badge/stable-green): Run PHP Mess Detector and report via reviewdog.
-- [**run-pint**](run-pint/README.md) ![stable](https://img.shields.io/badge/stable-green): Run Laravel Pint code style fixer and report via reviewdog.
+- [**run-pint**](run-pint/README.md) ![stable](https://img.shields.io/badge/stable-green): Run Laravel Pint code style checks and report via reviewdog.
 - [**run-phptests**](run-phptests/README.md) ![stable](https://img.shields.io/badge/stable-green): Run the PHP test suite.
 - [**check-security-composer**](check-security-composer/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit Composer dependencies for known vulnerabilities.
 - [**list-dirty**](list-dirty/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List files with uncommitted git changes, used by the PHP checks' `dirty` input.
