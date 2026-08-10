@@ -8,11 +8,17 @@ Every reviewdog-based action in this repository (`run-phpstan`, `run-pint`, `run
 
 This action also resolves the default reviewdog `reporter` for the run's context and exports it as the `TOMGRV_REVIEWDOG_REPORTER` environment marker, computed once per job the same way as the install step above. On `pull_request`/`pull_request_target` events it resolves to `github-pr-check`; on every other event (`push`, `workflow_dispatch`, `schedule`, tags, ...) it resolves to `github-check`, since `github-pr-check`/`github-pr-review` need a pull request to attach to and `github-check` is the only reporter that works without one. Every action above uses this as its `reporter` input's default, falling back to it only when the caller does not set `reporter` explicitly.
 
+It also resolves the reviewdog GitHub API token the same way: `github-token` (defaulting to `github.token`) falling back to a bare `GITHUB_TOKEN` env var, exported as `REVIEWDOG_GITHUB_API_TOKEN`, computed once per job. When neither source has a token, the marker is left unset rather than failing the job here — each wrapped action decides for itself whether a missing token is fatal (most error out; `run-phptests` skips reporting instead, since reporting failing tests is best-effort). Every action above forwards its own `github-token` input into its embedded `setup-reviewdog` step, so passing `github-token` to the wrapped action is enough; you don't need to configure it separately here.
+
 ## Inputs
 
 ### version
 
 **Optional.** Version of reviewdog to install. Defaults to `v0.20.3`.
+
+### github-token
+
+**Optional.** GitHub token for reviewdog reporting. Falls back to a bare `GITHUB_TOKEN` env var when empty. Defaults to `github.token`.
 
 ## Outputs
 

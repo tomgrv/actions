@@ -14,6 +14,13 @@ inputs:
     description: Version of reviewdog to install.
     required: false
     default: v0.20.3
+  github-token:
+    description: >-
+      GitHub token for reviewdog reporting. Falls back to GITHUB_TOKEN when
+      empty. Left unset when neither is available; callers that require a
+      token for reporting are responsible for erroring on that themselves.
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: composite
@@ -51,3 +58,21 @@ runs:
             ;;
         esac
         echo "TOMGRV_REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
+
+    - name: Resolve reviewdog GitHub API token
+      # Same redundant-reinstall guard as above, keyed on the target env var
+      # itself: once set, later setup-reviewdog steps in the same job skip
+      # straight through instead of re-resolving. Left unset (not an error)
+      # when neither source has a token: some callers (e.g. run-phptests)
+      # treat a missing token as "skip reporting" rather than a hard failure,
+      # so that decision stays with them.
+      if: env.REVIEWDOG_GITHUB_API_TOKEN == ''
+      shell: sh
+      env:
+        GITHUB_TOKEN_INPUT: ${{ inputs.github-token }}
+      run: |
+        token="${GITHUB_TOKEN_INPUT:-${GITHUB_TOKEN:-}}"
+        if [ -n "${token}" ]; then
+          echo "::add-mask::${token}"
+          echo "REVIEWDOG_GITHUB_API_TOKEN=${token}" >> "$GITHUB_ENV"
+        fi

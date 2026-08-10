@@ -92,6 +92,8 @@ runs:
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: List WIP files
       id: list-wip
@@ -106,7 +108,6 @@ runs:
       id: run-filacheck
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         FILACHECK_PATH: ${{ inputs.path }}
         FIX: ${{ inputs.fix }}
         DETAILED: ${{ inputs.detailed }}

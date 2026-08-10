@@ -72,13 +72,13 @@ runs:
       uses: $/setup-reviewdog
       with:
         version: ${{ inputs.reviewdog-version }}
+        github-token: ${{ inputs.github-token }}
 
     - name: Check lock coherence
       id: check
       if: ${{ hashFiles('**/composer.json') || hashFiles('**/composer.lock') || hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

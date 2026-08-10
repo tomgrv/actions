@@ -79,6 +79,8 @@ runs:
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: Cache baseline report
       uses: actions/cache@v5
@@ -108,7 +110,6 @@ runs:
     - name: Run PHPMD
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         PHPMD_PATHS: ${{ inputs.paths }}
         PHPMD_RULESET: ${{ inputs.ruleset }}
         PHPMD_PRIORITY: ${{ inputs.priority }}

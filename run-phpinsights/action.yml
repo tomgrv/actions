@@ -84,6 +84,8 @@ runs:
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: List dirty files
       id: list-dirty
@@ -106,7 +108,6 @@ runs:
       id: run-phpinsights
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         TARGET_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
         PHPINSIGHTS_CONFIG_PATH: ${{ inputs.config-path }}

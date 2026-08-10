@@ -62,11 +62,6 @@ REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
-if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
-fi
-
 ACTION_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
 #

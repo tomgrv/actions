@@ -87,6 +87,8 @@ runs:
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: List dirty files
       id: list-dirty
@@ -109,7 +111,6 @@ runs:
       id: run-pint
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         PINT_PATHS: ${{ inputs.paths }}
         FIX: ${{ inputs.fix }}
         PINT_PRESET: ${{ inputs.preset }}

@@ -55,11 +55,12 @@ runs:
 
     - name: Setup reviewdog toolchain
       uses: $/setup-reviewdog
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: Run composer security audit
       shell: sh
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.github-token }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

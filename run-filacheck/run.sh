@@ -15,15 +15,10 @@ fi
 FILACHECK_BIN="filacheck"
 REVIEWDOG_BIN="reviewdog"
 
-# Token resolution is a setup concern, not a FilaCheck finding: plain log
-# only, no GitHub annotation (see .github/instructions/action-creation.md).
+# Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-        exit 1
-    fi
-    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    exit 1
 fi
 
 FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
