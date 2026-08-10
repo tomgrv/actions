@@ -84,8 +84,12 @@ if [ "${BACKUP}" = "true" ]; then
 fi
 
 exit_code=0
+filacheck_log=$(mktemp)
+trap 'rm -f "${filacheck_log}"' EXIT INT TERM
+echo "Reviewdog parameters: -efm='%f:%l: %m' -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
 # shellcheck disable=SC2086
-"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2> /dev/null \
+"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2>"${filacheck_log}" \
+    | tee -a "${filacheck_log}" \
     | awk '
         /^[[:space:]]+[^[:space:]].*\.(blade\.php|php)$/ {
             current_file=$0
@@ -123,6 +127,9 @@ exit_code=0
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \
         -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
         ${REVIEWDOG_FLAGS} || exit_code=$?
+
+echo "FilaCheck stdout/stderr log:" >&2
+cat "${filacheck_log}" >&2
 
 if [ "${FIX}" = "true" ] && [ "${DRY_RUN}" != "true" ]; then
     if git diff --quiet; then

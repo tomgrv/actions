@@ -70,8 +70,12 @@ fi
 echo "Running PHPmd on <${PHPMD_TARGET}> with ruleset: ${PHPMD_RULESET}" >&2
 
 exit_code=0
+phpmd_log=$(mktemp)
+trap 'rm -f "${phpmd_log}"' EXIT INT TERM
+echo "Reviewdog parameters: -f=sarif -name=${REVIEWDOG_NAME} -reporter=${REVIEWDOG_REPORTER} -level=${REVIEWDOG_LEVEL} -filter-mode=${REVIEWDOG_FILTER_MODE} -fail-level=${REVIEWDOG_FAIL_LEVEL} -flags=${REVIEWDOG_FLAGS}" >&2
 # shellcheck disable=SC2086
-"${PHPMD_BIN}" "${PHPMD_TARGET}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority 2> /dev/null \
+"${PHPMD_BIN}" "${PHPMD_TARGET}" sarif "${PHPMD_RULESET}" --cache --cache-strategy content --ignore-errors-on-exit --ignore-violations-on-exit --${PHPMD_PRIORITY}-priority 2>"${phpmd_log}" \
+    | tee -a "${phpmd_log}" \
     | "${REVIEWDOG_BIN}" \
         -f=sarif \
         -name="${REVIEWDOG_NAME}" \
@@ -80,4 +84,6 @@ exit_code=0
         -filter-mode="${REVIEWDOG_FILTER_MODE}" \
         -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
         ${REVIEWDOG_FLAGS} || exit_code=$?
+echo "PHPMD stdout/stderr log:" >&2
+cat "${phpmd_log}" >&2
 exit $exit_code
