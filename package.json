@@ -1,6 +1,6 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.10.0",
+    "version": "2.11.0",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
     "keywords": [
         "github-actions",
