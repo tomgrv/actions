@@ -54,11 +54,10 @@ inputs:
     required: false
     default: error
   reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].'
-    required: false
-    default: github-pr-check
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter].'
+    description: >-
+      Reporter of reviewdog command [github-pr-check,github-check,github-pr-review].
+      Defaults to the reporter resolved by setup-reviewdog for this run's
+      context (github-pr-check on pull requests, github-check otherwise).
     required: false
     default: ''
   fail-level:
@@ -78,10 +77,11 @@ outputs:
 runs:
   using: composite
   steps:
-    # Same github-token/level/reporter/filter-mode/fail-level/reviewdog-flags
-    # inputs are forwarded as-is to run-filacheck, so this action's reviewdog
-    # context (and github-token) is always the one actually used by the
-    # underlying tool call, never a separately-defaulted one.
+    # Same github-token/level/reporter/fail-level/reviewdog-flags inputs are
+    # forwarded as-is to run-filacheck, so this action's reviewdog context
+    # (and github-token) is always the one actually used by the underlying
+    # tool call, never a separately-defaulted one. filter-mode is not
+    # forwarded: run-filacheck fixes it to `file` as a run-* action.
     - name: Run FilaCheck
       id: filacheck
       if: ${{hashFiles( inputs.path)}}
@@ -98,6 +98,5 @@ runs:
         backup: ${{ inputs.backup }}
         level: ${{ inputs.level }}
         reporter: ${{ inputs.reporter }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}

@@ -4,7 +4,7 @@
 
 Runs the Filament-specific check suite — currently [FilaCheck](https://github.com/LaravelDaily/FilaCheck) — and reports findings inline via reviewdog. This is a thin wrapper around [**run-filacheck**](../run-filacheck/README.md), kept as its own action so Filament checks can grow independently of the general Laravel suite in [**check-laravel**](../check-laravel/README.md).
 
-Every input is forwarded as-is to the wrapped `run-filacheck` call, including `github-token` and the reviewdog options (`level`, `reporter`, `filter-mode`, `fail-level`, `reviewdog-flags`), so the reviewdog context you configure on `check-filament` is exactly what the underlying check uses — never a separately-defaulted one. PHP, Composer and reviewdog are set up automatically (via `run-filacheck`'s own embedded `setup-php`/`setup-reviewdog`), skipped if they already ran earlier in the job.
+Every input is forwarded as-is to the wrapped `run-filacheck` call, including `github-token` and the reviewdog options (`level`, `reporter`, `fail-level`, `reviewdog-flags`), so the reviewdog context you configure on `check-filament` is exactly what the underlying check uses — never a separately-defaulted one. `filter-mode` is not forwarded: `run-filacheck` fixes it to `file`, since the wrapped check operates on files. PHP, Composer and reviewdog are set up automatically (via `run-filacheck`'s own embedded `setup-php`/`setup-reviewdog`), skipped if they already ran earlier in the job.
 
 ## Inputs
 
@@ -50,11 +50,7 @@ Every input is forwarded as-is to the wrapped `run-filacheck` call, including `g
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
-
-### filter-mode
-
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to empty, which keeps `run-filacheck`'s own default (`added`).
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
 ### fail-level
 

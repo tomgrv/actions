@@ -55,12 +55,10 @@ if ! _reject_control_chars 'coverage-file' "${COVERAGE_FILE}" || ! _reject_contr
 fi
 
 REVIEWDOG_BIN="reviewdog"
-# Test failures usually live in files the pull request did not touch, so the
-# default does not filter on the diff the way the linters in this repo do.
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-phpunit}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-${TOMGRV_REVIEWDOG_REPORTER:-github-check}}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 

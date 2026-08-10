@@ -8,9 +8,9 @@ Each check can be individually skipped via its boolean toggle (`phpstan`, `pint`
 
 ## Reviewdog context
 
-`github-token`, `level`, `reporter`, `fail-level` and `reviewdog-flags` are forwarded as-is from this action's inputs to every wrapped check, so the reviewdog context you configure once on `check-laravel` is exactly what each underlying check uses — never a separately-defaulted one.
+`github-token`, `level`, `fail-level` and `reviewdog-flags` are forwarded as-is from this action's inputs to every wrapped check, so the reviewdog context you configure once on `check-laravel` is exactly what each underlying check uses — never a separately-defaulted one. Each wrapped check resolves its own `reporter` via [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
-`filter-mode` is the one exception: it defaults to empty here, which lets each wrapped check keep its own tuned default (PHPStan, Pint and PHP Insights default to `added`; PHPMD and the test suite default to `nofilter`, since mess-detection findings and test failures often sit outside the diff). Set `filter-mode` explicitly on `check-laravel` to force the same value across every check instead.
+`filter-mode` is not forwarded either: every wrapped check (PHPStan, Pint, PHP Insights, PHPMD, tests) fixes it to `file`, since they all operate on files.
 
 PHP, Composer and reviewdog are set up automatically (each wrapped action embeds its own `setup-php`/`setup-reviewdog`); only the first one in the job actually installs anything; the rest detect the job-scoped marker and skip straight through.
 
@@ -47,14 +47,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`, shared by every wrapped check. Defaults to `error`.
-
-### reporter
-
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`, shared by every wrapped check. Defaults to `github-pr-check`.
-
-### filter-mode
-
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`, shared by every wrapped check. Defaults to empty — see [Reviewdog context](#reviewdog-context).
 
 ### fail-level
 

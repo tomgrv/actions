@@ -64,10 +64,6 @@ inputs:
     description: 'Report level for reviewdog [info,warning,error], shared by every wrapped check.'
     required: false
     default: error
-  filter-mode:
-    description: 'Filtering mode for the reviewdog command [added,diff_context,file,nofilter], shared by every wrapped check. Leave empty to let each check keep its own tuned default (PHPStan/Pint/PHP Insights use `added`, PHPMD/tests use `nofilter`).'
-    required: false
-    default: ''
   fail-level:
     description: 'Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error], shared by every wrapped check.'
     required: false
@@ -104,9 +100,10 @@ runs:
   using: composite
   steps:
     # Every wrapped check below forwards the same github-token, level,
-    # reporter, filter-mode, fail-level and reviewdog-flags inputs, so this
-    # action's reviewdog context is inherited consistently rather than each
-    # check silently falling back to its own separately-configured default.
+    # fail-level and reviewdog-flags inputs, so this action's reviewdog
+    # context is inherited consistently rather than each check silently
+    # falling back to its own separately-configured default. filter-mode is
+    # not forwarded: each wrapped check fixes it to `file` as a run-* action.
     # Each of these actions embeds setup-php/setup-reviewdog itself; only the
     # first one in this job actually installs anything, the rest detect the
     # TOMGRV_PHP_SETUP/TOMGRV_REVIEWDOG_SETUP markers and skip straight through.
@@ -123,7 +120,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 
@@ -140,7 +136,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 
@@ -157,7 +152,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 
@@ -173,7 +167,6 @@ runs:
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
         level: ${{ inputs.level }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 
@@ -185,7 +178,6 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         level: ${{ inputs.level }}
-        filter-mode: ${{ inputs.filter-mode }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}
 

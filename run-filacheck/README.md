@@ -52,11 +52,11 @@ Runs [FilaCheck](https://github.com/LaravelDaily/FilaCheck) and reports Filament
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
 ### filter-mode
 
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `added`.
+Fixed to `file`: this action operates on files, not the whole repository, so reviewdog only needs to know which files are in scope. Not configurable.
 
 ### fail-level
 

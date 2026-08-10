@@ -31,3 +31,23 @@ runs:
       if: env.TOMGRV_REVIEWDOG_SETUP != 'true'
       shell: sh
       run: echo "TOMGRV_REVIEWDOG_SETUP=true" >> "$GITHUB_ENV"
+
+    - name: Determine reviewdog reporter for this run context
+      # Same redundant-reinstall guard as above: several actions in this
+      # repository each embed setup-reviewdog within the same job, so only
+      # compute this once. `github-pr-check`/`github-pr-review` need a pull
+      # request to attach to; `github-check` is the only reporter that works
+      # outside one, so non-PR events (push, workflow_dispatch, schedule...)
+      # fall back to it.
+      if: env.TOMGRV_REVIEWDOG_REPORTER == ''
+      shell: sh
+      run: |
+        case "${GITHUB_EVENT_NAME}" in
+          pull_request | pull_request_target)
+            reporter=github-pr-check
+            ;;
+          *)
+            reporter=github-check
+            ;;
+        esac
+        echo "TOMGRV_REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
