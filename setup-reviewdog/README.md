@@ -50,7 +50,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup reviewdog toolchain
+            - name: Setup Reviewdog toolchain
               uses: tomgrv/actions/setup-reviewdog@v1
               with:
                   version: v0.21.0

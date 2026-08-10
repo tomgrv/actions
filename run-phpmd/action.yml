@@ -77,7 +77,7 @@ runs:
       with:
         require: phpmd/phpmd
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
       with:
         github-token: ${{ inputs.github-token }}

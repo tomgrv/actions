@@ -67,7 +67,7 @@ runs:
       if: ${{ hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
       uses: $/setup-node
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       id: setup-reviewdog
       uses: $/setup-reviewdog
       with:

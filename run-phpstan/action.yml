@@ -72,7 +72,7 @@ runs:
       with:
         require: phpstan/phpstan
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
       with:
         github-token: ${{ inputs.github-token }}

@@ -64,7 +64,7 @@ runs:
         options: '--no-dev'
         require: deployer/deployer${{ inputs.version && format(':{0}', inputs.version) || '' }}
 
-    - name: Setup reviewdog toolchain
+    - name: Setup Reviewdog toolchain
       uses: $/setup-reviewdog
       with:
         version: ${{ inputs.reviewdog-version }}
