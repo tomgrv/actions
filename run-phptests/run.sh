@@ -23,10 +23,6 @@ if [ "${WORKING_DIRECTORY}" != "." ]; then
     cd "${WORKING_DIRECTORY}" || exit 1
 fi
 
-COMPOSER_HOME_DIR="$(composer config -g home 2> /dev/null || echo "${HOME:-/root}/.composer")"
-PATH="$(pwd)/vendor/bin:${COMPOSER_HOME_DIR}/vendor/bin:${PATH}"
-export PATH
-
 TEST_RUNNER="${TEST_RUNNER:-auto}"
 TEST_PATHS="${TEST_PATHS:-${1:-}}"
 TEST_FLAGS="${TEST_FLAGS:-}"

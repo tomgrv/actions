@@ -33,7 +33,6 @@ if [ -z "${PHPMD_RULESET}" ]; then
     fi
 fi
 
-PATH="${GITHUB_WORKSPACE:-.}/vendor/bin:$(composer config -g home)/vendor/bin:${PATH}"
 PHPMD_BIN="phpmd"
 REVIEWDOG_BIN="reviewdog"
 

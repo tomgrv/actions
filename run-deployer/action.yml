@@ -56,7 +56,8 @@ outputs:
 runs:
   using: composite
   steps:
-    # Installs deployer/deployer globally (via setup-php's require.sh) and adds it to PATH.
+    # Installs deployer/deployer globally (via setup-php's require.sh); setup-php
+    # itself puts the global Composer bin directory on PATH, so `dep` resolves.
     - name: Setup PHP toolchain
       uses: $/setup-php
       with:

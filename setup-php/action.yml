@@ -71,6 +71,16 @@ runs:
         coverage: xdebug
         tools: ${{ inputs.tools }}
 
+    # Shared once per job so every PHP action in this repository can call its
+    # tool (pest, phpunit, pint, phpstan, phpmd, phpinsights, filacheck, dep, ...)
+    # by bare name instead of each recomputing this PATH itself.
+    - name: Add Composer bin directories to PATH
+      if: env.TOMGRV_PHP_SETUP != 'true'
+      shell: sh
+      run: |
+        echo "vendor/bin" >> "$GITHUB_PATH"
+        echo "$(composer config -g home 2> /dev/null || echo "${HOME:-/root}/.composer")/vendor/bin" >> "$GITHUB_PATH"
+
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install

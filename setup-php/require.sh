@@ -11,9 +11,6 @@ if [ -z "${REQUIRE}" ]; then
     exit 0
 fi
 
-GLOBAL_BIN="$(composer config -g home)/vendor/bin"
-echo "${GLOBAL_BIN}" >> "${GITHUB_PATH}"
-
 IFS=','
 # Disable pathname expansion: a version constraint like "pkg:1.*" must reach
 # Composer unchanged, not be glob-expanded against the working directory.

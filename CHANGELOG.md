@@ -2,6 +2,18 @@
 
 # Changelog
 
+## 2.11.0 (2026-08-10)
+
+_Commits from: v2.10.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.10.0' into develop ([53cce4f](https://github.com/tomgrv/actions/commit/53cce4fe856daa1d0a682b057e54edc30d6cf083))
+- move composer bin PATH setup into setup-php (#45) ([f7c445a](https://github.com/tomgrv/actions/commit/f7c445ae1be5447f1874dc765b9e965ff8570d24))
+- 🔧 remove Claude Code workflow file ([d00ae4d](https://github.com/tomgrv/actions/commit/d00ae4d2b9a75efd29ecb8c947a40fd00cf4fb9d))
+
 ## 2.10.0 (2026-08-09)
 
 _Commits from: v2.9.0..HEAD_
@@ -335,4 +347,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-09 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-10 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
