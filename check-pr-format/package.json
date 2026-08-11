@@ -1,6 +1,6 @@
 {
     "name": "check-pr-format",
-    "version": "2.13.0",
+    "version": "2.13.1",
     "description": "Validate and optionally normalize pull request title format.",
     "private": true
 }

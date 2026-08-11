@@ -2,6 +2,16 @@
 
 # Changelog
 
+## 2.13.1 (2026-08-11)
+
+_Commits from: v2.13.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 allow commitlint errors to be reported without exiting script ([cfaaac6](https://github.com/tomgrv/actions/commit/cfaaac678afc9b38b067d112afc97e07a93adcd8))
+
 ## 2.13.0 (2026-08-11)
 
 _Commits from: v2.12.0..HEAD_

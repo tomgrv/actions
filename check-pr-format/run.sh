@@ -2,7 +2,8 @@
 
 # Validate PR title format (commitlint + devmoji) and auto-fix it when possible.
 
-set -e
+# do not exit on error to allow for proper error reporting and annotation
+# set -e
 
 # Missing tooling/inputs are setup concerns, not PR title findings: plain
 # log only, no GitHub annotation (see .github/instructions/action-creation.md).
@@ -54,7 +55,7 @@ fi
 # enough (still invalid) or can't be applied (fork PR or missing token).
 formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 
-commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
+commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1 || true)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
   echo "::error::${commitlint_output}" >&2
