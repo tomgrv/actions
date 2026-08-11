@@ -54,10 +54,10 @@ fi
 # enough (still invalid) or can't be applied (fork PR or missing token).
 formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 
-if ! echo "${formatted_title}" | npx commitlint; then
-  echo "::error::PR title does not meet commitlint rules." >&2
-  echo "::error::Current:  ${PR_TITLE}" >&2
-  echo "::error::Formatted: ${formatted_title}" >&2
+commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
+commitlint_status=$?
+if [ ${commitlint_status} -ne 0 ]; then
+  echo "::error::${commitlint_output}" >&2
   exit 1
 fi
 
@@ -66,9 +66,11 @@ if [ "${PR_TITLE}" != "${formatted_title}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
     echo "PR title updated: ${formatted_title}" >&2
   else
-    echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token)." >&2
-    echo "::error::Current:  ${PR_TITLE}" >&2
-    echo "::error::Expected: ${formatted_title}" >&2
+    error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
+
+Current:  ${PR_TITLE}
+Expected: ${formatted_title}"
+    echo "::error::${error_message}" >&2
     exit 1
   fi
 fi
