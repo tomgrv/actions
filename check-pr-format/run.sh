@@ -58,9 +58,8 @@ formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
-  # Escape newlines for GitHub annotation
-  escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
-  echo "::error::${escaped_output}" >&2
+  # Use reviewdog to generate annotations from commitlint output
+  printf "PR Title\n%s\n\nCurrent: %s\nExpected: %s\n" "${commitlint_output}" "${PR_TITLE}" "${formatted_title}" | npx reviewdog -name=commitlint -reporter=github-pr-check || true
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
@@ -68,12 +67,7 @@ if [ "${PR_TITLE}" != "${formatted_title}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
     echo "PR title updated: ${formatted_title}" >&2
   else
-    error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
-
-Current:  ${PR_TITLE}
-Expected: ${formatted_title}"
-    # Escape newlines for GitHub annotation
-    escaped_error=$(printf '%s\n' "${error_message}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
-    echo "::error::${escaped_error}" >&2
+    # Report formatting issue via reviewdog
+    printf "PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).\n\nCurrent: %s\nExpected: %s\n" "${PR_TITLE}" "${formatted_title}" | npx reviewdog -name="PR title format" -reporter=github-pr-check || true
   fi
 fi
