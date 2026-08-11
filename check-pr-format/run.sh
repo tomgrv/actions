@@ -37,7 +37,7 @@ fi
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
 if [ -n "${commitlint_extends_trimmed}" ]; then
-  npm install -D ${commitlint_extends}
+  npm install -q -D ${commitlint_extends}
 fi
 
 # Fetching the PR title from the API (fallback when not passed as input) is
@@ -62,6 +62,10 @@ if [ ${commitlint_status} -ne 0 ]; then
   escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
   echo "::error::${escaped_output}" >&2
   exit 1
+else
+  # Show commitlint output as notice on success
+  escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
+  echo "::notice::${escaped_output}" >&2
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
