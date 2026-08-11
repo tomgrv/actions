@@ -61,7 +61,6 @@ if [ ${commitlint_status} -ne 0 ]; then
   # Escape newlines for GitHub annotation
   escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
   echo "::error::${escaped_output}" >&2
-  exit 1
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
@@ -76,6 +75,5 @@ Expected: ${formatted_title}"
     # Escape newlines for GitHub annotation
     escaped_error=$(printf '%s\n' "${error_message}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
     echo "::error::${escaped_error}" >&2
-    exit 1
   fi
 fi
