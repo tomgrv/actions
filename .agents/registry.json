@@ -1,0 +1,28 @@
+{
+    "agents": ["claude-code", "github-copilot"],
+    "plugins": [
+        {
+            "name": "caveman",
+            "marketplace": "caveman",
+            "url": "https://github.com/JuliusBrussee/caveman.git"
+        },
+        {
+            "name": "ponytail",
+            "marketplace": "ponytail",
+            "url": "https://github.com/DietrichGebert/ponytail.git"
+        }
+    ],
+    "skills": [
+        "caveman",
+        "caveman-commit",
+        "caveman-compress",
+        "caveman-help",
+        "caveman-review",
+        "feature-ai-coding",
+        "pm/metrics-digest",
+        "pm/prd-draft",
+        "pm/release-notes",
+        "pm/research-synthesis",
+        "pm/roadmap-brief"
+    ]
+}

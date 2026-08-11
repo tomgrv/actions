@@ -33,6 +33,9 @@
     "devDependencies": {
         "npm-check-updates": "*"
     },
+    "optionalDependencies": {
+        "@tomgrv-devcontainer-features/common-utils": ">=5"
+    },
     "peerDependencies": {
         "@commitlint/cli": "*",
         "@commitlint/config-conventional": "*",
