@@ -14,6 +14,10 @@ inputs:
     description: GitHub token used to update PR title when needed.
     required: false
     default: ${{ github.token }}
+  fix:
+    description: Autocorrect the PR title (via devmoji) and push it back when possible, instead of only reporting the expected format.
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -22,6 +26,7 @@ runs:
       shell: sh
       env:
         GH_TOKEN: ${{ inputs.github-token }}
+        FIX: ${{ inputs.fix }}
         PR_TITLE: ${{ github.event.pull_request.title }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         REPO: ${{ github.repository }}
