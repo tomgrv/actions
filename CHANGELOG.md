@@ -2,6 +2,16 @@
 
 # Changelog
 
+## 2.13.4 (2026-08-11)
+
+_Commits from: v2.13.3..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 ensure proper exit on commitlint and title validation errors ([d7d1c1b](https://github.com/tomgrv/actions/commit/d7d1c1bb3e92e6dba6b79ddfa47b70f30a3228b8))
+
 ## 2.13.3 (2026-08-11)
 
 _Commits from: v2.13.2..HEAD_
