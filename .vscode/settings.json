@@ -1,8 +1,8 @@
 {
     "chat.plugins.marketplaces": [
-        "github/copilot-plugins",
+        "JuliusBrussee/caveman",
         "github/awesome-copilot",
-        "JuliusBrussee/caveman"
+        "github/copilot-plugins"
     ],
     "triggerTaskOnSave": {
         "tasks": null
