@@ -32,6 +32,55 @@ _Commits from: v2.11.0..HEAD_
 
 - ♻️ change shell from bash to sh for running audit ([a936df7](https://github.com/tomgrv/actions/commit/a936df7c47c123f9d9a65f898f7dd147a611438b))
 
+### 📦 release changes
+
+#### Other changes
+
+- 🚀 2.12.0 ([62a3195](https://github.com/tomgrv/actions/commit/62a3195ba34d3d42c45b9384fd3dc246bebc5499))
+
+### 📦 reviewdog changes
+
+#### Bug Fixes
+
+- fix filter-mode by convention, resolve reporter/token by run context (#47) ([4378688](https://github.com/tomgrv/actions/commit/4378688bbe91e65ef1474666f7258f576f5c08b2))
+
+### 📦 run-phpstan changes
+
+#### Other changes
+
+- 🔧 add logging for PHPStan stdout/stderr output ([32871c9](https://github.com/tomgrv/actions/commit/32871c9491dda2512f36d71de4b68b527b37d68f))
+- 🔧 update default reviewdog flags to include '-tee' ([ded3109](https://github.com/tomgrv/actions/commit/ded3109f33a3b2ced25cac2075e830255bd1618d))
+
+## 2.12.0 (2026-08-11)
+
+_Commits from: v2.11.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- add type parameter to setup-reviewdog and aggregate run-deployer errors (#48) ([3c227ae](https://github.com/tomgrv/actions/commit/3c227aeca4de73458596d2fed21554b8d165c88b))
+
+#### Other changes
+
+- Merge tag 'v2.11.0' into develop ([527eb51](https://github.com/tomgrv/actions/commit/527eb51f71e4e5bb9ff804812c7983a5ea18fb95))
+- improve run.sh diagnostics for unexplained exit 1 (#46) ([71124e3](https://github.com/tomgrv/actions/commit/71124e3cd36a7245d8a37dcbc1a0849160c9f2ec))
+- ♻️ update run command syntax for consistency ([a39dc45](https://github.com/tomgrv/actions/commit/a39dc453d546b42dd7dae3c3f5c8ba5685bb98b9))
+- 🔧 swap positions of caveman and copilot-plugins in marketplace list ([a0a9e3d](https://github.com/tomgrv/actions/commit/a0a9e3d7cbc345b153b211c9f34a6fff7da59f16))
+- 🔧 update devcontainer ([6eee575](https://github.com/tomgrv/actions/commit/6eee5751955563dd0d1d7b91ee0fc7d40f8f3682))
+
+### 📦 check-pr-format changes
+
+#### Bug Fixes
+
+- autocorrect PR title before validating (#49) ([b7f4444](https://github.com/tomgrv/actions/commit/b7f4444f3da4ee939a6431a141b2434eda5f4d56))
+
+### 📦 check-security-composer changes
+
+#### Other changes
+
+- ♻️ change shell from bash to sh for running audit ([a936df7](https://github.com/tomgrv/actions/commit/a936df7c47c123f9d9a65f898f7dd147a611438b))
+
 ### 📦 reviewdog changes
 
 #### Bug Fixes
