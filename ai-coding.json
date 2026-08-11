@@ -1,0 +1,19 @@
+{
+    "agents": [
+        "claude-code",
+        "github-copilot"
+    ],
+    "plugins": [
+        {
+            "name": "caveman",
+            "marketplace": "caveman",
+            "url": "https://github.com/JuliusBrussee/caveman.git"
+        },
+        {
+            "name": "ponytail",
+            "marketplace": "ponytail",
+            "url": "https://github.com/DietrichGebert/ponytail.git"
+        }
+    ],
+    "skills": []
+}
