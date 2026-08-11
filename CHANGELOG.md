@@ -2,6 +2,16 @@
 
 # Changelog
 
+## 2.13.3 (2026-08-11)
+
+_Commits from: v2.13.2..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 multiline error annotation escaping in check-pr-format (#51) ([cb2d85f](https://github.com/tomgrv/actions/commit/cb2d85f3eaff9d27bfc3313c934895d31d1b4cd8))
+
 ## 2.13.2 (2026-08-11)
 
 _Commits from: v2.13.1..HEAD_

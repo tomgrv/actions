@@ -58,8 +58,9 @@ formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
-  echo "::error::${commitlint_output}" >&2
-  exit 1
+  # Escape newlines for GitHub annotation
+  escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
+  echo "::error::${escaped_output}" >&2
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
@@ -71,7 +72,8 @@ if [ "${PR_TITLE}" != "${formatted_title}" ]; then
 
 Current:  ${PR_TITLE}
 Expected: ${formatted_title}"
-    echo "::error::${error_message}" >&2
-    exit 1
+    # Escape newlines for GitHub annotation
+    escaped_error=$(printf '%s\n' "${error_message}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
+    echo "::error::${escaped_error}" >&2
   fi
 fi
