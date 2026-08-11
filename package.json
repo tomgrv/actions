@@ -1,6 +1,6 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.11.0",
+    "version": "2.12.0",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
     "keywords": [
         "github-actions",
@@ -32,6 +32,9 @@
     },
     "devDependencies": {
         "npm-check-updates": "*"
+    },
+    "optionalDependencies": {
+        "@tomgrv-devcontainer-features/common-utils": ">=5"
     },
     "peerDependencies": {
         "@commitlint/cli": "*",
@@ -192,6 +195,6 @@
     },
     "validate-branch-name": {
         "errorMsg": "Cannot push to a branch that does not follow the naming convention.",
-        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release)/.+$"
+        "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release|claude)/.+$"
     }
 }

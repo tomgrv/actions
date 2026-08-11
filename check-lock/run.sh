@@ -10,19 +10,14 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
   git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-# Token/tooling resolution is a setup concern, not a lock-coherence finding:
-# plain log only, no GitHub annotation (see .github/instructions/action-creation.md).
-if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-    exit 1
-  fi
-  echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-  export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
-fi
-
 if ! command -v reviewdog >/dev/null 2>&1; then
   echo "Error: reviewdog could not be found. Please install it to run this action." >&2
+  exit 1
+fi
+
+# Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
+if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
+  echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
   exit 1
 fi
 
@@ -32,9 +27,9 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-lock-coherence}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-nofilter}"
+REVIEWDOG_FILTER_MODE="nofilter"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
@@ -241,11 +236,11 @@ jq -R -s -f "$(dirname "$0")/rdjson.jq" <"${FINDINGS}" | \
     ${REVIEWDOG_FLAGS} >&2 || exit_code=$?
 
 if [ -s "${FINDINGS}" ]; then
-  printf 'has-drift=true\n'
+  printf 'has-drift=true\n' >> "${GITHUB_OUTPUT}"
 else
   echo "All lock files are in sync." >&2
-  printf 'has-drift=false\n'
+  printf 'has-drift=false\n' >> "${GITHUB_OUTPUT}"
 fi
-printf 'drift-files=%s\n' "${DRIFT_FILES}"
+printf 'drift-files=%s\n' "${DRIFT_FILES}" >> "${GITHUB_OUTPUT}"
 
 exit $exit_code

@@ -39,4 +39,4 @@ runs:
       env:
         LIST_PATHS: ${{ inputs.path }}
         LIST_EXTENSIONS: ${{ inputs.extensions }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

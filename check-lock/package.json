@@ -1,6 +1,6 @@
 {
     "name": "check-lock",
-    "version": "2.10.0",
+    "version": "2.12.0",
     "description": "Validate composer.json/composer.lock and package.json/package-lock.json coherence and report via reviewdog.",
     "private": true
 }

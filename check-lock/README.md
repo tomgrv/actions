@@ -41,11 +41,11 @@ This catches the case where a pull request edits a manifest but forgets to regen
 
 ### reporter
 
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to `github-pr-check`.
+**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
 ### filter-mode
 
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`.
+Fixed to `nofilter`: this action validates repository-wide manifest/lock coherence rather than specific files, so reviewdog reports every finding regardless of diff. Not configurable.
 
 ### fail-level
 

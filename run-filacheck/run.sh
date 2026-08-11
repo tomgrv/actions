@@ -15,35 +15,23 @@ fi
 FILACHECK_BIN="filacheck"
 REVIEWDOG_BIN="reviewdog"
 
-# Token resolution is a setup concern, not a FilaCheck finding: plain log
-# only, no GitHub annotation (see .github/instructions/action-creation.md).
+# Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    if [ -z "${GITHUB_TOKEN:-}" ]; then
-        echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
-        exit 1
-    fi
-    echo "REVIEWDOG_GITHUB_API_TOKEN not set, using GITHUB_TOKEN" >&2
-    export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    exit 1
 fi
 
 FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
-FIX="${FIX:-false}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
 WIP_FILES="${WIP_FILES:-}"
-DRY_RUN="${DRY_RUN:-false}"
-BACKUP="${BACKUP:-false}"
 REVIEWDOG_NAME="${REVIEWDOG_NAME:-filacheck}"
-REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-pr-check}"
+REVIEWDOG_REPORTER="${REVIEWDOG_REPORTER:-github-check}"
 REVIEWDOG_LEVEL="${REVIEWDOG_LEVEL:-error}"
-REVIEWDOG_FILTER_MODE="${REVIEWDOG_FILTER_MODE:-added}"
+REVIEWDOG_FILTER_MODE="file"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
-
-if [ "${FILACHECK_PATH}" = "app/Filament" ]; then
-    echo "FILACHECK_PATH not set, using default: app/Filament" >&2
-fi
 
 #
 # FilaCheck has no native flag for `wip` (unlike `dirty`, which it accepts
@@ -54,38 +42,30 @@ fi
 if [ "${WIP}" = "true" ]; then
     FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
-        # Functional: nothing in the analyzed repo matches the filter.
         echo "::notice::No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck." >&2
-        printf 'has-changes=false\n'
         exit 0
     fi
-    echo "Restricting FilaCheck to changed files: ${FILACHECK_TARGET}" >&2
 else
     FILACHECK_TARGET="${FILACHECK_PATH}"
 fi
 
-echo "Running FilaCheck on: ${FILACHECK_TARGET}" >&2
-
 filacheck_args=""
-if [ "${FIX}" = "true" ]; then
-    filacheck_args="${filacheck_args} --fix"
-fi
 if [ "${DETAILED}" = "true" ]; then
     filacheck_args="${filacheck_args} --detailed"
 fi
 if [ "${DIRTY}" = "true" ]; then
     filacheck_args="${filacheck_args} --dirty"
 fi
-if [ "${DRY_RUN}" = "true" ]; then
-    filacheck_args="${filacheck_args} --dry-run"
-fi
-if [ "${BACKUP}" = "true" ]; then
-    filacheck_args="${filacheck_args} --backup"
-fi
 
+# FilaCheck's own exit code is not used as the step's exit code: findings
+# are reviewdog's job to gate (via fail-level), not a script failure. The
+# pipe's exit code below is reviewdog's, since it is the last command in it.
 exit_code=0
+filacheck_log=$(mktemp)
+trap 'rm -f "${filacheck_log}"' EXIT INT TERM
 # shellcheck disable=SC2086
-"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2> /dev/null \
+"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2>"${filacheck_log}" \
+    | tee -a "${filacheck_log}" \
     | awk '
         /^[[:space:]]+[^[:space:]].*\.(blade\.php|php)$/ {
             current_file=$0
@@ -124,14 +104,6 @@ exit_code=0
         -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
         ${REVIEWDOG_FLAGS} || exit_code=$?
 
-if [ "${FIX}" = "true" ] && [ "${DRY_RUN}" != "true" ]; then
-    if git diff --quiet; then
-        printf 'has-changes=false\n'
-    else
-        printf 'has-changes=true\n'
-    fi
-else
-    printf 'has-changes=false\n'
-fi
+cat "${filacheck_log}" >&2
 
 exit $exit_code

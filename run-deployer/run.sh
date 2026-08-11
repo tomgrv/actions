@@ -66,6 +66,9 @@ cat "${log_file}" >&2
 
 # Report Deployer warnings/errors as reviewdog check annotations. Best-effort:
 # never let reviewdog's own outcome affect the step's exit status below.
+echo "Reviewdog parameters: -f=rdjson -name=deployer -reporter=${REVIEWDOG_REPORTER} -filter-mode=nofilter -fail-level=none" >&2
+echo "Deployer log tempfile source size: $(wc -c < "${log_file}") bytes" >&2
+
 jq -R -s -f "${GITHUB_ACTION_PATH}/rdjson.jq" <"${log_file}" |
     reviewdog \
         -f=rdjson \
@@ -76,7 +79,7 @@ jq -R -s -f "${GITHUB_ACTION_PATH}/rdjson.jq" <"${log_file}" |
 
 url=$(grep -o '##KLICK_DEPLOY_URL##.*' "${log_file}" | tail -n1 | sed 's/##KLICK_DEPLOY_URL##//')
 if [ -n "${url}" ]; then
-    printf 'deploy-url=%s\n' "${url}"
+    printf 'deploy-url=%s\n' "${url}" >> "${GITHUB_OUTPUT}"
 fi
 
 exit "${status}"

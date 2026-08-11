@@ -8,9 +8,9 @@ Each check can be individually skipped via its boolean toggle (`phpstan`, `pint`
 
 ## Reviewdog context
 
-`github-token`, `level`, `reporter`, `fail-level` and `reviewdog-flags` are forwarded as-is from this action's inputs to every wrapped check, so the reviewdog context you configure once on `check-laravel` is exactly what each underlying check uses — never a separately-defaulted one.
+`github-token`, `level`, `fail-level` and `reviewdog-flags` are forwarded as-is from this action's inputs to every wrapped check, so the reviewdog context you configure once on `check-laravel` is exactly what each underlying check uses — never a separately-defaulted one. Each wrapped check resolves its own `reporter` via [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
 
-`filter-mode` is the one exception: it defaults to empty here, which lets each wrapped check keep its own tuned default (PHPStan, Pint and PHP Insights default to `added`; PHPMD and the test suite default to `nofilter`, since mess-detection findings and test failures often sit outside the diff). Set `filter-mode` explicitly on `check-laravel` to force the same value across every check instead.
+`filter-mode` is not forwarded either: every wrapped check (PHPStan, Pint, PHP Insights, PHPMD, tests) fixes it to `file`, since they all operate on files.
 
 PHP, Composer and reviewdog are set up automatically (each wrapped action embeds its own `setup-php`/`setup-reviewdog`); only the first one in the job actually installs anything; the rest detect the job-scoped marker and skip straight through.
 
@@ -23,10 +23,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 ### paths
 
 **Optional.** Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD. Defaults to `app`.
-
-### fix
-
-**Optional.** Apply fixes directly (PHPStan baseline, Pint, PHP Insights) instead of reporting via reviewdog. Defaults to `false`.
 
 ### dirty
 
@@ -48,14 +44,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 **Optional.** Report level for reviewdog `[info,warning,error]`, shared by every wrapped check. Defaults to `error`.
 
-### reporter
-
-**Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`, shared by every wrapped check. Defaults to `github-pr-check`.
-
-### filter-mode
-
-**Optional.** Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`, shared by every wrapped check. Defaults to empty — see [Reviewdog context](#reviewdog-context).
-
 ### fail-level
 
 **Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`, shared by every wrapped check. Defaults to `none`.
@@ -66,10 +54,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 ## Outputs
 
-- `has-changes`: Whether fix mode produced local changes in any of PHPStan, Pint or PHP Insights.
-- `phpstan-has-changes`: Whether fix mode produced changes to the PHPStan baseline file.
-- `pint-has-changes`: Whether fix mode produced local changes via Pint.
-- `phpinsights-has-changes`: Whether fix mode produced local changes via PHP Insights.
 - `tests-passed`: Whether the test suite passed.
 - `coverage-file`: Path of the generated coverage report, empty when no report was produced.
 - `junit-file`: Path of the generated JUnit report, empty when no report was produced.
@@ -79,7 +63,6 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 - [**check-filament**](../check-filament/README.md) — run the Filament-specific suite alongside the general Laravel one.
 - [**check-security-composer**](../check-security-composer/README.md) — complement the suite with a Composer dependency audit.
 - [**check-lock**](../check-lock/README.md) — complement the suite with lock coherence validation.
-- [**create-pr**](../create-pr/README.md) — open a pull request with the auto-fixed files.
 - [**list-dirty**](../list-dirty/README.md) / [**list-wip**](../list-wip/README.md) — included automatically behind `dirty`/`wip`.
 
 ## Example

@@ -42,4 +42,4 @@ runs:
         REF_NAME: ${{ github.ref_name }}
         PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         DEP: ${{ inputs.dep }}
-      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

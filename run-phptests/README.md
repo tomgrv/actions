@@ -8,6 +8,8 @@ The action picks the first available runner — `pest`, then `phpunit` (from `ve
 
 Reporting never changes the verdict: the suite's own exit code is what fails the step, so a missing token or a reviewdog problem cannot mask or invent a test result.
 
+`filter-mode` is fixed to `file` and not configurable, like every other `run-*` action.
+
 ## Inputs
 
 | Name                | Description                                                                                                            | Required | Default      |
@@ -24,8 +26,7 @@ Reporting never changes the verdict: the suite's own exit code is what fails the
 | `migrate`           | Run `artisan migrate` before the suite `[auto,true,false]`. `auto` migrates when the project has migrations.             | No       | `auto`       |
 | `name`              | Name reported by reviewdog to identify this check.                                                                      | No       | `phpunit`    |
 | `level`             | Report level for reviewdog `[info,warning,error]`.                                                                      | No       | `error`      |
-| `reporter`          | Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`.                                         | No       | `github-pr-check` |
-| `filter-mode`       | Filtering mode for the reviewdog command `[added,diff_context,file,nofilter]`. Defaults to `nofilter`, as failing tests often sit outside the diff. | No | `nofilter` |
+| `reporter`          | Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise). | No | `''` |
 | `fail-level`        | Exit code for reviewdog if it finds at least the specified level of diagnostic `[none,any,info,warning,error]`.          | No       | `none`       |
 | `reviewdog-flags`   | Additional reviewdog flags.                                                                                             | No       | `''`         |
 

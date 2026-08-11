@@ -1,5 +1,5 @@
 # Convert PHP Deployer's log output into a reviewdog rdjson diagnostic
-# report, one diagnostic per warning/error line.
+# report: one diagnostic per warning, all errors aggregated into a single annotation.
 def diag($severity; $message): {
   message: $message,
   severity: $severity,
@@ -28,6 +28,10 @@ def diag($severity; $message): {
     },
     diagnostics: (
       ($warnings | map(diag("WARNING"; .)))
-      + ($errors | map(diag("ERROR"; .)))
+      + (if ($errors | length) > 0 then
+          [diag("ERROR"; $errors | join("\n"))]
+        else
+          []
+        end)
     )
   }

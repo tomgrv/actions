@@ -24,6 +24,7 @@ action-name/
 ### Per-Action package.json
 
 Every action directory must have a minimal `package.json` with:
+
 - `name`: the folder name (no `@org/` prefix)
 - `private: true` — these packages are never published individually
 - `description`: brief description matching `action.yml`
@@ -45,7 +46,7 @@ Every package in this repository, including the root one, is `private: true` and
 All actions with a `run.sh` can be invoked locally via the root `dispatch.sh`:
 
 ```sh
-./dispatch.sh <action-name> [args...]
+./dispatch.sh < action-name > [args...]
 ```
 
 `dispatch.sh` automatically sets sensible defaults for all `GITHUB_*` environment variables. Users only need to supply `GITHUB_TOKEN` for actions that call the GitHub API.
@@ -101,7 +102,7 @@ runs:
           env:
               ENV_VAR: ${{ inputs.parameter-name }}
               GITHUB_TOKEN: ${{ inputs.github-token }}
-          run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+           run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
 ```
 
 ### Shell Script (run.sh)
@@ -264,15 +265,15 @@ echo "Running analysis..." >&2
 # Capture reviewdog exit code; do NOT swallow it
 exit_code=0
 # shellcheck disable=SC2086
-tool_command | \
-  reviewdog \
-    -f=FORMAT \
-    -name="${REVIEWDOG_NAME}" \
-    -reporter="${REVIEWDOG_REPORTER}" \
-    -level="${REVIEWDOG_LEVEL}" \
-    -filter-mode="${REVIEWDOG_FILTER_MODE}" \
-    -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
-    ${REVIEWDOG_FLAGS} || exit_code=$?
+tool_command \
+    | reviewdog \
+        -f=FORMAT \
+        -name="${REVIEWDOG_NAME}" \
+        -reporter="${REVIEWDOG_REPORTER}" \
+        -level="${REVIEWDOG_LEVEL}" \
+        -filter-mode="${REVIEWDOG_FILTER_MODE}" \
+        -fail-level="${REVIEWDOG_FAIL_LEVEL}" \
+        ${REVIEWDOG_FLAGS} || exit_code=$?
 
 # GITHUB_OUTPUT lines go to stdout (redirected to $GITHUB_OUTPUT in action.yml)
 printf 'has-changes=false\n'
@@ -280,6 +281,7 @@ exit $exit_code
 ```
 
 **Key rules:**
+
 - Pipe tool output **only** to reviewdog or to stderr (`>&2`). Never mix with stdout.
 - All stdout lines must be `key=value` pairs written to `$GITHUB_OUTPUT`.
 - Use `exit_code=0; cmd || exit_code=$?` to capture reviewdog's exit code.
@@ -289,20 +291,20 @@ exit $exit_code
 
 ```sh
 if [ "${FIX}" = "true" ]; then
-  # Run tool in fix mode; all output goes to stderr
-  tool --fix ... >&2 || true
-  # Check for changes via git diff
-  if git diff --quiet; then
-    printf 'has-changes=false\n'
-  else
-    printf 'has-changes=true\n'
-  fi
+    # Run tool in fix mode; all output goes to stderr
+    tool --fix ... >&2 || true
+    # Check for changes via git diff
+    if git diff --quiet; then
+        printf 'has-changes=false\n'
+    else
+        printf 'has-changes=true\n'
+    fi
 else
-  # Normal reviewdog review mode
-  exit_code=0
-  tool ... 2>/dev/null | reviewdog ... || exit_code=$?
-  printf 'has-changes=false\n'
-  exit $exit_code
+    # Normal reviewdog review mode
+    exit_code=0
+    tool ... 2> /dev/null | reviewdog ... || exit_code=$?
+    printf 'has-changes=false\n'
+    exit $exit_code
 fi
 ```
 
