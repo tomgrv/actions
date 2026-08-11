@@ -21,30 +21,38 @@ jobs:
       - name: Install dependencies
         run: npm ci && npm install -D $(jq -r '.commitlint.extends//""' 'package.json' | tr -d "'[]:,\"")
 
-      - name: Validate PR title format
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
-
-      - name: Validate and update PR title if needed
-        # Only attempt to edit the PR title for same-repo PRs; fork PRs have a
-        # read-only GITHUB_TOKEN that cannot update pull request metadata.
-        if: github.event.pull_request.head.repo.full_name == github.repository
+      - name: Validate and autocorrect PR title if needed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_NUMBER="${{ github.event.pull_request.number }}"
           REPO="${{ github.repository }}"
-          # Use devmoji to get the formatted title
+          HEAD_REPO_FULL_NAME="${{ github.event.pull_request.head.repo.full_name }}"
+
+          # Attempt to autocorrect the title with devmoji first, then validate
+          # the result with commitlint. Errors are only raised when
+          # autocorrection isn't enough (still invalid) or can't be applied
+          # (fork PR has a read-only GITHUB_TOKEN that cannot update PR metadata).
           FORMATTED_TITLE=$(npx --yes devmoji --text "$PR_TITLE")
-          # If devmoji added an emoji, it means the original didn't have one
+
+          if ! echo "$FORMATTED_TITLE" | npx commitlint; then
+            echo "::error::PR title does not meet commitlint rules."
+            echo "::error::Current:   $PR_TITLE"
+            echo "::error::Formatted: $FORMATTED_TITLE"
+            exit 1
+          fi
+
           if [ "$PR_TITLE" != "$FORMATTED_TITLE" ]; then
-            echo "❌ PR title is missing an emoji or not formatted correctly."
-            echo "Original: $PR_TITLE"
-            echo "Expected: $FORMATTED_TITLE"
-            echo "Updating PR title..."
-            # Update the PR title (GH_TOKEN is already in the environment, no need to gh auth login)
-            gh pr edit "$PR_NUMBER" --repo "$REPO" --title "$FORMATTED_TITLE"
-            echo "✅ PR title updated to: $FORMATTED_TITLE"
+            if [ "$HEAD_REPO_FULL_NAME" = "$REPO" ]; then
+              gh pr edit "$PR_NUMBER" --repo "$REPO" --title "$FORMATTED_TITLE"
+              echo "✅ PR title updated to: $FORMATTED_TITLE"
+            else
+              echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fork PR)."
+              echo "::error::Current:  $PR_TITLE"
+              echo "::error::Expected: $FORMATTED_TITLE"
+              exit 1
+            fi
           else
-            echo "✅ PR title contains an emoji and is formatted correctly!"
+            echo "✅ PR title is correctly formatted!"
           fi

@@ -49,25 +49,26 @@ fi
 # From here on, errors are the actual outcome of validating the PR title
 # (the analyzed content), so they are kept as GitHub annotations.
 
-# Validate PR title with commitlint
-if ! echo "${PR_TITLE}" | npx commitlint; then
+# Attempt to autocorrect the title with devmoji first, then validate the
+# result with commitlint. Errors are only raised when autocorrection isn't
+# enough (still invalid) or can't be applied (fork PR or missing token).
+formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
+
+if ! echo "${formatted_title}" | npx commitlint; then
   echo "::error::PR title does not meet commitlint rules." >&2
-  echo "::error::Current: ${PR_TITLE}" >&2
+  echo "::error::Current:  ${PR_TITLE}" >&2
+  echo "::error::Formatted: ${formatted_title}" >&2
   exit 1
 fi
 
-# Format PR title with devmoji and update if necessary
-formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
-  echo "::error::PR title is not formatted with devmoji." >&2
-  echo "::error::Current:  ${PR_TITLE}" >&2
-  echo "::error::Expected: ${formatted_title}" >&2
-
   if [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
-    echo "PR title updated." >&2
+    echo "PR title updated: ${formatted_title}" >&2
   else
-    echo "::error::PR title could not be auto-updated (fork PR or missing token)." >&2
+    echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fork PR or missing token)." >&2
+    echo "::error::Current:  ${PR_TITLE}" >&2
+    echo "::error::Expected: ${formatted_title}" >&2
     exit 1
   fi
 fi
