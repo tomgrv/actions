@@ -1,6 +1,6 @@
 {
     "name": "check-filament",
-    "version": "2.8.0",
+    "version": "2.12.0",
     "description": "Run Filament-specific checks (FilaCheck) and report via reviewdog.",
     "private": true
 }
