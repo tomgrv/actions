@@ -2,6 +2,16 @@
 
 # Changelog
 
+## 2.13.2 (2026-08-11)
+
+_Commits from: v2.13.1..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 ensure commitlint output is captured correctly ([b912501](https://github.com/tomgrv/actions/commit/b9125010ede63f81cfae40491f9dedd75c03eb9f))
+
 ## 2.13.1 (2026-08-11)
 
 _Commits from: v2.13.0..HEAD_

@@ -55,7 +55,7 @@ fi
 # enough (still invalid) or can't be applied (fork PR or missing token).
 formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
 
-commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1 || true)
+commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
   echo "::error::${commitlint_output}" >&2
