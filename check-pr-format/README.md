@@ -2,13 +2,17 @@
 
 # GitHub Action: Validate PR Format
 
-Validates and optionally normalizes pull request title format against the Conventional Commits specification. When a GitHub token is provided and the title can be normalized, the PR title is updated automatically.
+Validates pull request title format against the Conventional Commits specification. When `fix: true` and a GitHub token is provided, a title that can be normalized (via devmoji) is autocorrected and pushed back to the PR instead of failing; an error is only raised when the title still fails validation after normalization, or when it can't be pushed back (fork PR or missing token).
 
 ## Inputs
 
 ### github-token
 
 **Optional.** GitHub token used to update the PR title when normalization is needed. Defaults to `github.token`.
+
+### fix
+
+**Optional.** When `true`, autocorrect the PR title (via devmoji) and push it back to the PR when possible, instead of only reporting the expected format. Defaults to `false`.
 
 ## Outputs
 
@@ -48,4 +52,5 @@ jobs:
               uses: tomgrv/actions/check-pr-format@v1
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
+                  fix: true
 ```

@@ -18,41 +18,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
-        run: npm ci && npm install -D $(jq -r '.commitlint.extends//""' 'package.json' | tr -d "'[]:,\"")
-
       - name: Validate and autocorrect PR title if needed
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          REPO="${{ github.repository }}"
-          HEAD_REPO_FULL_NAME="${{ github.event.pull_request.head.repo.full_name }}"
-
-          # Attempt to autocorrect the title with devmoji first, then validate
-          # the result with commitlint. Errors are only raised when
-          # autocorrection isn't enough (still invalid) or can't be applied
-          # (fork PR has a read-only GITHUB_TOKEN that cannot update PR metadata).
-          FORMATTED_TITLE=$(npx --yes devmoji --text "$PR_TITLE")
-
-          if ! echo "$FORMATTED_TITLE" | npx commitlint; then
-            echo "::error::PR title does not meet commitlint rules."
-            echo "::error::Current:   $PR_TITLE"
-            echo "::error::Formatted: $FORMATTED_TITLE"
-            exit 1
-          fi
-
-          if [ "$PR_TITLE" != "$FORMATTED_TITLE" ]; then
-            if [ "$HEAD_REPO_FULL_NAME" = "$REPO" ]; then
-              gh pr edit "$PR_NUMBER" --repo "$REPO" --title "$FORMATTED_TITLE"
-              echo "✅ PR title updated to: $FORMATTED_TITLE"
-            else
-              echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fork PR)."
-              echo "::error::Current:  $PR_TITLE"
-              echo "::error::Expected: $FORMATTED_TITLE"
-              exit 1
-            fi
-          else
-            echo "✅ PR title is correctly formatted!"
-          fi
+        uses: tomgrv/actions/check-pr-format@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fix: true

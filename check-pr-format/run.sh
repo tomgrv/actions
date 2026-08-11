@@ -62,11 +62,11 @@ if ! echo "${formatted_title}" | npx commitlint; then
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
-  if [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
+  if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
     echo "PR title updated: ${formatted_title}" >&2
   else
-    echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fork PR or missing token)." >&2
+    echo "::error::PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token)." >&2
     echo "::error::Current:  ${PR_TITLE}" >&2
     echo "::error::Expected: ${formatted_title}" >&2
     exit 1
