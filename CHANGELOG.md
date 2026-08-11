@@ -2,6 +2,21 @@
 
 # Changelog
 
+## 2.13.0 (2026-08-11)
+
+_Commits from: v2.12.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- Consolidate check-title error annotations into single annotation (#50) ([826f3ef](https://github.com/tomgrv/actions/commit/826f3efd393342439eeb80a9f2f1241e551f3e75))
+
+#### Other changes
+
+- Merge tag 'v2.12.0' into develop ([1d46820](https://github.com/tomgrv/actions/commit/1d46820869ada9c9578745a06b7131819b1fb8cd))
+- 🔧 update devcontainer ([95c74ea](https://github.com/tomgrv/actions/commit/95c74eae15574b54ee25685db0fa21f6c79aeafc))
+
 ## 2.12.0 (2026-08-11)
 
 _Commits from: v2.11.0..HEAD_

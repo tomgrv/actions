@@ -34,7 +34,7 @@ Write commit messages terse and exact. Conventional Commits format. No fluff. Wh
 
 - "This commit does X", "I", "we", "now", "currently" — the diff says what
 - "As requested by..." — use Co-authored-by trailer
-- "Generated with Claude Code" or any AI attribution
+- "Generated with Claude Code" or any AI attribution — unless the user's own rule requires an `Assisted-by`/AI-attribution trailer, then add it as a trailer
 - Emoji (unless project convention requires)
 - Restating the file name when scope already says it
 
@@ -44,7 +44,6 @@ Diff: new endpoint for user profile with body explaining the why
 
 - ❌ "feat: add a new endpoint to get user profile information from the database"
 - ✅
-
     ```
     feat(api): add GET /users/:id/profile
 
@@ -57,7 +56,6 @@ Diff: new endpoint for user profile with body explaining the why
 Diff: breaking API change
 
 - ✅
-
     ```
     feat(api)!: rename /v1/orders to /v1/checkout
 
