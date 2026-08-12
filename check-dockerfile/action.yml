@@ -1,0 +1,53 @@
+# @format
+
+# @package tomgrv/actions/check-dockerfile
+
+name: Check Dockerfile Best Practices
+description: Validate Dockerfile against 6 production best practices
+author: Claude Code
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  dockerfile-path:
+    description: Path to the Dockerfile to check
+    required: false
+    default: ./Dockerfile
+  strict:
+    description: Treat warnings as errors
+    required: false
+    default: 'false'
+  github-token:
+    description: GitHub token for reviewdog reporting
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  issues-found:
+    description: Total number of issues found
+    value: ${{ steps.check.outputs.issues-found }}
+  checks-failed:
+    description: Number of failed required checks
+    value: ${{ steps.check.outputs.checks-failed }}
+  checks-warned:
+    description: Number of warnings
+    value: ${{ steps.check.outputs.checks-warned }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up reviewdog
+      uses: tomgrv/actions/setup-reviewdog@main
+      with:
+        github-token: ${{ inputs.github-token }}
+
+    - name: Check Dockerfile best practices
+      id: check
+      shell: sh
+      env:
+        DOCKERFILE: ${{ inputs.dockerfile-path }}
+        STRICT: ${{ inputs.strict }}
+        ACTION_PATH: ${{ github.action_path }}
+        REVIEWDOG_REPORTER: ${{ env.REVIEWDOG_REPORTER }}
+      run: sh -c "${{ github.action_path }}/run.sh"
