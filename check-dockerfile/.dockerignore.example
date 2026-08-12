@@ -1,0 +1,56 @@
+# Git history and metadata
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+.secrets
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation
+README.md
+CONTRIBUTING.md
+LICENSE
+
+# Build artifacts
+dist/
+build/
+.next/
+coverage/
+
+# Testing
+.pytest_cache/
+.coverage
+cypress/videos/
+cypress/screenshots/
+
+# Logs
+logs/
+*.log
+
+# Misc
+.editorconfig
+.prettierrc
+eslintrc.json
+Makefile
+docker-compose*.yml

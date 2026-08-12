@@ -1,0 +1,61 @@
+name: Check Dockerfile Best Practices
+description: Validate Dockerfile against 6 production best practices
+author: Claude Code
+
+inputs:
+  dockerfile-path:
+    description: Path to the Dockerfile to check
+    required: false
+    default: ./Dockerfile
+  strict:
+    description: Fail on warnings (not just errors)
+    required: false
+    default: 'false'
+  hadolint-version:
+    description: Version of hadolint to use
+    required: false
+    default: 'latest'
+
+outputs:
+  issues-found:
+    description: Number of issues found
+    value: ${{ steps.check.outputs.issues-found }}
+  checks-passed:
+    description: Comma-separated list of checks that passed
+    value: ${{ steps.check.outputs.checks-passed }}
+  checks-failed:
+    description: Comma-separated list of checks that failed
+    value: ${{ steps.check.outputs.checks-failed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check Dockerfile best practices
+      id: check
+      shell: bash
+      env:
+        DOCKERFILE: ${{ inputs.dockerfile-path }}
+        STRICT: ${{ inputs.strict }}
+      run: ${{ github.action_path }}/check.sh
+
+    - name: Install hadolint
+      shell: bash
+      if: always()
+      run: |
+        if ! command -v hadolint &> /dev/null; then
+          if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            sudo apt-get update && sudo apt-get install -y hadolint
+          elif [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install hadolint
+          fi
+        fi
+
+    - name: Run hadolint
+      id: hadolint
+      shell: bash
+      if: always()
+      continue-on-error: true
+      run: |
+        if [ -f "${{ inputs.dockerfile-path }}" ]; then
+          hadolint "${{ inputs.dockerfile-path }}" || true
+        fi
