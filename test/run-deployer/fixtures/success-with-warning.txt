@@ -1,0 +1,10 @@
+✈️  Deploying to production
+➤ Executing task deploy:info
+[web1] ➤ Executing task deploy:prepare
+[web1] ✔ Ok [0.5s]
+[web1] ➤ Executing task deploy:vendors
+[web1] PHP Warning:  Undefined array key "foo" in /var/www/app/index.php on line 12
+[web1] ✔ Ok [1.2s]
+[web1] ➤ Executing task deploy:symlink
+[web1] ✔ Ok [0.1s]
+##KLICK_DEPLOY_URL##https://example.com
