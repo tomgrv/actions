@@ -1,0 +1,8 @@
+➤ Executing task deploy:vendors
+[web1] ➤ Executing task deploy:vendors
+[web1] ✘ deploy:vendors
+The command "composer install" failed.
+
+Exit Code: 1 (General error)
+[web1] PHP Deprecated:  Implicit conversion in /var/www/app/vendor/x.php on line 5
+In deploy.php exception 'Deployer\Exception\GracefulShutdownException'
