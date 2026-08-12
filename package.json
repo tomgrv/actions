@@ -62,6 +62,7 @@
         "list-dirty",
         "list-packages",
         "list-wip",
+        "publish-npm",
         "rebase-pr",
         "resolve-environment",
         "run-deployer",
