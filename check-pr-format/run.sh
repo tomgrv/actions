@@ -41,10 +41,17 @@ if [ -n "${commitlint_extends_trimmed}" ]; then
 fi
 
 # Fetching the PR title from the API (fallback when not passed as input) is
-# a setup detail, not a finding: plain log only.
-if [ -z "${PR_TITLE:-}" ]; then
-  echo "PR_TITLE not set, fetching from GitHub API" >&2
+# a setup detail, not a finding: plain log only. Trim whitespace to detect
+# truly empty titles from YAML expansion of null/missing fields.
+PR_TITLE_TRIMMED="$(printf '%s' "${PR_TITLE:-}" | tr -d ' \t')"
+if [ -z "${PR_TITLE_TRIMMED}" ]; then
+  echo "PR_TITLE not set or empty, fetching from GitHub API" >&2
   PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
+  # Validate that we got a title from the API
+  if [ -z "${PR_TITLE}" ]; then
+    echo "Error: PR title could not be fetched from GitHub API" >&2
+    exit 1
+  fi
 fi
 
 # From here on, errors are the actual outcome of validating the PR title
