@@ -2,6 +2,32 @@
 
 # Changelog
 
+## 2.14.0 (2026-08-12)
+
+_Commits from: v2.13.4..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- make npm install silent and display commitlint output as notice (#53) ([87136a5](https://github.com/tomgrv/actions/commit/87136a52649610a1d6aa04c2273b98a89f4568f3))
+- ✨ add check-dockerfile action with 6 best practices (#56) ([9fc98ee](https://github.com/tomgrv/actions/commit/9fc98ee03794949f7a5d5298b73e3629e8e8a418))
+
+#### Other changes
+
+- Merge tag 'v2.13.0' into develop ([b394b93](https://github.com/tomgrv/actions/commit/b394b934d291d19106c618b45a101d250843a4c0))
+- Merge tag 'v2.13.1' into develop ([726e91b](https://github.com/tomgrv/actions/commit/726e91b0cf194c800573e88113e7c06123374f61))
+- Merge tag 'v2.13.2' into develop ([6b2ddc6](https://github.com/tomgrv/actions/commit/6b2ddc680c2c312e3b041f1b49b5861c28380b82))
+- Merge tag 'v2.13.3' into develop ([97c58c1](https://github.com/tomgrv/actions/commit/97c58c10ac293847062d91647276009f852e5b46))
+- Merge tag 'v2.13.4' into develop ([bafa5e3](https://github.com/tomgrv/actions/commit/bafa5e35b2d1993cfe02ebac3d220a374da38a96))
+- 🔧 update devcontainer ([07a0028](https://github.com/tomgrv/actions/commit/07a002890d3f4c41bb37b3cf5c33041b41009b88))
+
+### 📦 run-deployer changes
+
+#### Features
+
+- report successful deploys as reviewdog notices (#54) ([d09166f](https://github.com/tomgrv/actions/commit/d09166f0b99987872c160d39bef9ebed0411a11b))
+
 ## 2.13.4 (2026-08-11)
 
 _Commits from: v2.13.3..HEAD_
@@ -494,4 +520,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-11 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-12 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_

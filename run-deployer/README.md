@@ -2,7 +2,7 @@
 
 # Run PHP Deployer
 
-Composite action that installs PHP Deployer and runs a `dep` command over SSH. The deploy target (branch/tag/environment) is resolved by [`resolve-environment`](../resolve-environment/README.md) from the triggering GitHub event. Deployer's warnings/errors are reported as reviewdog check annotations.
+Composite action that installs PHP Deployer and runs a `dep` command over SSH. The deploy target (branch/tag/environment) is resolved by [`resolve-environment`](../resolve-environment/README.md) from the triggering GitHub event. Deployer's warnings/errors are reported as reviewdog check annotations, and a clean successful run is reported as a notice annotation.
 
 ## What It Does
 
@@ -10,7 +10,7 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 - Installs reviewdog via [`setup-reviewdog`](../setup-reviewdog/README.md).
 - Installs the SSH key used to reach the deploy target.
 - Resolves `--branch`/`--tag` and the environment via [`resolve-environment`](../resolve-environment/README.md).
-- Runs `dep <command> ... -- <selector>`, replays its log, and pipes it through reviewdog (`-reporter=github-check`, best-effort) so warnings/exceptions surface as check annotations instead of being buried in the raw log.
+- Runs `dep <command> ... -- <selector>`, replays its log, and pipes it through reviewdog (`-reporter=github-check`, best-effort) so warnings/exceptions surface as check annotations instead of being buried in the raw log. A run that exits `0` with no errors is reported as a single notice annotation (including the deploy URL when available) so a successful deploy is visible without opening the raw log.
 - Extracts a `##KLICK_DEPLOY_URL##` marker from the log into the `deploy-url` output, when present.
 
 ## Inputs

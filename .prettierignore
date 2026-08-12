@@ -1,0 +1,9 @@
+# Exclude .agents/ from prettier formatting
+# This is the canonical source for AI tooling; symlinked copies format via their own rules
+.agents/
+
+# Standard ignores
+node_modules/
+dist/
+build/
+.git/

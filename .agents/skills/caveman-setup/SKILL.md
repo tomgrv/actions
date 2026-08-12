@@ -1,14 +1,12 @@
 ---
 name: caveman-setup
 description: >
-    Wire the current repository through the Caveman Cloud gateway so every LLM
-    request is measured — cost, tokens, latency — with zero behavior change.
-    Use when the user pastes the Caveman setup prompt, says "set up caveman",
-    or wants LLM spend observability added to an app. Requires the gateway URL
-    and a Cave API key (the setup prompt carries both).
+  Wire the current repository through the Caveman Cloud gateway so every LLM
+  request is measured — cost, tokens, latency — with zero behavior change.
+  Use when the user pastes the Caveman setup prompt, says "set up caveman",
+  or wants LLM spend observability added to an app. Requires the gateway URL
+  and a Cave API key (the setup prompt carries both).
 ---
-
-<!-- @format -->
 
 You are wiring this repository through the Caveman gateway. Caveman is a
 byte-preserving LLM proxy: in record mode it measures what your app sends and
@@ -85,17 +83,16 @@ Exact shapes (use the one matching each callsite — these are the product's
 published recipes, not suggestions):
 
 **OpenAI SDK (TS)** — Chat Completions and Responses both route through:
-
 ```ts
 const client = new OpenAI({
-    baseURL: `${process.env.CAVE_GATEWAY_URL}/w/<app>/openai/v1`,
-    apiKey: process.env.OPENAI_API_KEY, // byok: unchanged · stored: use CAVE_API_KEY
-    defaultHeaders: {
-        'x-cave-api-key': process.env.CAVE_API_KEY!,
-        // byok only:
-        'x-cave-upstream-key': process.env.OPENAI_API_KEY!,
-    },
-})
+  baseURL: `${process.env.CAVE_GATEWAY_URL}/w/<app>/openai/v1`,
+  apiKey: process.env.OPENAI_API_KEY,           // byok: unchanged · stored: use CAVE_API_KEY
+  defaultHeaders: {
+    "x-cave-api-key": process.env.CAVE_API_KEY!,
+    // byok only:
+    "x-cave-upstream-key": process.env.OPENAI_API_KEY!,
+  },
+});
 ```
 
 **OpenAI SDK (Python)** — same shape: `base_url=f"{gw}/w/<app>/openai/v1"`,
@@ -104,7 +101,6 @@ const client = new OpenAI({
 **Anthropic SDK (TS/Python)** — the SDK appends `/v1/messages` itself. The
 `x-cave-api-key` header is required here in both modes (this SDK's own key
 param rides `x-api-key`, which is not a gateway-auth header):
-
 ```python
 client = anthropic.Anthropic(
     base_url=f"{os.environ['CAVE_GATEWAY_URL']}/w/<app>",
@@ -163,16 +159,16 @@ the protocol you just wired** with the app's own model and a small cap
 ```bash
 # OpenAI-protocol wiring:
 curl -sS "$CAVE_GATEWAY_URL/w/<app>/v1/chat/completions" \
-    -H "x-cave-api-key: $CAVE_API_KEY" \
-    -H "content-type: application/json" \
-    -d '{"model":"<model the repo already uses>","max_tokens":16,"messages":[{"role":"user","content":"ping"}]}'
+  -H "x-cave-api-key: $CAVE_API_KEY" \
+  -H "content-type: application/json" \
+  -d '{"model":"<model the repo already uses>","max_tokens":16,"messages":[{"role":"user","content":"ping"}]}'
 
 # Anthropic-protocol wiring:
 curl -sS "$CAVE_GATEWAY_URL/w/<app>/v1/messages" \
-    -H "x-cave-api-key: $CAVE_API_KEY" \
-    -H "anthropic-version: 2023-06-01" \
-    -H "content-type: application/json" \
-    -d '{"model":"<model the repo already uses>","max_tokens":16,"messages":[{"role":"user","content":"ping"}]}'
+  -H "x-cave-api-key: $CAVE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model":"<model the repo already uses>","max_tokens":16,"messages":[{"role":"user","content":"ping"}]}'
 ```
 
 (byok: add `-H "x-cave-upstream-key: $PROVIDER_KEY"`.) This is one real,

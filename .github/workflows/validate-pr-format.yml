@@ -4,7 +4,9 @@ name: Validate PR Title
 
 on:
   pull_request:
-    types: [review_requested]
+    types:
+      - opened
+      - ready_for_review
 
 permissions:
   contents: read
