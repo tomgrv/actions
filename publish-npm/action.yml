@@ -1,0 +1,65 @@
+# @format
+
+# @package tomgrv/actions/publish-npm
+
+name: Publish NPM Package
+description: Publish a package to npm registry using GitHub's OIDC trusted publishers.
+author: Perspikapps
+branding:
+  icon: package
+  color: red
+
+inputs:
+  path:
+    description: Path to the package directory containing package.json. Defaults to current directory.
+    required: false
+    default: '.'
+  registry-url:
+    description: npm registry URL. Defaults to https://registry.npmjs.org/
+    required: false
+    default: 'https://registry.npmjs.org/'
+  provenance:
+    description: >-
+      Generate provenance attestation for this package (NPM 10.2.0+, Node 18.20.0+).
+      When enabled, npm creates a .provenance.json with build metadata for verification.
+    required: false
+    default: 'true'
+  tag:
+    description: >-
+      Distribution tag to publish as (e.g., latest, next, rc). Defaults to "latest".
+      Useful for pre-releases or distinguishing different channels.
+    required: false
+    default: 'latest'
+  dry-run:
+    description: >-
+      If true, runs publish in dry-run mode to validate the package without uploading.
+      Useful for testing the publish process.
+    required: false
+    default: 'false'
+
+outputs:
+  version:
+    description: Published package version (from package.json).
+    value: ${{ steps.publish.outputs.version }}
+  name:
+    description: Published package name (from package.json).
+    value: ${{ steps.publish.outputs.name }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node toolchain
+      uses: $/setup-node
+      with:
+        bare: 'true'
+
+    - name: Publish to npm
+      id: publish
+      shell: sh
+      env:
+        PACKAGE_PATH: ${{ inputs.path }}
+        REGISTRY_URL: ${{ inputs.registry-url }}
+        PROVENANCE: ${{ inputs.provenance }}
+        DIST_TAG: ${{ inputs.tag }}
+        DRY_RUN: ${{ inputs.dry-run }}
+      run: sh -c "${{ github.action_path }}/run.sh"
