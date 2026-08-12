@@ -9,9 +9,9 @@ For each directory in `paths`, the action runs whichever checks apply:
 | Manifest        | Lock file           | Check                                                                                     |
 | --------------- | -------------------- | ------------------------------------------------------------------------------------------ |
 | `composer.json` | `composer.lock` (optional) | `composer validate --strict` — schema, publish-readiness, and lock content-hash coherence, all in one pass |
-| `package.json`  | `package-lock.json`  | `npm ci --dry-run --package-lock-only` — the check CI itself runs                          |
+| `package.json`  | `package-lock.json`  | `npm ci` — bare install validates lock coherence with the manifest                        |
 
-Both are read-only: nothing is installed and no lock file is rewritten. `--workspaces` is added to the npm check only when `package.json` declares workspaces. `composer.lock` is optional — packages and libraries commonly don't commit one, and `composer.json` is still validated in that case; `package-lock.json` is required for the npm check to run at all.
+A bare install is the simplest validation: if `npm ci` succeeds, the lock file is coherent with the manifest. `--workspaces` is added to the npm check only when `package.json` declares workspaces. `composer.lock` is optional — packages and libraries commonly don't commit one, and `composer.json` is still validated in that case; `package-lock.json` is required for the npm check to run at all.
 
 The composer.json findings are split by what `validate --strict` itself calls them: bullets under a "warnings" section (e.g. missing license, unbound version constraints) are reported as `WARNING`; everything else — lock drift, publish errors (missing description), schema errors — is `ERROR`. `fail-level` defaults to `error`, so warnings annotate without failing the job while lock drift and schema/publish errors do fail it.
 

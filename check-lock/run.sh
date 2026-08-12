@@ -129,9 +129,8 @@ ${_out}"
   return 0
 }
 
-# `npm ci` is what CI actually runs, and it refuses to install when the lock does not
-# match the manifests. --dry-run --package-lock-only reproduces exactly that check
-# without installing anything or writing to the lock file.
+# A bare install validates that lock files are correct: if npm ci succeeds,
+# the lock file is coherent with the manifest.
 _check_npm() {
   _dir="$1"
 
@@ -153,7 +152,7 @@ _check_npm() {
   echo "Checking npm lock coherence in ${_dir}..." >&2
 
   # shellcheck disable=SC2086
-  if _out=$(cd "${_dir}" && npm ci --dry-run --package-lock-only --no-audit --no-fund ${_workspaces} 2>&1); then
+  if _out=$(cd "${_dir}" && npm ci --no-audit --no-fund ${_workspaces} 2>&1); then
     _exit=0
   else
     _exit=$?
@@ -165,7 +164,7 @@ _check_npm() {
   fi
 
   if ! printf '%s\n' "${_out}" | grep -q 'can only install packages when your package.json and package-lock.json'; then
-    _add "${_dir}/package-lock.json" ERROR "npm ci --dry-run failed (exit ${_exit}) for a reason other than lock drift, so lock coherence could not be verified.
+    _add "${_dir}/package-lock.json" ERROR "npm ci failed (exit ${_exit}) for a reason other than lock drift, so lock coherence could not be verified.
 ${_out}"
     return 0
   fi
