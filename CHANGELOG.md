@@ -2,6 +2,24 @@
 
 # Changelog
 
+## 2.15.0 (2026-08-12)
+
+_Commits from: v2.14.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 handle empty PR title on PR open event (#58) ([1068f72](https://github.com/tomgrv/actions/commit/1068f725148cc3c3ba41b9bd82b7c2b76993d58e))
+
+#### Features
+
+- ✨ add publish-npm GitHub Action for npm trusted publishers (#57) ([a8d35ce](https://github.com/tomgrv/actions/commit/a8d35ce7f78a0e667d994cac71e450dde077d8c6))
+
+#### Other changes
+
+- Merge tag 'v2.14.0' into develop ([9945d58](https://github.com/tomgrv/actions/commit/9945d5872eb9cf19b3121c0e3fa63a9ea69b9d59))
+
 ## 2.14.0 (2026-08-12)
 
 _Commits from: v2.13.4..HEAD_
