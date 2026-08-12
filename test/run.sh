@@ -2,7 +2,7 @@
 
 # Run all BATS tests for composite actions.
 #
-# Usage: ./test/run-all-tests.sh [options]
+# Usage: ./test/run.sh [options]
 #   -v, --verbose       Show detailed test output
 #   -f, --filter PATTERN Only run tests matching PATTERN
 #   -q, --quiet         Suppress test output
@@ -32,7 +32,7 @@ _help() {
   cat >&2 <<'EOF'
 Run all BATS tests for composite actions.
 
-Usage: ./test/run-all-tests.sh [options]
+Usage: ./test/run.sh [options]
 
 Options:
   -v, --verbose       Show detailed test output
@@ -42,16 +42,16 @@ Options:
 
 Examples:
   # Run all tests
-  ./test/run-all-tests.sh
+  ./test/run.sh
 
   # Run tests with verbose output
-  ./test/run-all-tests.sh -v
+  ./test/run.sh -v
 
   # Run only resolve-environment tests
-  ./test/run-all-tests.sh -f resolve-environment
+  ./test/run.sh -f resolve-environment
 
   # Run only tests with 'changes' in the name
-  ./test/run-all-tests.sh -f changes
+  ./test/run.sh -f changes
 EOF
 }
 

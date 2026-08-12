@@ -48,6 +48,18 @@ test/
 └── [additional test directories]/
 ```
 
+## Usage
+
+The test suite is run via the main test script:
+
+```bash
+./test/run.sh [options]
+  -v, --verbose       Show detailed test output
+  -f, --filter PATTERN Only run tests matching PATTERN
+  -q, --quiet         Suppress test output
+  -h, --help          Show help message
+```
+
 ## Test Coverage
 
 ### Utility Actions
@@ -83,27 +95,27 @@ test/
 ### Run All Tests
 
 ```bash
-./test/run-all-tests.sh
+./test/run.sh
 ```
 
 ### Run Specific Action Tests
 
 ```bash
-./test/run-all-tests.sh -f resolve-environment
-./test/run-all-tests.sh -f detect-changes
-./test/run-all-tests.sh -f list-dirty
+./test/run.sh -f resolve-environment
+./test/run.sh -f detect-changes
+./test/run.sh -f list-dirty
 ```
 
 ### Run Tests with Verbose Output
 
 ```bash
-./test/run-all-tests.sh -v
+./test/run.sh -v
 ```
 
 ### Run Tests Quietly
 
 ```bash
-./test/run-all-tests.sh -q
+./test/run.sh -q
 ```
 
 ### Run Individual Test Files
@@ -229,10 +241,10 @@ Tests are designed to run in CI environments without external dependencies:
 ```yaml
 # Example GitHub Actions workflow
 - name: Run tests
-  run: ./test/run-all-tests.sh
+  run: ./test/run.sh
 
 - name: Run specific action tests
-  run: ./test/run-all-tests.sh -f detect-changes
+  run: ./test/run.sh -f detect-changes
 ```
 
 ## Dependencies
