@@ -1,5 +1,7 @@
 # Convert PHP Deployer's log output into a reviewdog rdjson diagnostic
-# report: one diagnostic per warning, all errors aggregated into a single annotation.
+# report: one diagnostic per warning, all errors aggregated into a single
+# annotation, and (on a clean successful run) a single INFO diagnostic -
+# reported by reviewdog as a GitHub notice annotation.
 def diag($severity; $message): {
   message: $message,
   severity: $severity,
@@ -22,6 +24,17 @@ def diag($severity; $message): {
         and (test("exception|failed|✘|error:"; "i") | not)
       ))
   ) as $warnings
+| (if ($status == "0" and ($errors | length) == 0) then
+    [diag("INFO";
+      if ($url | length) > 0 then
+        "Deployer completed successfully. Deployed to " + $url
+      else
+        "Deployer completed successfully."
+      end
+    )]
+  else
+    []
+  end) as $notices
 | {
     source: {
       name: "deployer"
@@ -33,5 +46,6 @@ def diag($severity; $message): {
         else
           []
         end)
+      + $notices
     )
   }
