@@ -1,42 +1,42 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "cleanupPeriodDays": 30,
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
-  },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/configure-skills.sh sync -a claude-code",
-            "type": "command"
-          }
-        ]
-      }
-    ]
-  },
-  "enabledPlugins": {
-    "caveman@caveman": true,
-    "ponytail@ponytail": true
-  },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/JuliusBrussee/caveman.git"
-      }
+    "$schema": "https://json.schemastore.org/claude-code-settings.json",
+    "cleanupPeriodDays": 30,
+    "attribution": {
+        "commit": "",
+        "pr": "",
+        "sessionUrl": false
     },
-    "ponytail": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/DietrichGebert/ponytail.git"
-      }
-    }
-  },
-  "outputStyle": "Caveman",
-  "enableWorkflows": true,
-  "includeCoAuthoredBy": false
+    "hooks": {
+        "SessionStart": [
+            {
+                "hooks": [
+                    {
+                        "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/configure-skills.sh sync -a claude-code",
+                        "type": "command"
+                    }
+                ]
+            }
+        ]
+    },
+    "enabledPlugins": {
+        "caveman@caveman": true,
+        "ponytail@ponytail": true
+    },
+    "extraKnownMarketplaces": {
+        "caveman": {
+            "source": {
+                "source": "git",
+                "url": "https://github.com/JuliusBrussee/caveman.git"
+            }
+        },
+        "ponytail": {
+            "source": {
+                "source": "git",
+                "url": "https://github.com/DietrichGebert/ponytail.git"
+            }
+        }
+    },
+    "outputStyle": "Caveman",
+    "enableWorkflows": true,
+    "includeCoAuthoredBy": false
 }
