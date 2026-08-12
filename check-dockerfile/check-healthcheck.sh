@@ -9,7 +9,9 @@ if [ ! -f "$DOCKERFILE" ]; then
 fi
 
 if ! grep -q "^HEALTHCHECK" "$DOCKERFILE"; then
-  echo "$DOCKERFILE: no HEALTHCHECK defined. Add HEALTHCHECK so orchestrators can detect stuck processes."
+  # Report at end of file
+  lastline=$(wc -l < "$DOCKERFILE")
+  echo "$DOCKERFILE:$lastline: no HEALTHCHECK defined. Add HEALTHCHECK so orchestrators can detect stuck processes."
   exit 1
 fi
 

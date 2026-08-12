@@ -30,7 +30,7 @@ warnings=()
 # 1. Check for pinned versions (required)
 if ! "$ACTION_PATH/check-pinned-versions.sh" "$CONTEXT_DIR" 2>&1 | while read -r line; do
   errors+=("$line")
-  echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
+  echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
 done; then
   : # Capture output
 fi
@@ -39,10 +39,10 @@ fi
 if ! "$ACTION_PATH/check-dockerignore.sh" "$CONTEXT_DIR" 2>&1 | while read -r line; do
   if [ "$STRICT" = "true" ]; then
     errors+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
   else
     warnings+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
   fi
 done; then
   : # Capture output
@@ -52,10 +52,10 @@ fi
 if ! "$ACTION_PATH/check-multistage.sh" "$CONTEXT_DIR" 2>&1 | while read -r line; do
   if [ "$STRICT" = "true" ]; then
     errors+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
   else
     warnings+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
   fi
 done; then
   : # Capture output
@@ -65,10 +65,10 @@ fi
 if ! "$ACTION_PATH/check-nonroot-user.sh" "$CONTEXT_DIR" 2>&1 | while read -r line; do
   if [ "$STRICT" = "true" ]; then
     errors+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
   else
     warnings+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
   fi
 done; then
   : # Capture output
@@ -78,10 +78,10 @@ fi
 if ! "$ACTION_PATH/check-healthcheck.sh" "$CONTEXT_DIR" 2>&1 | while read -r line; do
   if [ "$STRICT" = "true" ]; then
     errors+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=error
   else
     warnings+=("$line")
-    echo "$line" | reviewdog -efm="%f:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
+    echo "$line" | reviewdog -efm="%f:%l:%m" -reporter="${REVIEWDOG_REPORTER:-github-check}" -level=warning
   fi
 done; then
   : # Capture output
