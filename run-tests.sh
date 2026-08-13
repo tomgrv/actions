@@ -64,7 +64,7 @@ fi
 # Collect test files from action directories
 TEST_FILES=""
 if [ -n "${FILTER}" ]; then
-  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -path "*${FILTER}*" 2>/dev/null | sort)
+  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | grep -E "${FILTER}" | sort)
 else
   TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | sort)
 fi
