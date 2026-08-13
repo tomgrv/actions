@@ -1,6 +1,6 @@
 {
-  "name": "publish-npm",
-  "version": "1.0.0",
-  "description": "Publish an npm package to registry using GitHub OIDC trusted publishers.",
-  "private": true
+    "name": "publish-npm",
+    "version": "2.16.0",
+    "description": "Publish an npm package to registry using GitHub OIDC trusted publishers.",
+    "private": true
 }
