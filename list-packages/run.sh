@@ -50,10 +50,9 @@ if command -v composer >/dev/null 2>&1; then
                   ecosystem:       "php",
                   private:         false
                 }
-            ]'
-            
-            echo "Discovered $(echo "$composer_packages" | jq 'length') Composer packages." >&2
-            )
+            ]')
+
+    echo "Discovered $(echo "$composer_packages" | jq 'length') Composer packages." >&2
 
 else
     # Missing binary is a setup concern, not a finding: plain log only.
@@ -74,7 +73,7 @@ if [ -f "$WORKDIR/package.json" ]; then
 
                 location=${package_dir#"$WORKDIR"/}
 
-                jq -c --arg path "$package_dir" --arg location "$location" '
+                node_package=$(jq -c --arg path "$package_dir" --arg location "$location" '
                     .name as $package_name
                     | ($package_name | ltrimstr("@") | split("/")) as $parts
                     | {
@@ -96,10 +95,10 @@ if [ -f "$WORKDIR/package.json" ]; then
                         ecosystem:       "node",
                         private:         (.private // false)
                     }
-                    
-                ' "$package_manifest"
+                ' "$package_manifest")
 
-                echo "Discovered package: $(jq -c '.org + "/" + .name + "@" + .package_version' "$package_manifest")" >&2
+                echo "Discovered package: $(echo "$node_package" | jq -r '.package_name + "@" + .package_version')" >&2
+                echo "$node_package"
             done
         done | jq -cs '.')
         
