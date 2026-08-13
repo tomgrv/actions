@@ -200,6 +200,12 @@ permissions:
 
 **Solution:** Set up trusted publishing in your npm account settings as described in [Prerequisites](#prerequisites).
 
+### "This command does not support workspaces" (ENOWORKSPACES)
+
+**Cause:** `path` points to a package that is a workspace member of a monorepo (e.g. root `package.json` has a `workspaces` field). npm implicitly scopes commands run from inside a workspace member to that workspace, but some npm commands don't support workspaces at all.
+
+**Solution:** Already handled — the action writes the registry URL and OIDC auth token directly to a project-local `.npmrc` instead of calling `npm config set`, so `npm publish` runs unaffected by implicit workspace detection. If you still see this error, ensure you're using the latest version of this action.
+
 ### Provenance attestation fails
 
 **Cause:** npm version is too old (requires 10.2.0+) or Node.js version is too old (requires 18.20.0+).
@@ -231,7 +237,7 @@ This action:
 2. Locates and validates `package.json` in the specified path
 3. Extracts package name and version metadata
 4. Requests an OIDC token from GitHub Actions using the Action's built-in `ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_RUNTIME_TOKEN`
-5. Configures npm to use the OIDC token for authentication
+5. Writes the registry URL and OIDC token to a project-local `.npmrc` for authentication (avoids `npm config set`, which breaks when publishing a workspace member of a monorepo)
 6. Publishes the package with appropriate flags (provenance, tag, dry-run)
 7. Outputs package metadata for downstream steps
 

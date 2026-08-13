@@ -2,6 +2,13 @@
 # report: one diagnostic per warning, all errors aggregated into a single
 # annotation, and (on a clean successful run) a single INFO diagnostic -
 # reported by reviewdog as a GitHub notice annotation.
+#
+# Deployer prefixes every line of per-host output with "[alias] " - including
+# routine task progress like "[web1] ✔ Ok" - so matching on that prefix alone
+# (as this used to) flags nearly the whole log as warnings and buries the
+# actual signal. Classify by content instead: only lines that actually look
+# like an error or warning/deprecation notice are captured, whether or not
+# they carry a host prefix.
 def diag($severity; $message): {
   message: $message,
   severity: $severity,
@@ -20,7 +27,7 @@ def diag($severity; $message): {
 | ($lines | map(select(test("exception|failed|✘|error:"; "i")))) as $errors
 | ($lines
     | map(select(
-        test("^\\[[^\\]]+\\]")
+        test("warning|deprecated"; "i")
         and (test("exception|failed|✘|error:"; "i") | not)
       ))
   ) as $warnings

@@ -51,9 +51,6 @@ fi
 
 echo "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}" >&2
 
-# Set npm registry
-npm config set registry "${REGISTRY_URL}"
-
 # Request OIDC token from GitHub
 # This uses the built-in support in GitHub Actions for requesting ID tokens
 OIDC_TOKEN=$( \
@@ -107,8 +104,14 @@ if [ -z "${OIDC_TOKEN}" ]; then
   exit 1
 fi
 
-# Configure npm with the OIDC token for authentication
-npm config set "//${REGISTRY_URL#https://}" "_authToken=${OIDC_TOKEN}"
+# Configure npm registry and OIDC auth token via a project-local .npmrc.
+# `npm config set` runs the "config" command, which does not support
+# workspaces and errors with ENOWORKSPACES when PACKAGE_PATH is a workspace
+# member of a monorepo. Writing the .npmrc directly avoids that command.
+{
+  echo "registry=${REGISTRY_URL}"
+  echo "//${REGISTRY_URL#https://}:_authToken=${OIDC_TOKEN}"
+} >> .npmrc
 
 # Build npm publish command
 PUBLISH_CMD="npm publish"
