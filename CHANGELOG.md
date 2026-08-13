@@ -2,6 +2,29 @@
 
 # Changelog
 
+## 2.16.0 (2026-08-13)
+
+_Commits from: v2.15.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.15.0' into develop ([75ecd37](https://github.com/tomgrv/actions/commit/75ecd379bddca8376733d98623e3561e77b918aa))
+- 🚨 Add comprehensive BATS test suite for composite actions (#61) ([a76920e](https://github.com/tomgrv/actions/commit/a76920e856c8cc94134c58e6eff03af77b755a18))
+
+### 📦 publish-npm changes
+
+#### Bug Fixes
+
+- 🐛 avoid ENOWORKSPACES when publishing a workspace member (#59) ([07a99bd](https://github.com/tomgrv/actions/commit/07a99bd0eea27602d48e8425eb45770b8e2042d6))
+
+### 📦 run-deployer changes
+
+#### Bug Fixes
+
+- 🐛 classify reviewdog diagnostics by content, not host prefix (#60) ([90b1c00](https://github.com/tomgrv/actions/commit/90b1c0011e93fc1776455de003f2f1dde2b2987d))
+
 ## 2.15.0 (2026-08-12)
 
 _Commits from: v2.14.0..HEAD_
@@ -538,4 +561,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-12 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-13 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
