@@ -204,3 +204,61 @@ EOF
   published=$(packages_json | jq -r '.[0].registry.packagist.published')
   [ "$published" = "false" ]
 }
+
+@test "package published as both a php (Composer) and node (npm) artifact under the same repository gets both registry entries" {
+  same_repository_url="https://github.com/acme/hybrid"
+
+  # Composer side: monorepo-local path package (outside vendor/).
+  mkdir -p "$TEST_DIR/packages/hybrid-php"
+  cat > "$TEST_DIR/composer-show.json" <<EOF
+{
+  "installed": [
+    {
+      "name": "acme/hybrid",
+      "version": "1.5.0",
+      "path": "$TEST_DIR/packages/hybrid-php",
+      "source": { "url": "${same_repository_url}.git" },
+      "abandoned": false
+    }
+  ]
+}
+EOF
+  stub_composer "$TEST_DIR/composer-show.json"
+
+  fixtures_dir="$TEST_DIR/packagist-fixtures"
+  mkdir -p "$fixtures_dir"
+  cat > "$fixtures_dir/acme_hybrid.json" <<'EOF'
+{ "packages": { "acme/hybrid": [ { "version": "1.5.0" } ] } }
+EOF
+  stub_curl_packagist "$fixtures_dir"
+
+  # Node side: npm workspace package for the same repository.
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  mkdir -p "$TEST_DIR/packages/hybrid-js"
+  cat > "$TEST_DIR/packages/hybrid-js/package.json" <<EOF
+{ "name": "hybrid", "version": "1.5.0", "repository": "${same_repository_url}" }
+EOF
+
+  echo "hybrid@1.5.0" > "$TEST_DIR/npm-published.txt"
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list
+  [ "$status" -eq 0 ]
+
+  count=$(packages_json | jq 'length')
+  [ "$count" = "2" ]
+
+  php_entry=$(packages_json | jq -c '.[] | select(.registry | has("packagist"))')
+  node_entry=$(packages_json | jq -c '.[] | select(.registry | has("npmjs"))')
+
+  [ -n "$php_entry" ]
+  [ -n "$node_entry" ]
+
+  [ "$(echo "$php_entry" | jq -r '.registry.packagist.published')" = "true" ]
+  [ "$(echo "$php_entry" | jq -r '.registry | has("npmjs")')" = "false" ]
+
+  [ "$(echo "$node_entry" | jq -r '.registry.npmjs.published')" = "true" ]
+  [ "$(echo "$node_entry" | jq -r '.registry | has("packagist")')" = "false" ]
+}

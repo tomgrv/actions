@@ -111,7 +111,7 @@ packages=$(jq -cn \
 
         ($composer + $node)
         | map(.repository_url |= normalize_repository)
-        | unique_by(.repository_url)
+        | unique_by([.repository_url, .ecosystem])
     ')
 
 echo "Checking package registries publication status..." >&2
