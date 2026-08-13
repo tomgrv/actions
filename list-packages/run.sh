@@ -2,10 +2,13 @@
 # Discover packages via Composer and workspace package manifests, then emit a JSON array
 # suitable for use as a GitHub Actions matrix value.
 #
-# Requires: jq, npm
+# Requires: jq, npm, curl
+#
+# Each package is checked against every registry configured for its ecosystem (see
+# ecosystem_registries below), so a package can carry more than one registry entry.
 #
 # Output format (stdout):
-#   packages=[{"org":"…","name":"…","path":"…","repository":"…","registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}}}, …]
+#   packages=[{"org":"…","name":"…","path":"…","repository":"…","registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}, …}}, …]
 
 set -eu
 
@@ -37,9 +40,9 @@ if command -v composer >/dev/null 2>&1; then
                       else
                           ""
                       end ),
-                  npm_name:   $package.name,
-                  npm_version: ($package.version // "" | ltrimstr("v")),
-                  npm_type:   "php"
+                  package_name:    $package.name,
+                  package_version: ($package.version // "" | ltrimstr("v")),
+                  ecosystem:       "php"
                 }
               | select(.repository_url != "" and (.repository_url | test("github\\.com")))
             ]')
@@ -81,9 +84,9 @@ if [ -f "$WORKDIR/package.json" ]; then
                                 ""
                             end
                         ),
-                        npm_name: $package_name,
-                        npm_version: (.version // ""),
-                        npm_type: "node"
+                        package_name:    $package_name,
+                        package_version: (.version // ""),
+                        ecosystem:       "node"
                     }
                     | select(.repository_url != "")
                 ' "$package_manifest"
@@ -111,29 +114,65 @@ packages=$(jq -cn \
         | unique_by(.repository_url)
     ')
 
-echo "Checking npmjs registry publication status..." >&2
+echo "Checking package registries publication status..." >&2
 
-npmjs_registry_url="https://registry.npmjs.org"
+# Registries checked per ecosystem. Add more names here (space-separated) to check a
+# package against several registries, and a matching check_<name> function below.
+ecosystem_registries() {
+    case "$1" in
+        node) echo "npmjs" ;;
+        php) echo "packagist" ;;
+        *) echo "" ;;
+    esac
+}
+
+check_npmjs() {
+    name="$1"
+    version="$2"
+    published=false
+    if [ -n "$version" ] && npm view "${name}@${version}" version >/dev/null 2>&1; then
+        published=true
+    fi
+    jq -cn --argjson published "$published" --arg url "https://registry.npmjs.org" \
+        '{published: $published, url: $url}'
+}
+
+check_packagist() {
+    name="$1"
+    version="$2"
+    published=false
+    if [ -n "$version" ] \
+        && curl -fsS "https://repo.packagist.org/p2/${name}.json" 2>/dev/null \
+            | jq -e --arg version "$version" '.packages[$name][]? | select(.version == $version or (.version | ltrimstr("v")) == $version)' >/dev/null 2>&1; then
+        published=true
+    fi
+    jq -cn --argjson published "$published" --arg url "https://packagist.org" \
+        '{published: $published, url: $url}'
+}
+
 count=$(echo "$packages" | jq 'length')
 i=0
 result='[]'
 while [ "$i" -lt "$count" ]; do
     package=$(echo "$packages" | jq -c ".[$i]")
-    npm_name=$(echo "$package" | jq -r '.npm_name')
-    npm_version=$(echo "$package" | jq -r '.npm_version')
-    npm_type=$(echo "$package" | jq -r '.npm_type')
+    package_name=$(echo "$package" | jq -r '.package_name')
+    package_version=$(echo "$package" | jq -r '.package_version')
+    ecosystem=$(echo "$package" | jq -r '.ecosystem')
 
-    published=false
-    if [ -n "$npm_version" ] && npm view "${npm_name}@${npm_version}" version >/dev/null 2>&1; then
-        published=true
-    fi
+    registry='{}'
+    for registry_name in $(ecosystem_registries "$ecosystem"); do
+        status=$(check_"$registry_name" "$package_name" "$package_version")
+        registry=$(echo "$registry" | jq \
+            --argjson status "$status" \
+            --arg name "$registry_name" \
+            --arg type "$ecosystem" \
+            '. + {($name): ($status + {type: $type})}')
+    done
 
     result=$(echo "$result" | jq \
         --argjson package "$package" \
-        --argjson published "$published" \
-        --arg url "$npmjs_registry_url" \
-        --arg type "$npm_type" \
-        '. + [($package | del(.npm_name, .npm_version, .npm_type)) + {registry: {npmjs: {published: $published, url: $url, type: $type}}}]')
+        --argjson registry "$registry" \
+        '. + [($package | del(.package_name, .package_version, .ecosystem)) + {registry: $registry}]')
 
     i=$((i + 1))
 done

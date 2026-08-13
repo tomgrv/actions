@@ -16,7 +16,7 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 JSON array of package objects, each containing `org`, `name`, `path`, `repository`, and `registry` fields.
 
-`registry.npmjs` reports the package's publication status on the npm registry:
+`registry` reports the package's publication status on every registry configured for its ecosystem. npm workspace packages are checked against npmjs; Composer packages are checked against Packagist. A package can carry more than one registry entry if its ecosystem is configured to check several:
 
 ```json
 {
@@ -30,7 +30,19 @@ JSON array of package objects, each containing `org`, `name`, `path`, `repositor
 }
 ```
 
-`published` reflects whether the package's current version is already published. `type` is `node` for npm workspace packages and `php` for Composer packages.
+```json
+{
+    "registry": {
+        "packagist": {
+            "published": false,
+            "url": "https://packagist.org",
+            "type": "php"
+        }
+    }
+}
+```
+
+`published` reflects whether the package's current version is already published on that registry. `type` is `node` for npm workspace packages and `php` for Composer packages.
 
 ## Works well with
 
