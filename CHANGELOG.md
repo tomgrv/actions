@@ -2,6 +2,17 @@
 
 # Changelog
 
+## 2.18.0 (2026-08-13)
+
+_Commits from: v2.17.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.17.0' into develop ([d9fc4fe](https://github.com/tomgrv/actions/commit/d9fc4feed796bc2c0c4db7fc0d0d75b28a3c22f2))
+- ♻️ reorganize test structure and consolidate workflows (#65) ([c87cfb1](https://github.com/tomgrv/actions/commit/c87cfb1c81203bad0f83fbc6c8c86cf049e94458))
+
 ## 2.17.0 (2026-08-13)
 
 _Commits from: v2.16.0..HEAD_
