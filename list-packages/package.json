@@ -1,6 +1,6 @@
 {
     "name": "list-packages",
-    "version": "2.10.0",
+    "version": "2.17.0",
     "description": "Discovers Composer and npm workspace packages and emits a JSON matrix array.",
     "private": true
 }
