@@ -1,0 +1,206 @@
+# @format
+
+# Tests list-packages/run.sh: Discover Composer and npm workspace packages and
+# emit a JSON matrix, including per-package registry publication status.
+
+setup() {
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  SCRIPT="${REPO_ROOT}/list-packages/run.sh"
+  TEST_DIR="$(mktemp -d)"
+  STUB_BIN="$(mktemp -d)"
+}
+
+teardown() {
+  rm -rf "$TEST_DIR" "$STUB_BIN"
+}
+
+stub_npm() {
+  # $1: file listing published "name@version" specs, one per line
+  cat > "$STUB_BIN/npm" <<EOF
+#!/bin/sh
+if [ "\$1" = "view" ]; then
+  if grep -qxF "\$2" "$1" 2>/dev/null; then
+    echo "\${2##*@}"
+    exit 0
+  fi
+  exit 1
+fi
+exit 1
+EOF
+  chmod +x "$STUB_BIN/npm"
+}
+
+stub_curl_packagist() {
+  # $1: directory containing "<org>_<name>.json" packagist p2 fixtures
+  fixtures_dir="$1"
+  cat > "$STUB_BIN/curl" <<EOF
+#!/bin/sh
+for arg in "\$@"; do
+  case "\$arg" in
+    https://repo.packagist.org/p2/*)
+      pkg="\${arg#https://repo.packagist.org/p2/}"
+      pkg="\${pkg%.json}"
+      fixture="$fixtures_dir/\$(echo "\$pkg" | tr '/' '_').json"
+      if [ -f "\$fixture" ]; then
+        cat "\$fixture"
+        exit 0
+      fi
+      exit 22
+      ;;
+  esac
+done
+exit 22
+EOF
+  chmod +x "$STUB_BIN/curl"
+}
+
+stub_composer() {
+  # $1: file containing the `composer show --format=json` output
+  cat > "$STUB_BIN/composer" <<EOF
+#!/bin/sh
+cat "$1"
+EOF
+  chmod +x "$STUB_BIN/composer"
+}
+
+run_list() {
+  (
+    export WORKDIR="$TEST_DIR"
+    # Curated PATH: stubs first, then just enough of the real toolchain (jq, npm,
+    # coreutils) to run the script -- deliberately excludes /usr/local/bin so the
+    # host's real `composer` binary never shadows a test that isn't stubbing it.
+    export PATH="$STUB_BIN:/opt/node22/bin:/usr/bin:/bin"
+    sh "$SCRIPT" 2>/dev/null
+  )
+}
+
+packages_json() {
+  echo "$output" | sed -n 's/^packages=//p'
+}
+
+@test "no package.json and no composer yields empty packages array" {
+  run run_list
+  [ "$status" -eq 0 ]
+  [ "$(packages_json)" = "[]" ]
+}
+
+@test "node workspace package published on npmjs is marked published" {
+  mkdir -p "$TEST_DIR/packages/foo"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/foo/package.json" <<'EOF'
+{ "name": "foo", "version": "1.0.0", "repository": "https://github.com/org/foo" }
+EOF
+
+  echo "foo@1.0.0" > "$TEST_DIR/npm-published.txt"
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  published=$(packages_json | jq -r '.[0].registry.npmjs.published')
+  url=$(packages_json | jq -r '.[0].registry.npmjs.url')
+  type=$(packages_json | jq -r '.[0].registry.npmjs.type')
+  [ "$published" = "true" ]
+  [ "$url" = "https://registry.npmjs.org" ]
+  [ "$type" = "node" ]
+}
+
+@test "node workspace package not yet published is marked unpublished" {
+  mkdir -p "$TEST_DIR/packages/bar"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/bar/package.json" <<'EOF'
+{ "name": "bar", "version": "9.9.9", "repository": "https://github.com/org/bar" }
+EOF
+
+  : > "$TEST_DIR/npm-published.txt"
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  published=$(packages_json | jq -r '.[0].registry.npmjs.published')
+  [ "$published" = "false" ]
+}
+
+@test "private node workspace packages are excluded" {
+  mkdir -p "$TEST_DIR/packages/priv"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/priv/package.json" <<'EOF'
+{ "name": "priv", "version": "1.0.0", "private": true, "repository": "https://github.com/org/priv" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "0" ]
+}
+
+@test "composer package published on packagist is marked published and checked against packagist, not npmjs" {
+  fixtures_dir="$TEST_DIR/packagist-fixtures"
+  mkdir -p "$fixtures_dir"
+  cat > "$fixtures_dir/acme_widgets.json" <<'EOF'
+{ "packages": { "acme/widgets": [ { "version": "2.0.0" } ] } }
+EOF
+  stub_curl_packagist "$fixtures_dir"
+
+  # Path-repository (monorepo-local) packages resolve outside vendor/, which is
+  # what list-packages' vendor-exclusion filter expects for owned packages.
+  mkdir -p "$TEST_DIR/packages/widgets"
+  cat > "$TEST_DIR/composer-show.json" <<EOF
+{
+  "installed": [
+    {
+      "name": "acme/widgets",
+      "version": "2.0.0",
+      "path": "$TEST_DIR/packages/widgets",
+      "source": { "url": "https://github.com/acme/widgets.git" },
+      "abandoned": false
+    }
+  ]
+}
+EOF
+  stub_composer "$TEST_DIR/composer-show.json"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  published=$(packages_json | jq -r '.[0].registry.packagist.published')
+  url=$(packages_json | jq -r '.[0].registry.packagist.url')
+  type=$(packages_json | jq -r '.[0].registry.packagist.type')
+  has_npmjs=$(packages_json | jq -r '.[0].registry | has("npmjs")')
+  [ "$published" = "true" ]
+  [ "$url" = "https://packagist.org" ]
+  [ "$type" = "php" ]
+  [ "$has_npmjs" = "false" ]
+}
+
+@test "composer package not on packagist is marked unpublished" {
+  fixtures_dir="$TEST_DIR/packagist-fixtures"
+  mkdir -p "$fixtures_dir"
+  stub_curl_packagist "$fixtures_dir"
+
+  mkdir -p "$TEST_DIR/packages/gadgets"
+  cat > "$TEST_DIR/composer-show.json" <<EOF
+{
+  "installed": [
+    {
+      "name": "acme/gadgets",
+      "version": "1.0.0",
+      "path": "$TEST_DIR/packages/gadgets",
+      "source": { "url": "https://github.com/acme/gadgets.git" },
+      "abandoned": false
+    }
+  ]
+}
+EOF
+  stub_composer "$TEST_DIR/composer-show.json"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  published=$(packages_json | jq -r '.[0].registry.packagist.published')
+  [ "$published" = "false" ]
+}

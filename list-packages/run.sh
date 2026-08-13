@@ -143,7 +143,7 @@ check_packagist() {
     published=false
     if [ -n "$version" ] \
         && curl -fsS "https://repo.packagist.org/p2/${name}.json" 2>/dev/null \
-            | jq -e --arg version "$version" '.packages[$name][]? | select(.version == $version or (.version | ltrimstr("v")) == $version)' >/dev/null 2>&1; then
+            | jq -e --arg name "$name" --arg version "$version" '.packages[$name][]? | select(.version == $version or (.version | ltrimstr("v")) == $version)' >/dev/null 2>&1; then
         published=true
     fi
     jq -cn --argjson published "$published" --arg url "https://packagist.org" \
@@ -162,14 +162,14 @@ while [ "$i" -lt "$count" ]; do
     registry='{}'
     for registry_name in $(ecosystem_registries "$ecosystem"); do
         status=$(check_"$registry_name" "$package_name" "$package_version")
-        registry=$(echo "$registry" | jq \
+        registry=$(echo "$registry" | jq -c \
             --argjson status "$status" \
             --arg name "$registry_name" \
             --arg type "$ecosystem" \
             '. + {($name): ($status + {type: $type})}')
     done
 
-    result=$(echo "$result" | jq \
+    result=$(echo "$result" | jq -c \
         --argjson package "$package" \
         --argjson registry "$registry" \
         '. + [($package | del(.package_name, .package_version, .ecosystem)) + {registry: $registry}]')
