@@ -7,8 +7,13 @@
 # Each package is checked against every registry configured for its ecosystem (see
 # ecosystem_registries below), so a package can carry more than one registry entry.
 #
+# PRIVATE_FILTER selects which packages are kept by their `private` flag:
+#   true  -> only private packages
+#   false -> only public packages
+#   unset/empty -> all packages (default)
+#
 # Output format (stdout):
-#   packages=[{"org":"…","name":"…","path":"…","repository":"…","registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}, …}}, …]
+#   packages=[{"org":"…","name":"…","path":"…","repository":"…","private":false,"registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}, …}}, …]
 
 set -eu
 
@@ -16,6 +21,7 @@ composer_packages='[]'
 node_packages='[]'
 
 WORKDIR="${WORKDIR:-$(pwd)}"
+PRIVATE_FILTER="${PRIVATE_FILTER:-}"
 
 if command -v composer >/dev/null 2>&1; then
 
@@ -42,7 +48,8 @@ if command -v composer >/dev/null 2>&1; then
                       end ),
                   package_name:    $package.name,
                   package_version: ($package.version // "" | ltrimstr("v")),
-                  ecosystem:       "php"
+                  ecosystem:       "php",
+                  private:         false
                 }
               | select(.repository_url != "" and (.repository_url | test("github\\.com")))
             ]')
@@ -67,8 +74,7 @@ if [ -f "$WORKDIR/package.json" ]; then
                 location=${package_dir#"$WORKDIR"/}
 
                 jq -c --arg path "$package_dir" --arg location "$location" '
-                    select(.private != true)
-                    | .name as $package_name
+                    .name as $package_name
                     | ($package_name | ltrimstr("@") | split("/")) as $parts
                     | {
                         org: $parts[0],
@@ -86,7 +92,8 @@ if [ -f "$WORKDIR/package.json" ]; then
                         ),
                         package_name:    $package_name,
                         package_version: (.version // ""),
-                        ecosystem:       "node"
+                        ecosystem:       "node",
+                        private:         (.private // false)
                     }
                     | select(.repository_url != "")
                 ' "$package_manifest"
@@ -176,5 +183,19 @@ while [ "$i" -lt "$count" ]; do
 
     i=$((i + 1))
 done
+
+case "$PRIVATE_FILTER" in
+    true)
+        echo "Filtering to private packages only..." >&2
+        result=$(echo "$result" | jq -c '[.[] | select(.private == true)]')
+        ;;
+    false)
+        echo "Filtering to public packages only..." >&2
+        result=$(echo "$result" | jq -c '[.[] | select(.private == false)]')
+        ;;
+    *)
+        : # no filtering, keep both public and private packages
+        ;;
+esac
 
 printf 'packages=%s\n' "$result"

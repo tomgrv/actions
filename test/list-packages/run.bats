@@ -66,6 +66,7 @@ EOF
 run_list() {
   (
     export WORKDIR="$TEST_DIR"
+    export PRIVATE_FILTER="${1:-}"
     # Curated PATH: stubs first, then just enough of the real toolchain (jq, npm,
     # coreutils) to run the script -- deliberately excludes /usr/local/bin so the
     # host's real `composer` binary never shadows a test that isn't stubbing it.
@@ -124,7 +125,7 @@ EOF
   [ "$published" = "false" ]
 }
 
-@test "private node workspace packages are excluded" {
+@test "private node workspace packages are included by default and flagged private:true" {
   mkdir -p "$TEST_DIR/packages/priv"
   cat > "$TEST_DIR/package.json" <<'EOF'
 { "workspaces": ["packages/*"] }
@@ -137,7 +138,83 @@ EOF
 
   run run_list
   [ "$status" -eq 0 ]
-  [ "$(packages_json | jq 'length')" = "0" ]
+  [ "$(packages_json | jq 'length')" = "1" ]
+  [ "$(packages_json | jq -r '.[0].private')" = "true" ]
+}
+
+@test "public node workspace packages are flagged private:false" {
+  mkdir -p "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq -r '.[0].private')" = "false" ]
+}
+
+@test "private=false input keeps only public packages" {
+  mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/priv/package.json" <<'EOF'
+{ "name": "priv", "version": "1.0.0", "private": true, "repository": "https://github.com/org/priv" }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list "false"
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "1" ]
+  [ "$(packages_json | jq -r '.[0].name')" = "pub" ]
+}
+
+@test "private=true input keeps only private packages" {
+  mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/priv/package.json" <<'EOF'
+{ "name": "priv", "version": "1.0.0", "private": true, "repository": "https://github.com/org/priv" }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list "true"
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "1" ]
+  [ "$(packages_json | jq -r '.[0].name')" = "priv" ]
+}
+
+@test "private unset input keeps both public and private packages" {
+  mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/priv/package.json" <<'EOF'
+{ "name": "priv", "version": "1.0.0", "private": true, "repository": "https://github.com/org/priv" }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list ""
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "2" ]
 }
 
 @test "composer package published on packagist is marked published and checked against packagist, not npmjs" {

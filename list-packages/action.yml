@@ -14,10 +14,16 @@ inputs:
     description: Working directory to search for packages. Defaults to the repository root.
     required: false
     default: ${{ github.workspace }}
+  private:
+    description: >-
+      Filter packages by their `private` flag: "false" keeps only public packages,
+      "true" keeps only private packages. Leave unset (default) to keep both.
+    required: false
+    default: ''
 
 outputs:
   packages:
-    description: JSON array of package objects (org, name, path, repository).
+    description: JSON array of package objects (org, name, path, repository, private, registry).
     value: ${{ steps.packages.outputs.packages }}
 
 runs:
@@ -28,4 +34,5 @@ runs:
       shell: sh
       env:
         WORKDIR: ${{ inputs.workdir }}
+        PRIVATE_FILTER: ${{ inputs.private }}
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

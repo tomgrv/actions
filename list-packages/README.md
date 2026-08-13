@@ -10,11 +10,17 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 **Optional.** Working directory to search for packages. Defaults to the repository root (`${{ github.workspace }}`).
 
+### private
+
+**Optional.** Filter packages by their `private` flag: `false` keeps only public packages, `true` keeps only private packages. Leave unset (default) to keep both.
+
 ## Outputs
 
 ### packages
 
-JSON array of package objects, each containing `org`, `name`, `path`, `repository`, and `registry` fields.
+JSON array of package objects, each containing `org`, `name`, `path`, `repository`, `private`, and `registry` fields.
+
+`private` reflects the package's `private` flag (`true`/`false`). npm workspace packages read this from their `package.json`; Composer packages currently always report `false`, since Composer has no equivalent standard field.
 
 `registry` reports the package's publication status on every registry configured for its ecosystem. npm workspace packages are checked against npmjs; Composer packages are checked against Packagist. A package can carry more than one registry entry if its ecosystem is configured to check several:
 
