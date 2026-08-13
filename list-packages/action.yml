@@ -14,10 +14,17 @@ inputs:
     description: Working directory to search for packages. Defaults to the repository root.
     required: false
     default: ${{ github.workspace }}
+  filter:
+    description: >-
+      A jq `select()` boolean expression evaluated against each final package object
+      (e.g. '.private == false', '.registry.npmjs.published == false'). Only packages
+      for which it evaluates truthy are kept. Leave unset (default) to keep all packages.
+    required: false
+    default: ''
 
 outputs:
   packages:
-    description: JSON array of package objects (org, name, path, repository).
+    description: JSON array of package objects (org, name, path, repository, private, registry).
     value: ${{ steps.packages.outputs.packages }}
 
 runs:
@@ -28,4 +35,5 @@ runs:
       shell: sh
       env:
         WORKDIR: ${{ inputs.workdir }}
+        FILTER: ${{ inputs.filter }}
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
