@@ -10,11 +10,52 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 **Optional.** Working directory to search for packages. Defaults to the repository root (`${{ github.workspace }}`).
 
+### filter
+
+**Optional.** A jq `select()` boolean expression evaluated against each final package object. Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.
+
+Examples:
+
+- `.private == false` — public packages only
+- `.private == true` — private packages only
+- `.registry.npmjs.published == false` — npm packages not yet published
+- `.registry | has("packagist")` — Composer packages only
+
 ## Outputs
 
 ### packages
 
-JSON array of package objects, each containing `org`, `name`, `path`, and `repository` fields.
+JSON array of package objects, each containing `org`, `name`, `path`, `repository`, `private`, and `registry` fields.
+
+`private` reflects the package's `private` flag (`true`/`false`). npm workspace packages read this from their `package.json`; Composer packages currently always report `false`, since Composer has no equivalent standard field.
+
+`registry` reports the package's publication status on every registry configured for its ecosystem. npm workspace packages are checked against npmjs; Composer packages are checked against Packagist. A package can carry more than one registry entry if its ecosystem is configured to check several:
+
+```json
+{
+    "registry": {
+        "npmjs": {
+            "published": true,
+            "url": "https://registry.npmjs.org",
+            "type": "node"
+        }
+    }
+}
+```
+
+```json
+{
+    "registry": {
+        "packagist": {
+            "published": false,
+            "url": "https://packagist.org",
+            "type": "php"
+        }
+    }
+}
+```
+
+`published` reflects whether the package's current version is already published on that registry. `type` is `node` for npm workspace packages and `php` for Composer packages.
 
 ## Works well with
 
@@ -62,6 +103,8 @@ jobs:
             - name: List packages
               id: list
               uses: tomgrv/actions/list-packages@v1
+              with:
+                  filter: '.private == false'
 
     split-packages:
         runs-on: ubuntu-latest
