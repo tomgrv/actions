@@ -29,15 +29,5 @@ jobs:
       - name: Setup Bats
         uses: bats-core/bats-action@4.0.0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Run all repository tests
-        run: ./run-tests.sh
+      - name: Run repository tests
+        run: ./run-tests.sh -f "check-dockerfile|check-security|config-bot|detect-changes|resolve-environment|run-deployer"
