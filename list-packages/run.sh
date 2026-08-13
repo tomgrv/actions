@@ -2,10 +2,10 @@
 # Discover packages via Composer and workspace package manifests, then emit a JSON array
 # suitable for use as a GitHub Actions matrix value.
 #
-# Requires: jq
+# Requires: jq, npm
 #
 # Output format (stdout):
-#   packages=[{"org":"…","name":"…","path":"…","repository":"…"}, …]
+#   packages=[{"org":"…","name":"…","path":"…","repository":"…","registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}}}, …]
 
 set -eu
 
@@ -36,7 +36,10 @@ if command -v composer >/dev/null 2>&1; then
                           $source
                       else
                           ""
-                      end )
+                      end ),
+                  npm_name:   $package.name,
+                  npm_version: ($package.version // "" | ltrimstr("v")),
+                  npm_type:   "php"
                 }
               | select(.repository_url != "" and (.repository_url | test("github\\.com")))
             ]')
@@ -77,7 +80,10 @@ if [ -f "$WORKDIR/package.json" ]; then
                             else
                                 ""
                             end
-                        )
+                        ),
+                        npm_name: $package_name,
+                        npm_version: (.version // ""),
+                        npm_type: "node"
                     }
                     | select(.repository_url != "")
                 ' "$package_manifest"
@@ -105,4 +111,31 @@ packages=$(jq -cn \
         | unique_by(.repository_url)
     ')
 
-printf 'packages=%s\n' "$packages"
+echo "Checking npmjs registry publication status..." >&2
+
+npmjs_registry_url="https://registry.npmjs.org"
+count=$(echo "$packages" | jq 'length')
+i=0
+result='[]'
+while [ "$i" -lt "$count" ]; do
+    package=$(echo "$packages" | jq -c ".[$i]")
+    npm_name=$(echo "$package" | jq -r '.npm_name')
+    npm_version=$(echo "$package" | jq -r '.npm_version')
+    npm_type=$(echo "$package" | jq -r '.npm_type')
+
+    published=false
+    if [ -n "$npm_version" ] && npm view "${npm_name}@${npm_version}" version >/dev/null 2>&1; then
+        published=true
+    fi
+
+    result=$(echo "$result" | jq \
+        --argjson package "$package" \
+        --argjson published "$published" \
+        --arg url "$npmjs_registry_url" \
+        --arg type "$npm_type" \
+        '. + [($package | del(.npm_name, .npm_version, .npm_type)) + {registry: {npmjs: {published: $published, url: $url, type: $type}}}]')
+
+    i=$((i + 1))
+done
+
+printf 'packages=%s\n' "$result"

@@ -14,7 +14,23 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 ### packages
 
-JSON array of package objects, each containing `org`, `name`, `path`, and `repository` fields.
+JSON array of package objects, each containing `org`, `name`, `path`, `repository`, and `registry` fields.
+
+`registry.npmjs` reports the package's publication status on the npm registry:
+
+```json
+{
+    "registry": {
+        "npmjs": {
+            "published": true,
+            "url": "https://registry.npmjs.org",
+            "type": "node"
+        }
+    }
+}
+```
+
+`published` reflects whether the package's current version is already published. `type` is `node` for npm workspace packages and `php` for Composer packages.
 
 ## Works well with
 
