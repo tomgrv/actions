@@ -10,9 +10,16 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 **Optional.** Working directory to search for packages. Defaults to the repository root (`${{ github.workspace }}`).
 
-### private
+### filter
 
-**Optional.** Filter packages by their `private` flag: `false` keeps only public packages, `true` keeps only private packages. Leave unset (default) to keep both.
+**Optional.** A jq `select()` boolean expression evaluated against each final package object. Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.
+
+Examples:
+
+- `.private == false` — public packages only
+- `.private == true` — private packages only
+- `.registry.npmjs.published == false` — npm packages not yet published
+- `.registry | has("packagist")` — Composer packages only
 
 ## Outputs
 
@@ -96,6 +103,8 @@ jobs:
             - name: List packages
               id: list
               uses: tomgrv/actions/list-packages@v1
+              with:
+                  filter: '.private == false'
 
     split-packages:
         runs-on: ubuntu-latest

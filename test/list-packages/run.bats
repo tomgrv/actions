@@ -66,7 +66,7 @@ EOF
 run_list() {
   (
     export WORKDIR="$TEST_DIR"
-    export PRIVATE_FILTER="${1:-}"
+    export FILTER="${1:-}"
     # Curated PATH: stubs first, then just enough of the real toolchain (jq, npm,
     # coreutils) to run the script -- deliberately excludes /usr/local/bin so the
     # host's real `composer` binary never shadows a test that isn't stubbing it.
@@ -158,7 +158,7 @@ EOF
   [ "$(packages_json | jq -r '.[0].private')" = "false" ]
 }
 
-@test "private=false input keeps only public packages" {
+@test "filter='.private == false' keeps only public packages" {
   mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
   cat > "$TEST_DIR/package.json" <<'EOF'
 { "workspaces": ["packages/*"] }
@@ -172,13 +172,13 @@ EOF
 
   stub_npm "$TEST_DIR/npm-published.txt"
 
-  run run_list "false"
+  run run_list '.private == false'
   [ "$status" -eq 0 ]
   [ "$(packages_json | jq 'length')" = "1" ]
   [ "$(packages_json | jq -r '.[0].name')" = "pub" ]
 }
 
-@test "private=true input keeps only private packages" {
+@test "filter='.private == true' keeps only private packages" {
   mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
   cat > "$TEST_DIR/package.json" <<'EOF'
 { "workspaces": ["packages/*"] }
@@ -192,13 +192,13 @@ EOF
 
   stub_npm "$TEST_DIR/npm-published.txt"
 
-  run run_list "true"
+  run run_list '.private == true'
   [ "$status" -eq 0 ]
   [ "$(packages_json | jq 'length')" = "1" ]
   [ "$(packages_json | jq -r '.[0].name')" = "priv" ]
 }
 
-@test "private unset input keeps both public and private packages" {
+@test "unset filter keeps both public and private packages" {
   mkdir -p "$TEST_DIR/packages/priv" "$TEST_DIR/packages/pub"
   cat > "$TEST_DIR/package.json" <<'EOF'
 { "workspaces": ["packages/*"] }
@@ -215,6 +215,27 @@ EOF
   run run_list ""
   [ "$status" -eq 0 ]
   [ "$(packages_json | jq 'length')" = "2" ]
+}
+
+@test "filter can select on the nested registry structure" {
+  mkdir -p "$TEST_DIR/packages/foo" "$TEST_DIR/packages/bar"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/foo/package.json" <<'EOF'
+{ "name": "foo", "version": "1.0.0", "repository": "https://github.com/org/foo" }
+EOF
+  cat > "$TEST_DIR/packages/bar/package.json" <<'EOF'
+{ "name": "bar", "version": "9.9.9", "repository": "https://github.com/org/bar" }
+EOF
+
+  echo "foo@1.0.0" > "$TEST_DIR/npm-published.txt"
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list '.registry.npmjs.published == false'
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "1" ]
+  [ "$(packages_json | jq -r '.[0].name')" = "bar" ]
 }
 
 @test "composer package published on packagist is marked published and checked against packagist, not npmjs" {

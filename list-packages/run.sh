@@ -7,10 +7,9 @@
 # Each package is checked against every registry configured for its ecosystem (see
 # ecosystem_registries below), so a package can carry more than one registry entry.
 #
-# PRIVATE_FILTER selects which packages are kept by their `private` flag:
-#   true  -> only private packages
-#   false -> only public packages
-#   unset/empty -> all packages (default)
+# FILTER, when set, is a jq `select()` boolean expression evaluated against each
+# final package object (e.g. `.private == false`, `.registry.npmjs.published == false`).
+# Only packages for which it evaluates truthy are kept. Unset/empty keeps all packages.
 #
 # Output format (stdout):
 #   packages=[{"org":"…","name":"…","path":"…","repository":"…","private":false,"registry":{"npmjs":{"published":true,"url":"https://registry.npmjs.org","type":"node"}, …}}, …]
@@ -21,7 +20,7 @@ composer_packages='[]'
 node_packages='[]'
 
 WORKDIR="${WORKDIR:-$(pwd)}"
-PRIVATE_FILTER="${PRIVATE_FILTER:-}"
+FILTER="${FILTER:-}"
 
 if command -v composer >/dev/null 2>&1; then
 
@@ -189,18 +188,9 @@ while [ "$i" -lt "$count" ]; do
     i=$((i + 1))
 done
 
-case "$PRIVATE_FILTER" in
-    true)
-        echo "Filtering to private packages only..." >&2
-        result=$(echo "$result" | jq -c '[.[] | select(.private == true)]')
-        ;;
-    false)
-        echo "Filtering to public packages only..." >&2
-        result=$(echo "$result" | jq -c '[.[] | select(.private == false)]')
-        ;;
-    *)
-        : # no filtering, keep both public and private packages
-        ;;
-esac
+if [ -n "$FILTER" ]; then
+    echo "Applying filter: select($FILTER)" >&2
+    result=$(echo "$result" | jq -c "[.[] | select($FILTER)]")
+fi
 
 printf 'packages=%s\n' "$result"
