@@ -35,6 +35,38 @@ Run without arguments to see all available actions:
 ./dispatch.sh
 ```
 
+## Testing
+
+Each action includes a test suite using [BATS](https://github.com/bats-core/bats-core). Tests are colocated with their actions in `<action-name>/run.bats` files.
+
+### Run tests locally
+
+Run all tests:
+```sh
+./run-tests.sh
+```
+
+Run tests for a specific action:
+```sh
+./run-tests.sh -f resolve-environment
+./run-tests.sh -f detect-changes
+```
+
+Run with verbose output:
+```sh
+./run-tests.sh -v
+```
+
+For more options, see the test runner help:
+```sh
+./run-tests.sh -h
+```
+
+### CI/CD
+
+- **validate-pr-tests**: Runs the full test suite on every PR and push to main/develop
+- **test-run-deployer**: Runs deployer-specific tests
+
 ## Naming convention
 
 `run-*` actions analyze specific files (a `paths`/`path` input scoped to what changed) and report via reviewdog with `-filter-mode=file`: findings are limited to files that are actually part of the run's scope, but not further restricted to changed lines. `check-*` actions validate repository- or PR-wide state (manifests, lock files, secrets, PR metadata) that isn't tied to a specific set of files, and report with `-filter-mode=nofilter`. Both are fixed by the action itself and are not exposed as a configurable input; only `reporter` remains configurable, and it defaults to the value [**setup-reviewdog**](setup-reviewdog/README.md) resolves for the run's context.
