@@ -2,6 +2,26 @@
 
 # Changelog
 
+## 2.17.0 (2026-08-13)
+
+_Commits from: v2.16.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ update actions to use new repository paths and add filtering for private packages ([05f1fcc](https://github.com/tomgrv/actions/commit/05f1fcc4309a7edc5995f2f437fed5fc4e8fedad))
+
+#### Other changes
+
+- Merge tag 'v2.16.0' into develop ([90bc958](https://github.com/tomgrv/actions/commit/90bc958c0bec09fd34ecbc92c2914b144b66328b))
+
+### 📦 list-packages changes
+
+#### Features
+
+- ✨ add npmjs registry publication status (#63) ([8e00928](https://github.com/tomgrv/actions/commit/8e00928d4d5f3e0a4521cd7de6a6b7848abc34b3))
+
 ## 2.16.0 (2026-08-13)
 
 _Commits from: v2.15.0..HEAD_
