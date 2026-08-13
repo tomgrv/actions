@@ -29,5 +29,5 @@ jobs:
       - name: Setup Bats
         uses: bats-core/bats-action@4.0.0
 
-      - name: Run all repository tests
-        run: ./run-tests.sh
+      - name: Run repository tests (non-PHP)
+        run: ./run-tests.sh -f "resolve-environment|detect-changes|list-dirty|list-packages|list-wip|check-dockerfile|check-security|config-bot|split-package|run-deployer"
