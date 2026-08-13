@@ -9,12 +9,10 @@ on:
       - develop
     paths:
       - 'run-deployer/**'
-      - 'test/run-deployer/**'
       - '.github/workflows/test-run-deployer.yml'
   pull_request:
     paths:
       - 'run-deployer/**'
-      - 'test/run-deployer/**'
       - '.github/workflows/test-run-deployer.yml'
 
 permissions:
@@ -30,4 +28,4 @@ jobs:
         uses: bats-core/bats-action@4.0.0
 
       - name: Run bats tests
-        run: bats test/run-deployer
+        run: bats run-deployer/run.bats
