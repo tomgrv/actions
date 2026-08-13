@@ -1,0 +1,31 @@
+# @format
+
+# @package tomgrv/actions/detect-unpublished-packages
+
+name: Detect Unpublished Packages
+description: Discovers npm packages under a directory and emits a JSON matrix of those not yet published to the npm registry.
+author: Perspikapps
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  path:
+    description: Directory containing package subdirectories to scan (e.g. src). Defaults to "src".
+    required: false
+    default: 'src'
+
+outputs:
+  packages:
+    description: JSON array of unpublished package objects (name, version, path).
+    value: ${{ steps.detect.outputs.packages }}
+
+runs:
+  using: composite
+  steps:
+    - name: Detect unpublished packages
+      id: detect
+      shell: sh
+      env:
+        SCAN_PATH: ${{ inputs.path }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
