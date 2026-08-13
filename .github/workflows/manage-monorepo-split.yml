@@ -31,6 +31,9 @@ jobs:
       - name: List packages
         id: list
         uses: tomgrv/actions/list-packages@v2
+        with:
+          workdir: ${{ github.workspace }}
+          filter: '.private == true || .repository_url != null'
 
   split-packages:
     name: Split packages
@@ -73,7 +76,7 @@ jobs:
           github-token: '${{ steps.app-token.outputs.token }}'
 
       - if: ${{ !startsWith(github.ref, 'refs/tags/') && steps.split-package.outputs.split-branch != '' }}
-        uses: tomgrv/actions/create-pr@v1
+        uses: tomgrv/actions/create-pr@v2
         with:
           github-token: '${{ steps.app-token.outputs.token }}'
           repository: '${{ matrix.package.org }}/${{ matrix.package.name }}'
