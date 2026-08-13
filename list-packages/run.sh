@@ -51,8 +51,10 @@ if command -v composer >/dev/null 2>&1; then
                   ecosystem:       "php",
                   private:         false
                 }
-              | select(.repository_url != "" and (.repository_url | test("github\\.com")))
-            ]')
+            ]'
+            
+            echo "Discovered $(echo "$composer_packages" | jq 'length') Composer packages." >&2
+            )
 
 else
     # Missing binary is a setup concern, not a finding: plain log only.
@@ -61,7 +63,7 @@ fi
 
 if [ -f "$WORKDIR/package.json" ]; then
 
-    echo "Discovering package workspace packages..." >&2
+    echo "Discovering package workspace packages in <$WORKDIR>..." >&2
 
     node_packages=$(jq -r '.workspaces[]?' "$WORKDIR/package.json" \
         | while IFS= read -r workspace_pattern; do
@@ -95,10 +97,13 @@ if [ -f "$WORKDIR/package.json" ]; then
                         ecosystem:       "node",
                         private:         (.private // false)
                     }
-                    | select(.repository_url != "")
+                    
                 ' "$package_manifest"
+
+                echo "Discovered package: $(jq -c '.org + "/" + .name + "@" + .package_version' "$package_manifest")" >&2
             done
         done | jq -cs '.')
+        
 else
     # Functional: absence of a file to analyze in the target repo is a notice.
     echo "::notice::Root package.json not found, skipping workspace package discovery." >&2
@@ -118,7 +123,7 @@ packages=$(jq -cn \
 
         ($composer + $node)
         | map(.repository_url |= normalize_repository)
-        | unique_by([.repository_url, .ecosystem])
+        | unique_by([.package_name, .ecosystem])
     ')
 
 echo "Checking package registries publication status..." >&2
