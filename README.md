@@ -116,6 +116,7 @@ For more options, see the test runner help:
 - [**create-pr**](create-pr/README.md) ![stable](https://img.shields.io/badge/stable-green): Open or update a pull request for a branch, with customizable title/body/labels.
 - [**rebase-pr**](rebase-pr/README.md) ![stable](https://img.shields.io/badge/stable-green): Rebase the head branch of a pull request onto its base branch.
 - [**check-pr-format**](check-pr-format/README.md) ![stable](https://img.shields.io/badge/stable-green): Validate PR title and body format.
+- [**check-pr-source-branch**](check-pr-source-branch/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Reject PRs from the main branch unless marked as a hotfix.
 - [**check-secret**](check-secret/README.md) ![stable](https://img.shields.io/badge/stable-green): Scan pull request changes for leaked secrets.
 - [**check-security-npm**](check-security-npm/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit npm dependencies for known vulnerabilities.
 - [**check-lock**](check-lock/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Validate composer.json/composer.lock and package.json/package-lock.json — schema, publish-readiness, and lock coherence — via reviewdog.
