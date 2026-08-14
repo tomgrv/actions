@@ -3,7 +3,7 @@
 # Tests split-package/run.sh: Split a monorepo package to a separate repository.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/split-package/run.sh"
 }
 

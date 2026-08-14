@@ -3,7 +3,7 @@
 # Tests check-security-npm/run.sh: Audit npm dependencies for known vulnerabilities.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/check-security-npm/run.sh"
 }
 

@@ -3,7 +3,7 @@
 # Tests setup-php/run.sh: Setup PHP and Composer in CI environment.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/setup-php/run.sh"
 }
 

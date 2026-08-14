@@ -4,7 +4,7 @@
 # from GitHub events (push, PR review, tag, workflow_dispatch).
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/resolve-environment/run.sh"
 }
 

@@ -3,7 +3,7 @@
 # Tests check-dockerfile/run.sh: Validate Dockerfile syntax and best practices.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/check-dockerfile/run.sh"
   TEST_DIR="$(mktemp -d)"
   cd "$TEST_DIR"

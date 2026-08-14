@@ -2,7 +2,7 @@
 
 # Run all BATS tests for composite actions.
 #
-# Usage: ./test/run.sh [options]
+# Usage: ./run-tests.sh [options]
 #   -v, --verbose       Show detailed test output
 #   -f, --filter PATTERN Only run tests matching PATTERN
 #   -q, --quiet         Suppress test output
@@ -11,7 +11,34 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="${SCRIPT_DIR}"
+
+_help() {
+  cat >&2 <<'EOF'
+Run all BATS tests for composite actions.
+
+Usage: ./run-tests.sh [options]
+
+Options:
+  -v, --verbose       Show detailed test output
+  -f, --filter PATTERN Only run tests matching PATTERN
+  -q, --quiet         Suppress test output
+  -h, --help          Show this help message
+
+Examples:
+  # Run all tests
+  ./run-tests.sh
+
+  # Run tests with verbose output
+  ./run-tests.sh -v
+
+  # Run only resolve-environment tests
+  ./run-tests.sh -f resolve-environment
+
+  # Run only tests with 'changes' in the name
+  ./run-tests.sh -f changes
+EOF
+}
 
 VERBOSE=""
 FILTER=""
@@ -28,45 +55,18 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-_help() {
-  cat >&2 <<'EOF'
-Run all BATS tests for composite actions.
-
-Usage: ./test/run.sh [options]
-
-Options:
-  -v, --verbose       Show detailed test output
-  -f, --filter PATTERN Only run tests matching PATTERN
-  -q, --quiet         Suppress test output
-  -h, --help          Show this help message
-
-Examples:
-  # Run all tests
-  ./test/run.sh
-
-  # Run tests with verbose output
-  ./test/run.sh -v
-
-  # Run only resolve-environment tests
-  ./test/run.sh -f resolve-environment
-
-  # Run only tests with 'changes' in the name
-  ./test/run.sh -f changes
-EOF
-}
-
 # Check if bats is installed
 if ! command -v bats >/dev/null 2>&1; then
   echo "Error: bats is not installed. Install it with: npm install -g bats" >&2
   exit 1
 fi
 
-# Collect test files
+# Collect test files from action directories
 TEST_FILES=""
 if [ -n "${FILTER}" ]; then
-  TEST_FILES=$(find "${SCRIPT_DIR}" -name "*.bats" -path "*${FILTER}*" 2>/dev/null | sort)
+  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | grep -E "${FILTER}" | sort)
 else
-  TEST_FILES=$(find "${SCRIPT_DIR}" -name "*.bats" -type f 2>/dev/null | sort)
+  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | sort)
 fi
 
 if [ -z "${TEST_FILES}" ]; then

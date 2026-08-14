@@ -3,7 +3,7 @@
 # Tests run-phpinsights/run.sh: Run PHP Insights code quality analysis.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/run-phpinsights/run.sh"
 }
 

@@ -3,7 +3,7 @@
 # Tests run-pint/run.sh: Run Laravel Pint code style checks.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/run-pint/run.sh"
 }
 

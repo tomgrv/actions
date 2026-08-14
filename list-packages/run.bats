@@ -4,7 +4,7 @@
 # emit a JSON matrix, including per-package registry publication status.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/list-packages/run.sh"
   TEST_DIR="$(mktemp -d)"
   STUB_BIN="$(mktemp -d)"

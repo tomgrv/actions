@@ -3,7 +3,7 @@
 # Tests check-security-composer/run.sh: Audit Composer dependencies for known vulnerabilities.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/check-security-composer/run.sh"
 }
 

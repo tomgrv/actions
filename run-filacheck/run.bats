@@ -3,7 +3,7 @@
 # Tests run-filacheck/run.sh: Run FilaCheck Filament code analysis.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/run-filacheck/run.sh"
 }
 

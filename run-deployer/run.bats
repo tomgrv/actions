@@ -6,7 +6,7 @@
 # whether it's routine progress or an actual problem.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   JQ_SCRIPT="${REPO_ROOT}/run-deployer/rdjson.jq"
   FIXTURES="${BATS_TEST_DIRNAME}/fixtures"
 }

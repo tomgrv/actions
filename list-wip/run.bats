@@ -3,7 +3,7 @@
 # Tests list-wip/run.sh: List files changed on current branch relative to base ref.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/list-wip/run.sh"
   TEST_DIR="$(mktemp -d)"
   REMOTE_DIR="$(mktemp -d)"

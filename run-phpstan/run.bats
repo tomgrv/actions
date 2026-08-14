@@ -3,7 +3,7 @@
 # Tests run-phpstan/run.sh: Run PHPStan static analysis.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/run-phpstan/run.sh"
 }
 

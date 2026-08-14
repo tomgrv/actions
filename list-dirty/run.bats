@@ -3,7 +3,7 @@
 # Tests list-dirty/run.sh: List files with uncommitted changes (staged, unstaged, untracked).
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/list-dirty/run.sh"
   TEST_DIR="$(mktemp -d)"
   cd "$TEST_DIR"

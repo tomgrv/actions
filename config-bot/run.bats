@@ -3,7 +3,7 @@
 # Tests config-bot/run.sh: Configure git bot identity.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/config-bot/run.sh"
   # Unset git config to start fresh
   git config --global --unset user.name 2>/dev/null || true

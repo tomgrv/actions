@@ -3,7 +3,7 @@
 # Tests detect-changes/run.sh: Detect uncommitted or untracked changes using git status.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/detect-changes/run.sh"
   TEST_DIR="$(mktemp -d)"
   cd "$TEST_DIR"

@@ -3,7 +3,7 @@
 # Tests run-phpmd/run.sh: Run PHP Mess Detector code analysis.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/run-phpmd/run.sh"
 }
 

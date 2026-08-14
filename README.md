@@ -13,7 +13,7 @@ tomgrv/actions is a suite of modular, reusable GitHub composite actions designed
 Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository via the bundled `dispatch.sh`, which sets sensible `GITHUB_*` defaults:
 
 ```sh
-./dispatch.sh <action> [args...]
+./dispatch.sh < action > [args...]
 ```
 
 For example:
@@ -34,6 +34,42 @@ Run without arguments to see all available actions:
 ```sh
 ./dispatch.sh
 ```
+
+## Testing
+
+Each action includes a test suite using [BATS](https://github.com/bats-core/bats-core). Tests are colocated with their actions in `<action-name>/run.bats` files.
+
+### Run tests locally
+
+Run all tests:
+
+```sh
+./run-tests.sh
+```
+
+Run tests for a specific action:
+
+```sh
+./run-tests.sh -f resolve-environment
+./run-tests.sh -f detect-changes
+```
+
+Run with verbose output:
+
+```sh
+./run-tests.sh -v
+```
+
+For more options, see the test runner help:
+
+```sh
+./run-tests.sh -h
+```
+
+### CI/CD
+
+- **validate-pr-tests**: Runs the full test suite on every PR and push to main/develop
+- **test-run-deployer**: Runs deployer-specific tests
 
 ## Naming convention
 

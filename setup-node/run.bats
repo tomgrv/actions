@@ -3,7 +3,7 @@
 # Tests setup-node/run.sh: Setup Node.js and npm in CI environment.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
+  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/setup-node/run.sh"
 }
 
