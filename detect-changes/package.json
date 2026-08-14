@@ -1,6 +1,6 @@
 {
     "name": "detect-changes",
-    "version": "2.10.0",
+    "version": "2.19.0",
     "description": "Detect uncommitted or untracked changes in a given path using git status.",
     "private": true
 }

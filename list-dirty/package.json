@@ -1,6 +1,6 @@
 {
     "name": "list-dirty",
-    "version": "2.12.0",
+    "version": "2.19.0",
     "description": "List files with uncommitted git changes (staged, unstaged, or untracked), optionally filtered by path and extension.",
     "private": true
 }
