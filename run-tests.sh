@@ -61,12 +61,13 @@ if ! command -v bats >/dev/null 2>&1; then
   exit 1
 fi
 
-# Collect test files from action directories
+# Collect test files: BATS tests under test/<action-name>/ and any test
+# co-located with its action (e.g. <action-name>/run.bats).
 TEST_FILES=""
 if [ -n "${FILTER}" ]; then
-  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | grep -E "${FILTER}" | sort)
+  TEST_FILES=$(find "${SCRIPT_DIR}" "${REPO_ROOT}" -maxdepth 2 -name "*.bats" -path "*${FILTER}*" -not -path "*/node_modules/*" 2>/dev/null | sort -u)
 else
-  TEST_FILES=$(find "${REPO_ROOT}" -maxdepth 2 -name "run.bats" -type f 2>/dev/null | sort)
+  TEST_FILES=$(find "${SCRIPT_DIR}" "${REPO_ROOT}" -maxdepth 2 -name "*.bats" -type f -not -path "*/node_modules/*" 2>/dev/null | sort -u)
 fi
 
 if [ -z "${TEST_FILES}" ]; then

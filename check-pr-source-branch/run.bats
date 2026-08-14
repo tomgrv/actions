@@ -4,8 +4,7 @@
 # unless the title marks them as a hotfix.
 
 setup() {
-  REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/../.." && pwd)"
-  SCRIPT="${REPO_ROOT}/check-pr-source-branch/run.sh"
+  SCRIPT="${BATS_TEST_DIRNAME}/run.sh"
 }
 
 run_check() {
