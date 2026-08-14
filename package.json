@@ -52,6 +52,7 @@
         "check-laravel",
         "check-lock",
         "check-pr-format",
+        "check-pr-source-branch",
         "check-secret",
         "check-security-composer",
         "check-security-npm",
