@@ -2,6 +2,21 @@
 
 # Changelog
 
+## 2.19.0 (2026-08-14)
+
+_Commits from: v2.18.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ add PR source branch validation workflow (#66) ([a5de620](https://github.com/tomgrv/actions/commit/a5de620672eb9a1fbd3e0e00ea7419eeea57b81c))
+
+#### Other changes
+
+- Merge tag 'v2.18.0' into develop ([d5f8fcf](https://github.com/tomgrv/actions/commit/d5f8fcff476f69c6e2b04ca7670fa0ee4edec64d))
+- ♻️ reorganize test structure and consolidate workflows (#65) ([ef5a662](https://github.com/tomgrv/actions/commit/ef5a662a9fe4d1c953d0b9cc18bbf8f363eadcf6))
+
 ## 2.18.0 (2026-08-13)
 
 _Commits from: v2.17.0..HEAD_
@@ -592,4 +607,4 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 ---
 
-_Generated on 2026-08-13 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+_Generated on 2026-08-14 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
