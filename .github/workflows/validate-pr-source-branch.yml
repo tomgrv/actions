@@ -1,0 +1,33 @@
+name: Validate PR Source Branch
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  validate-source:
+    name: Validate PR source branch
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check PR source branch
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+          COMMIT_MESSAGE="${{ github.event.pull_request.title }}"
+
+          if [ "$SOURCE_BRANCH" = "main" ]; then
+            IS_HOTFIX=false
+            if [[ "$COMMIT_MESSAGE" =~ hotfix ]] || [[ "$COMMIT_MESSAGE" =~ "hotfix:" ]]; then
+              IS_HOTFIX=true
+            fi
+
+            if [ "$IS_HOTFIX" = false ]; then
+              echo "❌ PRs cannot originate from the main branch unless marked as a hotfix"
+              echo ""
+              echo "**Rule:** Default PR source branch is \`develop\`, not \`main\`"
+              echo "- Only create PRs from \`main\` if explicitly requested or marked as \`hotfix/...\`"
+              echo "- Update your branch name or create a new PR from \`develop\`"
+              exit 1
+            fi
+          fi
