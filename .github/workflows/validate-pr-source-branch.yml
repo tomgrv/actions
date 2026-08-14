@@ -1,15 +1,21 @@
+# @format
+
 name: Validate PR Source Branch
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   validate-source:
-    name: Validate PR source branch
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Check PR source branch
         run: |
