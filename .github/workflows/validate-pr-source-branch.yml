@@ -17,5 +17,7 @@ jobs:
   validate-source:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Validate PR source branch
-        uses: tomgrv/actions/check-pr-source-branch@v2
+        uses: ./check-pr-source-branch
