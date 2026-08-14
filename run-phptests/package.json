@@ -1,6 +1,6 @@
 {
     "name": "run-phptests",
-    "version": "2.12.0",
+    "version": "2.19.0",
     "description": "Run pull request test suite for a PHP project.",
     "private": true
 }

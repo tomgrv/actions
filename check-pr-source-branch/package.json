@@ -1,0 +1,6 @@
+{
+    "name": "check-pr-source-branch",
+    "version": "2.19.0",
+    "description": "Reject pull requests from the main branch unless the title marks them as a hotfix.",
+    "private": true
+}
