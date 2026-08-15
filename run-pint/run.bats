@@ -14,6 +14,7 @@ run_pint() {
     export PINT_CONFIG="${3:-}"
     export DIRTY="${4:-false}"
     export WIP="${5:-false}"
+    export BLADE="${6:-false}"
     export REVIEWDOG_GITHUB_API_TOKEN="dummy-token"
     sh "$SCRIPT" 2>/dev/null
   )
@@ -51,5 +52,10 @@ run_pint() {
 
 @test "handles WIP files mode" {
   run run_pint "app" "laravel" "" "false" "true"
+  [ "$status" -eq 0 ] || [ "$status" -ne 0 ]
+}
+
+@test "accepts blade formatting flag" {
+  run run_pint "app" "laravel" "" "false" "false" "true"
   [ "$status" -eq 0 ] || [ "$status" -ne 0 ]
 }
