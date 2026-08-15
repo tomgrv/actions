@@ -22,6 +22,7 @@ fi
 PINT_PATHS="${PINT_PATHS:-${1:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
 PINT_CONFIG="${PINT_CONFIG:-}"
+BLADE="${BLADE:-false}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
@@ -55,6 +56,11 @@ else
     RULES_FLAG="--preset=${PINT_PRESET}"
 fi
 
+BLADE_FLAG=""
+if [ "${BLADE}" = "true" ]; then
+    BLADE_FLAG="--blade"
+fi
+
 # Pint's own exit code is not used as the step's exit code: findings are
 # reviewdog's job to gate (via fail-level), not a script failure. The pipe's
 # exit code below is reviewdog's, since it is the last command in the pipe.
@@ -62,7 +68,7 @@ exit_code=0
 pint_log=$(mktemp)
 trap 'rm -f "${pint_log}"' EXIT INT TERM
 # shellcheck disable=SC2046,SC2086
-"${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" --format=checkstyle -- ${PINT_ARGS} 2>"${pint_log}" \
+"${PINT_BIN}" --test --no-interaction "${RULES_FLAG}" ${BLADE_FLAG} --format=checkstyle -- ${PINT_ARGS} 2>"${pint_log}" \
     | tee -a "${pint_log}" \
     | "${REVIEWDOG_BIN}" \
         -f=checkstyle \
