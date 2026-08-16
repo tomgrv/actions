@@ -40,6 +40,10 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 **Optional.** Whether to run each check. Defaults to `true`.
 
+### pint-blade
+
+**Optional.** Format `.blade.php` files too when Pint runs, via Pint's [`--blade`](https://laravel-news.com/blade-formatting-in-laravel-pint) flag (Pint 1.30+), forwarded to [**run-pint**](../run-pint/README.md)'s `blade` input. Requires `prettier`, `prettier-plugin-blade` and `prettier-plugin-tailwindcss` already available in the repository. Defaults to `false`.
+
 ### level
 
 **Optional.** Report level for reviewdog `[info,warning,error]`, shared by every wrapped check. Defaults to `error`.
