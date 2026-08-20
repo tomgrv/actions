@@ -17,7 +17,7 @@ inputs:
   name:
     description: Name reported by reviewdog to identify this check.
     required: false
-    default: ${{ github.action }}
+    default: npm-audit
   level:
     description: 'Report level for reviewdog [info,warning,error].'
     required: false
