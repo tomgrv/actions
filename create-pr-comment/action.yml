@@ -1,0 +1,48 @@
+# @format
+
+# @package tomgrv/actions/create-pr-comment
+
+name: Create PR comment
+description: Post a new comment on a pull request or issue.
+author: Perspikapps
+branding:
+  icon: message-square
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token with permission to write issue comments.
+    required: false
+    default: ${{ github.token }}
+  repository:
+    description: Repository in the format "owner/name". Defaults to the current repository.
+    required: false
+    default: ''
+  issue-number:
+    description: Pull request or issue number to comment on. Defaults to the current pull request or issue number.
+    required: false
+    default: ${{ github.event.issue.number || github.event.pull_request.number }}
+  body:
+    description: Comment body (Markdown supported).
+    required: true
+
+outputs:
+  comment-id:
+    description: ID of the created comment.
+    value: ${{ steps.create-pr-comment.outputs.comment-id }}
+  comment-url:
+    description: HTML URL of the created comment.
+    value: ${{ steps.create-pr-comment.outputs.comment-url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Post comment
+      id: create-pr-comment
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPOSITORY: ${{ inputs.repository || github.repository }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        BODY: ${{ inputs.body }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

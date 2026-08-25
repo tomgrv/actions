@@ -1,6 +1,6 @@
 # @format
 
-# @package tomgrv/actions/reply-comment
+# @package tomgrv/actions/reply-pr-comment
 
 name: Reply comment
 description: Post a comment on a pull request or issue, referencing the comment that triggered the workflow.
@@ -33,16 +33,16 @@ inputs:
 outputs:
   comment-id:
     description: ID of the created comment.
-    value: ${{ steps.reply-comment.outputs.comment-id }}
+    value: ${{ steps.reply-pr-comment.outputs.comment-id }}
   comment-url:
     description: HTML URL of the created comment.
-    value: ${{ steps.reply-comment.outputs.comment-url }}
+    value: ${{ steps.reply-pr-comment.outputs.comment-url }}
 
 runs:
   using: composite
   steps:
     - name: Post reply comment
-      id: reply-comment
+      id: reply-pr-comment
       shell: sh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
