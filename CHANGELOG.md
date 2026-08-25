@@ -1,8 +1,32 @@
+<!-- @format -->
+
 # Changelog
+
+## 2.21.0 (2026-08-25)
+
+_Commits from: v2.20.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ create reply-comment action (#55) ([5f1f382](https://github.com/tomgrv/actions/commit/5f1f3828ab3264cd2dcd3d8d988bde060d05e7ff))
+- ✨ publish clean-history action (#74) ([1997198](https://github.com/tomgrv/actions/commit/1997198e2ef9a7fb75c6104b1250f6067fa85612))
+
+#### Other changes
+
+- Merge tag 'v2.20.0' into develop ([9c846a3](https://github.com/tomgrv/actions/commit/9c846a3a94c7bafbda1797f5b2378afd48d3bba1))
+- ♻️ rename comment actions and add create-pr-comment (#72) ([7ddebfa](https://github.com/tomgrv/actions/commit/7ddebfabed9b126b032339aeee4c5640ecf90180))
+
+### 📦 setup-reviewdog changes
+
+#### Other changes
+
+- ♻️ extract reporter selection into run.sh (#73) ([3635ec9](https://github.com/tomgrv/actions/commit/3635ec9c944c3825a0c7581e32b89c82e678c6c6))
 
 ## 2.20.0 (2026-08-25)
 
-*Commits from: v2.19.0..HEAD*
+_Commits from: v2.19.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -14,6 +38,7 @@
 
 - Merge tag 'v2.19.0' into develop ([b08aa7b](https://github.com/tomgrv/actions/commit/b08aa7b22e8a6b105147ff49d88086d31b510aed))
 - 🔧 🔒️ regenerate package-lock.json (#71) ([b82685e](https://github.com/tomgrv/actions/commit/b82685ec4a3326d27408dc6064d2c04ea5eb5b96))
+
 ### 📦 check-laravel changes
 
 #### Features
@@ -635,6 +660,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
-
 ---
-*Generated on 2026-08-25 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+
+_Generated on 2026-08-25 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_

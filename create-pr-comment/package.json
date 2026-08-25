@@ -1,6 +1,6 @@
 {
-  "name": "create-pr-comment",
-  "version": "2.20.0",
-  "description": "Post a new comment on a pull request or issue.",
-  "private": true
+    "name": "create-pr-comment",
+    "version": "2.21.0",
+    "description": "Post a new comment on a pull request or issue.",
+    "private": true
 }
