@@ -29,6 +29,13 @@ inputs:
       otherwise.
     required: false
     default: ''
+  blade:
+    description: >-
+      Format `.blade.php` files too (Pint's `--blade` flag, added in Pint
+      1.30). Requires `prettier`, `prettier-plugin-blade` and
+      `prettier-plugin-tailwindcss` available in the repository.
+    required: false
+    default: 'false'
   dirty:
     description: Only analyze files with uncommitted git changes (staged, unstaged, or untracked).
     required: false
@@ -105,6 +112,7 @@ runs:
         PINT_PATHS: ${{ inputs.paths }}
         PINT_PRESET: ${{ inputs.preset }}
         PINT_CONFIG: ${{ inputs.config }}
+        BLADE: ${{ inputs.blade }}
         DIRTY: ${{ inputs.dirty }}
         WIP: ${{ inputs.wip }}
         DIRTY_FILES: ${{ steps.list-dirty.outputs.files }}

@@ -44,6 +44,13 @@ inputs:
     description: Whether to run Pint.
     required: false
     default: 'true'
+  pint-blade:
+    description: >-
+      Format `.blade.php` files too when Pint runs (Pint's `--blade` flag,
+      added in Pint 1.30). Requires `prettier`, `prettier-plugin-blade` and
+      `prettier-plugin-tailwindcss` available in the repository.
+    required: false
+    default: 'false'
   phpinsights:
     description: Whether to run PHP Insights.
     required: false
@@ -117,6 +124,7 @@ runs:
         dirty: ${{ inputs.dirty }}
         wip: ${{ inputs.wip }}
         wip-base-ref: ${{ inputs.wip-base-ref }}
+        blade: ${{ inputs.pint-blade }}
         level: ${{ inputs.level }}
         fail-level: ${{ inputs.fail-level }}
         reviewdog-flags: ${{ inputs.reviewdog-flags }}

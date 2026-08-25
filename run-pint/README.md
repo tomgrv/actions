@@ -22,6 +22,10 @@ Runs [Laravel Pint](https://laravel.com/docs/pint) and reports code style findin
 
 **Optional.** Path to a custom Pint configuration file. Leave empty to let Pint auto-detect `pint.json` at the repository root, or fall back to `preset` otherwise.
 
+### blade
+
+**Optional.** Format `.blade.php` files too, via Pint's [`--blade`](https://laravel-news.com/blade-formatting-in-laravel-pint) flag (Pint 1.30+). Formats Blade syntax, Alpine attributes, Livewire `wire:` bindings, Flux components, and Tailwind class sorting, through `prettier` + `prettier-plugin-blade` + `prettier-plugin-tailwindcss` — these must already be available in the repository (e.g. as npm `devDependencies`). Defaults to `false`.
+
 ### dirty
 
 **Optional.** Only analyze files with uncommitted git changes (staged, unstaged, or untracked). Pint has no native flag for this, so it is emulated: [**list-dirty**](../list-dirty/README.md) resolves the changed files and this action passes that explicit list in place of `paths`. Defaults to `false`.
@@ -100,4 +104,3 @@ jobs:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app,config,routes,tests
 ```
-

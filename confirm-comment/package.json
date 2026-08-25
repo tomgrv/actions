@@ -1,0 +1,6 @@
+{
+  "name": "confirm-comment",
+  "version": "2.20.0",
+  "description": "Add a reaction emoji to the current GitHub event comment.",
+  "private": true
+}
