@@ -57,6 +57,7 @@
         "check-security-composer",
         "check-security-npm",
         "config-bot",
+        "confirm-comment",
         "create-pr",
         "degit-package",
         "detect-changes",
