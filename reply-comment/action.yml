@@ -1,0 +1,53 @@
+# @format
+
+# @package tomgrv/actions/reply-comment
+
+name: Reply comment
+description: Post a comment on a pull request or issue, referencing the comment that triggered the workflow.
+author: Perspikapps
+branding:
+  icon: message-circle
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token with permission to write issue comments.
+    required: false
+    default: ${{ github.token }}
+  repository:
+    description: Repository in the format "owner/name". Defaults to the current repository.
+    required: false
+    default: ''
+  issue-number:
+    description: Pull request or issue number to comment on. Defaults to the current pull request or issue number.
+    required: false
+    default: ${{ github.event.issue.number || github.event.pull_request.number }}
+  reply-to-url:
+    description: HTML URL of the comment being replied to, included as a reference link in the posted comment. Defaults to github.event.comment.html_url. Leave empty to omit the reference.
+    required: false
+    default: ${{ github.event.comment.html_url }}
+  body:
+    description: Comment body (Markdown supported).
+    required: true
+
+outputs:
+  comment-id:
+    description: ID of the created comment.
+    value: ${{ steps.reply-comment.outputs.comment-id }}
+  comment-url:
+    description: HTML URL of the created comment.
+    value: ${{ steps.reply-comment.outputs.comment-url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Post reply comment
+      id: reply-comment
+      shell: sh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPOSITORY: ${{ inputs.repository || github.repository }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        REPLY_TO_URL: ${{ inputs.reply-to-url }}
+        BODY: ${{ inputs.body }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
