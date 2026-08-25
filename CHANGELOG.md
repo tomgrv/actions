@@ -1,6 +1,36 @@
-<!-- @format -->
-
 # Changelog
+
+## 2.20.0 (2026-08-25)
+
+*Commits from: v2.19.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 use static reviewdog check name for composer/npm audit actions (#69) ([0ebe8bb](https://github.com/tomgrv/actions/commit/0ebe8bb46fbe0cd5dacac06d3acb155300824166))
+
+#### Other changes
+
+- Merge tag 'v2.19.0' into develop ([b08aa7b](https://github.com/tomgrv/actions/commit/b08aa7b22e8a6b105147ff49d88086d31b510aed))
+- 🔧 🔒️ regenerate package-lock.json (#71) ([b82685e](https://github.com/tomgrv/actions/commit/b82685ec4a3326d27408dc6064d2c04ea5eb5b96))
+### 📦 check-laravel changes
+
+#### Features
+
+- ✨ add pint-blade passthrough for Pint --blade formatting (#68) ([424f7f4](https://github.com/tomgrv/actions/commit/424f7f4739c3ef24b3921189e4170e560b359b26))
+
+### 📦 confirm-comment changes
+
+#### Bug Fixes
+
+- 🐛 make run.sh executable (#70) ([ed947d6](https://github.com/tomgrv/actions/commit/ed947d66ccfd829027ac909f0668b520f1602cf3))
+
+### 📦 run-pint changes
+
+#### Features
+
+- ✨ add blade input for Laravel Pint --blade formatting (#67) ([56594d4](https://github.com/tomgrv/actions/commit/56594d485c14a7c9a2406c4f976e4c3bfbf849a4))
 
 ## 2.19.0 (2026-08-14)
 
@@ -605,6 +635,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
----
 
-_Generated on 2026-08-14 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+---
+*Generated on 2026-08-25 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
