@@ -1,0 +1,42 @@
+# @format
+
+# @package tomgrv/actions/create-update-ref
+
+name: Create or Update Ref
+description: Create a git ref (tag/branch). If it already exists, updates it to point at the given SHA.
+author: Perspikapps
+branding:
+  icon: tag
+  color: blue
+
+inputs:
+  github-token:
+    description: GitHub token with contents write permission.
+    required: true
+  ref:
+    description: Full ref name (e.g. refs/tags/deploy/myhost).
+    required: true
+  sha:
+    description: The SHA to point the ref at.
+    required: true
+
+outputs:
+  action:
+    description: Whether the ref was "created" or "updated".
+    value: ${{ steps.create-update-ref.outputs.action }}
+  ref:
+    description: The ref that was created or updated.
+    value: ${{ steps.create-update-ref.outputs.ref }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create or update ref
+      id: create-update-ref
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        REF: ${{ inputs.ref }}
+        SHA: ${{ inputs.sha }}
+        REPO: ${{ github.repository }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
