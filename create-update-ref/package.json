@@ -1,0 +1,6 @@
+{
+    "name": "create-update-ref",
+    "version": "2.21.0",
+    "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
+    "private": true
+}

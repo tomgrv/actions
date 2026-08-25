@@ -1,6 +1,6 @@
 # @format
 
-# @package tomgrv/actions/react-comment
+# @package tomgrv/actions/confirm-pr-comment
 
 name: Confirm comment
 description: Add a reaction emoji to the current GitHub event comment.
@@ -34,19 +34,19 @@ inputs:
 outputs:
   reaction-id:
     description: ID of the created (or existing) reaction.
-    value: ${{ steps.react-comment.outputs.reaction-id }}
+    value: ${{ steps.confirm-pr-comment.outputs.reaction-id }}
   reaction-content:
     description: Normalized GitHub reaction content value.
-    value: ${{ steps.react-comment.outputs.reaction-content }}
+    value: ${{ steps.confirm-pr-comment.outputs.reaction-content }}
   comment-url:
     description: API URL of the comment that was reacted to.
-    value: ${{ steps.react-comment.outputs.comment-url }}
+    value: ${{ steps.confirm-pr-comment.outputs.comment-url }}
 
 runs:
   using: composite
   steps:
     - name: Add reaction to comment
-      id: react-comment
+      id: confirm-pr-comment
       shell: sh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
