@@ -61,6 +61,7 @@
     "confirm-pr-comment",
     "create-pr",
     "create-pr-comment",
+    "create-update-ref",
     "degit-package",
     "detect-changes",
     "list-dirty",
