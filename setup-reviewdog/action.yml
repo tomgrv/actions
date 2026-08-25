@@ -54,45 +54,9 @@ runs:
       if: env.REVIEWDOG_REPORTER == ''
       shell: sh
       env:
+        EVENT_NAME: ${{ github.event_name }}
         TYPE_INPUT: ${{ inputs.type }}
-      run: |
-        # Determine prefix based on event context
-        case "${GITHUB_EVENT_NAME}" in
-          pull_request | pull_request_target)
-            prefix=github-pr
-            ;;
-          *)
-            prefix=github
-            ;;
-        esac
-
-        # Determine suffix based on type
-        if [ -n "${TYPE_INPUT}" ]; then
-          suffix="${TYPE_INPUT}"
-        else
-          # Default suffix when type is unset
-          case "${prefix}" in
-            github-pr)
-              suffix=check
-              ;;
-            *)
-              suffix=check
-              ;;
-          esac
-        fi
-
-        # Form reporter from prefix and suffix
-        case "${suffix}" in
-          check | review | annotations)
-            reporter="${prefix}-${suffix}"
-            ;;
-          *)
-            echo "Invalid type: ${suffix}. Must be check, review, or annotations." >&2
-            exit 1
-            ;;
-        esac
-
-        echo "REVIEWDOG_REPORTER=${reporter}" >> "$GITHUB_ENV"
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_ENV"
 
     - name: Resolve reviewdog GitHub API token
       # Same redundant-reinstall guard as above, keyed on the target env var
