@@ -1,6 +1,6 @@
 {
-    "name": "run-pint",
-    "version": "2.19.0",
-    "description": "Run Laravel Pint with reviewdog.",
-    "private": true
+  "name": "run-pint",
+  "version": "2.20.0",
+  "description": "Run Laravel Pint with reviewdog.",
+  "private": true
 }
