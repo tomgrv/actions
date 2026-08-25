@@ -1,0 +1,6 @@
+{
+  "name": "clean-history",
+  "version": "2.20.0",
+  "description": "Remove old workflow run history, keeping a minimum number of days and runs per workflow.",
+  "private": true
+}
