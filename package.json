@@ -66,6 +66,7 @@
     "list-wip",
     "publish-npm",
     "rebase-pr",
+    "reply-comment",
     "resolve-environment",
     "run-deployer",
     "run-phpinsights",

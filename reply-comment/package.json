@@ -1,0 +1,6 @@
+{
+  "name": "reply-comment",
+  "version": "2.20.0",
+  "description": "Post a comment on a pull request or issue, referencing the comment that triggered the workflow.",
+  "private": true
+}
