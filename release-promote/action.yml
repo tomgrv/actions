@@ -25,24 +25,32 @@ inputs:
 runs:
   using: composite
   steps:
+    # The next three steps invoke each sibling action's run.sh directly via
+    # github.action_path rather than `uses: tomgrv/actions/<name>@<ref>`.
+    # Neither a fixed ref (`@main` 404s on a sibling that hasn't reached
+    # main yet -- true for setup-scripts/setup-gitversion right now, and
+    # for anything this repo's own first release ever introduces) nor a
+    # relative `./<name>` (resolves against the *calling* repo's checkout,
+    # not this one -- confirmed live: 404 when called from tomgrv/scripts)
+    # can track "whichever ref release-promote itself was invoked at" for
+    # every caller. github.action_path always points at wherever this
+    # action's own repo was fetched to run this step, and the sibling
+    # directories are checked out right alongside it at that same commit,
+    # so this works for any caller/ref without updates.
     - name: Configure git bot identity
-      # Relative reference, not @main: this resolves against the same
-      # ref/checkout release-promote itself was invoked at, so it works
-      # from a branch (this repo's own release-main.yml, before anything
-      # here has ever been tagged) as well as from a released tag -- @main
-      # would 404 on a sibling action that hasn't reached main yet.
-      uses: ./config-bot
-      with:
-        github-token: ${{ inputs.github-token }}
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../config-bot/run.sh"
 
     - name: Install release scripts
-      uses: ./setup-scripts
-      with:
-        scripts: git-release-beta git-release-prod
-        scripts-ref: ${{ inputs.scripts-ref }}
+      shell: sh
+      env:
+        SCRIPTS: git-release-beta git-release-prod
+        SCRIPTS_REF: ${{ inputs.scripts-ref }}
+      run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
 
     - name: Install GitVersion toolchain
-      uses: ./setup-gitversion
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
 
     - name: Run beta then prod
       shell: sh
