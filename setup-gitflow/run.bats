@@ -91,6 +91,32 @@ STUB
   [[ "$output" == *"still unavailable after install attempt"* ]]
 }
 
+@test "uses sudo for the install command when not running as root" {
+  stub_git_dispatcher no
+  cat > "${STUB_BIN}/id" << STUB
+#!/bin/sh
+echo 1000
+STUB
+  chmod +x "${STUB_BIN}/id"
+  cat > "${STUB_BIN}/sudo" << STUB
+#!/bin/sh
+echo "sudo \$*" >> "${CALLS_FILE}"
+"\$@"
+STUB
+  chmod +x "${STUB_BIN}/sudo"
+  cat > "${STUB_BIN}/apt-get" << STUB
+#!/bin/sh
+echo "apt-get \$*" >> "${CALLS_FILE}"
+touch "${STUB_BIN}/.installed"
+exit 0
+STUB
+  chmod +x "${STUB_BIN}/apt-get"
+  run sh "$SCRIPT"
+  [ "$status" -eq 0 ]
+  grep -qF "sudo apt-get update" "${CALLS_FILE}"
+  grep -qF "sudo apt-get install -y git-flow" "${CALLS_FILE}"
+}
+
 @test "passes master/develop branch config through to git flow init" {
   stub_git_dispatcher yes
   export GITFLOW_MASTER_BRANCH="trunk"

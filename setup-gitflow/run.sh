@@ -21,20 +21,28 @@ GITFLOW_VERSIONTAG_PREFIX="${GITFLOW_VERSIONTAG_PREFIX:-v}"
 # Idempotent: skip the (network) install when a previous step in the same
 # job, or a caller image that ships it, already has git-flow.
 if ! git flow version > /dev/null 2>&1; then
+    # Most package managers need root; a GitHub-hosted runner's default user
+    # is not root but has passwordless sudo -- fall back to it, matching the
+    # gitversion devcontainer feature's own install-gitflow.sh.
+    SUDO=""
+    if [ "$(id -u)" -ne 0 ]; then
+        command -v sudo > /dev/null 2>&1 && SUDO="sudo"
+    fi
+
     if command -v apt-get > /dev/null 2>&1; then
-        apt-get update && apt-get install -y git-flow
+        ${SUDO} apt-get update && ${SUDO} apt-get install -y git-flow
     elif command -v apk > /dev/null 2>&1; then
-        apk add --no-cache gitflow-avh
+        ${SUDO} apk add --no-cache gitflow-avh
     elif command -v dnf > /dev/null 2>&1; then
-        dnf install -y gitflow
+        ${SUDO} dnf install -y gitflow
     elif command -v yum > /dev/null 2>&1; then
-        yum install -y gitflow
+        ${SUDO} yum install -y gitflow
     elif command -v brew > /dev/null 2>&1; then
         brew install git-flow-avh
     elif command -v pacman > /dev/null 2>&1; then
-        pacman -S --noconfirm gitflow-avh
+        ${SUDO} pacman -S --noconfirm gitflow-avh
     elif command -v zypper > /dev/null 2>&1; then
-        zypper --non-interactive install git-flow
+        ${SUDO} zypper --non-interactive install git-flow
     else
         echo "setup-gitflow: no supported package manager found to install git-flow" >&2
         exit 1
