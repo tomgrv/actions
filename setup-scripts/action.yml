@@ -18,6 +18,10 @@ inputs:
     description: tomgrv/scripts ref (tag/branch/commit) every name in `scripts` is pinned to, as "<name>@<ref>". Leave empty to use each script's own default origin/ref.
     required: false
     default: ''
+  scripts-branch:
+    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz_use (default "main", typically overridden to a development branch during integration testing).
+    required: false
+    default: main
 
 runs:
   using: composite
@@ -27,4 +31,5 @@ runs:
       env:
         SCRIPTS: ${{ inputs.scripts }}
         SCRIPTS_REF: ${{ inputs.scripts-ref }}
+        ZZ_SCRIPTS_BRANCH: ${{ inputs.scripts-branch }}
       run: sh -c "${{ github.action_path }}/run.sh"

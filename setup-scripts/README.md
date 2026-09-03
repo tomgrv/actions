@@ -21,6 +21,12 @@ empty to only bootstrap `zz_use` itself, without installing anything.
 `scripts` is pinned to, applied as `<name>@<ref>`. Leave empty to use
 each script's own default origin/ref (its repo's default branch).
 
+### scripts-branch
+
+**Optional.** Branch to fetch `tomgrv/scripts` `setup.sh` from when
+bootstrapping `zz_use` (default `main`, typically overridden to a
+development branch during integration testing).
+
 ## Works well with
 
 - [**release-promote**](../release-promote/README.md) — uses this action

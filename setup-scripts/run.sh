@@ -10,7 +10,8 @@ set -eu
 # that ships it, or a re-run in the same job) is reused as-is -- only
 # fetch/install when it's genuinely missing.
 if ! command -v zz_use > /dev/null 2>&1; then
-    curl -fsSL "${ZZ_SCRIPTS_SETUP_URL:-https://raw.githubusercontent.com/tomgrv/scripts/main/setup.sh}" -o /tmp/zz_setup.sh
+    ZZ_SCRIPTS_BRANCH="${ZZ_SCRIPTS_BRANCH:-main}"
+    curl -fsSL "${ZZ_SCRIPTS_SETUP_URL:-https://raw.githubusercontent.com/tomgrv/scripts/${ZZ_SCRIPTS_BRANCH}/setup.sh}" -o /tmp/zz_setup.sh
     sh /tmp/zz_setup.sh
     rm -f /tmp/zz_setup.sh
 fi
