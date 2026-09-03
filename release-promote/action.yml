@@ -25,7 +25,7 @@ inputs:
 runs:
   using: composite
   steps:
-    # The next three steps invoke each sibling action's run.sh directly via
+    # The next four steps invoke each sibling action's run.sh directly via
     # github.action_path rather than `uses: tomgrv/actions/<name>@<ref>`.
     # Neither a fixed ref (`@main` 404s on a sibling that hasn't reached
     # main yet -- true for setup-scripts/setup-gitversion right now, and
@@ -51,6 +51,10 @@ runs:
     - name: Install GitVersion toolchain
       shell: sh
       run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
+
+    - name: Install and initialize git-flow
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitflow/run.sh"
 
     - name: Run beta then prod
       shell: sh

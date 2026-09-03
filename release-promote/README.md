@@ -7,10 +7,11 @@ promotion every `tomgrv`/`perspikapps` repo releases through — against
 the already-checked-out repo. Pulls both commands from
 [`tomgrv/scripts`](https://github.com/tomgrv/scripts#git-utilities)
 (pinned via `scripts-ref`, via [`setup-scripts`](../setup-scripts/README.md))
-and installs the [GitVersion toolchain](../setup-gitversion/README.md) both
-scripts depend on to compute the release version and bump the
-changelog/tag, instead of installing a whole devcontainer feature for
-either.
+and installs both the [GitVersion toolchain](../setup-gitversion/README.md)
+and [git-flow itself](../setup-gitflow/README.md), which those scripts
+depend on to compute the release version, bump the changelog/tag, and drive
+the actual `git flow release start`/`finish` calls — instead of installing
+a whole devcontainer feature for any of it.
 
 Assumes the caller has already checked out the repo (`fetch-depth: 0`,
 `ref: develop`) — this action doesn't do that itself, since checkout

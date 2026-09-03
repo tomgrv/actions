@@ -79,6 +79,7 @@
         "run-phpstan",
         "run-phptests",
         "run-pint",
+        "setup-gitflow",
         "setup-gitversion",
         "setup-node",
         "setup-php",

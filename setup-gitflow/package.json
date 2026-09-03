@@ -1,0 +1,6 @@
+{
+    "name": "setup-gitflow",
+    "version": "1.0.0",
+    "description": "Install the git-flow extension if missing, then initialize it against the checked-out repo.",
+    "private": true
+}
