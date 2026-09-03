@@ -16,7 +16,7 @@ if ! command -v gv > /dev/null 2>&1 \
     || ! command -v bump-tag > /dev/null 2>&1 \
     || ! command -v bump-changelog > /dev/null 2>&1 \
     || ! command -v bump-version > /dev/null 2>&1; then
-    npm exec --yes --legacy-peer-deps --package github:tomgrv/devcontainer-features -- devcontainer-features -- gitversion
+    npm exec --yes --legacy-peer-deps --package github:tomgrv/devcontainer-features -- devcontainer-features -- add gitversion
 fi
 export PATH="${INSTALL_BIN_DIR:-/usr/local/bin}:$PATH"
 # GITHUB_PATH is unset outside a real Actions run (e.g. under bats) -- only
