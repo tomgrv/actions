@@ -2,10 +2,16 @@
 
 # GitHub Action: Setup GitVersion
 
-Idempotently installs the [`gitversion`](https://github.com/tomgrv/devcontainer-features/tree/main/src/gitversion)
-devcontainer feature's toolchain (a no-op if it's already on `PATH`): a
-docker-wrapped [GitVersion](https://gitversion.net/) CLI, plus the
-`gv`/`bump-tag`/`bump-changelog`/`bump-version` bin scripts.
+Idempotently installs the toolchain behind the
+[`gitversion`](https://github.com/tomgrv/devcontainer-features/tree/main/src/gitversion)
+devcontainer feature (a no-op if it's already on `PATH`): a docker-wrapped
+[GitVersion](https://gitversion.net/) CLI, plus the
+`gv`/`bump-tag`/`bump-changelog`/`bump-version` scripts, fetched directly from
+that feature's source rather than run through its own installer — that
+installer is built for onboarding a dev environment and deploys stub files
+(`.gitattributes`, `package.json` merges, VS Code tasks, skills) into the
+checked-out repo, unwanted noise for a CI release job that only needs the CLI
+tools on `PATH`.
 `git-release-beta`/`git-release-prod` (from
 [`tomgrv/scripts`](https://github.com/tomgrv/scripts)) call these directly to
 compute the release version and bump the changelog/tag — they're a separate

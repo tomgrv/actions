@@ -35,38 +35,43 @@ stub_toolchain_present() {
   done
 }
 
-@test "skips the feature install when the toolchain is already on PATH" {
+@test "skips the network install when the toolchain is already on PATH" {
   stub_toolchain_present
-  stub npm 1 # would fail loudly if actually invoked
+  stub curl 1 # would fail loudly if actually invoked
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
 }
 
-@test "installs the gitversion feature via npm exec when tools are missing" {
-  # npm stub simulates the feature installer materializing the toolchain.
-  cat >"${STUB_BIN}/npm" <<STUB
+@test "fetches gv/bump-tag/bump-changelog/bump-version and builds the docker wrapper when tools are missing" {
+  # curl stub simulates fetching each bin script's content.
+  cat >"${STUB_BIN}/curl" <<'STUB'
 #!/bin/sh
-echo "npm called: \$*" >&2
-for name in gv bump-tag bump-changelog bump-version gitversion; do
-  cat >"${STUB_BIN}/\$name" <<INNER
-#!/bin/sh
-exit 0
-INNER
-  chmod +x "${STUB_BIN}/\$name"
+# args: -fsSL <url> -o <dest>
+for arg do
+  prev="$arg"
+  if [ "$last" = "-o" ]; then
+    dest="$arg"
+  fi
+  last="$arg"
 done
+echo "#!/bin/sh" > "$dest"
+echo "exit 0" >> "$dest"
 STUB
-  chmod +x "${STUB_BIN}/npm"
+  chmod +x "${STUB_BIN}/curl"
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"npm called:"* ]]
-  [[ "$output" == *"exec --yes"*"devcontainer-features"*"gitversion"* ]]
+  [ -x "${STUB_BIN}/gv" ]
+  [ -x "${STUB_BIN}/bump-tag" ]
+  [ -x "${STUB_BIN}/bump-changelog" ]
+  [ -x "${STUB_BIN}/bump-version" ]
+  [ -x "${STUB_BIN}/docker-gitversion" ]
+  [ -L "${STUB_BIN}/gitversion" ]
 }
 
-@test "errors when a tool is still missing after install" {
-  stub npm 0 # a no-op npm that installs nothing
+@test "errors when curl fails to fetch a script" {
+  stub curl 1
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
-  [[ "$output" == *"not on PATH after install"* ]]
 }
 
 @test "appends the install bin dir to GITHUB_PATH when set" {
