@@ -1,0 +1,6 @@
+{
+    "name": "setup-scripts",
+    "version": "1.0.0",
+    "description": "Idempotently bootstrap zz_use from tomgrv/scripts, optionally installing specific scripts.",
+    "private": true
+}

@@ -1,0 +1,6 @@
+{
+    "name": "setup-gitversion",
+    "version": "1.0.0",
+    "description": "Idempotently install the gitversion devcontainer feature's toolchain (GitVersion CLI plus gv/bump-tag/bump-changelog/bump-version).",
+    "private": true
+}

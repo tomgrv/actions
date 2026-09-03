@@ -71,6 +71,16 @@ For more options, see the test runner help:
 - **validate-pr-tests**: Runs the full test suite on every PR and push to main/develop
 - **test-run-deployer**: Runs deployer-specific tests
 
+## Release process
+
+Every repo in the `tomgrv`/`perspikapps` family releases via GitHub →
+Actions → `release-main` → "Run workflow" (no CLI needed), which checks
+out the repo and calls this repo's
+[**release-promote**](release-promote/README.md) composite action. See
+[`docs/release-process.md`](docs/release-process.md) for the full
+picture, including the tag/branch-protection bypass checklist every repo
+needs applied once by hand.
+
 ## Naming convention
 
 `run-*` actions analyze specific files (a `paths`/`path` input scoped to what changed) and report via reviewdog with `-filter-mode=file`: findings are limited to files that are actually part of the run's scope, but not further restricted to changed lines. `check-*` actions validate repository- or PR-wide state (manifests, lock files, secrets, PR metadata) that isn't tied to a specific set of files, and report with `-filter-mode=nofilter`. Both are fixed by the action itself and are not exposed as a configurable input; only `reporter` remains configurable, and it defaults to the value [**setup-reviewdog**](setup-reviewdog/README.md) resolves for the run's context.
@@ -82,9 +92,16 @@ For more options, see the test runner help:
 > ![beta](https://img.shields.io/badge/beta-yellow) Beta &nbsp;
 > ![experimental](https://img.shields.io/badge/experimental-orange) Experimental
 
+### 🚀 Release
+
+- [**release-promote**](release-promote/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run git-release-beta then git-release-prod (git-flow beta→prod promotion).
+
 ### 🔧 Utils
 
 - [**config-bot**](config-bot/README.md) ![stable](https://img.shields.io/badge/stable-green): Configure git bot identity and authentication for CI/CD.
+- [**setup-scripts**](setup-scripts/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently bootstrap `zz_use` from `tomgrv/scripts`, optionally installing specific scripts.
+- [**setup-gitversion**](setup-gitversion/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently install the `gitversion` devcontainer feature's toolchain (GitVersion CLI plus `gv`/`bump-tag`/`bump-changelog`/`bump-version`).
+- [**setup-gitflow**](setup-gitflow/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Install the git-flow extension if missing, then initialize it against the checked-out repo.
 - [**setup-php**](setup-php/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup PHP, Composer, and extensions as per composer for CI jobs.
 - [**setup-node**](setup-node/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup Node.js and npm for CI jobs.
 - [**setup-reviewdog**](setup-reviewdog/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup reviewdog for CI jobs.

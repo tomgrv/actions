@@ -1,0 +1,35 @@
+# @format
+
+# @package tomgrv/actions/setup-scripts
+
+name: Setup Scripts
+description: Idempotently bootstrap zz_use from tomgrv/scripts, optionally installing specific scripts onto PATH.
+author: Perspikapps
+branding:
+  icon: download
+  color: blue
+
+inputs:
+  scripts:
+    description: Space-separated tomgrv/scripts tool names to zz_use after bootstrapping (e.g. "git-release-beta git-release-prod"). Leave empty to only bootstrap zz_use itself.
+    required: false
+    default: ''
+  scripts-ref:
+    description: tomgrv/scripts ref (tag/branch/commit) every name in `scripts` is pinned to, as "<name>@<ref>". Leave empty to use each script's own default origin/ref.
+    required: false
+    default: ''
+  scripts-branch:
+    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz_use (default "main", typically overridden to a development branch during integration testing).
+    required: false
+    default: main
+
+runs:
+  using: composite
+  steps:
+    - name: Bootstrap zz_use and install requested scripts
+      shell: sh
+      env:
+        SCRIPTS: ${{ inputs.scripts }}
+        SCRIPTS_REF: ${{ inputs.scripts-ref }}
+        ZZ_SCRIPTS_BRANCH: ${{ inputs.scripts-branch }}
+      run: sh -c "${{ github.action_path }}/run.sh"
