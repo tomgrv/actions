@@ -6,8 +6,11 @@ Runs `git-release-beta` then `git-release-prod` — the git-flow beta→prod
 promotion every `tomgrv`/`perspikapps` repo releases through — against
 the already-checked-out repo. Pulls both commands from
 [`tomgrv/scripts`](https://github.com/tomgrv/scripts#git-utilities)
-(pinned via `scripts-ref`) instead of installing a whole devcontainer
-feature just for two scripts.
+(pinned via `scripts-ref`, via [`setup-scripts`](../setup-scripts/README.md))
+and installs the [GitVersion toolchain](../setup-gitversion/README.md) both
+scripts depend on to compute the release version and bump the
+changelog/tag, instead of installing a whole devcontainer feature for
+either.
 
 Assumes the caller has already checked out the repo (`fetch-depth: 0`,
 `ref: develop`) — this action doesn't do that itself, since checkout

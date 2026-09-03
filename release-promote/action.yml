@@ -36,6 +36,9 @@ runs:
         scripts: git-release-beta git-release-prod
         scripts-ref: ${{ inputs.scripts-ref }}
 
+    - name: Install GitVersion toolchain
+      uses: tomgrv/actions/setup-gitversion@main
+
     - name: Run beta then prod
       shell: sh
       env:
