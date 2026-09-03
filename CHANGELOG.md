@@ -1,6 +1,26 @@
-<!-- @format -->
-
 # Changelog
+
+## 2.22.0 (2026-09-03)
+
+*Commits from: v2.21.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ add release-promote composite action (#77) ([61dfb85](https://github.com/tomgrv/actions/commit/61dfb85a880019aa7871f1c2bdc99901224aa4ba))
+
+#### Other changes
+
+- Merge branch 'release/2.21.1' ([ab2cf28](https://github.com/tomgrv/actions/commit/ab2cf2822a00339bd1d11585de45cef223e56c51))
+- Merge tag 'v2.21.0' into develop ([b43bf62](https://github.com/tomgrv/actions/commit/b43bf623f53c85eec777a2b52da2feaf556e385a))
+- Merge tag 'v2.21.1' into develop ([ba8d3f3](https://github.com/tomgrv/actions/commit/ba8d3f3b3ea048d69bc9e6e5c20ea11c8eb90fd3))
+- 🔧 allow git push/tag without prompting (#75) ([36857b8](https://github.com/tomgrv/actions/commit/36857b8170521874fdb9572ba852405ed430c020))
+### 📦 release changes
+
+#### Other changes
+
+- 🚀 2.21.1 ([f6e13de](https://github.com/tomgrv/actions/commit/f6e13def0bdaef1a8aa6419e2a2c4284d0d2933b))
 
 ## 2.21.0 (2026-08-25)
 
@@ -660,6 +680,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
----
 
-_Generated on 2026-08-25 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+---
+*Generated on 2026-09-03 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
