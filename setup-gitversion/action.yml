@@ -1,0 +1,17 @@
+# @format
+
+# @package tomgrv/actions/setup-gitversion
+
+name: Setup GitVersion
+description: Idempotently install the gitversion devcontainer feature's toolchain (docker-wrapped GitVersion CLI plus the gv/bump-tag/bump-changelog/bump-version bin scripts).
+author: Perspikapps
+branding:
+  icon: tag
+  color: blue
+
+runs:
+  using: composite
+  steps:
+    - name: Install GitVersion toolchain
+      shell: sh
+      run: sh -c "${{ github.action_path }}/run.sh"

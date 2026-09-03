@@ -1,0 +1,64 @@
+# @format
+
+# @package tomgrv/actions/release-promote
+
+name: Release Promote
+description: Run git-release-beta then git-release-prod (git-flow beta->prod promotion) against the checked-out repo.
+author: Perspikapps
+branding:
+  icon: upload-cloud
+  color: blue
+
+inputs:
+  scripts-ref:
+    description: tomgrv/scripts ref (tag/branch/commit) to pull git-release-beta/git-release-prod from.
+    required: true
+  dry-run:
+    description: Run through beta/prod without pushing to main (verification only).
+    required: false
+    default: 'false'
+  github-token:
+    description: GitHub token used for the release push and for the git bot identity.
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    # The next four steps invoke each sibling action's run.sh directly via
+    # github.action_path rather than `uses: tomgrv/actions/<name>@<ref>`.
+    # Neither a fixed ref (`@main` 404s on a sibling that hasn't reached
+    # main yet -- true for setup-scripts/setup-gitversion right now, and
+    # for anything this repo's own first release ever introduces) nor a
+    # relative `./<name>` (resolves against the *calling* repo's checkout,
+    # not this one -- confirmed live: 404 when called from tomgrv/scripts)
+    # can track "whichever ref release-promote itself was invoked at" for
+    # every caller. github.action_path always points at wherever this
+    # action's own repo was fetched to run this step, and the sibling
+    # directories are checked out right alongside it at that same commit,
+    # so this works for any caller/ref without updates.
+    - name: Configure git bot identity
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../config-bot/run.sh"
+
+    - name: Install release scripts
+      shell: sh
+      env:
+        SCRIPTS: git-release-beta git-release-prod
+        SCRIPTS_REF: ${{ inputs.scripts-ref }}
+      run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
+
+    - name: Install GitVersion toolchain
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
+
+    - name: Install and initialize git-flow
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitflow/run.sh"
+
+    - name: Run beta then prod
+      shell: sh
+      env:
+        DRY_RUN: ${{ inputs.dry-run }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: sh -c "${{ github.action_path }}/run.sh"
