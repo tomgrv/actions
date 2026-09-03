@@ -1,0 +1,68 @@
+# @format
+
+name: 'Release Promote'
+
+# Shared beta->prod release logic, called by every tomgrv/perspikapps repo's
+# own release-main.yml (workflow_dispatch, GitHub UI "Run workflow" button
+# -- no CLI required). One place to fix/pin instead of a drifting copy per
+# repo -- see docs/release-process.md in this repo for the full checklist,
+# including the tag/branch-protection bypass every caller repo needs.
+
+on:
+  workflow_call:
+    inputs:
+      scripts_ref:
+        description: 'tomgrv/scripts ref (tag/branch/commit) to pull git-release-beta/git-release-prod from'
+        type: string
+        required: true
+      dry_run:
+        description: 'Run through beta/prod without pushing to main (verification only)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Set up Node.js
+        uses: tomgrv/actions/setup-node@v2
+
+      - name: Install release scripts
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/tomgrv/scripts/main/setup.sh -o /tmp/zz_setup.sh
+          sh /tmp/zz_setup.sh
+          export PATH="/usr/local/bin:$PATH"
+          zz_use "git-release-beta@${{ inputs.scripts_ref }}" "git-release-prod@${{ inputs.scripts_ref }}"
+          command -v git-release-beta >/dev/null || { echo 'git-release-beta not on PATH after zz_use; check the "Install release scripts" step logs.'; false; }
+          command -v git-release-prod >/dev/null || { echo 'git-release-prod not on PATH after zz_use; check the "Install release scripts" step logs.'; false; }
+          echo "/usr/local/bin" >>"$GITHUB_PATH"
+
+      - name: Configure git identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Run release beta then prod
+        if: inputs.dry_run != true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git-release-beta && git-release-prod || {
+            echo "::error::git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See docs/release-process.md in tomgrv/actions for the exact checklist."
+            exit 1
+          }
+
+      - name: Dry run — skip push
+        if: inputs.dry_run == true
+        run: |
+          echo "dry_run=true, stopping before git-release-beta/git-release-prod would push to main."

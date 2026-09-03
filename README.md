@@ -71,6 +71,15 @@ For more options, see the test runner help:
 - **validate-pr-tests**: Runs the full test suite on every PR and push to main/develop
 - **test-run-deployer**: Runs deployer-specific tests
 
+## Release process
+
+Every repo in the `tomgrv`/`perspikapps` family releases via GitHub →
+Actions → `release-main` → "Run workflow" (no CLI needed), which calls
+this repo's [`release-promote.yml`](.github/workflows/release-promote.yml)
+reusable workflow. See [`docs/release-process.md`](docs/release-process.md)
+for the full picture, including the tag/branch-protection bypass checklist
+every repo needs applied once by hand.
+
 ## Naming convention
 
 `run-*` actions analyze specific files (a `paths`/`path` input scoped to what changed) and report via reviewdog with `-filter-mode=file`: findings are limited to files that are actually part of the run's scope, but not further restricted to changed lines. `check-*` actions validate repository- or PR-wide state (manifests, lock files, secrets, PR metadata) that isn't tied to a specific set of files, and report with `-filter-mode=nofilter`. Both are fixed by the action itself and are not exposed as a configurable input; only `reporter` remains configurable, and it defaults to the value [**setup-reviewdog**](setup-reviewdog/README.md) resolves for the run's context.
