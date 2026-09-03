@@ -26,18 +26,23 @@ runs:
   using: composite
   steps:
     - name: Configure git bot identity
-      uses: tomgrv/actions/config-bot@main
+      # Relative reference, not @main: this resolves against the same
+      # ref/checkout release-promote itself was invoked at, so it works
+      # from a branch (this repo's own release-main.yml, before anything
+      # here has ever been tagged) as well as from a released tag -- @main
+      # would 404 on a sibling action that hasn't reached main yet.
+      uses: ./config-bot
       with:
         github-token: ${{ inputs.github-token }}
 
     - name: Install release scripts
-      uses: tomgrv/actions/setup-scripts@main
+      uses: ./setup-scripts
       with:
         scripts: git-release-beta git-release-prod
         scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Install GitVersion toolchain
-      uses: tomgrv/actions/setup-gitversion@main
+      uses: ./setup-gitversion
 
     - name: Run beta then prod
       shell: sh
