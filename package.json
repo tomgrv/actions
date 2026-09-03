@@ -69,6 +69,7 @@
         "list-wip",
         "publish-npm",
         "rebase-pr",
+        "release-promote",
         "reply-pr-comment",
         "resolve-environment",
         "run-deployer",

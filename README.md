@@ -74,11 +74,12 @@ For more options, see the test runner help:
 ## Release process
 
 Every repo in the `tomgrv`/`perspikapps` family releases via GitHub →
-Actions → `release-main` → "Run workflow" (no CLI needed), which calls
-this repo's [`release-promote.yml`](.github/workflows/release-promote.yml)
-reusable workflow. See [`docs/release-process.md`](docs/release-process.md)
-for the full picture, including the tag/branch-protection bypass checklist
-every repo needs applied once by hand.
+Actions → `release-main` → "Run workflow" (no CLI needed), which checks
+out the repo and calls this repo's
+[**release-promote**](release-promote/README.md) composite action. See
+[`docs/release-process.md`](docs/release-process.md) for the full
+picture, including the tag/branch-protection bypass checklist every repo
+needs applied once by hand.
 
 ## Naming convention
 
@@ -90,6 +91,10 @@ every repo needs applied once by hand.
 > ![stable](https://img.shields.io/badge/stable-green) Stable &nbsp;
 > ![beta](https://img.shields.io/badge/beta-yellow) Beta &nbsp;
 > ![experimental](https://img.shields.io/badge/experimental-orange) Experimental
+
+### 🚀 Release
+
+- [**release-promote**](release-promote/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Run git-release-beta then git-release-prod (git-flow beta→prod promotion).
 
 ### 🔧 Utils
 

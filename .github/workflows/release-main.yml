@@ -15,10 +15,18 @@ permissions:
 
 jobs:
   release-main:
-    uses: ./.github/workflows/release-promote.yml
-    with:
-      # TODO: pin to a released tag of tomgrv/scripts once that repo's own
-      # multi-repo-consistency PR merges and tags.
-      scripts_ref: claude/multi-repo-consistency-release-7se0jy
-      dry_run: ${{ inputs.dry_run == true }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Release promote
+        uses: ./release-promote
+        with:
+          # TODO: pin to a released tag of tomgrv/scripts once that repo's
+          # own multi-repo-consistency PR merges and tags.
+          scripts-ref: claude/multi-repo-consistency-release-7se0jy
+          dry-run: ${{ inputs.dry_run == true }}
