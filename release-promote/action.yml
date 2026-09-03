@@ -30,10 +30,15 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
 
-    - name: Install release scripts and run beta/prod
+    - name: Install release scripts
+      uses: tomgrv/actions/setup-scripts@main
+      with:
+        scripts: git-release-beta git-release-prod
+        scripts-ref: ${{ inputs.scripts-ref }}
+
+    - name: Run beta then prod
       shell: sh
       env:
-        SCRIPTS_REF: ${{ inputs.scripts-ref }}
         DRY_RUN: ${{ inputs.dry-run }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: sh -c "${{ github.action_path }}/run.sh"

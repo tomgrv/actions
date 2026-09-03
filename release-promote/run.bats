@@ -1,12 +1,15 @@
 # @format
 
-# Tests release-promote/run.sh: install release scripts, run beta->prod.
+# Tests release-promote/run.sh: run beta->prod, assuming setup-scripts and
+# config-bot already ran (that's action.yml's job, not run.sh's -- see
+# setup-scripts/run.bats for the bootstrap/install coverage).
 
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/release-promote/run.sh"
   STUB_BIN="$(mktemp -d)"
   export PATH="${STUB_BIN}:${PATH}"
+  unset DRY_RUN
 }
 
 teardown() {
@@ -23,27 +26,23 @@ STUB
   chmod +x "${STUB_BIN}/$1"
 }
 
-@test "requires SCRIPTS_REF" {
+@test "errors when git-release-beta isn't on PATH" {
+  stub git-release-prod 0
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
+  [[ "$output" == *"git-release-beta not on PATH"* ]]
 }
 
-@test "skips the network bootstrap when zz_use is already on PATH" {
-  stub zz_use 0
+@test "errors when git-release-prod isn't on PATH" {
   stub git-release-beta 0
-  stub git-release-prod 0
-  stub curl 1 # would fail loudly if actually invoked
-  export SCRIPTS_REF=v1
-  export DRY_RUN=true
   run sh "$SCRIPT"
-  [ "$status" -eq 0 ]
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"git-release-prod not on PATH"* ]]
 }
 
 @test "dry-run stops before beta/prod run" {
-  stub zz_use 0
   stub git-release-beta 1 # would fail if actually invoked
   stub git-release-prod 1
-  export SCRIPTS_REF=v1
   export DRY_RUN=true
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
@@ -51,20 +50,16 @@ STUB
 }
 
 @test "runs beta then prod when not dry-run" {
-  stub zz_use 0
   stub git-release-beta 0
   stub git-release-prod 0
-  export SCRIPTS_REF=v1
   export DRY_RUN=false
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
 }
 
 @test "errors clearly when prod push fails" {
-  stub zz_use 0
   stub git-release-beta 0
   stub git-release-prod 1
-  export SCRIPTS_REF=v1
   export DRY_RUN=false
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
@@ -72,10 +67,8 @@ STUB
 }
 
 @test "errors clearly when beta fails, without running prod" {
-  stub zz_use 0
   stub git-release-beta 1
   stub git-release-prod 1
-  export SCRIPTS_REF=v1
   export DRY_RUN=false
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]

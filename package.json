@@ -82,6 +82,7 @@
         "setup-node",
         "setup-php",
         "setup-reviewdog",
+        "setup-scripts",
         "split-package",
         "update-labels"
     ],

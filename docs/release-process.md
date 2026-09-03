@@ -39,9 +39,9 @@ For each of `devcontainer-features`, `actions`, `scripts`, and `vps`:
 2. If a **tag protection ruleset** exists (e.g. targeting `v*`), add the
    same bypass actor there too — otherwise the version tag push fails even
    once the branch push succeeds.
-3. Expected failure signature before the bypass is applied: the "Install
-   release scripts and run beta/prod" step fails on the final push/tag
-   with a protected-ref rejection. `release-promote` prints a pointer back
+3. Expected failure signature before the bypass is applied: `release-promote`'s
+   "Run beta then prod" step fails on the final push/tag with a
+   protected-ref rejection. `release-promote` prints a pointer back
    to this checklist when that happens.
 
 ## Verifying without releasing

@@ -99,6 +99,7 @@ needs applied once by hand.
 ### 🔧 Utils
 
 - [**config-bot**](config-bot/README.md) ![stable](https://img.shields.io/badge/stable-green): Configure git bot identity and authentication for CI/CD.
+- [**setup-scripts**](setup-scripts/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently bootstrap `zz_use` from `tomgrv/scripts`, optionally installing specific scripts.
 - [**setup-php**](setup-php/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup PHP, Composer, and extensions as per composer for CI jobs.
 - [**setup-node**](setup-node/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup Node.js and npm for CI jobs.
 - [**setup-reviewdog**](setup-reviewdog/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup reviewdog for CI jobs.
