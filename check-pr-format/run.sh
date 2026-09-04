@@ -36,9 +36,7 @@ fi
 # Ensure commitlint is available for validating commit messages
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
-if [ -n "${commitlint_extends_trimmed}" ]; then
-  npm install -q -D ${commitlint_extends}
-fi
+npm install -q -D devmoji ${commitlint_extends}
 
 # Fetching the PR title from the API (fallback when not passed as input) is
 # a setup detail, not a finding: plain log only. Trim whitespace to detect
@@ -60,7 +58,7 @@ fi
 # Attempt to autocorrect the title with devmoji first, then validate the
 # result with commitlint. Errors are only raised when autocorrection isn't
 # enough (still invalid) or can't be applied (fork PR or missing token).
-formatted_title="$(npx --yes devmoji --text "${PR_TITLE}")"
+formatted_title="$(npx devmoji --text "${PR_TITLE}")"
 
 commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
 commitlint_status=$?
