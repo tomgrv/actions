@@ -42,8 +42,13 @@ runs:
         cache: ${{ inputs.cache }}
         node-version: ${{ inputs.node-version }}
 
+    - name: Detect bare git repository
+      id: git-bare
+      shell: sh
+      run: echo "bare=$(git rev-parse --is-bare-repository 2> /dev/null || echo false)" >> "$GITHUB_OUTPUT"
+
     - name: Install Node dependencies
-      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && inputs.bare != 'true' && hashFiles('package-lock.json') }}
+      if: ${{ env.TOMGRV_NODE_SETUP != 'true' && inputs.bare != 'true' && steps.git-bare.outputs.bare != 'true' && hashFiles('package-lock.json') }}
       shell: sh
       run: npm ci --no-progress --workspaces ${{ inputs.options }}
 

@@ -81,13 +81,18 @@ runs:
         echo "vendor/bin" >> "$GITHUB_PATH"
         echo "$(composer config -g home 2> /dev/null || echo "${HOME:-/root}/.composer")/vendor/bin" >> "$GITHUB_PATH"
 
+    - name: Detect bare git repository
+      id: git-bare
+      shell: sh
+      run: echo "bare=$(git rev-parse --is-bare-repository 2> /dev/null || echo false)" >> "$GITHUB_OUTPUT"
+
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v3
       id: composer-install
       # Keyed on composer.json, not composer.lock: libraries and packages
       # commonly do not commit a lock file, and skipping the install there
       # leaves every downstream action without a vendor directory.
-      if: ${{  env.TOMGRV_PHP_SETUP != 'true' && inputs.bare != 'true' && hashFiles('composer.json') }}
+      if: ${{  env.TOMGRV_PHP_SETUP != 'true' && inputs.bare != 'true' && steps.git-bare.outputs.bare != 'true' && hashFiles('composer.json') }}
       with:
         composer-options: '--no-progress --no-interaction --ansi --no-suggest --optimize-autoloader ${{ inputs.options }}'
 
