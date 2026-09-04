@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.23.0 (2026-09-04)
+
+*Commits from: v2.22.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.22.0' into develop ([e3a307c](https://github.com/tomgrv/actions/commit/e3a307cf8e45181cd138ac475a365cbef44b563a))
+### 📦 check-pr-format changes
+
+#### Bug Fixes
+
+- 🐛 🔧 cache npm deps to fix 7-9min PR title checks (#78) ([96ded51](https://github.com/tomgrv/actions/commit/96ded5134499f4edc6948ff3cb945c0422f0f564))
+
 ## 2.22.0 (2026-09-03)
 
 *Commits from: v2.21.0..HEAD*
@@ -681,5 +696,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
 
+
 ---
-*Generated on 2026-09-03 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
