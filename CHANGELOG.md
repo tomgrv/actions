@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.24.0 (2026-09-04)
+
+*Commits from: v2.23.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 skip npm/composer install when git repo is bare (#82) ([96b6b35](https://github.com/tomgrv/actions/commit/96b6b3524ea16a515d2d4ae377137a3ee975969e))
+
+#### Other changes
+
+- Merge tag 'v2.23.0' into develop ([c09007f](https://github.com/tomgrv/actions/commit/c09007f609719d7cf429839444144db16ab88a48))
+
 ## 2.23.0 (2026-09-04)
 
 *Commits from: v2.22.0..HEAD*
@@ -694,6 +708,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
