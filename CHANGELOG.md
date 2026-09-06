@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.25.0 (2026-09-06)
+
+*Commits from: v2.24.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.24.0' into develop ([e44952a](https://github.com/tomgrv/actions/commit/e44952ac5ce77c720df8128c1f8663c49020b6a4))
+### 📦 setup-scripts changes
+
+#### Features
+
+- ✨ cache extracted tomgrv/scripts archive across CI runs (#84) ([ee56d57](https://github.com/tomgrv/actions/commit/ee56d57f44068986a226827407ba92aa34db6d6a))
+
 ## 2.24.0 (2026-09-04)
 
 *Commits from: v2.23.0..HEAD*
@@ -712,5 +727,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-06 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
