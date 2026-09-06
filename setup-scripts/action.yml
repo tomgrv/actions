@@ -26,6 +26,15 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Cache zz_scripts (extracted tomgrv/scripts archives)
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/zz_scripts
+        key: zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-${{ inputs.scripts-ref }}
+        restore-keys: |
+          zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-
+          zz_scripts-${{ runner.os }}-
+
     - name: Bootstrap zz_use and install requested scripts
       shell: sh
       env:
