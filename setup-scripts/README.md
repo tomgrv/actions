@@ -27,6 +27,15 @@ each script's own default origin/ref (its repo's default branch).
 bootstrapping `zz_use` (default `main`, typically overridden to a
 development branch during integration testing).
 
+## Caching
+
+`zz_use` (from `tomgrv/scripts`) already caches each extracted
+`tomgrv/scripts` archive locally, per origin/ref, under
+`~/.cache/zz_scripts`. This action caches that directory across job runs
+via `actions/cache`, keyed on `scripts-branch`/`scripts-ref`, so the
+archive is only downloaded and extracted once per ref instead of on every
+run.
+
 ## Works well with
 
 - [**release-promote**](../release-promote/README.md) — uses this action
