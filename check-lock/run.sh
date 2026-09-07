@@ -209,7 +209,7 @@ for _target in ${PATHS}; do
   if [ ! -d "${_target}" ]; then
     # Functional: absence of a target to analyze is a notice about the
     # analyzed repo, not a setup error.
-    echo "::notice::Directory not found, skipping: ${_target}" >&2
+    zz_log n "Directory not found, skipping: ${_target}"
     IFS=','
     continue
   fi

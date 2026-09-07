@@ -40,11 +40,11 @@ PR_NUMBER=$(printf '%s'   "${PR_JSON}" | jq -r '.number')
 PR_URL=$(printf '%s'      "${PR_JSON}" | jq -r '.url')
 
 if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
-  echo "::error::Could not resolve head or base branch for PR #${PR_NUMBER}." >&2
+  zz_log e "Could not resolve head or base branch for PR #${PR_NUMBER}."
   exit 1
 fi
 
-echo "::notice::Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})" >&2
+zz_log i "Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})"
 
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
@@ -56,7 +56,7 @@ MERGE_BASE=$(git merge-base "origin/${HEAD_BRANCH}" "origin/${BASE_BRANCH}")
 BASE_TIP=$(git rev-parse "origin/${BASE_BRANCH}")
 
 if [ "${MERGE_BASE}" = "${BASE_TIP}" ]; then
-  echo "::notice::PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do." >&2
+  zz_log n "PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do."
   printf 'action=up-to-date\n'
   printf 'head_branch=%s\n' "${HEAD_BRANCH}"
   printf 'base_branch=%s\n' "${BASE_BRANCH}"
@@ -88,7 +88,7 @@ NEW_HEAD=$(git -C "${TMP_DIR}" rev-parse HEAD)
 # Extract short SHA with awk for annotation
 SHORT_SHA=$(git -C "${TMP_DIR}" rev-parse --short=8 HEAD)
 
-echo "::notice::PR #${PR_NUMBER} successfully rebased. New HEAD: ${SHORT_SHA} (${NEW_HEAD})" >&2
+zz_log n "PR #${PR_NUMBER} successfully rebased. New HEAD: ${SHORT_SHA} (${NEW_HEAD})"
 
 printf 'action=rebased\n'
 printf 'head_branch=%s\n' "${HEAD_BRANCH}"

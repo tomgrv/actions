@@ -45,7 +45,7 @@ git config --global --name-only --get-regexp safe.directory ${WORKDIR} || git co
 
 # Clone the fork repository. If it fails, log an error and exit.
 if ! git clone "${FORK_URL}" "${WORKDIR}" >/dev/null 2>&1; then
-  printf '%s\n' "::error::Failed to clone ${FORK_URL}. Check if the repository exists and the token has access." >&2
+  zz_log e "Failed to clone ${FORK_URL}. Check if the repository exists and the token has access."
   exit 1
 else
   printf '%s\n' "Successfully cloned ${FORK_URL}." >&2
@@ -60,7 +60,7 @@ fi
 # Fetch the split commit from the local monorepo into this clone so the tree
 # object is reachable, then replace the working tree with the split content.
 if ! git fetch "${REPO_ROOT}" "${SPLIT_SHA}" >/dev/null 2>&1; then
-  printf '%s\n' "::error::Failed to fetch split commit ${SPLIT_SHA} from local repository. Check if the splitsh-lite output is correct and the commit exists." >&2
+  zz_log e "Failed to fetch split commit ${SPLIT_SHA} from local repository. Check if the splitsh-lite output is correct and the commit exists."
   exit 1
 else
   printf '%s\n' "Successfully fetched split commit ${SPLIT_SHA}." >&2

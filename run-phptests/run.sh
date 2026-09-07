@@ -334,7 +334,7 @@ fi
 if [ "${exit_code}" -eq 0 ]; then
     printf 'tests-passed=true\n' >> "${GITHUB_OUTPUT}"
 else
-    echo "::error::Test suite failed with exit code ${exit_code}." >&2
+    zz_log e "Test suite failed with exit code ${exit_code}."
     printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
 fi
 

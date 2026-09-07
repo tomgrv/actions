@@ -94,7 +94,7 @@ cat ${TMP_DIR}/existing_labels | tr '\t' '|' | while IFS='|' read -r fullname co
 
     # Attempt to delete label
     if ! gh label delete "${fullname}" --repo "${REPOSITORY}" --yes >&2; then
-      echo "::warning::Failed to delete label: ${fullname}" >&2
+      zz_log w "Failed to delete label: ${fullname}"
     fi
   fi
 done
@@ -109,7 +109,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
 
      # Attempt to create label
     if ! gh label create "${fullname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" >&2; then
-      echo "::warning::Failed to create label: ${fullname}" >&2
+      zz_log w "Failed to create label: ${fullname}"
     fi
 
   # If label exists but color or description differ, attempt to update (case-insensitive name match)
@@ -120,7 +120,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
 
     # Attempt to update label (color and description)
     if ! gh label edit "${oldname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" --name "${fullname}" >&2; then
-      echo "::warning::Failed to update label: ${fullname}" >&2
+      zz_log w "Failed to update label: ${fullname}"
     fi
   fi
 done

@@ -44,7 +44,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
-        echo "::notice::No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan." >&2
+        zz_log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan."
         exit 0
     fi
 else
@@ -79,7 +79,7 @@ if [ ! -s "${phpstan_log}" ]; then
 fi
 
 if grep -qi "no files found to analyse" "${phpstan_log}"; then
-    echo "::notice::PHPStan: No files found to analyse; nothing to do." >&2
+    zz_log n "PHPStan: No files found to analyse; nothing to do."
     exit 0
 fi
 

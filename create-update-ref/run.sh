@@ -3,7 +3,7 @@
 set -eu
 
 if [ -z "${GH_TOKEN:-}" ]; then
-  echo "::error::github-token is required" >&2
+  zz_log e "github-token is required"
   exit 1
 fi
 
@@ -12,7 +12,7 @@ SHA="${SHA:?sha is required}"
 REPO="${REPO:-${GITHUB_REPOSITORY:-}}"
 
 if [ -z "${REPO}" ]; then
-  echo "::error::could not determine repository from REPO or GITHUB_REPOSITORY." >&2
+  zz_log e "could not determine repository from REPO or GITHUB_REPOSITORY."
   exit 1
 fi
 

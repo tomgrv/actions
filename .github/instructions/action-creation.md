@@ -156,7 +156,7 @@ fi
 
 # Main logic here. A notice is warranted because this is a fact about the
 # analyzed repository (e.g. nothing matched the filter), not about setup.
-echo "::notice::Nothing to process, target path is empty." >&2
+zz_log n "Nothing to process, target path is empty."
 
 # Output to GITHUB_OUTPUT
 printf 'output-name=%s\n' "${value}"
@@ -178,11 +178,11 @@ printf 'output-name=%s\n' "${value}"
 
 ### Logging Conventions
 
-GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. Reserve them for facts about that repository - the thing being analyzed or acted upon - not for this toolkit's own setup:
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `dispatch.sh` use) no annotation line is emitted at all.
 
-- **Setup/config points stay in plain logs** via `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above): `zz_log i "..."` for informational setup detail, `zz_log w "..."` for a setup warning, and `zz_log e "..."` for a fatal setup problem (still followed by `exit 1` - only the annotation is dropped, not the failure). Covers things like missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), an input left at its default (`"PATHS not set, using default: app"`), or a bad/missing config file path. These are exactly as actionable printed in the job log as they would be as an annotation, but they are not something about the analyzed repository's code, so they must not be tagged `::error::`/`::warning::`/`::notice::`.
-- **`::notice::` for facts about the analyzed repository**: no files matched the target path/filter, a target directory or manifest is absent, nothing changed, a PR is already up to date. Example: "no PHP files to analyze" is a notice; "the `phpstan` binary is missing" is a plain log (`zz_log`). These GitHub workflow-command annotations are unchanged by the `zz_log` convention above - they stay exactly as `echo "::notice::..." >&2`.
-- **`::warning::`/`::error::` for the analysis outcome itself**: this is usually produced by the wrapped tool via reviewdog (checkstyle/sarif/rdjson piped through `reviewdog`), not by an `echo` in `run.sh`. Where `run.sh` does emit one directly (e.g. a test suite failing, a PR title failing commitlint), it must be reporting the actual result of checking the target, not a wrapper-script problem. Like the notices above, these annotations are unaffected by the `zz_log` convention.
+- **`zz_log e "..."`/`zz_log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz_log e` is still followed by `exit 1` when fatal.
+- **`zz_log n "..."` only for data the step generated, or a silent skip/no-op the user needs explained** - never to trace a plain success. Data: a PR's number/URL, a rebase's new HEAD SHA - information the step produced that the user has no other way to see. Silent skip: the step ran but did nothing and didn't fail - a missing/empty target, no matching changed files, a PR already up to date - because without the notice that looks indistinguishable from "ran cleanly, found nothing wrong". If a message is just confirming an operation succeeded (imported, title validated, rule exception granted) with no new data attached, it's `zz_log i` instead, however satisfying it feels to report.
+- **`zz_log i "..."` for everything else**: routine progress ("Cloning ...", "Rebasing PR #X onto Y..."), an input left at its default, and plain success confirmations that carry no new data.
 
 ### Documentation (README.md)
 

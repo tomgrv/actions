@@ -10,7 +10,7 @@ REPO="${REPO:-${GITHUB_REPOSITORY:-}}"
 if [ -z "$REPO" ]; then
   REPO=$(git config --get remote.origin.url | sed -E 's/.*[:\/]([^\/]+\/[^\.]+)(\.git)?$/\1/')
   if [ -z "$REPO" ]; then
-    echo "::error:: could not determine repository from GITHUB_REPOSITORY or git remote." >&2
+    zz_log e "could not determine repository from GITHUB_REPOSITORY or git remote."
     exit 1
   fi
 fi
@@ -33,7 +33,7 @@ if [ -n "$WORKFLOWS" ]; then
     if [ -n "$wf_id" ]; then
       workflow_ids="${workflow_ids} ${wf_id}"
     else
-      echo "::warning:: workflow '${wf_file}' not found, skipping." >&2
+      zz_log w "workflow '${wf_file}' not found, skipping."
     fi
   done
 else
@@ -41,7 +41,7 @@ else
 fi
 
 if [ -z "$(echo "$workflow_ids" | tr -d ' ')" ]; then
-  echo "::warning:: No workflows found." >&2
+  zz_log w "No workflows found."
   exit 0
 fi
 
