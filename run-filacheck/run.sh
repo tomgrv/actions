@@ -21,7 +21,14 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-FILACHECK_PATH="${FILACHECK_PATH:-${1:-app/Filament}}"
+# FILACHECK_PATH is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run FilaCheck" "$0" "$@" <<-help
+	- path	filacheck_path	Path to check (default: app/Filament)
+help
+)"
+
+FILACHECK_PATH="${FILACHECK_PATH:-${filacheck_path:-app/Filament}}"
 DETAILED="${DETAILED:-false}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"

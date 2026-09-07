@@ -10,7 +10,14 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-LIST_PATHS="${LIST_PATHS:-${1:-.}}"
+# LIST_PATHS is normally supplied via action.yml's env block; the positional
+# fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "List WIP files" "$0" "$@" <<-help
+	- path	list_paths	Comma-separated list of paths to restrict the list to (default: .)
+help
+)"
+
+LIST_PATHS="${LIST_PATHS:-${list_paths:-.}}"
 LIST_EXTENSIONS="${LIST_EXTENSIONS:-php}"
 LIST_BASE_REF="${LIST_BASE_REF:-${GITHUB_BASE_REF:-}}"
 

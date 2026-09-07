@@ -42,7 +42,7 @@ runs:
     - name: Setup scripts toolchain
       uses: tomgrv/actions/setup-scripts@v2
       with:
-        scripts: zz_log
+        scripts: zz_log zz_args
 
     - name: List WIP files
       id: list

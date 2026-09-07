@@ -33,7 +33,12 @@ REVIEWDOG_FILTER_MODE="nofilter"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
-PATHS="${1:-.}"
+eval "$(zz_args "Check composer/npm lock coherence" "$0" "$@" <<-help
+	- path	paths	Comma-separated list of paths to check (default: .)
+help
+)"
+
+PATHS="${paths:-.}"
 MAX_DETAILS=20
 
 FINDINGS=$(mktemp)

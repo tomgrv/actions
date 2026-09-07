@@ -19,7 +19,14 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+# TARGET_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run PHPStan" "$0" "$@" <<-help
+	- path	target_paths	Comma-separated list of paths to analyse (default: app)
+help
+)"
+
+TARGET_PATHS="${TARGET_PATHS:-${target_paths:-app}}"
 PHPSTAN_CONFIG="${PHPSTAN_CONFIG:-}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"

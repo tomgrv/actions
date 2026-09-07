@@ -24,7 +24,15 @@ if [ "${WORKING_DIRECTORY}" != "." ]; then
 fi
 
 TEST_RUNNER="${TEST_RUNNER:-auto}"
-TEST_PATHS="${TEST_PATHS:-${1:-}}"
+
+# TEST_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run PHP test suite" "$0" "$@" <<-help
+	- path	test_paths	Test paths to run (default: whole suite)
+help
+)"
+
+TEST_PATHS="${TEST_PATHS:-${test_paths:-}}"
 TEST_FLAGS="${TEST_FLAGS:-}"
 INSTALL="${INSTALL:-auto}"
 COVERAGE="${COVERAGE:-auto}"

@@ -174,7 +174,7 @@ printf 'output-name=%s\n' "${value}"
 8. Output variables using `printf` format
 9. Make script executable: `chmod +x run.sh`
 10. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
-11. When the script genuinely parses positional CLI args (checked via `"$@"`, not just a single `${1:-default}` convenience fallback for local `dispatch.sh` use), use `zz_args` instead of hand-rolled parsing - see `list-dirty/run.sh` for this repo's example, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - do not force `zz_args` onto those.
+11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `dispatch.sh` use, not only multi-flag parsing - use `zz_args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz_args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
 
 ### Logging Conventions
 
