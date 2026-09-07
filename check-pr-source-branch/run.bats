@@ -34,17 +34,23 @@ run_check() {
 @test "restricted branch without hotfix in title fails" {
   run run_check "main" "feat: add thing"
   [ "$status" -eq 1 ]
-  echo "$output" | grep -q "::error::"
+  echo "$output" | grep -q "cannot originate from"
 }
 
 @test "restricted branch with empty title fails" {
   run run_check "main" ""
   [ "$status" -eq 1 ]
-  echo "$output" | grep -q "::error::"
+  echo "$output" | grep -q "cannot originate from"
 }
 
 @test "custom restricted branch is honored" {
   run run_check "release" "feat: add thing" "release"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -q "cannot originate from"
+}
+
+@test "restricted branch without hotfix in title emits a GitHub error annotation" {
+  run env GITHUB_ACTIONS=true PATH="$PATH" sh -c 'export SOURCE_BRANCH=main PR_TITLE="feat: add thing"; sh "'"$SCRIPT"'"'
   [ "$status" -eq 1 ]
   echo "$output" | grep -q "::error::"
 }

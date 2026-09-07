@@ -30,9 +30,5 @@ error_message="PRs cannot originate from the '${RESTRICTED_BRANCH}' branch unles
 Rule: Default PR source branch is not '${RESTRICTED_BRANCH}'.
 - Only create PRs from '${RESTRICTED_BRANCH}' if explicitly requested or marked as 'hotfix/...'.
 - Update your branch name or create a new PR from the default development branch."
-# Percent-encode newlines for GitHub annotation: kept as a raw ::error::
-# echo rather than zz_log e, whose automatic annotation prints the message
-# verbatim on one line and would corrupt this multi-line report.
-escaped_error=$(printf '%s\n' "${error_message}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
-echo "::error::${escaped_error}"
+zz_log e "${error_message}"
 exit 1
