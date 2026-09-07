@@ -17,11 +17,18 @@ PHPINSIGHTS_BIN="phpinsights"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
-TARGET_PATHS="${TARGET_PATHS:-${1:-app}}"
+# TARGET_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run PHP Insights" "$0" "$@" <<-help
+	- path	target_paths	Comma-separated list of paths to analyse (default: app)
+help
+)"
+
+TARGET_PATHS="${TARGET_PATHS:-${target_paths:-app}}"
 PHPINSIGHTS_CONFIG_PATH="${PHPINSIGHTS_CONFIG_PATH:-}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
@@ -48,7 +55,7 @@ fi
 
 if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
     if [ ! -f "${PHPINSIGHTS_CONFIG_PATH}" ]; then
-        echo "Error: config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}" >&2
+        zz_log e "config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}"
         exit 1
     fi
     CONFIG_FLAG="--config-path=${PHPINSIGHTS_CONFIG_PATH}"

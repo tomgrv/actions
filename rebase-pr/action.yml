@@ -47,6 +47,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Rebase pull request
       id: rebase-pr
       shell: sh

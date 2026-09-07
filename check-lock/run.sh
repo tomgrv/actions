@@ -11,18 +11,18 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if ! command -v reviewdog >/dev/null 2>&1; then
-  echo "Error: reviewdog could not be found. Please install it to run this action." >&2
+  zz_log e "reviewdog could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq could not be found. Please install it to run this action." >&2
+  zz_log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
@@ -33,7 +33,12 @@ REVIEWDOG_FILTER_MODE="nofilter"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
-PATHS="${1:-.}"
+eval "$(zz_args "Check composer/npm lock coherence" "$0" "$@" <<-help
+	- path	paths	Comma-separated list of paths to check (default: .)
+help
+)"
+
+PATHS="${paths:-.}"
 MAX_DETAILS=20
 
 FINDINGS=$(mktemp)
@@ -71,7 +76,7 @@ _check_composer() {
     return 0
   fi
 
-  echo "Validating composer.json / composer.lock in ${_dir}..." >&2
+  zz_log i "Validating composer.json / composer.lock in ${_dir}..."
 
   if _out=$(cd "${_dir}" && composer validate --strict --no-interaction 2>&1); then
     _exit=0
@@ -150,7 +155,7 @@ _check_npm() {
     _workspaces='--workspaces --include-workspace-root'
   fi
 
-  echo "Checking npm lock coherence in ${_dir}..." >&2
+  zz_log i "Checking npm lock coherence in ${_dir}..."
 
   # shellcheck disable=SC2086
   if _out=$(cd "${_dir}" && npm ci --dry-run --package-lock-only --no-audit --no-fund ${_workspaces} 2>&1); then
@@ -188,7 +193,7 @@ ${_shown}"
   return 0
 }
 
-echo "Checking lock coherence in: ${PATHS}" >&2
+zz_log i "Checking lock coherence in: ${PATHS}"
 
 set -f
 _oldifs=$IFS
@@ -219,7 +224,7 @@ IFS=$_oldifs
 set +f
 
 if [ -s "${FINDINGS}" ]; then
-  echo "Lock coherence findings:" >&2
+  zz_log i "Lock coherence findings:"
   cat "${FINDINGS}" >&2
 fi
 
@@ -238,7 +243,7 @@ jq -R -s -f "$(dirname "$0")/rdjson.jq" <"${FINDINGS}" | \
 if [ -s "${FINDINGS}" ]; then
   printf 'has-drift=true\n' >> "${GITHUB_OUTPUT}"
 else
-  echo "All lock files are in sync." >&2
+  zz_log i "All lock files are in sync."
   printf 'has-drift=false\n' >> "${GITHUB_OUTPUT}"
 fi
 printf 'drift-files=%s\n' "${DRIFT_FILES}" >> "${GITHUB_OUTPUT}"

@@ -9,11 +9,11 @@ set -eu
 DRY_RUN="${DRY_RUN:-false}"
 
 command -v git-release-beta > /dev/null || {
-    echo "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)" >&2
+    zz_log e "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 command -v git-release-prod > /dev/null || {
-    echo "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)" >&2
+    zz_log e "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 

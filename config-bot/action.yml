@@ -33,6 +33,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Get GitHub App User ID
       id: get-user-id
       shell: sh

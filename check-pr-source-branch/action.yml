@@ -18,6 +18,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Check PR source branch
       shell: sh
       env:

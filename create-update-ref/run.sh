@@ -20,11 +20,11 @@ SHORT_REF="${REF#refs/}"
 
 if gh api "repos/${REPO}/git/ref/${SHORT_REF}" >/dev/null 2>&1; then
   gh api --method PATCH "repos/${REPO}/git/refs/${SHORT_REF}" -f sha="${SHA}" -F force=true >/dev/null
-  echo "Updated ref ${REF} -> ${SHA}" >&2
+  zz_log i "Updated ref ${REF} -> ${SHA}"
   printf 'action=updated\n'
 else
   gh api --method POST "repos/${REPO}/git/refs" -f ref="${REF}" -f sha="${SHA}" >/dev/null
-  echo "Created ref ${REF} -> ${SHA}" >&2
+  zz_log i "Created ref ${REF} -> ${SHA}"
   printf 'action=created\n'
 fi
 

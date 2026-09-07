@@ -6,17 +6,17 @@ set -eu
 
 # Missing tooling/tokens are setup concerns: plain log only.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo "Error: gh CLI could not be found. Please install it." >&2
+  zz_log e "gh CLI could not be found. Please install it."
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq could not be found. Please install it." >&2
+  zz_log e "jq could not be found. Please install it."
   exit 1
 fi
 

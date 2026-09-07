@@ -11,13 +11,13 @@ BOT_EMAIL="${BOT_EMAIL:-341898282+github-actions[bot]@users.noreply.github.com}"
 # Input defaulting is a setup detail, not a finding: plain log only, no
 # GitHub annotation.
 if [ "${BOT_NAME}" = "github-actions[bot]" ]; then
-  echo "BOT_NAME not set, using default: github-actions[bot]" >&2
+  zz_log i "BOT_NAME not set, using default: github-actions[bot]"
 fi
 if [ "${BOT_EMAIL}" = "341898282+github-actions[bot]@users.noreply.github.com" ]; then
-  echo "BOT_EMAIL not set, using default: 341898282+github-actions[bot]@users.noreply.github.com" >&2
+  zz_log i "BOT_EMAIL not set, using default: 341898282+github-actions[bot]@users.noreply.github.com"
 fi
 
-echo "Setting git user name and email for bot as ${BOT_NAME} <${BOT_EMAIL}>" >&2
+zz_log i "Setting git user name and email for bot as ${BOT_NAME} <${BOT_EMAIL}>"
 
 git config --global user.email "${BOT_EMAIL}"
 git config --global user.name "${BOT_NAME}"

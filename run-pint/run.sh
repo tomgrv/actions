@@ -15,11 +15,18 @@ PINT_BIN="pint"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
-PINT_PATHS="${PINT_PATHS:-${1:-app}}"
+# PINT_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run Laravel Pint" "$0" "$@" <<-help
+	- path	pint_paths	Comma-separated list of paths to analyse (default: app)
+help
+)"
+
+PINT_PATHS="${PINT_PATHS:-${pint_paths:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
 PINT_CONFIG="${PINT_CONFIG:-}"
 BLADE="${BLADE:-false}"
@@ -48,7 +55,7 @@ fi
 
 if [ -n "${PINT_CONFIG}" ]; then
     if [ ! -f "${PINT_CONFIG}" ]; then
-        echo "Error: config file not found: ${PINT_CONFIG}" >&2
+        zz_log e "config file not found: ${PINT_CONFIG}"
         exit 1
     fi
     RULES_FLAG="--config=${PINT_CONFIG}"

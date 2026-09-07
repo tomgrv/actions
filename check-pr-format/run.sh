@@ -10,19 +10,19 @@
 
 # Ensure gh CLI is available for fetching PR title
 if ! command -v gh >/dev/null 2>&1; then
-  echo "Error: gh CLI could not be found. Please install it to run this action." >&2
+  zz_log e "gh CLI could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Ensure jq is available for parsing JSON
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq could not be found. Please install it to run this action." >&2
+  zz_log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Validate required environment variables
 if [ -z "${REPO:-}" ]; then
-  echo "Error: REPO (github.repository) is required" >&2
+  zz_log e "REPO (github.repository) is required"
   exit 1
 fi
 
@@ -30,7 +30,7 @@ fi
 # when running locally, it defaults to empty (treated as a fork PR).
 HEAD_REPO_FULL_NAME="${HEAD_REPO_FULL_NAME:-}"
 if [ -z "${HEAD_REPO_FULL_NAME}" ]; then
-  echo "HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped" >&2
+  zz_log i "HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped"
 fi
 
 # Ensure commitlint is available for validating commit messages
@@ -43,11 +43,11 @@ npm install -q -D devmoji ${commitlint_extends}
 # truly empty titles from YAML expansion of null/missing fields.
 PR_TITLE_TRIMMED="$(printf '%s' "${PR_TITLE:-}" | tr -d ' \t')"
 if [ -z "${PR_TITLE_TRIMMED}" ]; then
-  echo "PR_TITLE not set or empty, fetching from GitHub API" >&2
+  zz_log i "PR_TITLE not set or empty, fetching from GitHub API"
   PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
   # Validate that we got a title from the API
   if [ -z "${PR_TITLE}" ]; then
-    echo "Error: PR title could not be fetched from GitHub API" >&2
+    zz_log e "PR title could not be fetched from GitHub API"
     exit 1
   fi
 fi
@@ -76,7 +76,7 @@ fi
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
   if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
-    echo "PR title updated: ${formatted_title}" >&2
+    zz_log i "PR title updated: ${formatted_title}"
   else
     error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
 

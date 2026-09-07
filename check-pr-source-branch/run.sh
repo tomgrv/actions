@@ -9,7 +9,7 @@ SOURCE_BRANCH="${SOURCE_BRANCH:?SOURCE_BRANCH is required}"
 PR_TITLE="${PR_TITLE:-}"
 
 if [ -z "${RESTRICTED_BRANCH:-}" ]; then
-    echo "RESTRICTED_BRANCH not set, using default: main" >&2
+    zz_log i "RESTRICTED_BRANCH not set, using default: main"
 fi
 RESTRICTED_BRANCH="${RESTRICTED_BRANCH:-main}"
 

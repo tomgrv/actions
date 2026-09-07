@@ -13,7 +13,7 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if ! command -v reviewdog >/dev/null 2>&1; then
-  echo "Error: reviewdog could not be found. Please install it to run this action." >&2
+  zz_log e "reviewdog could not be found. Please install it to run this action."
   exit 1
 fi
 
@@ -21,17 +21,17 @@ fi
 # is a setup concern, not a security finding: plain log only, no GitHub
 # annotation (see .github/instructions/action-creation.md).
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
   exit 1
 fi
 
 if ! command -v npm >/dev/null 2>&1; then
-  echo "Error: npm could not be found. Please install it to run this action." >&2
+  zz_log e "npm could not be found. Please install it to run this action."
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq could not be found. Please install it to run this action." >&2
+  zz_log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
@@ -43,7 +43,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 MAX_DIAGNOSTICS="${MAX_DIAGNOSTICS:-40}"
 
-echo "Running npm audit..." >&2
+zz_log i "Running npm audit..."
 
 WORKSPACES_FLAGS=""
 if [ -f "package.json" ] && jq -e '.workspaces' package.json >/dev/null 2>&1; then

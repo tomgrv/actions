@@ -14,16 +14,16 @@ OPTIONS="${OPTIONS:-}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${WORKDIR}" = "." ]; then
-  echo "WORKDIR not set, using default: ." >&2
+  zz_log i "WORKDIR not set, using default: ."
 fi
 
-echo "Checking for changes in: ${WORKDIR}" >&2
+zz_log i "Checking for changes in: ${WORKDIR}"
 
 # shellcheck disable=SC2086
 if [ -n "$(git status --porcelain ${OPTIONS} -- "${WORKDIR}")" ]; then
   echo "has-changes=true"
-  echo "Changes detected in ${WORKDIR}" >&2
+  zz_log i "Changes detected in ${WORKDIR}"
 else
-  echo "No changes detected in ${WORKDIR}" >&2
+  zz_log i "No changes detected in ${WORKDIR}"
   echo "has-changes=false" 
 fi
