@@ -22,7 +22,7 @@ node_packages='[]'
 WORKDIR="${WORKDIR:-$(pwd)}"
 FILTER="${FILTER:-}"
 
-if command -v composer >/dev/null 2>&1; then
+if command -v composer >/dev/null 2>&1 && [ -f "$WORKDIR/composer.json" ]; then
 
     zz_log i "Discovering Composer packages..."
 
@@ -55,8 +55,8 @@ if command -v composer >/dev/null 2>&1; then
     zz_log i "Discovered $(echo "$composer_packages" | jq 'length') Composer packages."
 
 else
-    # Missing binary is a setup concern, not a finding: plain log only.
-    zz_log i "Composer not found, skipping Composer package discovery."
+    # Missing binary/manifest is a setup concern, not a finding: plain log only.
+    zz_log i "Composer or composer.json not found, skipping Composer package discovery."
 fi
 
 if [ -f "$WORKDIR/package.json" ]; then
