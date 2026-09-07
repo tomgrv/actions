@@ -107,6 +107,26 @@ runs:
 
 ### Shell Script (run.sh)
 
+New actions bootstrap the [`tomgrv/scripts`](https://github.com/tomgrv/scripts) `zz_*` bundle via the [`setup-scripts`](../../setup-scripts/README.md) action as a composite step before the `run.sh` step, requesting at least `zz_log` (add `zz_args` too when the action genuinely parses positional CLI args - see point 4 below). `run.sh` itself does not need to `. zz_colors` - `zz_log` sources it internally (see `tomgrv/scripts`' `zz_log/run.sh`), so scripts just call `zz_log <level> <msg>` once `zz_use`/`setup-scripts` has put it on `PATH`.
+
+```yaml
+runs:
+    using: composite
+    steps:
+        - name: Setup scripts toolchain
+          uses: tomgrv/actions/setup-scripts@v2
+          with:
+              scripts: zz_log
+
+        - name: Step name
+          id: step-id
+          shell: sh
+          env:
+              ENV_VAR: ${{ inputs.parameter-name }}
+              GITHUB_TOKEN: ${{ inputs.github-token }}
+          run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
+```
+
 ```bash
 #!/usr/bin/sh
 
@@ -121,7 +141,7 @@ PARAMETER="${PARAMETER:-default-value}"
 # Setup problems (missing token/binary, bad input, defaulted values) are
 # plain logs, not GitHub annotations - see "Logging conventions" below.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN is required"
     exit 1
 fi
 
@@ -136,7 +156,7 @@ fi
 
 # Main logic here. A notice is warranted because this is a fact about the
 # analyzed repository (e.g. nothing matched the filter), not about setup.
-echo "::notice::Nothing to process, target path is empty." >&2
+zz_log n "Nothing to process, target path is empty."
 
 # Output to GITHUB_OUTPUT
 printf 'output-name=%s\n' "${value}"
@@ -149,19 +169,20 @@ printf 'output-name=%s\n' "${value}"
 3. Use `set -eu` (or `set -ef`/`set -e` when a `noglob`/pipefail comment explains the exception) to exit on errors and undefined variables
 4. Use `${VAR:-default}` for optional variables with defaults
 5. Use `${VAR:?error message}` for required variables
-6. Send user messages to stderr (`>&2`)
+6. Send user messages to stderr - plain logs via `zz_log` (see below), which writes to stderr itself
 7. Follow the **logging conventions** below for `::notice::`/`::warning::`/`::error::` vs. plain logs
 8. Output variables using `printf` format
 9. Make script executable: `chmod +x run.sh`
 10. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
+11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `dispatch.sh` use, not only multi-flag parsing - use `zz_args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz_args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
 
 ### Logging Conventions
 
-GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. Reserve them for facts about that repository - the thing being analyzed or acted upon - not for this toolkit's own setup:
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `dispatch.sh` use) no annotation line is emitted at all.
 
-- **Setup/config points stay in plain logs** (`echo "..." >&2`, prefixed `Error:` when fatal): missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), an input left at its default (`"PATHS not set, using default: app"`), or a bad/missing config file path. These are exactly as actionable printed in the job log as they would be as an annotation, but they are not something about the analyzed repository's code, so they must not be tagged `::error::`/`::warning::`/`::notice::`. Still `exit 1` when fatal - only the annotation is dropped, not the failure.
-- **`::notice::` for facts about the analyzed repository**: no files matched the target path/filter, a target directory or manifest is absent, nothing changed, a PR is already up to date. Example: "no PHP files to analyze" is a notice; "the `phpstan` binary is missing" is a plain log.
-- **`::warning::`/`::error::` for the analysis outcome itself**: this is usually produced by the wrapped tool via reviewdog (checkstyle/sarif/rdjson piped through `reviewdog`), not by an `echo` in `run.sh`. Where `run.sh` does emit one directly (e.g. a test suite failing, a PR title failing commitlint), it must be reporting the actual result of checking the target, not a wrapper-script problem.
+- **`zz_log e "..."`/`zz_log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz_log e` is still followed by `exit 1` when fatal.
+- **`zz_log n "..."` only for data the step generated, or a silent skip/no-op the user needs explained** - never to trace a plain success. Data: a PR's number/URL, a rebase's new HEAD SHA - information the step produced that the user has no other way to see. Silent skip: the step ran but did nothing and didn't fail - a missing/empty target, no matching changed files, a PR already up to date - because without the notice that looks indistinguishable from "ran cleanly, found nothing wrong". If a message is just confirming an operation succeeded (imported, title validated, rule exception granted) with no new data attached, it's `zz_log i` instead, however satisfying it feels to report.
+- **`zz_log i "..."` for everything else**: routine progress ("Cloning ...", "Rebasing PR #X onto Y..."), an input left at its default, and plain success confirmations that carry no new data.
 
 ### Documentation (README.md)
 

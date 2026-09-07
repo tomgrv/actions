@@ -53,6 +53,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Degit package
       id: degit-package
       shell: sh

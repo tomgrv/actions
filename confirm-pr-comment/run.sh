@@ -6,12 +6,12 @@ set -eu
 
 # Missing tooling/tokens are setup concerns: plain log only.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo "Error: gh CLI could not be found. Please install it." >&2
+  zz_log e "gh CLI could not be found. Please install it."
   exit 1
 fi
 
@@ -60,20 +60,20 @@ case "${REACTION_CONTENT}" in
   +1|-1|laugh|confused|heart|hooray|rocket|eyes)
     ;;
   *)
-    echo "Error: Invalid reaction '${REACTION}'. Use one of: +1, -1, laugh, confused, heart, hooray, rocket, eyes." >&2
+    zz_log e "Invalid reaction '${REACTION}'. Use one of: +1, -1, laugh, confused, heart, hooray, rocket, eyes."
     exit 1
     ;;
 esac
 
 if [ -z "${COMMENT_URL}" ]; then
   if [ -z "${COMMENT_ID}" ] || [ -z "${REPOSITORY}" ]; then
-    echo "Error: Provide comment-url, or comment-id with repository." >&2
+    zz_log e "Provide comment-url, or comment-id with repository."
     exit 1
   fi
   COMMENT_URL="https://api.github.com/repos/${REPOSITORY}/issues/comments/${COMMENT_ID}"
 fi
 
-echo "Adding reaction '${REACTION_CONTENT}' to comment ${COMMENT_URL}" >&2
+zz_log i "Adding reaction '${REACTION_CONTENT}' to comment ${COMMENT_URL}"
 
 REACTION_RESULT=$(gh api \
   --method POST \
@@ -86,7 +86,7 @@ REACTION_RESULT=$(gh api \
 REACTION_ID=$(printf '%s' "${REACTION_RESULT}" | cut -f1)
 REACTION_CREATED=$(printf '%s' "${REACTION_RESULT}" | cut -f2)
 
-echo "Reaction added: id=${REACTION_ID}, content=${REACTION_CREATED}" >&2
+zz_log i "Reaction added: id=${REACTION_ID}, content=${REACTION_CREATED}"
 
 printf 'reaction-id=%s\n' "${REACTION_ID}"
 printf 'reaction-content=%s\n' "${REACTION_CREATED}"

@@ -20,23 +20,23 @@ DRY_RUN="${DRY_RUN:-false}"
 
 # Validate required tools
 if ! command -v node >/dev/null 2>&1; then
-  echo "Error: node could not be found. Please install Node.js to run this action." >&2
+  zz_log e "node could not be found. Please install Node.js to run this action."
   exit 1
 fi
 
 if ! command -v npm >/dev/null 2>&1; then
-  echo "Error: npm could not be found. Please install npm to run this action." >&2
+  zz_log e "npm could not be found. Please install npm to run this action."
   exit 1
 fi
 
 # Navigate to package directory
 if [ "${PACKAGE_PATH}" != "." ]; then
-  cd "${PACKAGE_PATH}" || { echo "Error: Could not change to directory '${PACKAGE_PATH}'" >&2; exit 1; }
+  cd "${PACKAGE_PATH}" || { zz_log e "Could not change to directory '${PACKAGE_PATH}'"; exit 1; }
 fi
 
 # Validate package.json exists
 if [ ! -f "package.json" ]; then
-  echo "Error: package.json not found in '${PACKAGE_PATH}'" >&2
+  zz_log e "package.json not found in '${PACKAGE_PATH}'"
   exit 1
 fi
 
@@ -45,11 +45,11 @@ PACKAGE_NAME=$(node -e "console.log(require('./package.json').name)")
 PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version)")
 
 if [ -z "${PACKAGE_NAME}" ] || [ -z "${PACKAGE_VERSION}" ]; then
-  echo "Error: Failed to extract package name or version from package.json" >&2
+  zz_log e "Failed to extract package name or version from package.json"
   exit 1
 fi
 
-echo "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}" >&2
+zz_log i "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}"
 
 # Request OIDC token from GitHub
 # This uses the built-in support in GitHub Actions for requesting ID tokens
@@ -100,7 +100,7 @@ OIDC_TOKEN=$( \
 )
 
 if [ -z "${OIDC_TOKEN}" ]; then
-  echo "Error: Failed to obtain OIDC token from GitHub Actions" >&2
+  zz_log e "Failed to obtain OIDC token from GitHub Actions"
   exit 1
 fi
 
@@ -129,17 +129,17 @@ fi
 # Add dry-run flag if enabled
 if [ "${DRY_RUN}" = "true" ]; then
   PUBLISH_CMD="${PUBLISH_CMD} --dry-run"
-  echo "Running in dry-run mode (no upload will occur)" >&2
+  zz_log i "Running in dry-run mode (no upload will occur)"
 fi
 
 # Execute publish
 if eval "${PUBLISH_CMD}"; then
-  echo "Successfully published ${PACKAGE_NAME}@${PACKAGE_VERSION}" >&2
+  zz_log i "Successfully published ${PACKAGE_NAME}@${PACKAGE_VERSION}"
 
   # Output metadata for downstream steps
   echo "version=${PACKAGE_VERSION}" >> "${GITHUB_OUTPUT}"
   echo "name=${PACKAGE_NAME}" >> "${GITHUB_OUTPUT}"
 else
-  echo "Error: Failed to publish package" >&2
+  zz_log e "Failed to publish package"
   exit 1
 fi

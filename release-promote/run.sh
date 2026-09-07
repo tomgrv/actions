@@ -9,11 +9,11 @@ set -eu
 DRY_RUN="${DRY_RUN:-false}"
 
 command -v git-release-beta > /dev/null || {
-    echo "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)" >&2
+    zz_log e "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 command -v git-release-prod > /dev/null || {
-    echo "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)" >&2
+    zz_log e "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 
@@ -26,5 +26,5 @@ if git-release-beta && git-release-prod; then
     exit 0
 fi
 
-echo "::error::git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See docs/release-process.md in tomgrv/actions for the exact checklist." >&2
+zz_log e "git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See docs/release-process.md in tomgrv/actions for the exact checklist."
 exit 1

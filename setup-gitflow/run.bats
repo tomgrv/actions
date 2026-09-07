@@ -74,6 +74,15 @@ STUB
 
 @test "errors when no supported package manager is found" {
   stub_git_dispatcher no
+  # zz_log itself needs to resolve on this exclusive PATH -- in real CI it's
+  # put there by the setup-scripts composite step; stub a minimal stand-in
+  # that just prints its message so the assertion below still sees it.
+  cat > "${STUB_BIN}/zz_log" << 'STUB'
+#!/bin/sh
+shift
+echo "$*" >&2
+STUB
+  chmod +x "${STUB_BIN}/zz_log"
   # Exclusive PATH -- this sandbox has a real apt-get on it, which would
   # otherwise mask the branch under test. Invoke via the script's own
   # shebang (an absolute path) rather than `sh "$SCRIPT"`, so resolving

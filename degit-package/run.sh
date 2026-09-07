@@ -6,7 +6,7 @@
 set -eu
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN is required"
     exit 1
 fi
 
@@ -22,11 +22,11 @@ HEAD_BRANCH="${HEAD_BRANCH:-}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${EXCLUDE_PATHS}" = ".github,.devcontainer" ]; then
-  echo "EXCLUDE_PATHS not set, using default: .github,.devcontainer" >&2
+  zz_log i "EXCLUDE_PATHS not set, using default: .github,.devcontainer"
 fi
 
 if [ -z "${SOURCE_ORG}" ] || [ -z "${SOURCE_NAME}" ]; then
-    echo "Error: source-organization and source-repository are required" >&2
+    zz_log e "source-organization and source-repository are required"
     exit 1
 fi
 
@@ -38,14 +38,14 @@ AUTH_HEADER="AUTHORIZATION: basic ${BASIC_CREDENTIAL}"
 WORKDIR=$(mktemp -d)
 git config --global --add safe.directory "${WORKDIR}" >/dev/null 2>&1 || true
 
-echo "Cloning ${SOURCE_URL}/tree/${SOURCE_BRANCH} to temporary directory..." >&2
+zz_log i "Cloning ${SOURCE_URL}/tree/${SOURCE_BRANCH} to temporary directory..."
 
 # Pass the auth header scoped to this single invocation (-c) instead of
 # writing it to global git config: a global http.extraheader would still be
 # active for later steps in the job (e.g. actions/checkout's push), causing
 # git to send two Authorization headers and get rejected.
 if ! git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
-    echo "::error::Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access." >&2
+    zz_log e "Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access."
     exit 1
 fi
 
@@ -70,11 +70,11 @@ for exclude in .git ${EXCLUDE_PATHS}; do
 done
 IFS="${OLD_IFS}"
 
-echo "Syncing files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} (SHA: ${SOURCE_SHA}) to <${TARGET_PATH}> (excluding paths: ${EXCLUDE_PATHS})" >&2
+zz_log i "Syncing files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} (SHA: ${SOURCE_SHA}) to <${TARGET_PATH}> (excluding paths: ${EXCLUDE_PATHS})"
 
 # Sync files from the source repository to the target subdirectory, excluding specified paths.
 if ! mkdir -p "${TARGET_PATH}" && rsync -a --delete ${EXCLUDE_ARGS} "${WORKDIR}/" "${TARGET_PATH}/"; then
-    echo "::error::Failed to sync files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>" >&2
+    zz_log e "Failed to sync files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>"
     exit 1
 fi
 
@@ -86,7 +86,7 @@ if [ -z "$(git status --porcelain "${TARGET_PATH}")" ]; then
     printf 'has-changes=false\n'
     printf 'degit-branch=\n'
 else
-    echo "::notice::Imported ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>" >&2
+    zz_log i "Imported ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>"
     printf 'has-changes=true\n'
     printf 'degit-branch=%s\n' "${HEAD_BRANCH}"
 fi

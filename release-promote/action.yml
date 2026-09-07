@@ -37,16 +37,16 @@ runs:
     # action's own repo was fetched to run this step, and the sibling
     # directories are checked out right alongside it at that same commit,
     # so this works for any caller/ref without updates.
-    - name: Configure git bot identity
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../config-bot/run.sh"
-
     - name: Install release scripts
       shell: sh
       env:
-        SCRIPTS: git-release-beta git-release-prod
+        SCRIPTS: git-release-beta git-release-prod zz_log
         SCRIPTS_REF: ${{ inputs.scripts-ref }}
       run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
+
+    - name: Configure git bot identity
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../config-bot/run.sh"
 
     - name: Install GitVersion toolchain
       shell: sh

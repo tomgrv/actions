@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.26.0 (2026-09-07)
+
+*Commits from: v2.25.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.25.0' into develop ([7a18363](https://github.com/tomgrv/actions/commit/7a183638c2f2611de7b1ef1467f5e23d4a965f97))
+- ♻️ harmonize run.sh logging on zz_log/zz_args bundle (#85) ([b505f47](https://github.com/tomgrv/actions/commit/b505f47738a210561cfe7414b695ca961fc717e5))
+- ♻️ zz_log emits GitHub annotations, migrate manual ::error::/:⚠️: (#87) ([80c7837](https://github.com/tomgrv/actions/commit/80c7837c2ac99483d40f63c70995ac980fa04260))
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 install zz_log before config-bot run.sh (#89) ([0dce31c](https://github.com/tomgrv/actions/commit/0dce31c2cab9cd710b30cfc267101cdc170867f5))
+
+### 📦 setup-node changes
+
+#### Bug Fixes
+
+- 🐛 skip npm cache when no lock file present (#88) ([b929a65](https://github.com/tomgrv/actions/commit/b929a656f4315c496aeeef5dc96fcc00744ece2e))
+
 ## 2.25.0 (2026-09-06)
 
 *Commits from: v2.24.0..HEAD*
@@ -728,5 +751,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-06 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*

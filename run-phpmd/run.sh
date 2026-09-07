@@ -6,7 +6,15 @@ set -e
 
 PHPMD_RULESET="${PHPMD_RULESET:-}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
-PHPMD_PATHS="${PHPMD_PATHS:-${1:-app}}"
+
+# PHPMD_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run PHP Mess Detector" "$0" "$@" <<-help
+	- path	phpmd_paths	Comma-separated list of paths to analyse (default: app)
+help
+)"
+
+PHPMD_PATHS="${PHPMD_PATHS:-${phpmd_paths:-app}}"
 DIRTY="${DIRTY:-false}"
 WIP="${WIP:-false}"
 DIRTY_FILES="${DIRTY_FILES:-}"
@@ -29,7 +37,7 @@ PHPMD_BIN="phpmd"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
@@ -46,7 +54,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
-        echo "::notice::No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD." >&2
+        zz_log n "No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD."
         exit 0
     fi
 else

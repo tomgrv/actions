@@ -51,7 +51,7 @@ fi
 
 for name in gv bump-tag bump-changelog bump-version gitversion; do
     command -v "${name}" > /dev/null || {
-        echo "setup-gitversion: ${name} not on PATH after install" >&2
+        zz_log e "setup-gitversion: ${name} not on PATH after install"
         exit 1
     }
 done

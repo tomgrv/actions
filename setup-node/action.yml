@@ -39,7 +39,10 @@ runs:
       # repository each embed setup-node within the same job.
       if: env.TOMGRV_NODE_SETUP != 'true'
       with:
-        cache: ${{ inputs.cache }}
+        # actions/setup-node fails outright (rather than skipping) when
+        # asked to cache a package manager with no lock file present, so
+        # only request caching once a lock file actually exists.
+        cache: ${{ hashFiles('package-lock.json') && inputs.cache || '' }}
         node-version: ${{ inputs.node-version }}
 
     - name: Detect bare git repository

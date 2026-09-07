@@ -17,14 +17,22 @@ WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 # at the end of this script is a finding worth annotating.
 if [ "${WORKING_DIRECTORY}" != "." ]; then
     if [ ! -d "${WORKING_DIRECTORY}" ]; then
-        echo "Error: Working directory not found: ${WORKING_DIRECTORY}" >&2
+        zz_log e "Working directory not found: ${WORKING_DIRECTORY}"
         exit 1
     fi
     cd "${WORKING_DIRECTORY}" || exit 1
 fi
 
 TEST_RUNNER="${TEST_RUNNER:-auto}"
-TEST_PATHS="${TEST_PATHS:-${1:-}}"
+
+# TEST_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "Run PHP test suite" "$0" "$@" <<-help
+	- path	test_paths	Test paths to run (default: whole suite)
+help
+)"
+
+TEST_PATHS="${TEST_PATHS:-${test_paths:-}}"
 TEST_FLAGS="${TEST_FLAGS:-}"
 INSTALL="${INSTALL:-auto}"
 COVERAGE="${COVERAGE:-auto}"
@@ -39,7 +47,7 @@ MIGRATE="${MIGRATE:-auto}"
 _reject_control_chars() {
     case "$2" in
         *[[:cntrl:]]*)
-            echo "Error: ${1} must not contain control characters or newlines." >&2
+            zz_log e "${1} must not contain control characters or newlines."
             return 1
             ;;
     esac
@@ -79,24 +87,24 @@ if [ ! -f vendor/autoload.php ]; then
     esac
 
     if [ "${_install}" = 'true' ]; then
-        echo "vendor/autoload.php is missing, installing Composer dependencies" >&2
+        zz_log i "vendor/autoload.php is missing, installing Composer dependencies"
 
         # A failed install must not abort the script under `set -e`: the guard
         # below is what turns this into an actionable message and still writes
         # the step outputs.
         if ! command -v composer > /dev/null 2>&1; then
-            echo "Error: composer was not found in PATH, cannot install dependencies." >&2
+            zz_log e "composer was not found in PATH, cannot install dependencies."
         else
-            composer install --no-interaction --no-progress --prefer-dist --ansi >&2 || echo "Error: composer install failed, see the output above." >&2
+            composer install --no-interaction --no-progress --prefer-dist --ansi >&2 || zz_log e "composer install failed, see the output above."
         fi
     fi
 fi
 
 if [ ! -f vendor/autoload.php ]; then
     if [ -f composer.json ]; then
-        echo "Error: Composer dependencies are not installed (vendor/autoload.php is missing). Run setup-php or composer install before this action, or set install to true." >&2
+        zz_log e "Composer dependencies are not installed (vendor/autoload.php is missing). Run setup-php or composer install before this action, or set install to true."
     else
-        echo "Error: No composer.json found in $(pwd). Set working-directory to the package that holds the test suite." >&2
+        zz_log e "No composer.json found in $(pwd). Set working-directory to the package that holds the test suite."
     fi
 
     printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
@@ -123,7 +131,7 @@ _composer_has_test_script() {
     fi
 
     if ! command -v composer > /dev/null 2>&1; then
-        echo "Error: composer was not found in PATH." >&2
+        zz_log e "composer was not found in PATH."
         return 1
     fi
 
@@ -131,7 +139,7 @@ _composer_has_test_script() {
     _probe_out=''
 
     if ! _probe_out="$(composer run-script --list 2> "${_probe_err}")"; then
-        echo "Error: \`composer run-script --list\` failed:" >&2
+        zz_log e "\`composer run-script --list\` failed:"
         cat "${_probe_err}" >&2
         rm -f "${_probe_err}"
         return 1
@@ -159,12 +167,12 @@ _resolve_runner() {
                 return 0
             fi
 
-            echo "Error: No test runner found. Install pest or phpunit, or declare a \"test\" script in composer.json." >&2
+            zz_log e "No test runner found. Install pest or phpunit, or declare a \"test\" script in composer.json."
             return 1
             ;;
         composer)
             if ! _composer_has_test_script; then
-                echo "Error: Runner \"composer\" was requested but no \"test\" script is available in composer.json." >&2
+                zz_log e "Runner \"composer\" was requested but no \"test\" script is available in composer.json."
                 return 1
             fi
 
@@ -179,7 +187,7 @@ _resolve_runner() {
                 return 0
             fi
 
-            echo "Error: Requested test runner not found in PATH: ${TEST_RUNNER}" >&2
+            zz_log e "Requested test runner not found in PATH: ${TEST_RUNNER}"
             return 1
             ;;
     esac
@@ -205,7 +213,7 @@ case "${COVERAGE}" in
         if _has_coverage_driver; then
             COVERAGE_ENABLED='true'
         else
-            echo "Error: Coverage was requested but neither xdebug nor pcov is loaded." >&2
+            zz_log e "Coverage was requested but neither xdebug nor pcov is loaded."
             printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
             printf 'coverage-file=\n' >> "${GITHUB_OUTPUT}"
             printf 'junit-file=\n' >> "${GITHUB_OUTPUT}"
@@ -216,7 +224,7 @@ case "${COVERAGE}" in
         if _has_coverage_driver; then
             COVERAGE_ENABLED='true'
         else
-            echo "No coverage driver (xdebug/pcov) loaded, running tests without coverage." >&2
+            zz_log i "No coverage driver (xdebug/pcov) loaded, running tests without coverage."
             COVERAGE_ENABLED='false'
         fi
         ;;
@@ -236,14 +244,14 @@ fi
 if [ ! -f .env ]; then
     for _template in .env.example .env.testing .env.ci; do
         if [ -f "${_template}" ]; then
-            echo "Seeding .env from ${_template}" >&2
+            zz_log i "Seeding .env from ${_template}"
             cp "${_template}" .env
             break
         fi
     done
 
     if [ ! -f .env ]; then
-        echo "No .env template found, creating an empty .env" >&2
+        zz_log i "No .env template found, creating an empty .env"
         : > .env
     fi
 fi
@@ -266,7 +274,7 @@ if [ -f artisan ]; then
     esac
 
     if [ "${_should_migrate}" = 'true' ]; then
-        echo "Running database migrations" >&2
+        zz_log i "Running database migrations"
         php artisan migrate --force --no-interaction >&2
     fi
 fi
@@ -289,7 +297,7 @@ fi
 
 rm -f "${JUNIT_FILE}" "${COVERAGE_FILE}"
 
-echo "Running test suite with ${RUNNER_BIN}" >&2
+zz_log i "Running test suite with ${RUNNER_BIN}"
 
 exit_code=0
 if [ "${RUNNER_KIND}" = 'composer' ]; then
@@ -306,9 +314,9 @@ fi
 #
 if [ "${junit_written}" = 'true' ] && [ -f "${JUNIT_FILE}" ]; then
     if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-        echo "No GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN set, skipping reviewdog reporting." >&2
+        zz_log i "No GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN set, skipping reviewdog reporting."
     elif ! command -v "${REVIEWDOG_BIN}" > /dev/null 2>&1; then
-        echo "reviewdog was not found in PATH, skipping reviewdog reporting." >&2
+        zz_log i "reviewdog was not found in PATH, skipping reviewdog reporting."
     else
         # shellcheck disable=SC2086
         php "${ACTION_DIR}/junit-to-rdjson.php" "${JUNIT_FILE}" \
@@ -326,7 +334,7 @@ fi
 if [ "${exit_code}" -eq 0 ]; then
     printf 'tests-passed=true\n' >> "${GITHUB_OUTPUT}"
 else
-    echo "::error::Test suite failed with exit code ${exit_code}." >&2
+    zz_log e "Test suite failed with exit code ${exit_code}."
     printf 'tests-passed=false\n' >> "${GITHUB_OUTPUT}"
 fi
 

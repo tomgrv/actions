@@ -29,6 +29,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     # Intentionally the ONLY place that inspects github.event_name/github.ref, so
     # every trigger (push, PR review, tag, or workflow_dispatch/unlock with no
     # matching ref) is covered by a single, always-executed rule set.

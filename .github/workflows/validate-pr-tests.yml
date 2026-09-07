@@ -26,6 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Bootstrap zz_* scripts for run.sh tests
+        uses: ./setup-scripts
+        with:
+          scripts: zz_log zz_args
+
       - name: Setup Bats
         uses: bats-core/bats-action@4.0.0
 
