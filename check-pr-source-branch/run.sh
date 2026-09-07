@@ -14,13 +14,13 @@ fi
 RESTRICTED_BRANCH="${RESTRICTED_BRANCH:-main}"
 
 if [ "${SOURCE_BRANCH}" != "${RESTRICTED_BRANCH}" ]; then
-    echo "::notice::Source branch '${SOURCE_BRANCH}' is not restricted, nothing to check." >&2
+    zz_log n "Source branch '${SOURCE_BRANCH}' is not restricted, nothing to check."
     exit 0
 fi
 
 case "${PR_TITLE}" in
     *hotfix*)
-        echo "::notice::PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed." >&2
+        zz_log n "PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed."
         exit 0
         ;;
 esac

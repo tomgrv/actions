@@ -44,7 +44,7 @@ cd "${WORKING_DIRECTORY}" || {
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
 if [ -z "$(git status --porcelain)" ]; then
-    echo "::notice::No changes detected in working directory, skipping PR creation." >&2
+    zz_log n "No changes detected in working directory, skipping PR creation."
     printf 'action=skip\n'
     printf 'has-changes=false\n'
     printf 'pr-number=\n'
@@ -119,7 +119,7 @@ else
 fi
 
 PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPOSITORY}" --json url --jq '.url')
-echo "::notice::PR #${PR_NUMBER} ${ACTION}: ${PR_URL}" >&2
+zz_log n "PR #${PR_NUMBER} ${ACTION}: ${PR_URL}"
 
 printf 'action=%s\n' "${ACTION}"
 printf 'has-changes=true\n'

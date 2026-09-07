@@ -104,7 +104,7 @@ if [ -f "$WORKDIR/package.json" ]; then
         
 else
     # Functional: absence of a file to analyze in the target repo is a notice.
-    echo "::notice::Root package.json not found, skipping workspace package discovery." >&2
+    zz_log n "Root package.json not found, skipping workspace package discovery."
 fi
 
 zz_log i "Combining and normalizing package data..."

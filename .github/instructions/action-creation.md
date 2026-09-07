@@ -156,7 +156,7 @@ fi
 
 # Main logic here. A notice is warranted because this is a fact about the
 # analyzed repository (e.g. nothing matched the filter), not about setup.
-echo "::notice::Nothing to process, target path is empty." >&2
+zz_log n "Nothing to process, target path is empty."
 
 # Output to GITHUB_OUTPUT
 printf 'output-name=%s\n' "${value}"
@@ -178,11 +178,11 @@ printf 'output-name=%s\n' "${value}"
 
 ### Logging Conventions
 
-GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log w "..."`/`zz_log e "..."` also emit a leading `::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `dispatch.sh` use) no annotation line is emitted at all. This makes `zz_log w`/`zz_log e` the default way to raise a warning/error, whatever the message shape, whether it's a setup problem or a finding about the analyzed repository - see `check-pr-format/run.sh`'s commitlint-error case for a multi-line example.
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `dispatch.sh` use) no annotation line is emitted at all. This makes `zz_log n`/`zz_log w`/`zz_log e` the default way to raise a notice/warning/error, whatever the message shape, whether it's a setup detail or a finding about the analyzed repository - see `check-pr-format/run.sh`'s commitlint cases for multi-line examples of both `n` and `e`.
 
 - **`zz_log e "..."`/`zz_log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz_log e` is still followed by `exit 1` when fatal.
+- **`zz_log n "..."` for facts about the analyzed repository** worth surfacing on the PR/checks UI but not actionable enough for a warning/error: no files matched the target path/filter, a target directory or manifest is absent, nothing changed, a PR is already up to date, a PR was created/updated/rebased.
 - **`zz_log i "..."` for non-actionable informational detail** that shouldn't surface as an annotation at all: an input left at its default (`"PATHS not set, using default: app"`), a step's routine progress ("Cloning ...", "Deleting run ...").
-- **`::notice::` for facts about the analyzed repository** still needs a direct `echo "::notice::..." >&2` (with its own percent-encoding for a multi-line message, e.g. `check-pr-format/run.sh`'s commitlint-success case) - `zz_log` has no notice-level equivalent: no files matched the target path/filter, a target directory or manifest is absent, nothing changed, a PR is already up to date.
 
 ### Documentation (README.md)
 

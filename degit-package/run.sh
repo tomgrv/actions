@@ -86,7 +86,7 @@ if [ -z "$(git status --porcelain "${TARGET_PATH}")" ]; then
     printf 'has-changes=false\n'
     printf 'degit-branch=\n'
 else
-    echo "::notice::Imported ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>" >&2
+    zz_log n "Imported ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>"
     printf 'has-changes=true\n'
     printf 'degit-branch=%s\n' "${HEAD_BRANCH}"
 fi

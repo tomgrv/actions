@@ -66,10 +66,7 @@ if [ ${commitlint_status} -ne 0 ]; then
   zz_log e "${commitlint_output}"
   exit 1
 else
-  # Show commitlint output as notice on success. zz_log has no notice-level
-  # equivalent, so this keeps its own percent-encoding for the annotation.
-  escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
-  echo "::notice::${escaped_output}"
+  zz_log n "${commitlint_output}"
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
