@@ -40,7 +40,7 @@ PR_NUMBER=$(printf '%s'   "${PR_JSON}" | jq -r '.number')
 PR_URL=$(printf '%s'      "${PR_JSON}" | jq -r '.url')
 
 if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
-  echo "::error::Could not resolve head or base branch for PR #${PR_NUMBER}." >&2
+  zz_log e "Could not resolve head or base branch for PR #${PR_NUMBER}."
   exit 1
 fi
 

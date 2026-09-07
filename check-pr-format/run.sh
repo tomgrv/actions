@@ -63,7 +63,10 @@ formatted_title="$(npx devmoji --text "${PR_TITLE}")"
 commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
-  # Escape newlines for GitHub annotation
+  # Escape newlines for GitHub annotation. Kept as a raw ::error:: echo
+  # rather than zz_log e: zz_log's automatic annotation prints the message
+  # verbatim on one line, which would corrupt a multi-line report; this
+  # percent-encoding is what keeps a multi-line report as one annotation.
   escaped_output=$(printf '%s\n' "${commitlint_output}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
   echo "::error::${escaped_output}"
   exit 1
@@ -82,7 +85,8 @@ if [ "${PR_TITLE}" != "${formatted_title}" ]; then
 
 Current:  ${PR_TITLE}
 Expected: ${formatted_title}"
-    # Escape newlines for GitHub annotation
+    # Escape newlines for GitHub annotation (see the commitlint case above
+    # for why this stays a raw echo instead of zz_log e).
     escaped_error=$(printf '%s\n' "${error_message}" | sed 's/%/%25/g;s/$/\\n/g' | tr -d '\n' | sed 's/\\n/%0A/g;s/%25/%/g')
     echo "::error::${escaped_error}"
     exit 1

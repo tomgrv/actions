@@ -45,7 +45,7 @@ zz_log i "Cloning ${SOURCE_URL}/tree/${SOURCE_BRANCH} to temporary directory..."
 # active for later steps in the job (e.g. actions/checkout's push), causing
 # git to send two Authorization headers and get rejected.
 if ! git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
-    echo "::error::Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access." >&2
+    zz_log e "Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access."
     exit 1
 fi
 
@@ -74,7 +74,7 @@ zz_log i "Syncing files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} (SHA: ${SOURCE_
 
 # Sync files from the source repository to the target subdirectory, excluding specified paths.
 if ! mkdir -p "${TARGET_PATH}" && rsync -a --delete ${EXCLUDE_ARGS} "${WORKDIR}/" "${TARGET_PATH}/"; then
-    echo "::error::Failed to sync files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>" >&2
+    zz_log e "Failed to sync files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>"
     exit 1
 fi
 
