@@ -14,7 +14,7 @@ fi
 RESTRICTED_BRANCH="${RESTRICTED_BRANCH:-main}"
 
 if [ "${SOURCE_BRANCH}" != "${RESTRICTED_BRANCH}" ]; then
-    zz_log n "Source branch '${SOURCE_BRANCH}' is not restricted, nothing to check."
+    zz_log i "Source branch '${SOURCE_BRANCH}' is not restricted, nothing to check."
     exit 0
 fi
 

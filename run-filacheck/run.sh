@@ -49,7 +49,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${WIP}" = "true" ]; then
     FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
-        zz_log n "No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck."
+        zz_log i "No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck."
         exit 0
     fi
 else
