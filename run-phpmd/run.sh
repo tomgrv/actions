@@ -54,7 +54,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
-        zz_log i "No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD."
+        zz_log n "No changed PHP files under: ${PHPMD_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD."
         exit 0
     fi
 else

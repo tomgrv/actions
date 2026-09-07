@@ -20,7 +20,7 @@ fi
 
 case "${PR_TITLE}" in
     *hotfix*)
-        zz_log n "PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed."
+        zz_log i "PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed."
         exit 0
         ;;
 esac

@@ -66,7 +66,7 @@ if [ ${commitlint_status} -ne 0 ]; then
   zz_log e "${commitlint_output}"
   exit 1
 else
-  zz_log n "${commitlint_output}"
+  zz_log i "${commitlint_output}"
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then

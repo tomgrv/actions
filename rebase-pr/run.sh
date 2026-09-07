@@ -56,7 +56,7 @@ MERGE_BASE=$(git merge-base "origin/${HEAD_BRANCH}" "origin/${BASE_BRANCH}")
 BASE_TIP=$(git rev-parse "origin/${BASE_BRANCH}")
 
 if [ "${MERGE_BASE}" = "${BASE_TIP}" ]; then
-  zz_log i "PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do."
+  zz_log n "PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do."
   printf 'action=up-to-date\n'
   printf 'head_branch=%s\n' "${HEAD_BRANCH}"
   printf 'base_branch=%s\n' "${BASE_BRANCH}"

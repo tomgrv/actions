@@ -44,7 +44,7 @@ cd "${WORKING_DIRECTORY}" || {
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
 if [ -z "$(git status --porcelain)" ]; then
-    zz_log i "No changes detected in working directory, skipping PR creation."
+    zz_log n "No changes detected in working directory, skipping PR creation."
     printf 'action=skip\n'
     printf 'has-changes=false\n'
     printf 'pr-number=\n'
