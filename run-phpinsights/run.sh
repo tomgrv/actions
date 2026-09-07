@@ -17,7 +17,7 @@ PHPINSIGHTS_BIN="phpinsights"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
@@ -48,7 +48,7 @@ fi
 
 if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
     if [ ! -f "${PHPINSIGHTS_CONFIG_PATH}" ]; then
-        echo "Error: config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}" >&2
+        zz_log e "config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}"
         exit 1
     fi
     CONFIG_FLAG="--config-path=${PHPINSIGHTS_CONFIG_PATH}"

@@ -44,7 +44,7 @@ runs:
     - name: Install release scripts
       shell: sh
       env:
-        SCRIPTS: git-release-beta git-release-prod
+        SCRIPTS: git-release-beta git-release-prod zz_log
         SCRIPTS_REF: ${{ inputs.scripts-ref }}
       run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
 

@@ -13,23 +13,23 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if ! command -v reviewdog >/dev/null 2>&1; then
-  echo "Error: reviewdog could not be found. Please install it to run this action." >&2
+  zz_log e "reviewdog could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
   exit 1
 fi
 
 if ! command -v composer >/dev/null 2>&1; then
-  echo "Error: composer could not be found. Please install it to run this action." >&2
+  zz_log e "composer could not be found. Please install it to run this action."
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq could not be found. Please install it to run this action." >&2
+  zz_log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
@@ -41,7 +41,7 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-none}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 MAX_DIAGNOSTICS="${MAX_DIAGNOSTICS:-40}"
 
-echo "Running composer audit..." >&2
+zz_log i "Running composer audit..."
 
 # Installed versions are needed to work out, per advisory, whether the locked
 # version actually falls in the affected range and what the lowest version

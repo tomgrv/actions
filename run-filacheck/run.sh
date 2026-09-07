@@ -17,7 +17,7 @@ REVIEWDOG_BIN="reviewdog"
 
 # Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 

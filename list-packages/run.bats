@@ -67,6 +67,14 @@ run_list() {
   (
     export WORKDIR="$TEST_DIR"
     export FILTER="${1:-}"
+    # zz_log itself needs to resolve here -- in real CI it's put on PATH by
+    # the setup-scripts composite step; stub a minimal stand-in.
+    cat > "$STUB_BIN/zz_log" <<'EOF'
+#!/bin/sh
+shift
+echo "$*" >&2
+EOF
+    chmod +x "$STUB_BIN/zz_log"
     # Curated PATH: stubs first, then just enough of the real toolchain (jq, npm,
     # coreutils) to run the script -- deliberately excludes /usr/local/bin so the
     # host's real `composer` binary never shadows a test that isn't stubbing it.

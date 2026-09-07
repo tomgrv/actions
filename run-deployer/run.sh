@@ -49,7 +49,7 @@ case "${selector}" in
         ;;
 esac
 
-echo "Running Deployer command: ${args} -- ${selector}" >&2
+zz_log i "Running Deployer command: ${args} -- ${selector}"
 
 # Redirect (not pipe) to a log file so `dep`'s own exit status is captured
 # directly and portably (no bash-only pipefail needed), then replay the log
@@ -74,8 +74,8 @@ fi
 # single INFO diagnostic, which reviewdog surfaces as a GitHub notice).
 # Best-effort: never let reviewdog's own outcome affect the step's exit
 # status below.
-echo "Reviewdog parameters: -f=rdjson -name=deployer -reporter=${REVIEWDOG_REPORTER} -filter-mode=nofilter -fail-level=none" >&2
-echo "Deployer log tempfile source size: $(wc -c < "${log_file}") bytes" >&2
+zz_log i "Reviewdog parameters: -f=rdjson -name=deployer -reporter=${REVIEWDOG_REPORTER} -filter-mode=nofilter -fail-level=none"
+zz_log i "Deployer log tempfile source size: $(wc -c < "${log_file}") bytes"
 
 jq -R -s --arg status "${status}" --arg url "${url}" -f "${GITHUB_ACTION_PATH}/rdjson.jq" <"${log_file}" |
     reviewdog \

@@ -32,6 +32,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Set up reviewdog
       uses: reviewdog/action-setup@v1
       id: reviewdog-setup

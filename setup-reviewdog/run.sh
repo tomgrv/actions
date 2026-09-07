@@ -31,7 +31,7 @@ case "${suffix}" in
         reporter="${prefix}-${suffix}"
         ;;
     *)
-        echo "Invalid type: ${suffix}. Must be check, review, or annotations." >&2
+        zz_log e "Invalid type: ${suffix}. Must be check, review, or annotations."
         exit 1
         ;;
 esac

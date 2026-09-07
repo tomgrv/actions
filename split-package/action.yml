@@ -45,6 +45,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Cache splitsh-lite
       id: cache-splitsh
       uses: actions/cache@v5

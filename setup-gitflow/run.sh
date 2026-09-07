@@ -44,12 +44,12 @@ if ! git flow version > /dev/null 2>&1; then
     elif command -v zypper > /dev/null 2>&1; then
         ${SUDO} zypper --non-interactive install git-flow
     else
-        echo "setup-gitflow: no supported package manager found to install git-flow" >&2
+        zz_log e "setup-gitflow: no supported package manager found to install git-flow"
         exit 1
     fi
 
     git flow version > /dev/null 2>&1 || {
-        echo "setup-gitflow: git-flow still unavailable after install attempt" >&2
+        zz_log e "setup-gitflow: git-flow still unavailable after install attempt"
         exit 1
     }
 fi

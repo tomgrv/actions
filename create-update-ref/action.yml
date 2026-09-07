@@ -31,6 +31,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Create or update ref
       id: create-update-ref
       shell: sh

@@ -11,7 +11,7 @@ WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${WORKING_DIRECTORY}" = "." ]; then
-  echo "WORKING_DIRECTORY not set, using default: ." >&2
+  zz_log i "WORKING_DIRECTORY not set, using default: ."
 fi
 
 HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
@@ -30,14 +30,14 @@ PR_BODY="${PR_BODY:-${DEFAULT_TITLE}} \
 _This pull request was created automatically by [tomgrv/actions/create-pr](https://github.com/tomgrv/actions/create-pr)_"
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "Error: GITHUB_TOKEN is required" >&2
+  zz_log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 export GH_TOKEN="${GITHUB_TOKEN}"
 
 cd "${WORKING_DIRECTORY}" || {
-  echo "Error: Working directory '${WORKING_DIRECTORY}' does not exist" >&2
+  zz_log e "Working directory '${WORKING_DIRECTORY}' does not exist"
   exit 1
 }
 
@@ -53,7 +53,7 @@ if [ -z "$(git status --porcelain)" ]; then
 fi
 
 if [ -z "${COMMIT_MESSAGE}" ]; then
-    echo "Error: commit-message is required when commit-all is true" >&2
+    zz_log e "commit-message is required when commit-all is true"
     exit 1
 fi
 
@@ -74,7 +74,7 @@ PR_NUMBER=$(gh pr list \
 
 if [ -n "${PR_NUMBER}" ]; then
 
-  echo "Existing PR #${PR_NUMBER} found for head '${HEAD_REF}'" >&2
+  zz_log i "Existing PR #${PR_NUMBER} found for head '${HEAD_REF}'"
 
   if [ -n "${PR_BODY}" ]; then
     gh pr edit "${PR_NUMBER}" \
@@ -91,7 +91,7 @@ if [ -n "${PR_NUMBER}" ]; then
 
 else
 
-  echo "No existing PR found for head '${HEAD_REF}', creating a new one" >&2
+  zz_log i "No existing PR found for head '${HEAD_REF}', creating a new one"
 
   if [ -n "${PR_BODY}" ]; then
     gh pr create \

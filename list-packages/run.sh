@@ -24,7 +24,7 @@ FILTER="${FILTER:-}"
 
 if command -v composer >/dev/null 2>&1; then
 
-    echo "Discovering Composer packages..." >&2
+    zz_log i "Discovering Composer packages..."
 
     composer_packages=$(composer show --direct --path --format=json --working-dir="$WORKDIR" \
         | jq -c --arg pwd "$WORKDIR" \
@@ -52,16 +52,16 @@ if command -v composer >/dev/null 2>&1; then
                 }
             ]')
 
-    echo "Discovered $(echo "$composer_packages" | jq 'length') Composer packages." >&2
+    zz_log i "Discovered $(echo "$composer_packages" | jq 'length') Composer packages."
 
 else
     # Missing binary is a setup concern, not a finding: plain log only.
-    echo "Composer not found, skipping Composer package discovery." >&2
+    zz_log i "Composer not found, skipping Composer package discovery."
 fi
 
 if [ -f "$WORKDIR/package.json" ]; then
 
-    echo "Discovering package workspace packages in <$WORKDIR>..." >&2
+    zz_log i "Discovering package workspace packages in <$WORKDIR>..."
 
     node_packages=$(jq -r '.workspaces[]?' "$WORKDIR/package.json" \
         | while IFS= read -r workspace_pattern; do
@@ -97,7 +97,7 @@ if [ -f "$WORKDIR/package.json" ]; then
                     }
                 ' "$package_manifest")
 
-                echo "Discovered package: $(echo "$node_package" | jq -r '.package_name + "@" + .package_version')" >&2
+                zz_log i "Discovered package: $(echo "$node_package" | jq -r '.package_name + "@" + .package_version')"
                 echo "$node_package"
             done
         done | jq -cs '.')
@@ -107,7 +107,7 @@ else
     echo "::notice::Root package.json not found, skipping workspace package discovery." >&2
 fi
 
-echo "Combining and normalizing package data..." >&2
+zz_log i "Combining and normalizing package data..."
 
 packages=$(jq -cn \
     --argjson composer "$composer_packages" \
@@ -124,7 +124,7 @@ packages=$(jq -cn \
         | unique_by([.package_name, .ecosystem])
     ')
 
-echo "Checking package registries publication status..." >&2
+zz_log i "Checking package registries publication status..."
 
 # Registries checked per ecosystem. Add more names here (space-separated) to check a
 # package against several registries, and a matching check_<name> function below.
@@ -188,7 +188,7 @@ while [ "$i" -lt "$count" ]; do
 done
 
 if [ -n "$FILTER" ]; then
-    echo "Applying filter: select($FILTER)" >&2
+    zz_log i "Applying filter: select($FILTER)"
     result=$(echo "$result" | jq -c "[.[] | select($FILTER)]")
 fi
 

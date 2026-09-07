@@ -15,13 +15,13 @@ if [ -z "$REPO" ]; then
   fi
 fi
 
-echo "Cleaning history for repo: ${REPO}" >&2
-echo "Keeping at least ${MIN_DAYS} days and ${MIN_RUNS} runs per workflow" >&2
+zz_log i "Cleaning history for repo: ${REPO}"
+zz_log i "Keeping at least ${MIN_DAYS} days and ${MIN_RUNS} runs per workflow"
 
 # Calculate cutoff date (runs older than this AND beyond the min-runs window are deleted)
 cutoff=$(date -d "-${MIN_DAYS} days" "+%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || \
          date -v-${MIN_DAYS}d "+%Y-%m-%dT%H:%M:%SZ" 2>/dev/null)
-echo "Cutoff date: ${cutoff}" >&2
+zz_log i "Cutoff date: ${cutoff}"
 
 # Build list of workflow IDs to process
 if [ -n "$WORKFLOWS" ]; then
@@ -46,7 +46,7 @@ if [ -z "$(echo "$workflow_ids" | tr -d ' ')" ]; then
 fi
 
 for workflow_id in $workflow_ids; do
-  echo "Processing workflow ID: ${workflow_id}" >&2
+  zz_log i "Processing workflow ID: ${workflow_id}"
 
   # Fetch up to 500 runs sorted newest-first (default gh ordering)
   runs_json=$(gh run list --workflow="${workflow_id}" --limit=500 --json databaseId,createdAt 2>/dev/null || echo "[]")
@@ -62,12 +62,12 @@ for workflow_id in $workflow_ids; do
 
   count=0
   for run_id in $to_delete; do
-    echo "Deleting run ${run_id}..." >&2
+    zz_log i "Deleting run ${run_id}..."
     gh run delete "${run_id}" --repo "${REPO}" 2>/dev/null || true
     count=$((count + 1))
   done
 
-  echo "Deleted ${count} runs for workflow ${workflow_id}." >&2
+  zz_log i "Deleted ${count} runs for workflow ${workflow_id}."
 done
 
-echo "Done." >&2
+zz_log i "Done."

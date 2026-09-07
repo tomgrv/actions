@@ -10,12 +10,19 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
     git config --global --add safe.directory "${GITHUB_WORKSPACE}" || exit 1
 fi
 
-LIST_PATHS="${LIST_PATHS:-${1:-.}}"
+# LIST_PATHS is normally supplied via action.yml's env block; the positional
+# fallback below only matters for local dispatch.sh usage.
+eval "$(zz_args "List dirty files" "$0" "$@" <<-help
+	- path	list_paths	Comma-separated list of paths to restrict the list to (default: .)
+help
+)"
+
+LIST_PATHS="${LIST_PATHS:-${list_paths:-.}}"
 LIST_EXTENSIONS="${LIST_EXTENSIONS:-php}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LIST_PATHS}" = "." ]; then
-    echo "path not set, using default: ." >&2
+    zz_log i "path not set, using default: ."
 fi
 
 if [ "${LIST_PATHS}" = "." ]; then
@@ -25,7 +32,7 @@ else
 fi
 _ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))\$"
 
-echo "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})" >&2
+zz_log i "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
 
 FILES="$(
     {
@@ -40,7 +47,7 @@ if [ -n "${FILES}" ]; then
     COUNT="$(printf '%s\n' "${FILES}" | wc -l | tr -d ' ')"
 fi
 
-echo "Found ${COUNT} dirty file(s)" >&2
+zz_log i "Found ${COUNT} dirty file(s)"
 
 {
     echo "files<<GH_LIST_DIRTY_EOF"

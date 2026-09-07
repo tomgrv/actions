@@ -15,7 +15,7 @@ PHPSTAN_BIN="phpstan"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
@@ -46,7 +46,7 @@ fi
 
 if [ -n "${PHPSTAN_CONFIG}" ]; then
     if [ ! -f "${PHPSTAN_CONFIG}" ]; then
-        echo "Error: config file not found: ${PHPSTAN_CONFIG}" >&2
+        zz_log e "config file not found: ${PHPSTAN_CONFIG}"
         exit 1
     fi
     CONFIG_FLAG="-c ${PHPSTAN_CONFIG}"
@@ -54,8 +54,8 @@ else
     CONFIG_FLAG=""
 fi
 
-command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { echo "Error: ${PHPSTAN_BIN} not found in PATH" >&2; exit 1; }
-command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { echo "Error: ${REVIEWDOG_BIN} not found in PATH" >&2; exit 1; }
+command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { zz_log e "${PHPSTAN_BIN} not found in PATH"; exit 1; }
+command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { zz_log e "${REVIEWDOG_BIN} not found in PATH"; exit 1; }
 
 # Run PHPStan to a temp file so its report can be validated before passing it
 # to reviewdog.
@@ -67,7 +67,7 @@ trap 'rm -f "${phpstan_log}"' EXIT INT TERM
 # PHPStan crashing before producing any report is a tooling/setup failure,
 # not an analysis finding.
 if [ ! -s "${phpstan_log}" ]; then
-    echo "Error: PHPStan produced no output." >&2
+    zz_log e "PHPStan produced no output."
     exit 1
 fi
 

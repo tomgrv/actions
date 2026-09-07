@@ -29,7 +29,7 @@ PHPMD_BIN="phpmd"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    echo "Error: GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required" >&2
+    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 

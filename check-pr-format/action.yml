@@ -27,6 +27,11 @@ runs:
       with:
         bare: 'true'
 
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
     - name: Validate PR title
       shell: sh
       env:
