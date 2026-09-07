@@ -44,7 +44,7 @@ if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
   exit 1
 fi
 
-zz_log n "Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})"
+zz_log i "Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})"
 
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
