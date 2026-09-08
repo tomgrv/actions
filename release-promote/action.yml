@@ -38,14 +38,17 @@ runs:
     # against the *calling* repo's checkout when release-promote itself is
     # invoked from elsewhere (e.g. tomgrv/scripts), not this one.
     #
-    # So each sibling's own run.sh is invoked directly via
-    # github.action_path here, which always resolves to wherever *this*
-    # release-promote's own checkout landed -- immune to the staleness
-    # above, for any ref/caller. Each sibling's own "Setup scripts
-    # toolchain" sub-step (installing zz_log/gv/bump-*/etc from
-    # tomgrv/scripts) stays pinned to `@v2` as normal: that's an external
-    # repo released independently of this one, not something this release
-    # cycle could make stale.
+    # `$/<name>` (GitHub's self-repository uses: syntax) resolves each
+    # sibling against *this* action's own repo at the exact commit it's
+    # currently running at, for any caller/ref -- immune to the staleness
+    # above, and unlike the github.action_path/run.sh-direct-invocation
+    # workaround this replaced, it's a real `uses:` of the sibling
+    # composite action, so its own steps/inputs/outputs all just work
+    # (e.g. config-bot's get-user-id step) instead of being hand-reimplemented
+    # here. Each sibling's own "Setup scripts toolchain" sub-step
+    # (installing zz_log/gv/bump-*/etc from tomgrv/scripts) stays pinned to
+    # `@v2` as normal: that's an external repo released independently of
+    # this one, not something this release cycle could make stale.
     - name: Setup scripts toolchain
       uses: tomgrv/actions/setup-scripts@v2
       with:
@@ -60,26 +63,15 @@ runs:
         scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Configure git bot identity
-      shell: sh
-      env:
-        GH_TOKEN: ${{ inputs.github-token }}
-      run: |
-        user_id=$(gh api "/users/github-actions[bot]" --jq .id)
-        BOT_NAME="github-actions[bot]" BOT_EMAIL="${user_id}+github-actions[bot]@users.noreply.github.com" \
-          sh -c "${{ github.action_path }}/../config-bot/run.sh"
-
-    - name: Setup GitVersion scripts toolchain
-      uses: tomgrv/actions/setup-scripts@v2
+      uses: $/config-bot
       with:
-        scripts: zz_log gv bump-tag bump-changelog bump-version
+        github-token: ${{ inputs.github-token }}
 
     - name: Install GitVersion toolchain
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
+      uses: $/setup-gitversion
 
     - name: Install and initialize git-flow
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../setup-gitflow/run.sh"
+      uses: $/setup-gitflow
 
     - name: Run beta then prod
       shell: sh
