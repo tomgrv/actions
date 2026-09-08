@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.28.0 (2026-09-08)
+
+*Commits from: v2.27.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.27.0' into develop ([9a54439](https://github.com/tomgrv/actions/commit/9a54439cbf575f12f2bb4ae2cd7e84e0b5d086a3))
+### 📦 clean-branches changes
+
+#### Features
+
+- ✨ add action and workflow to delete branches linked to closed PRs (#93) ([5d4db9e](https://github.com/tomgrv/actions/commit/5d4db9e418d9becc2741bc8ed520cfe74abc0681))
+
 ## 2.27.0 (2026-09-08)
 
 *Commits from: v2.26.0..HEAD*
@@ -767,6 +782,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
