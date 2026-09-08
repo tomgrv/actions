@@ -42,7 +42,7 @@ runs:
   using: composite
   steps:
     - name: Setup scripts toolchain
-      uses: tomgrv/actions/setup-scripts@v2
+      uses: $/setup-scripts
       with:
         scripts: zz_log
 
