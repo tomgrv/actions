@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.29.0 (2026-09-08)
+
+*Commits from: v2.28.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.28.0' into develop ([cfe9bfc](https://github.com/tomgrv/actions/commit/cfe9bfca186f383854fb9e898280dab1a5ca27cf))
+### 📦 list-packages changes
+
+#### Features
+
+- ✨ make repository filter optional per workflow (#95) ([712cb65](https://github.com/tomgrv/actions/commit/712cb65b3975bd59a1df4f7cff56a4fd021d75f6))
+
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 un-pin sibling steps whose content this release ships (#96) ([72cd91c](https://github.com/tomgrv/actions/commit/72cd91ccc8ec050acdef4a0127a60d7b50888b83))
+
+### 📦 setup-gitversion changes
+
+#### Other changes
+
+- ♻️ zz_use gv/bump-* instead of curling raw source (#94) ([046940b](https://github.com/tomgrv/actions/commit/046940b88b561a9112c2563d4c4992cc042c2823))
+
 ## 2.28.0 (2026-09-08)
 
 *Commits from: v2.27.0..HEAD*
@@ -782,6 +809,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
