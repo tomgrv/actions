@@ -4,13 +4,15 @@
 
 Discovers Composer and npm workspace packages in the repository and emits a JSON matrix array suitable for use as a GitHub Actions matrix value.
 
-Only packages with a defined `repository` (source repo) are included; packages without one are dropped before any `filter` input is applied.
-
 ## Inputs
 
 ### workdir
 
 **Optional.** Working directory to search for packages. Defaults to the repository root (`${{ github.workspace }}`).
+
+### require-repository
+
+**Optional.** When `true` (default), packages without a defined `repository` are dropped before `filter` is applied. Set to `false` to keep packages that have no repository — useful for workflows that don't need it (e.g. a plain package listing) as opposed to split/merge-packages workflows, which require a repository per package.
 
 ### filter
 
