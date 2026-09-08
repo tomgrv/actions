@@ -23,21 +23,36 @@ action-name/
 
 ### Per-Action package.json
 
-Every action directory must have a minimal `package.json` with:
+Every action directory must have a `package.json` with:
 
 - `name`: the folder name (no `@org/` prefix)
-- `private: true` — these packages are never published individually
 - `description`: brief description matching `action.yml`
+- `inputs`: mirrors `action.yml`'s `inputs:` block — one entry per input, each with `description`, `required`, and `default` (only when `action.yml` defines one)
+- `outputs`: mirrors `action.yml`'s `outputs:` block — one entry per output, with `description` only (the `value: ${{ steps... }}` expression is a `action.yml`-only concern, not part of the script-facing contract)
+- `private: true` — these packages are never published individually
 
 ```json
 {
     "name": "action-name",
-    "private": true,
-    "description": "Short description of what the action does."
+    "version": "2.0.0",
+    "description": "Short description of what the action does.",
+    "inputs": {
+        "parameter-name": {
+            "description": "What this input controls.",
+            "required": false,
+            "default": "some-default"
+        }
+    },
+    "outputs": {
+        "output-name": {
+            "description": "What this output contains."
+        }
+    },
+    "private": true
 }
 ```
 
-This minimal file is used only to provide the workspace scope for `commitlint`.
+Keep `inputs`/`outputs` in sync with `action.yml` whenever either changes — they document the same contract so the action can be reasoned about (and eventually invoked) as a plain script, independent of the GitHub Actions runner.
 
 Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; `dispatch.sh` is a local, unpublished helper for running an action's `run.sh` directly from a clone of this repository (see below).
 

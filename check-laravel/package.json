@@ -1,6 +1,89 @@
 {
-  "name": "check-laravel",
-  "version": "2.20.0",
-  "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.",
-  "private": true
+    "name": "check-laravel",
+    "version": "2.20.0",
+    "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.",
+    "inputs": {
+        "github-token": {
+            "description": "GitHub token for reviewdog reporting, shared by every wrapped check.",
+            "required": false,
+            "default": "${{ github.token }}"
+        },
+        "paths": {
+            "description": "Comma-separated list of paths to analyze with PHPStan, Pint, PHP Insights and PHPMD.  Defaults to `app`, filtered by `dirty` and `wip` if enabled.  Shared by every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD).",
+            "required": false,
+            "default": "app"
+        },
+        "dirty": {
+            "description": "Only analyze files with uncommitted git changes, shared by every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD).",
+            "required": false,
+            "default": "false"
+        },
+        "wip": {
+            "description": "Only analyze files changed on the current pull request (relative to its base branch), shared by every wrapped check that supports it (PHPStan, Pint, PHP Insights, PHPMD).",
+            "required": false,
+            "default": "false"
+        },
+        "wip-base-ref": {
+            "description": "Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
+            "required": false,
+            "default": ""
+        },
+        "phpstan": {
+            "description": "Whether to run PHPStan.",
+            "required": false,
+            "default": "true"
+        },
+        "pint": {
+            "description": "Whether to run Pint.",
+            "required": false,
+            "default": "true"
+        },
+        "pint-blade": {
+            "description": "Format `.blade.php` files too when Pint runs (Pint's `--blade` flag, added in Pint 1.30). Requires `prettier`, `prettier-plugin-blade` and `prettier-plugin-tailwindcss` available in the repository.",
+            "required": false,
+            "default": "false"
+        },
+        "phpinsights": {
+            "description": "Whether to run PHP Insights.",
+            "required": false,
+            "default": "false"
+        },
+        "phpmd": {
+            "description": "Whether to run PHPMD.",
+            "required": false,
+            "default": "false"
+        },
+        "tests": {
+            "description": "Whether to run the test suite.",
+            "required": false,
+            "default": "false"
+        },
+        "level": {
+            "description": "Report level for reviewdog [info,warning,error], shared by every wrapped check.",
+            "required": false,
+            "default": "error"
+        },
+        "fail-level": {
+            "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error], shared by every wrapped check.",
+            "required": false,
+            "default": "none"
+        },
+        "reviewdog-flags": {
+            "description": "Additional reviewdog flags, shared by every wrapped check.",
+            "required": false,
+            "default": ""
+        }
+    },
+    "outputs": {
+        "tests-passed": {
+            "description": "Whether the test suite passed."
+        },
+        "coverage-file": {
+            "description": "Path of the generated coverage report, empty when no report was produced."
+        },
+        "junit-file": {
+            "description": "Path of the generated JUnit report, empty when no report was produced."
+        }
+    },
+    "private": true
 }

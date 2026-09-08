@@ -2,5 +2,53 @@
     "name": "degit-package",
     "version": "2.10.0",
     "description": "Import the tip of a source branch into a target repository workspace.",
+    "inputs": {
+        "github-token": {
+            "description": "GitHub token with read access to source and write access to target repository.",
+            "required": true
+        },
+        "source-organization": {
+            "description": "Source repository organization or user to import from.",
+            "required": true
+        },
+        "source-repository": {
+            "description": "Source repository name to import from.",
+            "required": true
+        },
+        "source-branch": {
+            "description": "Source branch to import. Defaults to the source repository default branch.",
+            "required": false,
+            "default": ""
+        },
+        "target-subdir": {
+            "description": "Relative subdirectory inside the target repository where content is imported.",
+            "required": false,
+            "default": "."
+        },
+        "exclude-paths": {
+            "description": "Comma-separated paths to exclude during import.",
+            "required": false,
+            "default": ".github,.devcontainer,.vscode"
+        },
+        "head-branch": {
+            "description": "Branch name to prepare in repository. Auto-generated when empty.",
+            "required": false,
+            "default": ""
+        }
+    },
+    "outputs": {
+        "has-changes": {
+            "description": "Whether import produced changes in the target workspace."
+        },
+        "degit-branch": {
+            "description": "Branch prepared in the target repository workspace."
+        },
+        "degit-workdir": {
+            "description": "Working directory used for the target repository clone."
+        },
+        "source-sha": {
+            "description": "Source branch tip SHA used for import."
+        }
+    },
     "private": true
 }

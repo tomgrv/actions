@@ -2,5 +2,63 @@
     "name": "run-deployer",
     "version": "2.19.0",
     "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
+    "inputs": {
+        "version": {
+            "description": "The version of Deployer to install. If not specified, the latest version will be used.",
+            "required": false
+        },
+        "dep": {
+            "description": "The deployer command to run. If not specified, the default is \"deploy\".",
+            "required": true,
+            "default": "deploy"
+        },
+        "options": {
+            "description": "Options to pass to the deployer command.",
+            "required": false
+        },
+        "selector": {
+            "description": "The selector to use for the deployer command. If not specified, the default is \"all\".",
+            "required": false,
+            "default": "all"
+        },
+        "environment": {
+            "description": "The environment to use for the deployer command. If not specified, the default is determined by git branch.",
+            "required": false,
+            "default": ""
+        },
+        "branch-scope": {
+            "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
+            "required": false,
+            "default": ""
+        },
+        "ssh-private-key": {
+            "description": "SSH private key for deployment",
+            "required": true
+        },
+        "known-hosts": {
+            "description": "Known hosts for SSH",
+            "required": true
+        },
+        "ssh-config": {
+            "description": "SSH configuration",
+            "required": false,
+            "default": ""
+        },
+        "github-token": {
+            "description": "GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.",
+            "required": false,
+            "default": "${{ github.token }}"
+        },
+        "reviewdog-version": {
+            "description": "The version of reviewdog to install.",
+            "required": false,
+            "default": "v0.20.3"
+        }
+    },
+    "outputs": {
+        "deploy-url": {
+            "description": "The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package's own workflows do via matrix + alias=<host>) to get an unambiguous value."
+        }
+    },
     "private": true
 }

@@ -1,6 +1,30 @@
 {
-  "name": "clean-branches",
-  "version": "2.28.0",
-  "description": "Delete branches whose linked pull request is closed.",
-  "private": true
+    "name": "clean-branches",
+    "version": "2.28.0",
+    "description": "Delete branches whose linked pull request is closed.",
+    "inputs": {
+        "github-token": {
+            "description": "GitHub token with contents:write and pull-requests:read permissions.",
+            "required": true
+        },
+        "protected-branches": {
+            "description": "Comma-separated list of branch names that must never be deleted, even if linked to a closed PR.",
+            "required": false,
+            "default": "main,master,develop"
+        },
+        "merged-only": {
+            "description": "When true, only delete branches whose PR was merged. When false, also delete branches whose PR was closed without merging.",
+            "required": false,
+            "default": "false"
+        }
+    },
+    "outputs": {
+        "deleted-branches": {
+            "description": "Newline-separated list of deleted branch names. Empty when none were deleted."
+        },
+        "count": {
+            "description": "Number of branches deleted."
+        }
+    },
+    "private": true
 }

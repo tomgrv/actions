@@ -2,5 +2,23 @@
     "name": "resolve-environment",
     "version": "2.19.0",
     "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event.",
+    "inputs": {
+        "dep": {
+            "description": "The deployer command being run. When \"deploy\" and no other rule matches, falls back to the current branch ref with no environment guess.",
+            "required": false,
+            "default": "deploy"
+        }
+    },
+    "outputs": {
+        "branch": {
+            "description": "Resolved --branch value for Deployer, if any."
+        },
+        "tag": {
+            "description": "Resolved --tag value for Deployer, if any."
+        },
+        "environment": {
+            "description": "Resolved environment name (unstable/staging/production), if any."
+        }
+    },
     "private": true
 }
