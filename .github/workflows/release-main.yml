@@ -26,5 +26,5 @@ jobs:
       - name: Release promote
         uses: ./release-promote
         with:
-          scripts-ref: v0.3.0
+          scripts-ref: v0.9.0
           dry-run: ${{ inputs.dry_run == true }}
