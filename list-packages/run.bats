@@ -67,6 +67,7 @@ run_list() {
   (
     export WORKDIR="$TEST_DIR"
     export FILTER="${1:-}"
+    export REQUIRE_REPOSITORY="${2:-true}"
     # zz_log itself needs to resolve here -- in real CI it's put on PATH by
     # the setup-scripts composite step; stub a minimal stand-in.
     cat > "$STUB_BIN/zz_log" <<'EOF'
@@ -234,6 +235,45 @@ EOF
   stub_npm "$TEST_DIR/npm-published.txt"
 
   run run_list ""
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "2" ]
+}
+
+@test "require-repository defaults to true and drops packages without a repository" {
+  mkdir -p "$TEST_DIR/packages/norepo" "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/norepo/package.json" <<'EOF'
+{ "name": "norepo", "version": "1.0.0" }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list ""
+  [ "$status" -eq 0 ]
+  [ "$(packages_json | jq 'length')" = "1" ]
+  [ "$(packages_json | jq -r '.[0].name')" = "pub" ]
+}
+
+@test "require-repository=false keeps packages without a repository" {
+  mkdir -p "$TEST_DIR/packages/norepo" "$TEST_DIR/packages/pub"
+  cat > "$TEST_DIR/package.json" <<'EOF'
+{ "workspaces": ["packages/*"] }
+EOF
+  cat > "$TEST_DIR/packages/norepo/package.json" <<'EOF'
+{ "name": "norepo", "version": "1.0.0" }
+EOF
+  cat > "$TEST_DIR/packages/pub/package.json" <<'EOF'
+{ "name": "pub", "version": "1.0.0", "repository": "https://github.com/org/pub" }
+EOF
+
+  stub_npm "$TEST_DIR/npm-published.txt"
+
+  run run_list "" "false"
   [ "$status" -eq 0 ]
   [ "$(packages_json | jq 'length')" = "2" ]
 }

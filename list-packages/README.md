@@ -10,6 +10,10 @@ Discovers Composer and npm workspace packages in the repository and emits a JSON
 
 **Optional.** Working directory to search for packages. Defaults to the repository root (`${{ github.workspace }}`).
 
+### require-repository
+
+**Optional.** When `true` (default), packages without a defined `repository` are dropped before `filter` is applied. Set to `false` to keep packages that have no repository — useful for workflows that don't need it (e.g. a plain package listing) as opposed to split/merge-packages workflows, which require a repository per package.
+
 ### filter
 
 **Optional.** A jq `select()` boolean expression evaluated against each final package object. Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.
