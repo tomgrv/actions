@@ -40,7 +40,14 @@ runs:
     - name: Install release scripts
       shell: sh
       env:
-        SCRIPTS: git-release-beta git-release-prod zz_log
+        # bump-version (installed separately by setup-gitversion, from
+        # tomgrv/devcontainer-features) shells out to `git workspaces` for
+        # its minimal-mode affected-workspace check -- without it on PATH
+        # that call silently fails (git: 'workspaces' is not a git command,
+        # swallowed by bump-version's own `2>/dev/null || echo ""`), so
+        # every workspace looks unaffected and per-workspace version files
+        # never get bumped.
+        SCRIPTS: git-release-beta git-release-prod git-workspaces zz_log
         SCRIPTS_REF: ${{ inputs.scripts-ref }}
       run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
 
