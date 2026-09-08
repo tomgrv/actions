@@ -1,6 +1,6 @@
 {
-    "name": "clean-branches",
-    "version": "2.21.0",
-    "description": "Delete branches whose linked pull request is closed.",
-    "private": true
+  "name": "clean-branches",
+  "version": "2.28.0",
+  "description": "Delete branches whose linked pull request is closed.",
+  "private": true
 }
