@@ -187,6 +187,11 @@ while [ "$i" -lt "$count" ]; do
     i=$((i + 1))
 done
 
+if [ "${REQUIRE_REPOSITORY:-true}" = "true" ]; then
+    zz_log i "Filtering out packages without a repository"
+    result=$(echo "$result" | jq -c '[.[] | select(.repository_url != null and .repository_url != "")]')
+fi
+
 if [ -n "$FILTER" ]; then
     zz_log i "Applying filter: select($FILTER)"
     result=$(echo "$result" | jq -c "[.[] | select($FILTER)]")

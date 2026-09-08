@@ -1,6 +1,6 @@
 {
   "name": "release-promote",
-  "version": "2.27.0",
+  "version": "2.29.0",
   "description": "Run git-release-beta then git-release-prod (git-flow beta->prod promotion).",
   "private": true
 }

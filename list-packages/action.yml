@@ -21,6 +21,12 @@ inputs:
       for which it evaluates truthy are kept. Leave unset (default) to keep all packages.
     required: false
     default: ''
+  require-repository:
+    description: >-
+      When 'true', drop packages whose repository is not defined before applying
+      `filter`. Set to 'false' to keep packages without a repository.
+    required: false
+    default: 'true'
 
 outputs:
   packages:
@@ -41,4 +47,5 @@ runs:
       env:
         WORKDIR: ${{ inputs.workdir }}
         FILTER: ${{ inputs.filter }}
+        REQUIRE_REPOSITORY: ${{ inputs.require-repository }}
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

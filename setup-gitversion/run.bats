@@ -1,6 +1,11 @@
 # @format
 
 # Tests setup-gitversion/run.sh: idempotently install the gitversion toolchain.
+# gv/bump-tag/bump-changelog/bump-version are installed by this action's own
+# earlier "Setup scripts toolchain" step (setup-scripts@v2, scripts: zz_log
+# gv bump-tag bump-changelog bump-version) -- run.sh itself only builds the
+# docker-gitversion wrapper/gitversion symlink and then verifies everything
+# actually landed on PATH.
 
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
@@ -29,49 +34,37 @@ STUB
   chmod +x "${STUB_BIN}/$1"
 }
 
-stub_toolchain_present() {
-  for name in gv bump-tag bump-changelog bump-version gitversion; do
+stub_scripts_toolchain() {
+  for name in gv bump-tag bump-changelog bump-version; do
     stub "$name" 0
   done
 }
 
-@test "skips the network install when the toolchain is already on PATH" {
+stub_toolchain_present() {
+  stub_scripts_toolchain
+  stub gitversion 0
+}
+
+@test "skips building the docker wrapper when gitversion is already on PATH" {
   stub_toolchain_present
-  stub curl 1 # would fail loudly if actually invoked
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
 }
 
-@test "fetches gv/bump-tag/bump-changelog/bump-version and builds the docker wrapper when tools are missing" {
-  # curl stub simulates fetching each bin script's content.
-  cat >"${STUB_BIN}/curl" <<'STUB'
-#!/bin/sh
-# args: -fsSL <url> -o <dest>
-for arg do
-  prev="$arg"
-  if [ "$last" = "-o" ]; then
-    dest="$arg"
-  fi
-  last="$arg"
-done
-echo "#!/bin/sh" > "$dest"
-echo "exit 0" >> "$dest"
-STUB
-  chmod +x "${STUB_BIN}/curl"
+@test "builds the docker wrapper when gitversion is missing, given gv/bump-tag/bump-changelog/bump-version already installed" {
+  stub_scripts_toolchain
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
-  [ -x "${STUB_BIN}/gv" ]
-  [ -x "${STUB_BIN}/bump-tag" ]
-  [ -x "${STUB_BIN}/bump-changelog" ]
-  [ -x "${STUB_BIN}/bump-version" ]
   [ -x "${STUB_BIN}/docker-gitversion" ]
   [ -L "${STUB_BIN}/gitversion" ]
 }
 
-@test "errors when curl fails to fetch a script" {
-  stub curl 1
+@test "errors clearly when gv/bump-tag/bump-changelog/bump-version weren't installed by the earlier setup-scripts step" {
+  # None of the four stubbed -- simulates the "Setup scripts toolchain" step
+  # never having run or having failed to actually land them on PATH.
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
+  [[ "$output" == *"not on PATH after install"* ]]
 }
 
 @test "appends the install bin dir to GITHUB_PATH when set" {

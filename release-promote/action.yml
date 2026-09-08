@@ -25,13 +25,27 @@ inputs:
 runs:
   using: composite
   steps:
-    # These four steps used to invoke each sibling action's run.sh directly
-    # via github.action_path instead of `uses: tomgrv/actions/<name>@v2`,
-    # to dodge a fixed ref 404ing on a sibling that hadn't reached a release
-    # tag yet. The whole repo now ships as one monorepo tag (v2), so every
-    # sibling resolves at the same ref release-promote itself resolves at --
-    # the same `uses: tomgrv/actions/<name>@v2` pattern every other action
-    # in this repo already uses, so use it here too instead of bypassing it.
+    # release-promote is uniquely self-referential: it releases the very
+    # repo it's defined in, so any sibling action whose *content* changes
+    # in the same release (config-bot/setup-gitversion/setup-gitflow's own
+    # run.sh) cannot be called via a fixed `uses: tomgrv/actions/<name>@v2`
+    # -- that ref necessarily predates whatever this release is about to
+    # ship, so it silently runs the *old* sibling instead of the one just
+    # merged. Confirmed live: setup-gitversion@v2 still curled bin/*.sh out
+    # of tomgrv/devcontainer-features after that repo deleted them (404),
+    # because @v2 was cut before the fix that stopped doing that ever
+    # existed. `uses: ./<name>` doesn't fix this either -- that resolves
+    # against the *calling* repo's checkout when release-promote itself is
+    # invoked from elsewhere (e.g. tomgrv/scripts), not this one.
+    #
+    # So each sibling's own run.sh is invoked directly via
+    # github.action_path here, which always resolves to wherever *this*
+    # release-promote's own checkout landed -- immune to the staleness
+    # above, for any ref/caller. Each sibling's own "Setup scripts
+    # toolchain" sub-step (installing zz_log/gv/bump-*/etc from
+    # tomgrv/scripts) stays pinned to `@v2` as normal: that's an external
+    # repo released independently of this one, not something this release
+    # cycle could make stale.
     - name: Setup scripts toolchain
       uses: tomgrv/actions/setup-scripts@v2
       with:
@@ -46,15 +60,26 @@ runs:
         scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Configure git bot identity
-      uses: tomgrv/actions/config-bot@v2
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        user_id=$(gh api "/users/github-actions[bot]" --jq .id)
+        BOT_NAME="github-actions[bot]" BOT_EMAIL="${user_id}+github-actions[bot]@users.noreply.github.com" \
+          sh -c "${{ github.action_path }}/../config-bot/run.sh"
+
+    - name: Setup GitVersion scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
       with:
-        github-token: ${{ inputs.github-token }}
+        scripts: zz_log gv bump-tag bump-changelog bump-version
 
     - name: Install GitVersion toolchain
-      uses: tomgrv/actions/setup-gitversion@v2
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
 
     - name: Install and initialize git-flow
-      uses: tomgrv/actions/setup-gitflow@v2
+      shell: sh
+      run: sh -c "${{ github.action_path }}/../setup-gitflow/run.sh"
 
     - name: Run beta then prod
       shell: sh
