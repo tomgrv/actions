@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.30.0 (2026-09-08)
+
+*Commits from: v2.29.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.29.0' into develop ([86c6d57](https://github.com/tomgrv/actions/commit/86c6d579faa499f1f46943e58d9f7b29088ff723))
+- use $/name self-repository syntax for every internal uses: (#99) ([15c850d](https://github.com/tomgrv/actions/commit/15c850dff0cac740760388c6845de5f9dcf0af6d))
+- 🔧 bump stale tomgrv/scripts-ref pin (v0.3.0 -> v0.9.0) (#97) ([23a5c90](https://github.com/tomgrv/actions/commit/23a5c90a1bea6adb741daac7e02823ddb2a1c058))
+- 🚨 guard against reintroducing pinned same-repo action references (#100) ([9915445](https://github.com/tomgrv/actions/commit/9915445ced9a92c58276a8a42c9d60fda6246462))
+### 📦 release-promote changes
+
+#### Other changes
+
+- ♻️ use $/&lt;name&gt; self-repository syntax (#98) ([959ceba](https://github.com/tomgrv/actions/commit/959ceba254d0c36bc6cb70377d41c185226256a2))
+
 ## 2.29.0 (2026-09-08)
 
 *Commits from: v2.28.0..HEAD*
@@ -809,6 +827,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
