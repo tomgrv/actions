@@ -45,12 +45,12 @@ runs:
     # workaround this replaced, it's a real `uses:` of the sibling
     # composite action, so its own steps/inputs/outputs all just work
     # (e.g. config-bot's get-user-id step) instead of being hand-reimplemented
-    # here. Each sibling's own "Setup scripts toolchain" sub-step
-    # (installing zz_log/gv/bump-*/etc from tomgrv/scripts) stays pinned to
-    # `@v2` as normal: that's an external repo released independently of
-    # this one, not something this release cycle could make stale.
+    # here. Every same-repo `uses:` in this repo (not just release-promote's
+    # own steps) now uses `$/<name>` for the same reason -- there's no
+    # general-purpose case where pinning a sibling in your own repo to a
+    # tag is actually safer than tracking the commit you're already running.
     - name: Setup scripts toolchain
-      uses: tomgrv/actions/setup-scripts@v2
+      uses: $/setup-scripts
       with:
         # bump-version (installed separately by setup-gitversion, from
         # tomgrv/devcontainer-features) shells out to `git workspaces` for

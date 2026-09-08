@@ -23,12 +23,12 @@ runs:
   using: composite
   steps:
     - name: Set up Node.js
-      uses: tomgrv/actions/setup-node@v2
+      uses: $/setup-node
       with:
         bare: 'true'
 
     - name: Setup scripts toolchain
-      uses: tomgrv/actions/setup-scripts@v2
+      uses: $/setup-scripts
       with:
         scripts: zz_log
 
