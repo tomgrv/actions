@@ -56,6 +56,7 @@
     "check-secret",
     "check-security-composer",
     "check-security-npm",
+    "clean-branches",
     "clean-history",
     "config-bot",
     "confirm-pr-comment",

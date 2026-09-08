@@ -1,0 +1,49 @@
+# @format
+
+# @package tomgrv/actions/clean-branches
+
+name: Clean Branches
+description: Delete branches whose linked pull request is closed (merged or not).
+author: Perspikapps
+branding:
+  icon: git-branch
+  color: red
+
+inputs:
+  github-token:
+    description: GitHub token with contents:write and pull-requests:read permissions.
+    required: true
+  protected-branches:
+    description: Comma-separated list of branch names that must never be deleted, even if linked to a closed PR.
+    required: false
+    default: 'main,master,develop'
+  merged-only:
+    description: When true, only delete branches whose PR was merged. When false, also delete branches whose PR was closed without merging.
+    required: false
+    default: 'false'
+
+outputs:
+  deleted-branches:
+    description: Newline-separated list of deleted branch names. Empty when none were deleted.
+    value: ${{ steps.clean.outputs.deleted-branches }}
+  count:
+    description: Number of branches deleted.
+    value: ${{ steps.clean.outputs.count }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
+        scripts: zz_log
+
+    - name: Clean branches linked to closed PRs
+      id: clean
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PROTECTED_BRANCHES: ${{ inputs.protected-branches }}
+        MERGED_ONLY: ${{ inputs.merged-only }}
+        REPO: ${{ github.repository }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
