@@ -3,8 +3,8 @@
 # Idempotently install the GitVersion toolchain git-release-beta/
 # git-release-prod (from tomgrv/scripts) depend on: a docker-wrapped
 # GitVersion CLI plus the gv/bump-tag/bump-changelog/bump-version scripts
-# (also from tomgrv/scripts -- zz_use, bootstrapped by this action's own
-# setup-scripts step).
+# (also from tomgrv/scripts -- zz_used by this action's own setup-scripts
+# step, ahead of this run.sh).
 
 set -eu
 
@@ -30,8 +30,6 @@ export PATH="${INSTALL_BIN_DIR}:$PATH"
 if [ -n "${GITHUB_PATH:-}" ]; then
     echo "${INSTALL_BIN_DIR}" >> "${GITHUB_PATH}"
 fi
-
-zz_use gv bump-tag bump-changelog bump-version
 
 for name in gv bump-tag bump-changelog bump-version gitversion; do
     command -v "${name}" > /dev/null || {

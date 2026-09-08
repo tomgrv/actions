@@ -15,7 +15,7 @@ runs:
     - name: Setup scripts toolchain
       uses: tomgrv/actions/setup-scripts@v2
       with:
-        scripts: zz_log
+        scripts: zz_log gv bump-tag bump-changelog bump-version
 
     - name: Install GitVersion toolchain
       shell: sh
