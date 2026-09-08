@@ -187,6 +187,8 @@ while [ "$i" -lt "$count" ]; do
     i=$((i + 1))
 done
 
+result=$(echo "$result" | jq -c '[.[] | select(.repository_url != null and .repository_url != "")]')
+
 if [ -n "$FILTER" ]; then
     zz_log i "Applying filter: select($FILTER)"
     result=$(echo "$result" | jq -c "[.[] | select($FILTER)]")

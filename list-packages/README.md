@@ -4,6 +4,8 @@
 
 Discovers Composer and npm workspace packages in the repository and emits a JSON matrix array suitable for use as a GitHub Actions matrix value.
 
+Only packages with a defined `repository` (source repo) are included; packages without one are dropped before any `filter` input is applied.
+
 ## Inputs
 
 ### workdir
