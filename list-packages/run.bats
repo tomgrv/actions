@@ -93,6 +93,19 @@ packages_json() {
   [ "$(packages_json)" = "[]" ]
 }
 
+@test "composer present but no composer.json skips Composer discovery without failing" {
+  cat > "$STUB_BIN/composer" <<'EOF'
+#!/bin/sh
+echo "Composer could not find a composer.json file in $PWD" >&2
+exit 1
+EOF
+  chmod +x "$STUB_BIN/composer"
+
+  run run_list
+  [ "$status" -eq 0 ]
+  [ "$(packages_json)" = "[]" ]
+}
+
 @test "node workspace package published on npmjs is marked published" {
   mkdir -p "$TEST_DIR/packages/foo"
   cat > "$TEST_DIR/package.json" <<'EOF'
@@ -254,6 +267,8 @@ EOF
 EOF
   stub_curl_packagist "$fixtures_dir"
 
+  : > "$TEST_DIR/composer.json"
+
   # Path-repository (monorepo-local) packages resolve outside vendor/, which is
   # what list-packages' vendor-exclusion filter expects for owned packages.
   mkdir -p "$TEST_DIR/packages/widgets"
@@ -289,6 +304,8 @@ EOF
   mkdir -p "$fixtures_dir"
   stub_curl_packagist "$fixtures_dir"
 
+  : > "$TEST_DIR/composer.json"
+
   mkdir -p "$TEST_DIR/packages/gadgets"
   cat > "$TEST_DIR/composer-show.json" <<EOF
 {
@@ -313,6 +330,8 @@ EOF
 
 @test "package published as both a php (Composer) and node (npm) artifact under the same repository gets both registry entries" {
   same_repository_url="https://github.com/acme/hybrid"
+
+  : > "$TEST_DIR/composer.json"
 
   # Composer side: monorepo-local path package (outside vendor/).
   mkdir -p "$TEST_DIR/packages/hybrid-php"

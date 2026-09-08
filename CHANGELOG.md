@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.27.0 (2026-09-08)
+
+*Commits from: v2.26.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.26.0' into develop ([995443b](https://github.com/tomgrv/actions/commit/995443b1f54e456fd548b0f339dcf86822934193))
+### 📦 list-packages changes
+
+#### Bug Fixes
+
+- 🐛 skip Composer discovery when composer.json absent (#90) ([c09a263](https://github.com/tomgrv/actions/commit/c09a263a940aea3b32cb3a001893146be036c1f9))
+
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 install git-workspaces and reuse setup-scripts@v2 pattern (#91) ([994e498](https://github.com/tomgrv/actions/commit/994e49872520f9ff5103f24d36facec565d8b5e9))
+
 ## 2.26.0 (2026-09-07)
 
 *Commits from: v2.25.0..HEAD*
@@ -752,5 +773,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
