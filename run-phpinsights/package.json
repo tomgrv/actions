@@ -1,6 +1,6 @@
 {
     "name": "run-phpinsights",
-    "version": "2.19.0",
+    "version": "2.30.0",
     "description": "Run PHP Insights with reviewdog.",
     "inputs": {
         "github-token": {

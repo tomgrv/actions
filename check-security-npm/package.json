@@ -1,6 +1,6 @@
 {
     "name": "check-security-npm",
-    "version": "2.20.0",
+    "version": "2.30.0",
     "description": "Run npm dependency security audit and report via reviewdog.",
     "inputs": {
         "github-token": {

@@ -1,6 +1,6 @@
 {
     "name": "create-pr-comment",
-    "version": "2.21.0",
+    "version": "2.30.0",
     "description": "Post a new comment on a pull request or issue.",
     "inputs": {
         "github-token": {

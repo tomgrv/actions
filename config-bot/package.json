@@ -1,6 +1,6 @@
 {
     "name": "config-bot",
-    "version": "2.19.0",
+    "version": "2.30.0",
     "description": "Configure Git identity and authentication for bot commits.",
     "inputs": {
         "github-token": {

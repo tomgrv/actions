@@ -1,6 +1,6 @@
 {
     "name": "resolve-environment",
-    "version": "2.19.0",
+    "version": "2.30.0",
     "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event.",
     "inputs": {
         "dep": {

@@ -1,6 +1,6 @@
 {
     "name": "run-pint",
-    "version": "2.20.0",
+    "version": "2.30.0",
     "description": "Run Laravel Pint with reviewdog.",
     "inputs": {
         "github-token": {
