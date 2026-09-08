@@ -25,21 +25,16 @@ inputs:
 runs:
   using: composite
   steps:
-    # The next four steps invoke each sibling action's run.sh directly via
-    # github.action_path rather than `uses: tomgrv/actions/<name>@<ref>`.
-    # Neither a fixed ref (`@main` 404s on a sibling that hasn't reached
-    # main yet -- true for setup-scripts/setup-gitversion right now, and
-    # for anything this repo's own first release ever introduces) nor a
-    # relative `./<name>` (resolves against the *calling* repo's checkout,
-    # not this one -- confirmed live: 404 when called from tomgrv/scripts)
-    # can track "whichever ref release-promote itself was invoked at" for
-    # every caller. github.action_path always points at wherever this
-    # action's own repo was fetched to run this step, and the sibling
-    # directories are checked out right alongside it at that same commit,
-    # so this works for any caller/ref without updates.
-    - name: Install release scripts
-      shell: sh
-      env:
+    # These four steps used to invoke each sibling action's run.sh directly
+    # via github.action_path instead of `uses: tomgrv/actions/<name>@v2`,
+    # to dodge a fixed ref 404ing on a sibling that hadn't reached a release
+    # tag yet. The whole repo now ships as one monorepo tag (v2), so every
+    # sibling resolves at the same ref release-promote itself resolves at --
+    # the same `uses: tomgrv/actions/<name>@v2` pattern every other action
+    # in this repo already uses, so use it here too instead of bypassing it.
+    - name: Setup scripts toolchain
+      uses: tomgrv/actions/setup-scripts@v2
+      with:
         # bump-version (installed separately by setup-gitversion, from
         # tomgrv/devcontainer-features) shells out to `git workspaces` for
         # its minimal-mode affected-workspace check -- without it on PATH
@@ -47,21 +42,19 @@ runs:
         # swallowed by bump-version's own `2>/dev/null || echo ""`), so
         # every workspace looks unaffected and per-workspace version files
         # never get bumped.
-        SCRIPTS: git-release-beta git-release-prod git-workspaces zz_log
-        SCRIPTS_REF: ${{ inputs.scripts-ref }}
-      run: sh -c "${{ github.action_path }}/../setup-scripts/run.sh"
+        scripts: git-release-beta git-release-prod git-workspaces zz_log
+        scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Configure git bot identity
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../config-bot/run.sh"
+      uses: tomgrv/actions/config-bot@v2
+      with:
+        github-token: ${{ inputs.github-token }}
 
     - name: Install GitVersion toolchain
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../setup-gitversion/run.sh"
+      uses: tomgrv/actions/setup-gitversion@v2
 
     - name: Install and initialize git-flow
-      shell: sh
-      run: sh -c "${{ github.action_path }}/../setup-gitflow/run.sh"
+      uses: tomgrv/actions/setup-gitflow@v2
 
     - name: Run beta then prod
       shell: sh
