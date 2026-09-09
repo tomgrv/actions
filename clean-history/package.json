@@ -3,7 +3,7 @@
     "version": "2.30.0",
     "description": "Remove old workflow run history, keeping a minimum number of days and runs per workflow.",
     "inputs": {
-        "GH_TOKEN": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token with actions:read and actions:write permissions.",
             "required": true
         },

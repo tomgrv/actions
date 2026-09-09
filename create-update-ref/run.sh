@@ -2,7 +2,10 @@
 
 set -eu
 
-if [ -z "${GH_TOKEN:-}" ]; then
+# Export GitHub token for gh CLI
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+
+if [ -z "${GH_TOKEN}" ]; then
   zz_log e "github-token is required"
   exit 1
 fi

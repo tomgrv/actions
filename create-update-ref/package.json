@@ -3,7 +3,7 @@
     "version": "2.30.0",
     "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
     "inputs": {
-        "GH_TOKEN": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token with contents write permission.",
             "required": true
         },

@@ -42,8 +42,10 @@ runs:
       id: get-user-id
       shell: sh
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
-      run: echo "user_id=$(gh api "/users/${{ inputs.github-app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        export GH_TOKEN="${GITHUB_TOKEN}"
+        echo "user_id=$(gh api "/users/${{ inputs.github-app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
     - name: Configure Git bot credentials
       id: configure-bot
       shell: sh

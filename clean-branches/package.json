@@ -3,7 +3,7 @@
     "version": "2.30.0",
     "description": "Delete branches whose linked pull request is closed.",
     "inputs": {
-        "GH_TOKEN": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token with contents:write and pull-requests:read permissions.",
             "required": true
         },

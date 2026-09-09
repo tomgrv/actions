@@ -3,7 +3,7 @@
     "version": "2.30.0",
     "description": "Configure Git identity and authentication for bot commits.",
     "inputs": {
-        "GH_TOKEN": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token used for authenticated Git operations.",
             "required": false,
             "default": "${{ github.token }}"
