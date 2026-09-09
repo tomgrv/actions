@@ -3,10 +3,6 @@
     "version": "2.30.0",
     "description": "Run git-release-beta then git-release-prod (git-flow beta->prod promotion).",
     "inputs": {
-        "scripts-ref": {
-            "description": "tomgrv/scripts ref (tag/branch/commit) to pull git-release-beta/git-release-prod from.",
-            "required": true
-        },
         "DRY_RUN": {
             "description": "Run through beta/prod without pushing to main (verification only).",
             "required": false,

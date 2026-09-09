@@ -15,15 +15,6 @@
             "description": "Name of the origin repository",
             "required": true
         },
-        "sync-branch": {
-            "description": "Branch to target in the PR on the origin repository",
-            "required": false,
-            "default": "main"
-        },
-        "github-token": {
-            "description": "GitHub token with permissions to push to the origin repository",
-            "required": false
-        },
         "SPLITSH_VERSION": {
             "description": "Version of splitsh-lite to use for splitting the repository",
             "required": false,

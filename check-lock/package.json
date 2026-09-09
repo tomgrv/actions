@@ -3,20 +3,10 @@
     "version": "2.30.0",
     "description": "Validate composer.json/composer.lock and package.json/package-lock.json coherence and report via reviewdog.",
     "inputs": {
-        "github-token": {
-            "description": "GitHub token for reviewdog reporting.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
         "TARGET_PATHS": {
             "description": "Comma-separated list of directories to check for lock files.",
             "required": false,
             "default": "."
-        },
-        "reviewdog-version": {
-            "description": "Version of reviewdog to install.",
-            "required": false,
-            "default": "v0.20.3"
         },
         "REVIEWDOG_NAME": {
             "description": "Name reported by reviewdog to identify this check.",

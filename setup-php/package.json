@@ -3,21 +3,6 @@
     "version": "2.30.0",
     "description": "Shared PHP and Composer setup for PR validation actions.",
     "inputs": {
-        "bare": {
-            "description": "If true, skips the `composer install` step. Useful for actions that only need PHP and Composer available, but not the project's dependencies.",
-            "required": false,
-            "default": "false"
-        },
-        "options": {
-            "description": "Additional options to pass to composer install, such as --no-dev.",
-            "required": false,
-            "default": ""
-        },
-        "tools": {
-            "description": "Additional tools to install with shivammathur/setup-php, comma-separated.",
-            "required": false,
-            "default": ""
-        },
         "REQUIRE": {
             "description": "Composer packages to install globally (`composer global require`), comma-separated, each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`). Runs on every invocation of this action within a job, regardless of whether the PHP/Composer setup itself was skipped as a duplicate - each caller may need a different global package. Packages already installed globally are skipped.",
             "required": false,

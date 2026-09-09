@@ -3,11 +3,6 @@
     "version": "2.30.0",
     "description": "Setup reviewdog for PR validation actions.",
     "inputs": {
-        "version": {
-            "description": "Version of reviewdog to install.",
-            "required": false,
-            "default": "v0.20.3"
-        },
         "TYPE_INPUT": {
             "description": "Report type: check (github-check), review (github-pr-review), or annotations (github-pr-check). When unset, auto-detects based on event context (PR events use annotations, others use check).",
             "required": false,

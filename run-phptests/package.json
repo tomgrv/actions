@@ -3,11 +3,6 @@
     "version": "2.30.0",
     "description": "Run pull request test suite for a PHP project.",
     "inputs": {
-        "github-token": {
-            "description": "GitHub token for reviewdog reporting. Reporting is skipped when empty.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
         "WORKING_DIRECTORY": {
             "description": "Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.",
             "required": false,

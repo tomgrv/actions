@@ -2,27 +2,5 @@
     "name": "setup-node",
     "version": "2.19.0",
     "description": "Setup Node.js and npm for CI jobs.",
-    "inputs": {
-        "cache": {
-            "description": "Supported package manager",
-            "required": false,
-            "default": "npm"
-        },
-        "node-version": {
-            "description": "Node.js version to set up. Defaults to version specified in package.json or 24.",
-            "required": false,
-            "default": "24"
-        },
-        "options": {
-            "description": "Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.",
-            "required": false,
-            "default": ""
-        },
-        "bare": {
-            "description": "If true, skips the `npm ci` step. Useful for actions that only need Node.js and npm available, but not the project's dependencies.",
-            "required": false,
-            "default": "false"
-        }
-    },
     "private": true
 }

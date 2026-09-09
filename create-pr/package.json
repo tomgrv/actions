@@ -31,10 +31,6 @@
             "required": false,
             "default": ""
         },
-        "head-owner": {
-            "description": "Owner of the head branch repository. Defaults to repository-organization. PR via a fork if head-owner is different from repository-organization.",
-            "required": false
-        },
         "BASE_BRANCH": {
             "description": "Base branch for the pull request. Defaults to the default branch of the repository if not provided.",
             "required": false,

@@ -3,10 +3,6 @@
     "version": "2.30.0",
     "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
     "inputs": {
-        "version": {
-            "description": "The version of Deployer to install. If not specified, the latest version will be used.",
-            "required": false
-        },
         "DEP": {
             "description": "The deployer command to run. If not specified, the default is \"deploy\".",
             "required": true,
@@ -30,29 +26,6 @@
             "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
             "required": false,
             "default": ""
-        },
-        "ssh-private-key": {
-            "description": "SSH private key for deployment",
-            "required": true
-        },
-        "known-hosts": {
-            "description": "Known hosts for SSH",
-            "required": true
-        },
-        "ssh-config": {
-            "description": "SSH configuration",
-            "required": false,
-            "default": ""
-        },
-        "github-token": {
-            "description": "GitHub token for reviewdog reporting of Deployer warnings/errors as check annotations.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
-        "reviewdog-version": {
-            "description": "The version of reviewdog to install.",
-            "required": false,
-            "default": "v0.20.3"
         }
     },
     "outputs": {

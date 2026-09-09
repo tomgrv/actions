@@ -3,11 +3,6 @@
     "version": "2.30.0",
     "description": "Run FilaCheck with reviewdog.",
     "inputs": {
-        "github-token": {
-            "description": "GitHub token for reviewdog reporting.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
         "FILACHECK_PATH": {
             "description": "Path to analyze with FilaCheck. Defaults to `app/Filament`.",
             "required": false,
@@ -27,11 +22,6 @@
             "description": "Only scan files changed on the current pull request (relative to its base branch). FilaCheck has no native flag for this, so it is emulated by resolving the changed files and passing that explicit list in place of `path`.",
             "required": false,
             "default": "false"
-        },
-        "wip-base-ref": {
-            "description": "Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
-            "required": false,
-            "default": ""
         },
         "REVIEWDOG_NAME": {
             "description": "Name reported by reviewdog to identify this check.",

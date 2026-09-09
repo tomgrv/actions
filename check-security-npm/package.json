@@ -3,11 +3,6 @@
     "version": "2.30.0",
     "description": "Run npm dependency security audit and report via reviewdog.",
     "inputs": {
-        "github-token": {
-            "description": "GitHub token for reviewdog reporting.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
         "REVIEWDOG_NAME": {
             "description": "Name reported by reviewdog to identify this check.",
             "required": false,
