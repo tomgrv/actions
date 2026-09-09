@@ -8,7 +8,7 @@
             "required": false,
             "default": "${{ github.token }}"
         },
-        "PINT_PATHS": {
+        "TARGET_PATHS": {
             "description": "Comma-separated list of paths to analyze with Pint. Defaults to `app`.",
             "required": false,
             "default": "app"

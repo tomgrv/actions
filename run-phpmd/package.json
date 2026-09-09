@@ -8,7 +8,7 @@
             "required": false,
             "default": "${{ github.token }}"
         },
-        "PHPMD_PATHS": {
+        "TARGET_PATHS": {
             "description": "Paths to analyze with PHPMD, comma-separated. Defaults to `app`.",
             "required": false,
             "default": "app"
