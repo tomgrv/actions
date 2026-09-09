@@ -3,12 +3,12 @@
     "version": "2.30.0",
     "description": "Install the git-flow extension if missing, then initialize it against the checked-out repo.",
     "inputs": {
-        "master-branch": {
+        "GITFLOW_MASTER_BRANCH": {
             "description": "Branch git-flow treats as production/master.",
             "required": false,
             "default": "main"
         },
-        "develop-branch": {
+        "GITFLOW_DEVELOP_BRANCH": {
             "description": "Branch git-flow treats as develop.",
             "required": false,
             "default": "develop"

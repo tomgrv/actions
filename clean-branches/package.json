@@ -3,16 +3,16 @@
     "version": "2.30.0",
     "description": "Delete branches whose linked pull request is closed.",
     "inputs": {
-        "github-token": {
+        "GH_TOKEN": {
             "description": "GitHub token with contents:write and pull-requests:read permissions.",
             "required": true
         },
-        "protected-branches": {
+        "PROTECTED_BRANCHES": {
             "description": "Comma-separated list of branch names that must never be deleted, even if linked to a closed PR.",
             "required": false,
             "default": "main,master,develop"
         },
-        "merged-only": {
+        "MERGED_ONLY": {
             "description": "When true, only delete branches whose PR was merged. When false, also delete branches whose PR was closed without merging.",
             "required": false,
             "default": "false"

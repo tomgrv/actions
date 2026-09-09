@@ -3,15 +3,15 @@
     "version": "2.30.0",
     "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
     "inputs": {
-        "github-token": {
+        "GH_TOKEN": {
             "description": "GitHub token with contents write permission.",
             "required": true
         },
-        "ref": {
+        "REF": {
             "description": "Full ref name (e.g. refs/tags/deploy/myhost).",
             "required": true
         },
-        "sha": {
+        "SHA": {
             "description": "The SHA to point the ref at.",
             "required": true
         }

@@ -8,32 +8,32 @@
             "required": false,
             "default": "${{ github.token }}"
         },
-        "name": {
+        "REVIEWDOG_NAME": {
             "description": "Name reported by reviewdog to identify this check.",
             "required": false,
             "default": "npm-audit"
         },
-        "level": {
+        "REVIEWDOG_LEVEL": {
             "description": "Report level for reviewdog [info,warning,error].",
             "required": false,
             "default": "error"
         },
-        "reporter": {
+        "REVIEWDOG_REPORTER": {
             "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise), which posts a Check annotation for every finding regardless of whether the PR touches the manifest file. Set explicitly to github-pr-review to post applyable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment.",
             "required": false,
             "default": ""
         },
-        "fail-level": {
+        "REVIEWDOG_FAIL_LEVEL": {
             "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].",
             "required": false,
             "default": "none"
         },
-        "reviewdog-flags": {
+        "REVIEWDOG_FLAGS": {
             "description": "Additional reviewdog flags.",
             "required": false,
             "default": ""
         },
-        "max-diagnostics": {
+        "MAX_DIAGNOSTICS": {
             "description": "Maximum number of vulnerability diagnostics to report, most severe first. Extra findings are collapsed into a single summary diagnostic to stay under GitHub's annotation limits.",
             "required": false,
             "default": "10"

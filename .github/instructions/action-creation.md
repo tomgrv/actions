@@ -27,7 +27,7 @@ Every action directory must have a `package.json` with:
 
 - `name`: the folder name (no `@org/` prefix)
 - `description`: brief description matching `action.yml`
-- `inputs`: mirrors `action.yml`'s `inputs:` block — one entry per input, each with `description`, `required`, and `default` (only when `action.yml` defines one)
+- `inputs`: mirrors `action.yml`'s `inputs:` block, one entry per input, each with `description`, `required`, and `default` (only when `action.yml` defines one) — but keyed by the **environment variable** the input maps to (the same name used in `action.yml`'s `env:` block for this action's own `run.sh`; see [Environment Variables and Scripts](#environment-variables-and-scripts) below), not by the kebab-case `action.yml` input name. This lets `zz_use`/local script invocation inject a value for the input by exporting that variable directly. When an input has no such direct env mapping — it's forwarded as `with:` to a nested composite action instead of read by this action's own script, or the script reads it as a positional/`zz_args` argument — key it by its `action.yml` input name instead.
 - `outputs`: mirrors `action.yml`'s `outputs:` block — one entry per output, with `description` only (the `value: ${{ steps... }}` expression is a `action.yml`-only concern, not part of the script-facing contract)
 - `private: true` — these packages are never published individually
 
@@ -37,7 +37,7 @@ Every action directory must have a `package.json` with:
     "version": "2.0.0",
     "description": "Short description of what the action does.",
     "inputs": {
-        "parameter-name": {
+        "ENV_VAR": {
             "description": "What this input controls.",
             "required": false,
             "default": "some-default"

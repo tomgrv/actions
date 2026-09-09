@@ -3,15 +3,15 @@
     "version": "2.30.0",
     "description": "Split a package from a monorepo and push the split branch.",
     "inputs": {
-        "package-directory": {
+        "PACKAGE_DIR": {
             "description": "Relative path to the package directory from the repository root",
             "required": true
         },
-        "repository-organization": {
+        "REPO_ORG": {
             "description": "GitHub organization or user that owns the origin repository",
             "required": true
         },
-        "repository-name": {
+        "REPO_NAME": {
             "description": "Name of the origin repository",
             "required": true
         },
@@ -24,7 +24,7 @@
             "description": "GitHub token with permissions to push to the origin repository",
             "required": false
         },
-        "splitsh-version": {
+        "SPLITSH_VERSION": {
             "description": "Version of splitsh-lite to use for splitting the repository",
             "required": false,
             "default": "v1.0.1"

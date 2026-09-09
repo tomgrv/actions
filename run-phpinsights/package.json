@@ -8,22 +8,22 @@
             "required": false,
             "default": "${{ github.token }}"
         },
-        "paths": {
+        "TARGET_PATHS": {
             "description": "Paths to analyze with PHP Insights, comma-separated. Defaults to `app`.",
             "required": false,
             "default": "app"
         },
-        "config-path": {
+        "PHPINSIGHTS_CONFIG_PATH": {
             "description": "Path to a custom PHP Insights configuration file. Leave empty to let PHP Insights auto-detect `phpinsights.json` (or `config/insights.php` in Laravel apps) at the repository root, or fall back to its own defaults otherwise.",
             "required": false,
             "default": ""
         },
-        "dirty": {
+        "DIRTY": {
             "description": "Only analyze files with uncommitted git changes (staged, unstaged, or untracked).",
             "required": false,
             "default": "false"
         },
-        "wip": {
+        "WIP": {
             "description": "Only analyze files changed on the current pull request (relative to its base branch).",
             "required": false,
             "default": "false"
@@ -33,27 +33,27 @@
             "required": false,
             "default": ""
         },
-        "name": {
+        "REVIEWDOG_NAME": {
             "description": "Name reported by reviewdog to identify this check.",
             "required": false,
             "default": "phpinsights"
         },
-        "level": {
+        "REVIEWDOG_LEVEL": {
             "description": "Report level for reviewdog [info,warning,error].",
             "required": false,
             "default": "error"
         },
-        "reporter": {
+        "REVIEWDOG_REPORTER": {
             "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise).",
             "required": false,
             "default": ""
         },
-        "fail-level": {
+        "REVIEWDOG_FAIL_LEVEL": {
             "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].",
             "required": false,
             "default": "none"
         },
-        "reviewdog-flags": {
+        "REVIEWDOG_FLAGS": {
             "description": "Additional reviewdog flags.",
             "required": false,
             "default": ""

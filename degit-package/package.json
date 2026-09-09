@@ -3,34 +3,34 @@
     "version": "2.30.0",
     "description": "Import the tip of a source branch into a target repository workspace.",
     "inputs": {
-        "github-token": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token with read access to source and write access to target repository.",
             "required": true
         },
-        "source-organization": {
+        "SOURCE_ORG": {
             "description": "Source repository organization or user to import from.",
             "required": true
         },
-        "source-repository": {
+        "SOURCE_NAME": {
             "description": "Source repository name to import from.",
             "required": true
         },
-        "source-branch": {
+        "SOURCE_BRANCH": {
             "description": "Source branch to import. Defaults to the source repository default branch.",
             "required": false,
             "default": ""
         },
-        "target-subdir": {
+        "TARGET_SUBDIR": {
             "description": "Relative subdirectory inside the target repository where content is imported.",
             "required": false,
             "default": "."
         },
-        "exclude-paths": {
+        "EXCLUDE_PATHS": {
             "description": "Comma-separated paths to exclude during import.",
             "required": false,
             "default": ".github,.devcontainer,.vscode"
         },
-        "head-branch": {
+        "HEAD_BRANCH": {
             "description": "Branch name to prepare in repository. Auto-generated when empty.",
             "required": false,
             "default": ""

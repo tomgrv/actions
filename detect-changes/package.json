@@ -3,12 +3,12 @@
     "version": "2.30.0",
     "description": "Detect uncommitted or untracked changes in a given path using git status.",
     "inputs": {
-        "path": {
+        "WORKDIR": {
             "description": "Base path to check for changes (relative to repo root).",
             "required": false,
             "default": "."
         },
-        "options": {
+        "OPTIONS": {
             "description": "Additional options passed to `git status` (e.g. --ignored, -u).",
             "required": false,
             "default": ""

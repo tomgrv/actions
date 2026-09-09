@@ -3,27 +3,27 @@
     "version": "2.30.0",
     "description": "Publish an npm package to registry using GitHub OIDC trusted publishers.",
     "inputs": {
-        "path": {
+        "PACKAGE_PATH": {
             "description": "Path to the package directory containing package.json. Defaults to current directory.",
             "required": false,
             "default": "."
         },
-        "registry-url": {
+        "REGISTRY_URL": {
             "description": "npm registry URL. Defaults to https://registry.npmjs.org/",
             "required": false,
             "default": "https://registry.npmjs.org/"
         },
-        "provenance": {
+        "PROVENANCE": {
             "description": "Generate provenance attestation for this package (NPM 10.2.0+, Node 18.20.0+). When enabled, npm creates a .provenance.json with build metadata for verification.",
             "required": false,
             "default": "true"
         },
-        "tag": {
+        "DIST_TAG": {
             "description": "Distribution tag to publish as (e.g., latest, next, rc). Defaults to \"latest\". Useful for pre-releases or distinguishing different channels.",
             "required": false,
             "default": "latest"
         },
-        "dry-run": {
+        "DRY_RUN": {
             "description": "If true, runs publish in dry-run mode to validate the package without uploading. Useful for testing the publish process.",
             "required": false,
             "default": "false"

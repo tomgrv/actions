@@ -3,22 +3,22 @@
     "version": "2.30.0",
     "description": "Post a new comment on a pull request or issue.",
     "inputs": {
-        "github-token": {
+        "GITHUB_TOKEN": {
             "description": "GitHub token with permission to write issue comments.",
             "required": false,
             "default": "${{ github.token }}"
         },
-        "repository": {
+        "REPOSITORY": {
             "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
             "required": false,
             "default": ""
         },
-        "issue-number": {
+        "ISSUE_NUMBER": {
             "description": "Pull request or issue number to comment on. Defaults to the current pull request or issue number.",
             "required": false,
             "default": "${{ github.event.issue.number || github.event.pull_request.number }}"
         },
-        "body": {
+        "BODY": {
             "description": "Comment body (Markdown supported).",
             "required": true
         }

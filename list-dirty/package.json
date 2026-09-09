@@ -3,12 +3,12 @@
     "version": "2.30.0",
     "description": "List files with uncommitted git changes (staged, unstaged, or untracked), optionally filtered by path and extension.",
     "inputs": {
-        "path": {
+        "LIST_PATHS": {
             "description": "Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).",
             "required": false,
             "default": "."
         },
-        "extensions": {
+        "LIST_EXTENSIONS": {
             "description": "Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.",
             "required": false,
             "default": "php"

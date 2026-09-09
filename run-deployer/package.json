@@ -7,26 +7,26 @@
             "description": "The version of Deployer to install. If not specified, the latest version will be used.",
             "required": false
         },
-        "dep": {
+        "DEP": {
             "description": "The deployer command to run. If not specified, the default is \"deploy\".",
             "required": true,
             "default": "deploy"
         },
-        "options": {
+        "OPTIONS": {
             "description": "Options to pass to the deployer command.",
             "required": false
         },
-        "selector": {
+        "SELECTOR": {
             "description": "The selector to use for the deployer command. If not specified, the default is \"all\".",
             "required": false,
             "default": "all"
         },
-        "environment": {
+        "ENVIRONMENT": {
             "description": "The environment to use for the deployer command. If not specified, the default is determined by git branch.",
             "required": false,
             "default": ""
         },
-        "branch-scope": {
+        "BRANCH_SCOPE": {
             "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
             "required": false,
             "default": ""
