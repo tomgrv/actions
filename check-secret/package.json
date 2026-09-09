@@ -2,16 +2,5 @@
     "name": "check-secret",
     "version": "2.6.0",
     "description": "Scan pull request changes for secrets.",
-    "inputs": {
-        "GITHUB_TOKEN": {
-            "description": "GitHub token for gitleaks action.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
-        "GITLEAKS_LICENSE": {
-            "description": "Gitleaks license key for private repositories. Not required for public repositories.",
-            "required": false
-        }
-    },
     "private": true
 }

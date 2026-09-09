@@ -10,9 +10,6 @@
         }
     },
     "outputs": {
-        "php-version": {
-            "description": "Detected PHP version from composer.json, or default."
-        },
         "php-extensions": {
             "description": "Detected PHP extensions from composer.json, or empty."
         }

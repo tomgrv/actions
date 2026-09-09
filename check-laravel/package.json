@@ -2,16 +2,5 @@
     "name": "check-laravel",
     "version": "2.20.0",
     "description": "Run the standard Laravel PHP check suite (PHPStan, Pint, PHP Insights, PHPMD, tests) and report via reviewdog.",
-    "outputs": {
-        "tests-passed": {
-            "description": "Whether the test suite passed."
-        },
-        "coverage-file": {
-            "description": "Path of the generated coverage report, empty when no report was produced."
-        },
-        "junit-file": {
-            "description": "Path of the generated JUnit report, empty when no report was produced."
-        }
-    },
     "private": true
 }

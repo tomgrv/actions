@@ -7,11 +7,6 @@
             "description": "Report type: check (github-check), review (github-pr-review), or annotations (github-pr-check). When unset, auto-detects based on event context (PR events use annotations, others use check).",
             "required": false,
             "default": ""
-        },
-        "GITHUB_TOKEN_INPUT": {
-            "description": "GitHub token for reviewdog reporting. Falls back to GITHUB_TOKEN when empty. Left unset when neither is available; callers that require a token for reporting are responsible for erroring on that themselves.",
-            "required": false,
-            "default": "${{ github.token }}"
         }
     },
     "private": true
