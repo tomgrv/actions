@@ -84,6 +84,7 @@ runs:
       if: ${{ hashFiles('**/composer.json') || hashFiles('**/composer.lock') || hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
       shell: sh
       env:
+        TARGET_PATHS: ${{ inputs.paths }}
         REVIEWDOG_NAME: ${{ inputs.name }}
         REVIEWDOG_REPORTER: ${{ inputs.reporter || env.REVIEWDOG_REPORTER }}
         REVIEWDOG_LEVEL: ${{ inputs.level }}

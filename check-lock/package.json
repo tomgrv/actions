@@ -8,7 +8,7 @@
             "required": false,
             "default": "${{ github.token }}"
         },
-        "paths": {
+        "TARGET_PATHS": {
             "description": "Comma-separated list of directories to check for lock files.",
             "required": false,
             "default": "."
