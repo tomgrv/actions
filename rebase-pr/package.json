@@ -6,26 +6,22 @@
         "github-token": {
             "description": "GitHub token with pull request and contents permissions.",
             "required": false,
-            "default": "${{ github.token }}",
-            "env": "GITHUB_TOKEN"
+            "default": "${{ github.token }}"
         },
         "repository": {
             "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
             "required": false,
-            "default": "",
-            "env": "REPOSITORY"
+            "default": ""
         },
         "pr-number": {
             "description": "Pull request number to rebase. Defaults to the current pull request number.",
             "required": false,
-            "default": "",
-            "env": "PR_NUMBER"
+            "default": ""
         },
         "autosquash": {
             "description": "Whether to autosquash fixup! and squash! commits during rebase.",
             "required": false,
-            "default": "false",
-            "env": "AUTOSQUASH"
+            "default": "false"
         }
     },
     "outputs": {

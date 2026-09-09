@@ -6,14 +6,12 @@
         "github-token": {
             "description": "GitHub token used to update PR title when needed.",
             "required": false,
-            "default": "${{ github.token }}",
-            "env": "GH_TOKEN"
+            "default": "${{ github.token }}"
         },
         "fix": {
             "description": "Autocorrect the PR title (via devmoji) and push it back when possible, instead of only reporting the expected format.",
             "required": false,
-            "default": "false",
-            "env": "FIX"
+            "default": "false"
         }
     },
     "private": true

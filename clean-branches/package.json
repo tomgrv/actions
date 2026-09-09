@@ -5,20 +5,17 @@
     "inputs": {
         "github-token": {
             "description": "GitHub token with contents:write and pull-requests:read permissions.",
-            "required": true,
-            "env": "GH_TOKEN"
+            "required": true
         },
         "protected-branches": {
             "description": "Comma-separated list of branch names that must never be deleted, even if linked to a closed PR.",
             "required": false,
-            "default": "main,master,develop",
-            "env": "PROTECTED_BRANCHES"
+            "default": "main,master,develop"
         },
         "merged-only": {
             "description": "When true, only delete branches whose PR was merged. When false, also delete branches whose PR was closed without merging.",
             "required": false,
-            "default": "false",
-            "env": "MERGED_ONLY"
+            "default": "false"
         }
     },
     "outputs": {

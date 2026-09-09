@@ -10,31 +10,26 @@
         "dep": {
             "description": "The deployer command to run. If not specified, the default is \"deploy\".",
             "required": true,
-            "default": "deploy",
-            "env": "DEP"
+            "default": "deploy"
         },
         "options": {
             "description": "Options to pass to the deployer command.",
-            "required": false,
-            "env": "OPTIONS"
+            "required": false
         },
         "selector": {
             "description": "The selector to use for the deployer command. If not specified, the default is \"all\".",
             "required": false,
-            "default": "all",
-            "env": "SELECTOR"
+            "default": "all"
         },
         "environment": {
             "description": "The environment to use for the deployer command. If not specified, the default is determined by git branch.",
             "required": false,
-            "default": "",
-            "env": "ENVIRONMENT"
+            "default": ""
         },
         "branch-scope": {
             "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
             "required": false,
-            "default": "",
-            "env": "BRANCH_SCOPE"
+            "default": ""
         },
         "ssh-private-key": {
             "description": "SSH private key for deployment",

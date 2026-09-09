@@ -6,20 +6,17 @@
         "path": {
             "description": "Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).",
             "required": false,
-            "default": ".",
-            "env": "LIST_PATHS"
+            "default": "."
         },
         "extensions": {
             "description": "Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.",
             "required": false,
-            "default": "php",
-            "env": "LIST_EXTENSIONS"
+            "default": "php"
         },
         "base-ref": {
             "description": "Base branch/ref to diff against. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
             "required": false,
-            "default": "",
-            "env": "LIST_BASE_REF"
+            "default": ""
         }
     },
     "outputs": {

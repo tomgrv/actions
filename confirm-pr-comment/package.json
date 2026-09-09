@@ -6,32 +6,27 @@
         "github-token": {
             "description": "GitHub token with permission to add reactions.",
             "required": false,
-            "default": "${{ github.token }}",
-            "env": "GITHUB_TOKEN"
+            "default": "${{ github.token }}"
         },
         "repository": {
             "description": "Repository in the format \"owner/name\". Used when comment-url is not provided.",
             "required": false,
-            "default": "",
-            "env": "REPOSITORY"
+            "default": ""
         },
         "comment-url": {
             "description": "API URL of the comment to react to. Defaults to github.event.comment.url.",
             "required": false,
-            "default": "${{ github.event.comment.url }}",
-            "env": "COMMENT_URL"
+            "default": "${{ github.event.comment.url }}"
         },
         "comment-id": {
             "description": "Numeric comment ID. Used with repository when comment-url is not provided.",
             "required": false,
-            "default": "${{ github.event.comment.id }}",
-            "env": "COMMENT_ID"
+            "default": "${{ github.event.comment.id }}"
         },
         "reaction": {
             "description": "Reaction to add. Supports GitHub values (+1, -1, laugh, confused, heart, hooray, rocket, eyes) and emoji aliases (\ud83d\udc4d, \ud83d\udc4e, \ud83d\ude04, \ud83d\ude15, \u2764\ufe0f, \ud83c\udf89, \ud83d\ude80, \ud83d\udc40).",
             "required": false,
-            "default": "+1",
-            "env": "REACTION"
+            "default": "+1"
         }
     },
     "outputs": {

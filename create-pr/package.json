@@ -6,36 +6,30 @@
         "github-token": {
             "description": "GitHub token with pull request permissions.",
             "required": false,
-            "default": "${{ github.token }}",
-            "env": "GITHUB_TOKEN"
+            "default": "${{ github.token }}"
         },
         "repository": {
             "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
-            "required": false,
-            "env": "REPOSITORY"
+            "required": false
         },
         "head-branch": {
             "description": "Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.",
-            "required": true,
-            "env": "HEAD_BRANCH"
+            "required": true
         },
         "workdir": {
             "description": "Working directory where changes to commit are located. Defaults to the repository root.",
             "required": false,
-            "default": ".",
-            "env": "WORKING_DIRECTORY"
+            "default": "."
         },
         "commit-message": {
             "description": "Commit message for the changes being committed. Defaults to the PR title if not provided.",
             "required": false,
-            "default": "",
-            "env": "COMMIT_MESSAGE"
+            "default": ""
         },
         "commit-files": {
             "description": "Comma-separated list of files to commit. Defaults to all changes in the workdir.",
             "required": false,
-            "default": "",
-            "env": "COMMIT_FILES"
+            "default": ""
         },
         "head-owner": {
             "description": "Owner of the head branch repository. Defaults to repository-organization. PR via a fork if head-owner is different from repository-organization.",
@@ -44,19 +38,16 @@
         "base-branch": {
             "description": "Base branch for the pull request. Defaults to the default branch of the repository if not provided.",
             "required": false,
-            "default": "",
-            "env": "BASE_BRANCH"
+            "default": ""
         },
         "pr-title": {
             "description": "Pull request title.",
-            "required": true,
-            "env": "PR_TITLE"
+            "required": true
         },
         "pr-body": {
             "description": "Pull request body.",
             "required": false,
-            "default": "",
-            "env": "PR_BODY"
+            "default": ""
         }
     },
     "outputs": {

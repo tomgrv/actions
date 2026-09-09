@@ -6,13 +6,11 @@
         "github-token": {
             "description": "GitHub token for gitleaks action.",
             "required": false,
-            "default": "${{ github.token }}",
-            "env": "GITHUB_TOKEN"
+            "default": "${{ github.token }}"
         },
         "gitleaks-license": {
             "description": "Gitleaks license key for private repositories. Not required for public repositories.",
-            "required": false,
-            "env": "GITLEAKS_LICENSE"
+            "required": false
         }
     },
     "private": true

@@ -5,18 +5,15 @@
     "inputs": {
         "package-directory": {
             "description": "Relative path to the package directory from the repository root",
-            "required": true,
-            "env": "PACKAGE_DIR"
+            "required": true
         },
         "repository-organization": {
             "description": "GitHub organization or user that owns the origin repository",
-            "required": true,
-            "env": "REPO_ORG"
+            "required": true
         },
         "repository-name": {
             "description": "Name of the origin repository",
-            "required": true,
-            "env": "REPO_NAME"
+            "required": true
         },
         "sync-branch": {
             "description": "Branch to target in the PR on the origin repository",
@@ -30,8 +27,7 @@
         "splitsh-version": {
             "description": "Version of splitsh-lite to use for splitting the repository",
             "required": false,
-            "default": "v1.0.1",
-            "env": "SPLITSH_VERSION"
+            "default": "v1.0.1"
         }
     },
     "outputs": {

@@ -11,32 +11,27 @@
         "paths": {
             "description": "Paths to analyze with PHPMD, comma-separated. Defaults to `app`.",
             "required": false,
-            "default": "app",
-            "env": "PHPMD_PATHS"
+            "default": "app"
         },
         "ruleset": {
             "description": "PHPMD ruleset to use: comma-separated rule set names (e.g. `cleancode,codesize`) and/or paths to custom ruleset XML files. Leave empty to automatically use `phpmd.xml` from the repository root when present, or fall back to the default ruleset (`cleancode,codesize,controversial,design,naming,unusedcode`) otherwise.",
             "required": false,
-            "default": "",
-            "env": "PHPMD_RULESET"
+            "default": ""
         },
         "priority": {
             "description": "Priority of issues to report (min/max). Defaults to max.",
             "required": false,
-            "default": "max",
-            "env": "PHPMD_PRIORITY"
+            "default": "max"
         },
         "dirty": {
             "description": "Only analyze files with uncommitted git changes (staged, unstaged, or untracked).",
             "required": false,
-            "default": "false",
-            "env": "DIRTY"
+            "default": "false"
         },
         "wip": {
             "description": "Only analyze files changed on the current pull request (relative to its base branch).",
             "required": false,
-            "default": "false",
-            "env": "WIP"
+            "default": "false"
         },
         "wip-base-ref": {
             "description": "Base branch/ref to diff against when `wip` is enabled. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
@@ -46,32 +41,27 @@
         "name": {
             "description": "Name reported by reviewdog to identify this check.",
             "required": false,
-            "default": "phpmd",
-            "env": "REVIEWDOG_NAME"
+            "default": "phpmd"
         },
         "level": {
             "description": "Report level for reviewdog [info,warning,error].",
             "required": false,
-            "default": "error",
-            "env": "REVIEWDOG_LEVEL"
+            "default": "error"
         },
         "reporter": {
             "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise).",
             "required": false,
-            "default": "",
-            "env": "REVIEWDOG_REPORTER"
+            "default": ""
         },
         "fail-level": {
             "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].",
             "required": false,
-            "default": "none",
-            "env": "REVIEWDOG_FAIL_LEVEL"
+            "default": "none"
         },
         "reviewdog-flags": {
             "description": "Additional reviewdog flags.",
             "required": false,
-            "default": "",
-            "env": "REVIEWDOG_FLAGS"
+            "default": ""
         }
     },
     "private": true

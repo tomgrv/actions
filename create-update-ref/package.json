@@ -5,18 +5,15 @@
     "inputs": {
         "github-token": {
             "description": "GitHub token with contents write permission.",
-            "required": true,
-            "env": "GH_TOKEN"
+            "required": true
         },
         "ref": {
             "description": "Full ref name (e.g. refs/tags/deploy/myhost).",
-            "required": true,
-            "env": "REF"
+            "required": true
         },
         "sha": {
             "description": "The SHA to point the ref at.",
-            "required": true,
-            "env": "SHA"
+            "required": true
         }
     },
     "outputs": {

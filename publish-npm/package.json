@@ -6,32 +6,27 @@
         "path": {
             "description": "Path to the package directory containing package.json. Defaults to current directory.",
             "required": false,
-            "default": ".",
-            "env": "PACKAGE_PATH"
+            "default": "."
         },
         "registry-url": {
             "description": "npm registry URL. Defaults to https://registry.npmjs.org/",
             "required": false,
-            "default": "https://registry.npmjs.org/",
-            "env": "REGISTRY_URL"
+            "default": "https://registry.npmjs.org/"
         },
         "provenance": {
             "description": "Generate provenance attestation for this package (NPM 10.2.0+, Node 18.20.0+). When enabled, npm creates a .provenance.json with build metadata for verification.",
             "required": false,
-            "default": "true",
-            "env": "PROVENANCE"
+            "default": "true"
         },
         "tag": {
             "description": "Distribution tag to publish as (e.g., latest, next, rc). Defaults to \"latest\". Useful for pre-releases or distinguishing different channels.",
             "required": false,
-            "default": "latest",
-            "env": "DIST_TAG"
+            "default": "latest"
         },
         "dry-run": {
             "description": "If true, runs publish in dry-run mode to validate the package without uploading. Useful for testing the publish process.",
             "required": false,
-            "default": "false",
-            "env": "DRY_RUN"
+            "default": "false"
         }
     },
     "outputs": {
