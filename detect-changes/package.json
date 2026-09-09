@@ -6,12 +6,14 @@
         "path": {
             "description": "Base path to check for changes (relative to repo root).",
             "required": false,
-            "default": "."
+            "default": ".",
+            "env": "WORKDIR"
         },
         "options": {
             "description": "Additional options passed to `git status` (e.g. --ignored, -u).",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "OPTIONS"
         }
     },
     "outputs": {

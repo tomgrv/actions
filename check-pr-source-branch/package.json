@@ -6,7 +6,8 @@
         "restricted-branch": {
             "description": "Branch name that requires a hotfix-marked title when used as a PR source.",
             "required": false,
-            "default": "main"
+            "default": "main",
+            "env": "RESTRICTED_BRANCH"
         }
     },
     "private": true

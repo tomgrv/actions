@@ -27,7 +27,7 @@ Every action directory must have a `package.json` with:
 
 - `name`: the folder name (no `@org/` prefix)
 - `description`: brief description matching `action.yml`
-- `inputs`: mirrors `action.yml`'s `inputs:` block — one entry per input, each with `description`, `required`, and `default` (only when `action.yml` defines one)
+- `inputs`: mirrors `action.yml`'s `inputs:` block — one entry per input, each with `description`, `required`, `default` (only when `action.yml` defines one), and `env` (only when the input maps to an environment variable read by this action's own `run.sh` — see below)
 - `outputs`: mirrors `action.yml`'s `outputs:` block — one entry per output, with `description` only (the `value: ${{ steps... }}` expression is a `action.yml`-only concern, not part of the script-facing contract)
 - `private: true` — these packages are never published individually
 
@@ -40,7 +40,8 @@ Every action directory must have a `package.json` with:
         "parameter-name": {
             "description": "What this input controls.",
             "required": false,
-            "default": "some-default"
+            "default": "some-default",
+            "env": "ENV_VAR"
         }
     },
     "outputs": {
@@ -51,6 +52,8 @@ Every action directory must have a `package.json` with:
     "private": true
 }
 ```
+
+`env` names the environment variable the action's own `run.sh` reads for that input — the same name used in `action.yml`'s `env:` block (see [Environment Variables and Scripts](#environment-variables-and-scripts) below). It lets `zz_use`/`dispatch.sh`-style local invocation inject a value for the input by exporting that variable directly, without parsing `action.yml`. Omit `env` when the input has no such direct mapping: it's forwarded as `with:` to a nested composite action instead of read by this action's own script, or the script reads it as a positional/`zz_args` argument rather than an environment variable.
 
 Keep `inputs`/`outputs` in sync with `action.yml` whenever either changes — they document the same contract so the action can be reasoned about (and eventually invoked) as a plain script, independent of the GitHub Actions runner.
 

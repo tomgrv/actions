@@ -6,12 +6,14 @@
         "master-branch": {
             "description": "Branch git-flow treats as production/master.",
             "required": false,
-            "default": "main"
+            "default": "main",
+            "env": "GITFLOW_MASTER_BRANCH"
         },
         "develop-branch": {
             "description": "Branch git-flow treats as develop.",
             "required": false,
-            "default": "develop"
+            "default": "develop",
+            "env": "GITFLOW_DEVELOP_BRANCH"
         }
     },
     "private": true

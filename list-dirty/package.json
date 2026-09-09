@@ -6,12 +6,14 @@
         "path": {
             "description": "Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).",
             "required": false,
-            "default": "."
+            "default": ".",
+            "env": "LIST_PATHS"
         },
         "extensions": {
             "description": "Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.",
             "required": false,
-            "default": "php"
+            "default": "php",
+            "env": "LIST_EXTENSIONS"
         }
     },
     "outputs": {

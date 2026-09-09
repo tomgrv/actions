@@ -5,35 +5,42 @@
     "inputs": {
         "github-token": {
             "description": "GitHub token with read access to source and write access to target repository.",
-            "required": true
+            "required": true,
+            "env": "GITHUB_TOKEN"
         },
         "source-organization": {
             "description": "Source repository organization or user to import from.",
-            "required": true
+            "required": true,
+            "env": "SOURCE_ORG"
         },
         "source-repository": {
             "description": "Source repository name to import from.",
-            "required": true
+            "required": true,
+            "env": "SOURCE_NAME"
         },
         "source-branch": {
             "description": "Source branch to import. Defaults to the source repository default branch.",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "SOURCE_BRANCH"
         },
         "target-subdir": {
             "description": "Relative subdirectory inside the target repository where content is imported.",
             "required": false,
-            "default": "."
+            "default": ".",
+            "env": "TARGET_SUBDIR"
         },
         "exclude-paths": {
             "description": "Comma-separated paths to exclude during import.",
             "required": false,
-            "default": ".github,.devcontainer,.vscode"
+            "default": ".github,.devcontainer,.vscode",
+            "env": "EXCLUDE_PATHS"
         },
         "head-branch": {
             "description": "Branch name to prepare in repository. Auto-generated when empty.",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "HEAD_BRANCH"
         }
     },
     "outputs": {

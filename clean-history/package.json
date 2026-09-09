@@ -5,22 +5,26 @@
     "inputs": {
         "github-token": {
             "description": "GitHub token with actions:read and actions:write permissions.",
-            "required": true
+            "required": true,
+            "env": "GH_TOKEN"
         },
         "min-days": {
             "description": "Minimum number of complete days of history to keep per workflow.",
             "required": false,
-            "default": "10"
+            "default": "10",
+            "env": "MIN_DAYS"
         },
         "min-runs": {
             "description": "Minimum number of most-recent runs to keep per workflow, regardless of age.",
             "required": false,
-            "default": "10"
+            "default": "10",
+            "env": "MIN_RUNS"
         },
         "workflows": {
             "description": "Comma-separated list of workflow file names to clean (e.g. deploy.yml,clean.yml). Defaults to all workflows in the repository.",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "WORKFLOWS"
         }
     },
     "private": true

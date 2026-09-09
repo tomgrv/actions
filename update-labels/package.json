@@ -6,21 +6,25 @@
         "github-token": {
             "description": "GitHub token with repository permissions.",
             "required": false,
-            "default": "${{ github.token }}"
+            "default": "${{ github.token }}",
+            "env": "GITHUB_TOKEN"
         },
         "repository": {
             "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
-            "required": false
+            "required": false,
+            "env": "REPOSITORY"
         },
         "labels-file": {
             "description": "Path to labels.json file. Defaults to .github/labels.json if it exists.",
             "required": false,
-            "default": ".github/labels.json"
+            "default": ".github/labels.json",
+            "env": "LABELS_FILE"
         },
         "labels": {
             "description": "Comma-separated list of label names with optional numbers (e.g., \"25 documentation,10 must,20 should\"). Used if labels-file does not exist.",
             "required": false,
-            "default": "25 documentation,10 must,20 should,30 could,80 duplicate,90 wont"
+            "default": "25 documentation,10 must,20 should,30 could,80 duplicate,90 wont",
+            "env": "LABELS"
         }
     },
     "private": true

@@ -6,17 +6,20 @@
         "workdir": {
             "description": "Working directory to search for packages. Defaults to the repository root.",
             "required": false,
-            "default": "${{ github.workspace }}"
+            "default": "${{ github.workspace }}",
+            "env": "WORKDIR"
         },
         "filter": {
             "description": "A jq `select()` boolean expression evaluated against each final package object (e.g. '.private == false', '.registry.npmjs.published == false'). Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "FILTER"
         },
         "require-repository": {
             "description": "When 'true', drop packages whose repository is not defined before applying `filter`. Set to 'false' to keep packages without a repository.",
             "required": false,
-            "default": "true"
+            "default": "true",
+            "env": "REQUIRE_REPOSITORY"
         }
     },
     "outputs": {

@@ -6,21 +6,25 @@
         "github-token": {
             "description": "GitHub token with permission to write issue comments.",
             "required": false,
-            "default": "${{ github.token }}"
+            "default": "${{ github.token }}",
+            "env": "GITHUB_TOKEN"
         },
         "repository": {
             "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
             "required": false,
-            "default": ""
+            "default": "",
+            "env": "REPOSITORY"
         },
         "issue-number": {
             "description": "Pull request or issue number to comment on. Defaults to the current pull request or issue number.",
             "required": false,
-            "default": "${{ github.event.issue.number || github.event.pull_request.number }}"
+            "default": "${{ github.event.issue.number || github.event.pull_request.number }}",
+            "env": "ISSUE_NUMBER"
         },
         "body": {
             "description": "Comment body (Markdown supported).",
-            "required": true
+            "required": true,
+            "env": "BODY"
         }
     },
     "outputs": {
