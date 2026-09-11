@@ -38,4 +38,4 @@ for name in gv bump-tag bump-changelog bump-version gitversion; do
     }
 done
 
-echo "setup-gitversion: installed gitversion ${GITVERSION_VERSION}"
+zz_log i "setup-gitversion: installed gitversion ${GITVERSION_VERSION}"
