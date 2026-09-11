@@ -18,6 +18,14 @@ setup() {
   # shadow the stub once that line re-prepends its default.
   export INSTALL_BIN_DIR="${STUB_BIN}"
   unset GITHUB_PATH
+  # zz_log itself needs to resolve here -- in real CI it's put on PATH by
+  # the setup-scripts composite step; stub a minimal stand-in.
+  cat > "${STUB_BIN}/zz_log" <<'EOF'
+#!/bin/sh
+shift
+echo "$*" >&2
+EOF
+  chmod +x "${STUB_BIN}/zz_log"
 }
 
 teardown() {
