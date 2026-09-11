@@ -37,3 +37,5 @@ for name in gv bump-tag bump-changelog bump-version gitversion; do
         exit 1
     }
 done
+
+echo "setup-gitversion: installed gitversion ${GITVERSION_VERSION}"
