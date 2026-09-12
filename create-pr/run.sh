@@ -57,13 +57,6 @@ if [ -z "${COMMIT_MESSAGE}" ]; then
     exit 1
 fi
 
-if [ -z "$(git config user.email || true)" ]; then
-  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-fi
-if [ -z "$(git config user.name || true)" ]; then
-  git config user.name "github-actions[bot]"
-fi
-
 git checkout -B "${HEAD_BRANCH}" >&2
 git add $(echo "${COMMIT_FILES:-.}" | tr ',' ' ') >&2
 git commit -m "${COMMIT_MESSAGE}" --no-verify >&2

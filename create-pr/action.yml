@@ -72,6 +72,17 @@ runs:
       with:
         scripts: zz_log
 
+    - name: Detect existing git identity
+      id: git-identity
+      shell: sh
+      run: echo "configured=$(git config --get user.email >/dev/null 2>&1 && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+    - name: Configure git bot
+      if: steps.git-identity.outputs.configured != 'true'
+      uses: $/config-bot
+      with:
+        github-token: ${{ inputs.github-token }}
+
     - name: Create or update pull request
       id: create-pr
       shell: sh
