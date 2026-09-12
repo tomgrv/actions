@@ -115,7 +115,7 @@ runs:
     - name: Run PHPMD
       shell: sh
       env:
-        PHPMD_PATHS: ${{ inputs.paths }}
+        TARGET_PATHS: ${{ inputs.paths }}
         PHPMD_RULESET: ${{ inputs.ruleset }}
         PHPMD_PRIORITY: ${{ inputs.priority }}
         DIRTY: ${{ inputs.dirty }}

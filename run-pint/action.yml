@@ -114,7 +114,7 @@ runs:
       id: run-pint
       shell: sh
       env:
-        PINT_PATHS: ${{ inputs.paths }}
+        TARGET_PATHS: ${{ inputs.paths }}
         PINT_PRESET: ${{ inputs.preset }}
         PINT_CONFIG: ${{ inputs.config }}
         BLADE: ${{ inputs.blade }}

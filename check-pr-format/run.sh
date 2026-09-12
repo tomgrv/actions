@@ -8,6 +8,9 @@
 # Missing tooling/inputs are setup concerns, not PR title findings: plain
 # log only, no GitHub annotation (see .github/instructions/action-creation.md).
 
+# Export GitHub token for gh CLI
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+
 # Ensure gh CLI is available for fetching PR title
 if ! command -v gh >/dev/null 2>&1; then
   zz_log e "gh CLI could not be found. Please install it to run this action."

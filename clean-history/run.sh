@@ -2,6 +2,9 @@
 
 set -e
 
+# Export GitHub token for gh CLI
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+
 MIN_DAYS="${MIN_DAYS:-10}"
 MIN_RUNS="${MIN_RUNS:-10}"
 WORKFLOWS="${WORKFLOWS:-}"

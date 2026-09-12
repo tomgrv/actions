@@ -7,7 +7,7 @@ set -eu
 
 REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
 LABELS_FILE="${LABELS_FILE:-.github/labels.json}"
-LABELS="${LABELS:-50 documentation,10 must,20 should,30 could,80 duplicate,90 wont}"
+LABELS="${LABELS:-25 documentation,10 must,20 should,30 could,80 duplicate,90 wont}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LABELS_FILE}" = ".github/labels.json" ] && [ ! -f "${LABELS_FILE}" ]; then
@@ -127,5 +127,4 @@ done
 
 # Clean up temporary files
 rm -rf "${TMP_DIR}"
-
 

@@ -2,6 +2,9 @@
 
 set -e
 
+# Export GitHub token for gh CLI
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+
 PROTECTED_BRANCHES="${PROTECTED_BRANCHES:-main,master,develop}"
 MERGED_ONLY="${MERGED_ONLY:-false}"
 REPO="${REPO:-${GITHUB_REPOSITORY:-}}"

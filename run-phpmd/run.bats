@@ -9,7 +9,7 @@ setup() {
 
 run_phpmd() {
   (
-    export PHPMD_PATHS="${1:-app}"
+    export TARGET_PATHS="${1:-app}"
     export PHPMD_RULESETS="${2:-codesize,controversial,naming,design}"
     export DIRTY="${3:-false}"
     export WIP="${4:-false}"
@@ -19,7 +19,7 @@ run_phpmd() {
 }
 
 @test "requires GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN" {
-  run sh -c "unset REVIEWDOG_GITHUB_API_TOKEN; PHPMD_PATHS=app sh $SCRIPT" 2>/dev/null || true
+  run sh -c "unset REVIEWDOG_GITHUB_API_TOKEN; TARGET_PATHS=app sh $SCRIPT" 2>/dev/null || true
   [ "$status" -ne 0 ]
 }
 

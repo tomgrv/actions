@@ -9,7 +9,7 @@ setup() {
 
 run_pint() {
   (
-    export PINT_PATHS="${1:-app}"
+    export TARGET_PATHS="${1:-app}"
     export PINT_PRESET="${2:-laravel}"
     export PINT_CONFIG="${3:-}"
     export DIRTY="${4:-false}"
@@ -21,7 +21,7 @@ run_pint() {
 }
 
 @test "requires GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN" {
-  run sh -c "unset REVIEWDOG_GITHUB_API_TOKEN; PINT_PATHS=app sh $SCRIPT" 2>/dev/null || true
+  run sh -c "unset REVIEWDOG_GITHUB_API_TOKEN; TARGET_PATHS=app sh $SCRIPT" 2>/dev/null || true
   [ "$status" -ne 0 ]
 }
 

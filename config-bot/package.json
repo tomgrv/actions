@@ -1,6 +1,29 @@
 {
-  "name": "config-bot",
-  "version": "2.30.0",
-  "description": "Configure Git identity and authentication for bot commits.",
-  "private": true
+    "name": "config-bot",
+    "version": "2.30.0",
+    "description": "Configure Git identity and authentication for bot commits.",
+    "inputs": {
+        "GITHUB_TOKEN": {
+            "description": "GitHub token used for authenticated Git operations.",
+            "required": false,
+            "default": "${{ github.token }}"
+        },
+        "GITHUB_APP_SLUG": {
+            "description": "GitHub App slug for the bot. Defaults to the current action's app slug.",
+            "required": false,
+            "default": "github-actions"
+        }
+    },
+    "outputs": {
+        "user-id": {
+            "description": "GitHub App bot user ID."
+        },
+        "git-user-name": {
+            "description": "Effective Git user.name configured."
+        },
+        "git-user-email": {
+            "description": "Effective Git user.email configured."
+        }
+    },
+    "private": true
 }

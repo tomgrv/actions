@@ -1,6 +1,18 @@
 {
-  "name": "check-pr-format",
-  "version": "2.30.0",
-  "description": "Validate and optionally normalize pull request title format.",
-  "private": true
+    "name": "check-pr-format",
+    "version": "2.30.0",
+    "description": "Validate and optionally normalize pull request title format.",
+    "inputs": {
+        "GITHUB_TOKEN": {
+            "description": "GitHub token used to update PR title when needed.",
+            "required": false,
+            "default": "${{ github.token }}"
+        },
+        "FIX": {
+            "description": "Autocorrect the PR title (via devmoji) and push it back when possible, instead of only reporting the expected format.",
+            "required": false,
+            "default": "false"
+        }
+    },
+    "private": true
 }

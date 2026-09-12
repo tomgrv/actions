@@ -19,14 +19,14 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
     exit 1
 fi
 
-# PINT_PATHS is normally supplied via action.yml's env block; the
+# TARGET_PATHS is normally supplied via action.yml's env block; the
 # positional fallback below only matters for local dispatch.sh usage.
 eval "$(zz_args "Run Laravel Pint" "$0" "$@" <<-help
-	- path	pint_paths	Comma-separated list of paths to analyse (default: app)
+	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help
 )"
 
-PINT_PATHS="${PINT_PATHS:-${pint_paths:-app}}"
+TARGET_PATHS="${TARGET_PATHS:-${target_paths:-app}}"
 PINT_PRESET="${PINT_PRESET:-laravel}"
 PINT_CONFIG="${PINT_CONFIG:-}"
 BLADE="${BLADE:-false}"
@@ -46,11 +46,11 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PINT_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${PINT_ARGS}" | tr -d '[:space:]')" ]; then
-        zz_log n "No changed PHP files under: ${PINT_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping Pint."
+        zz_log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping Pint."
         exit 0
     fi
 else
-    PINT_ARGS="$(echo "${PINT_PATHS}" | tr ',' ' ')"
+    PINT_ARGS="$(echo "${TARGET_PATHS}" | tr ',' ' ')"
 fi
 
 if [ -n "${PINT_CONFIG}" ]; then

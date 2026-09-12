@@ -16,13 +16,13 @@ SOURCE_NAME="${SOURCE_NAME:?SOURCE_NAME is required}"
 DEFAULT_BRANCH=$(gh repo view "${SOURCE_ORG}/${SOURCE_NAME}" --json defaultBranchRef --jq '.defaultBranchRef.name')
 
 SOURCE_BRANCH="${SOURCE_BRANCH:-${DEFAULT_BRANCH:-main}}"
-TARGET_SUBDIR="${TARGET_SUBDIR:?TARGET_SUBDIR is required}"
-EXCLUDE_PATHS="${EXCLUDE_PATHS:-.github,.devcontainer}"
+TARGET_SUBDIR="${TARGET_SUBDIR:-.}"
+EXCLUDE_PATHS="${EXCLUDE_PATHS:-.github,.devcontainer,.vscode}"
 HEAD_BRANCH="${HEAD_BRANCH:-}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
-if [ "${EXCLUDE_PATHS}" = ".github,.devcontainer" ]; then
-  zz_log i "EXCLUDE_PATHS not set, using default: .github,.devcontainer"
+if [ "${EXCLUDE_PATHS}" = ".github,.devcontainer,.vscode" ]; then
+  zz_log i "EXCLUDE_PATHS not set, using default: .github,.devcontainer,.vscode"
 fi
 
 if [ -z "${SOURCE_ORG}" ] || [ -z "${SOURCE_NAME}" ]; then

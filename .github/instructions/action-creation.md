@@ -23,21 +23,38 @@ action-name/
 
 ### Per-Action package.json
 
-Every action directory must have a minimal `package.json` with:
+Every action directory must have a `package.json` with:
 
 - `name`: the folder name (no `@org/` prefix)
-- `private: true` — these packages are never published individually
 - `description`: brief description matching `action.yml`
+- `inputs`/`outputs` exist in `package.json` **only for what a script this action owns (`run.sh`, or another `.sh` file in the same directory, e.g. `require.sh`) actually reads or produces.** Nothing else is tracked here — `action.yml` stays the sole source of truth for the rest:
+  - No such script at all (composite-only: the action just wires nested actions or a third-party `uses:` step together, nothing for `zz_use` to invoke locally) → omit `inputs` and `outputs` entirely.
+  - `inputs`: one entry per input that maps to an environment variable read by one of this action's own scripts via a step whose `run:` invokes that script (the same env var name used in `action.yml`'s `env:` block for that step; see [Environment Variables and Scripts](#environment-variables-and-scripts) below) — keyed by that **environment variable name** (not the kebab-case `action.yml` input name), each with `description`, `required`, and `default` (only when `action.yml` defines one). This lets `zz_use`/local script invocation inject a value by exporting that variable directly. Not listed here: inputs forwarded as `with:` to a nested composite action or third-party `uses:` step, and inputs only read by an inline `run:` command that doesn't invoke a script file. If none qualify, omit `inputs`.
+  - `outputs`: one entry per output whose `value: ${{ steps.<id>.outputs... }}` in `action.yml` points at a step that invokes one of this action's own scripts — with `description` only (the `value:` expression itself is an `action.yml`-only concern). Not listed here: outputs from a nested action's own output, or from an inline `run:` command. If none qualify, omit `outputs`.
+- `private: true` — these packages are never published individually
 
 ```json
 {
     "name": "action-name",
-    "private": true,
-    "description": "Short description of what the action does."
+    "version": "2.0.0",
+    "description": "Short description of what the action does.",
+    "inputs": {
+        "ENV_VAR": {
+            "description": "What this input controls.",
+            "required": false,
+            "default": "some-default"
+        }
+    },
+    "outputs": {
+        "output-name": {
+            "description": "What this output contains."
+        }
+    },
+    "private": true
 }
 ```
 
-This minimal file is used only to provide the workspace scope for `commitlint`.
+Keep `inputs`/`outputs` in sync with `action.yml` whenever either changes — they document the same contract so the action can be reasoned about (and eventually invoked) as a plain script, independent of the GitHub Actions runner.
 
 Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; `dispatch.sh` is a local, unpublished helper for running an action's `run.sh` directly from a clone of this repository (see below).
 
