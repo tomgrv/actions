@@ -1,67 +1,67 @@
 {
-    "name": "create-pr",
-    "version": "2.30.0",
-    "description": "Create or update a pull request from a branch.",
-    "inputs": {
-        "GITHUB_TOKEN": {
-            "description": "GitHub token with pull request permissions.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
-        "REPOSITORY": {
-            "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
-            "required": false
-        },
-        "HEAD_BRANCH": {
-            "description": "Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.",
-            "required": true
-        },
-        "WORKING_DIRECTORY": {
-            "description": "Working directory where changes to commit are located. Defaults to the repository root.",
-            "required": false,
-            "default": "."
-        },
-        "COMMIT_MESSAGE": {
-            "description": "Commit message for the changes being committed. Defaults to the PR title if not provided.",
-            "required": false,
-            "default": ""
-        },
-        "COMMIT_FILES": {
-            "description": "Comma-separated list of files to commit. Defaults to all changes in the workdir.",
-            "required": false,
-            "default": ""
-        },
-        "BASE_BRANCH": {
-            "description": "Base branch for the pull request. Defaults to the default branch of the repository if not provided.",
-            "required": false,
-            "default": ""
-        },
-        "PR_TITLE": {
-            "description": "Pull request title.",
-            "required": true
-        },
-        "PR_BODY": {
-            "description": "Pull request body.",
-            "required": false,
-            "default": ""
-        }
+  "name": "create-pr",
+  "version": "2.31.0",
+  "description": "Create or update a pull request from a branch.",
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with pull request permissions.",
+      "required": false,
+      "default": "${{ github.token }}"
     },
-    "outputs": {
-        "has-changes": {
-            "description": "Whether there were changes to commit when commit-all is enabled."
-        },
-        "head-branch": {
-            "description": "Head branch used for the pull request."
-        },
-        "pr-number": {
-            "description": "Pull request number."
-        },
-        "pr-url": {
-            "description": "Pull request URL."
-        },
-        "action": {
-            "description": "Action taken by the workflow (created, updated, or skip)."
-        }
+    "REPOSITORY": {
+      "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
+      "required": false
     },
-    "private": true
+    "HEAD_BRANCH": {
+      "description": "Head branch name for the pull request. If the branch does not exist, it will be created from the base branch.",
+      "required": true
+    },
+    "WORKING_DIRECTORY": {
+      "description": "Working directory where changes to commit are located. Defaults to the repository root.",
+      "required": false,
+      "default": "."
+    },
+    "COMMIT_MESSAGE": {
+      "description": "Commit message for the changes being committed. Defaults to the PR title if not provided.",
+      "required": false,
+      "default": ""
+    },
+    "COMMIT_FILES": {
+      "description": "Comma-separated list of files to commit. Defaults to all changes in the workdir.",
+      "required": false,
+      "default": ""
+    },
+    "BASE_BRANCH": {
+      "description": "Base branch for the pull request. Defaults to the default branch of the repository if not provided.",
+      "required": false,
+      "default": ""
+    },
+    "PR_TITLE": {
+      "description": "Pull request title.",
+      "required": true
+    },
+    "PR_BODY": {
+      "description": "Pull request body.",
+      "required": false,
+      "default": ""
+    }
+  },
+  "outputs": {
+    "has-changes": {
+      "description": "Whether there were changes to commit when commit-all is enabled."
+    },
+    "head-branch": {
+      "description": "Head branch used for the pull request."
+    },
+    "pr-number": {
+      "description": "Pull request number."
+    },
+    "pr-url": {
+      "description": "Pull request URL."
+    },
+    "action": {
+      "description": "Action taken by the workflow (created, updated, or skip)."
+    }
+  },
+  "private": true
 }

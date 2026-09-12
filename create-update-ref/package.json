@@ -1,28 +1,28 @@
 {
-    "name": "create-update-ref",
-    "version": "2.30.0",
-    "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
-    "inputs": {
-        "GITHUB_TOKEN": {
-            "description": "GitHub token with contents write permission.",
-            "required": true
-        },
-        "REF": {
-            "description": "Full ref name (e.g. refs/tags/deploy/myhost).",
-            "required": true
-        },
-        "SHA": {
-            "description": "The SHA to point the ref at.",
-            "required": true
-        }
+  "name": "create-update-ref",
+  "version": "2.31.0",
+  "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with contents write permission.",
+      "required": true
     },
-    "outputs": {
-        "action": {
-            "description": "Whether the ref was \"created\" or \"updated\"."
-        },
-        "ref": {
-            "description": "The ref that was created or updated."
-        }
+    "REF": {
+      "description": "Full ref name (e.g. refs/tags/deploy/myhost).",
+      "required": true
     },
-    "private": true
+    "SHA": {
+      "description": "The SHA to point the ref at.",
+      "required": true
+    }
+  },
+  "outputs": {
+    "action": {
+      "description": "Whether the ref was \"created\" or \"updated\"."
+    },
+    "ref": {
+      "description": "The ref that was created or updated."
+    }
+  },
+  "private": true
 }

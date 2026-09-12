@@ -1,28 +1,28 @@
 {
-    "name": "list-packages",
-    "version": "2.30.0",
-    "description": "Discovers Composer and npm workspace packages and emits a JSON matrix array.",
-    "inputs": {
-        "WORKDIR": {
-            "description": "Working directory to search for packages. Defaults to the repository root.",
-            "required": false,
-            "default": "${{ github.workspace }}"
-        },
-        "FILTER": {
-            "description": "A jq `select()` boolean expression evaluated against each final package object (e.g. '.private == false', '.registry.npmjs.published == false'). Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.",
-            "required": false,
-            "default": ""
-        },
-        "REQUIRE_REPOSITORY": {
-            "description": "When 'true', drop packages whose repository is not defined before applying `filter`. Set to 'false' to keep packages without a repository.",
-            "required": false,
-            "default": "true"
-        }
+  "name": "list-packages",
+  "version": "2.31.0",
+  "description": "Discovers Composer and npm workspace packages and emits a JSON matrix array.",
+  "inputs": {
+    "WORKDIR": {
+      "description": "Working directory to search for packages. Defaults to the repository root.",
+      "required": false,
+      "default": "${{ github.workspace }}"
     },
-    "outputs": {
-        "packages": {
-            "description": "JSON array of package objects (org, name, path, repository, private, registry)."
-        }
+    "FILTER": {
+      "description": "A jq `select()` boolean expression evaluated against each final package object (e.g. '.private == false', '.registry.npmjs.published == false'). Only packages for which it evaluates truthy are kept. Leave unset (default) to keep all packages.",
+      "required": false,
+      "default": ""
     },
-    "private": true
+    "REQUIRE_REPOSITORY": {
+      "description": "When 'true', drop packages whose repository is not defined before applying `filter`. Set to 'false' to keep packages without a repository.",
+      "required": false,
+      "default": "true"
+    }
+  },
+  "outputs": {
+    "packages": {
+      "description": "JSON array of package objects (org, name, path, repository, private, registry)."
+    }
+  },
+  "private": true
 }

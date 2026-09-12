@@ -1,89 +1,89 @@
 {
-    "name": "run-phptests",
-    "version": "2.30.0",
-    "description": "Run pull request test suite for a PHP project.",
-    "inputs": {
-        "WORKING_DIRECTORY": {
-            "description": "Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.",
-            "required": false,
-            "default": "."
-        },
-        "INSTALL": {
-            "description": "Install Composer dependencies when `vendor/autoload.php` is missing [auto,true,false]. `auto` installs when a composer.json is present.",
-            "required": false,
-            "default": "auto"
-        },
-        "TEST_RUNNER": {
-            "description": "Test runner to use [auto,pest,phpunit,composer]. `auto` picks pest, then phpunit, then the composer `test` script.",
-            "required": false,
-            "default": "auto"
-        },
-        "TEST_PATHS": {
-            "description": "Optional paths or filters to pass to the test runner. Defaults to the whole suite.",
-            "required": false,
-            "default": ""
-        },
-        "TEST_FLAGS": {
-            "description": "Additional flags to pass to the test runner.",
-            "required": false,
-            "default": ""
-        },
-        "COVERAGE": {
-            "description": "Generate a clover coverage report [auto,true,false]. `auto` skips coverage when no xdebug/pcov driver is loaded.",
-            "required": false,
-            "default": "auto"
-        },
-        "COVERAGE_FILE": {
-            "description": "Clover coverage report to write when coverage is enabled.",
-            "required": false,
-            "default": "coverage.xml"
-        },
-        "JUNIT_FILE": {
-            "description": "JUnit report to write, used to report failing tests with reviewdog.",
-            "required": false,
-            "default": "junit.xml"
-        },
-        "MIGRATE": {
-            "description": "Run `artisan migrate` before the suite [auto,true,false]. `auto` migrates when the project has migrations.",
-            "required": false,
-            "default": "auto"
-        },
-        "REVIEWDOG_NAME": {
-            "description": "Name reported by reviewdog to identify this check.",
-            "required": false,
-            "default": "phpunit"
-        },
-        "REVIEWDOG_LEVEL": {
-            "description": "Report level for reviewdog [info,warning,error].",
-            "required": false,
-            "default": "error"
-        },
-        "REVIEWDOG_REPORTER": {
-            "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise).",
-            "required": false,
-            "default": ""
-        },
-        "REVIEWDOG_FAIL_LEVEL": {
-            "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].",
-            "required": false,
-            "default": "none"
-        },
-        "REVIEWDOG_FLAGS": {
-            "description": "Additional reviewdog flags.",
-            "required": false,
-            "default": ""
-        }
+  "name": "run-phptests",
+  "version": "2.31.0",
+  "description": "Run pull request test suite for a PHP project.",
+  "inputs": {
+    "WORKING_DIRECTORY": {
+      "description": "Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.",
+      "required": false,
+      "default": "."
     },
-    "outputs": {
-        "tests-passed": {
-            "description": "Whether the test suite passed."
-        },
-        "coverage-file": {
-            "description": "Path of the generated coverage report, empty when no report was produced."
-        },
-        "junit-file": {
-            "description": "Path of the generated JUnit report, empty when no report was produced."
-        }
+    "INSTALL": {
+      "description": "Install Composer dependencies when `vendor/autoload.php` is missing [auto,true,false]. `auto` installs when a composer.json is present.",
+      "required": false,
+      "default": "auto"
     },
-    "private": true
+    "TEST_RUNNER": {
+      "description": "Test runner to use [auto,pest,phpunit,composer]. `auto` picks pest, then phpunit, then the composer `test` script.",
+      "required": false,
+      "default": "auto"
+    },
+    "TEST_PATHS": {
+      "description": "Optional paths or filters to pass to the test runner. Defaults to the whole suite.",
+      "required": false,
+      "default": ""
+    },
+    "TEST_FLAGS": {
+      "description": "Additional flags to pass to the test runner.",
+      "required": false,
+      "default": ""
+    },
+    "COVERAGE": {
+      "description": "Generate a clover coverage report [auto,true,false]. `auto` skips coverage when no xdebug/pcov driver is loaded.",
+      "required": false,
+      "default": "auto"
+    },
+    "COVERAGE_FILE": {
+      "description": "Clover coverage report to write when coverage is enabled.",
+      "required": false,
+      "default": "coverage.xml"
+    },
+    "JUNIT_FILE": {
+      "description": "JUnit report to write, used to report failing tests with reviewdog.",
+      "required": false,
+      "default": "junit.xml"
+    },
+    "MIGRATE": {
+      "description": "Run `artisan migrate` before the suite [auto,true,false]. `auto` migrates when the project has migrations.",
+      "required": false,
+      "default": "auto"
+    },
+    "REVIEWDOG_NAME": {
+      "description": "Name reported by reviewdog to identify this check.",
+      "required": false,
+      "default": "phpunit"
+    },
+    "REVIEWDOG_LEVEL": {
+      "description": "Report level for reviewdog [info,warning,error].",
+      "required": false,
+      "default": "error"
+    },
+    "REVIEWDOG_REPORTER": {
+      "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise).",
+      "required": false,
+      "default": ""
+    },
+    "REVIEWDOG_FAIL_LEVEL": {
+      "description": "Exit code for reviewdog if it finds at least the specified level of diagnostic [none,any,info,warning,error].",
+      "required": false,
+      "default": "none"
+    },
+    "REVIEWDOG_FLAGS": {
+      "description": "Additional reviewdog flags.",
+      "required": false,
+      "default": ""
+    }
+  },
+  "outputs": {
+    "tests-passed": {
+      "description": "Whether the test suite passed."
+    },
+    "coverage-file": {
+      "description": "Path of the generated coverage report, empty when no report was produced."
+    },
+    "junit-file": {
+      "description": "Path of the generated JUnit report, empty when no report was produced."
+    }
+  },
+  "private": true
 }

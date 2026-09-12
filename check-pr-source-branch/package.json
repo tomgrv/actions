@@ -1,13 +1,13 @@
 {
-    "name": "check-pr-source-branch",
-    "version": "2.30.0",
-    "description": "Reject pull requests from the main branch unless the title marks them as a hotfix.",
-    "inputs": {
-        "RESTRICTED_BRANCH": {
-            "description": "Branch name that requires a hotfix-marked title when used as a PR source.",
-            "required": false,
-            "default": "main"
-        }
-    },
-    "private": true
+  "name": "check-pr-source-branch",
+  "version": "2.31.0",
+  "description": "Reject pull requests from the main branch unless the title marks them as a hotfix.",
+  "inputs": {
+    "RESTRICTED_BRANCH": {
+      "description": "Branch name that requires a hotfix-marked title when used as a PR source.",
+      "required": false,
+      "default": "main"
+    }
+  },
+  "private": true
 }

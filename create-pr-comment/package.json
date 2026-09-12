@@ -1,35 +1,35 @@
 {
-    "name": "create-pr-comment",
-    "version": "2.30.0",
-    "description": "Post a new comment on a pull request or issue.",
-    "inputs": {
-        "GITHUB_TOKEN": {
-            "description": "GitHub token with permission to write issue comments.",
-            "required": false,
-            "default": "${{ github.token }}"
-        },
-        "REPOSITORY": {
-            "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
-            "required": false,
-            "default": ""
-        },
-        "ISSUE_NUMBER": {
-            "description": "Pull request or issue number to comment on. Defaults to the current pull request or issue number.",
-            "required": false,
-            "default": "${{ github.event.issue.number || github.event.pull_request.number }}"
-        },
-        "BODY": {
-            "description": "Comment body (Markdown supported).",
-            "required": true
-        }
+  "name": "create-pr-comment",
+  "version": "2.31.0",
+  "description": "Post a new comment on a pull request or issue.",
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with permission to write issue comments.",
+      "required": false,
+      "default": "${{ github.token }}"
     },
-    "outputs": {
-        "comment-id": {
-            "description": "ID of the created comment."
-        },
-        "comment-url": {
-            "description": "HTML URL of the created comment."
-        }
+    "REPOSITORY": {
+      "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
+      "required": false,
+      "default": ""
     },
-    "private": true
+    "ISSUE_NUMBER": {
+      "description": "Pull request or issue number to comment on. Defaults to the current pull request or issue number.",
+      "required": false,
+      "default": "${{ github.event.issue.number || github.event.pull_request.number }}"
+    },
+    "BODY": {
+      "description": "Comment body (Markdown supported).",
+      "required": true
+    }
+  },
+  "outputs": {
+    "comment-id": {
+      "description": "ID of the created comment."
+    },
+    "comment-url": {
+      "description": "HTML URL of the created comment."
+    }
+  },
+  "private": true
 }

@@ -1,27 +1,27 @@
 {
-    "name": "clean-history",
-    "version": "2.30.0",
-    "description": "Remove old workflow run history, keeping a minimum number of days and runs per workflow.",
-    "inputs": {
-        "GITHUB_TOKEN": {
-            "description": "GitHub token with actions:read and actions:write permissions.",
-            "required": true
-        },
-        "MIN_DAYS": {
-            "description": "Minimum number of complete days of history to keep per workflow.",
-            "required": false,
-            "default": "10"
-        },
-        "MIN_RUNS": {
-            "description": "Minimum number of most-recent runs to keep per workflow, regardless of age.",
-            "required": false,
-            "default": "10"
-        },
-        "WORKFLOWS": {
-            "description": "Comma-separated list of workflow file names to clean (e.g. deploy.yml,clean.yml). Defaults to all workflows in the repository.",
-            "required": false,
-            "default": ""
-        }
+  "name": "clean-history",
+  "version": "2.31.0",
+  "description": "Remove old workflow run history, keeping a minimum number of days and runs per workflow.",
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with actions:read and actions:write permissions.",
+      "required": true
     },
-    "private": true
+    "MIN_DAYS": {
+      "description": "Minimum number of complete days of history to keep per workflow.",
+      "required": false,
+      "default": "10"
+    },
+    "MIN_RUNS": {
+      "description": "Minimum number of most-recent runs to keep per workflow, regardless of age.",
+      "required": false,
+      "default": "10"
+    },
+    "WORKFLOWS": {
+      "description": "Comma-separated list of workflow file names to clean (e.g. deploy.yml,clean.yml). Defaults to all workflows in the repository.",
+      "required": false,
+      "default": ""
+    }
+  },
+  "private": true
 }
