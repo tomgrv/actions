@@ -4,7 +4,7 @@
 
 Creates a pull request from a branch, or updates the existing open pull request for the same head ref. Stages and commits local changes from the working directory, pushes the branch, and then opens or updates the pull request.
 
-If no git identity (`user.email`) is already configured on the runner, this action configures one itself via [**config-bot**](../config-bot/README.md) using `github-token`. Run `config-bot` explicitly beforehand to use a custom GitHub App identity instead.
+This action configures the git identity itself via [**config-bot**](../config-bot/README.md) using `github-token` before committing.
 
 ## Inputs
 
@@ -58,7 +58,6 @@ If no git identity (`user.email`) is already configured on the runner, this acti
 
 ## Works well with
 
-- [**config-bot**](../config-bot/README.md) — configure git bot identity explicitly (e.g. a custom GitHub App) instead of the automatic fallback.
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; feed `degit-branch` and `degit-workdir` outputs into `create-pr`.
 - [**split-packages**](../split-packages/README.md) — split a monorepo subtree; feed `split-branch` and `split-workdir` outputs into `create-pr`.
 
@@ -88,11 +87,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
-            - name: Configure git bot
-              uses: tomgrv/actions/config-bot@v1
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
 
             # ... steps that produce changes in the working directory ...
 
