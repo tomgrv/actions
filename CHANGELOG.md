@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.32.0 (2026-09-12)
+
+*Commits from: v2.31.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ Add .mcp server for repo action discovery (#109) ([bb212cc](https://github.com/tomgrv/actions/commit/bb212cc3ba7e7d53c76dbeca67c60f952e2d5203))
+
+#### Other changes
+
+- Merge tag 'v2.31.0' into develop ([fcc63c4](https://github.com/tomgrv/actions/commit/fcc63c44b8fb87fab2b8cba0dc8c08d4e5759069))
+
 ## 2.31.0 (2026-09-12)
 
 *Commits from: v2.30.0..HEAD*
@@ -864,6 +878,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
