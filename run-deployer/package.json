@@ -1,37 +1,37 @@
 {
-    "name": "run-deployer",
-    "version": "2.30.0",
-    "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
-    "inputs": {
-        "DEP": {
-            "description": "The deployer command to run. If not specified, the default is \"deploy\".",
-            "required": true,
-            "default": "deploy"
-        },
-        "OPTIONS": {
-            "description": "Options to pass to the deployer command.",
-            "required": false
-        },
-        "SELECTOR": {
-            "description": "The selector to use for the deployer command. If not specified, the default is \"all\".",
-            "required": false,
-            "default": "all"
-        },
-        "ENVIRONMENT": {
-            "description": "The environment to use for the deployer command. If not specified, the default is determined by git branch.",
-            "required": false,
-            "default": ""
-        },
-        "BRANCH_SCOPE": {
-            "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
-            "required": false,
-            "default": ""
-        }
+  "name": "run-deployer",
+  "version": "2.31.0",
+  "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
+  "inputs": {
+    "DEP": {
+      "description": "The deployer command to run. If not specified, the default is \"deploy\".",
+      "required": true,
+      "default": "deploy"
     },
-    "outputs": {
-        "deploy-url": {
-            "description": "The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package's own workflows do via matrix + alias=<host>) to get an unambiguous value."
-        }
+    "OPTIONS": {
+      "description": "Options to pass to the deployer command.",
+      "required": false
     },
-    "private": true
+    "SELECTOR": {
+      "description": "The selector to use for the deployer command. If not specified, the default is \"all\".",
+      "required": false,
+      "default": "all"
+    },
+    "ENVIRONMENT": {
+      "description": "The environment to use for the deployer command. If not specified, the default is determined by git branch.",
+      "required": false,
+      "default": ""
+    },
+    "BRANCH_SCOPE": {
+      "description": "Branch name identifying an isolated per-branch preview deployment. Forwarded as --branch-scope to Deployer. Leave empty for a normal (non-preview) deployment.",
+      "required": false,
+      "default": ""
+    }
+  },
+  "outputs": {
+    "deploy-url": {
+      "description": "The deployed URL (https://<alias>), captured from the ##KLICK_DEPLOY_URL## log marker. Empty for non-deploy commands (unlock/teardown). If the selector matched more than one host in a single run, only the last host printed is returned - keep selectors scoped to one host per job (as this package's own workflows do via matrix + alias=<host>) to get an unambiguous value."
+    }
+  },
+  "private": true
 }

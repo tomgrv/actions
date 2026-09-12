@@ -1,5 +1,42 @@
 # Changelog
 
+## 2.31.0 (2026-09-12)
+
+*Commits from: v2.30.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Features
+
+- ✨ add inputs/outputs objects to per-action package.json (#101) ([0b577a3](https://github.com/tomgrv/actions/commit/0b577a3593909f4dbae3ad65bc94d31291fb406c))
+
+#### Other changes
+
+- Merge tag 'v2.30.0' into develop ([ecfaa68](https://github.com/tomgrv/actions/commit/ecfaa6874209dc8134bf4864341fc429e6a44654))
+### 📦 check-lock changes
+
+#### Bug Fixes
+
+- 🐛 sync package-lock.json with package.json (#104) ([8695c0d](https://github.com/tomgrv/actions/commit/8695c0dba99f524e466fa5cfa6c85c206dc91a8c))
+
+### 📦 check-pr-format changes
+
+#### Bug Fixes
+
+- 🐛 suppress unnecessary npm install logs (#105) ([b720e10](https://github.com/tomgrv/actions/commit/b720e109597f9d842a552502c420801ab515c37e))
+
+### 📦 check-pr-source-branch changes
+
+#### Bug Fixes
+
+- 🐛 validate PR target branch instead of source (#107) ([8355d03](https://github.com/tomgrv/actions/commit/8355d03cc087e67e1403c8e0f8bdc5d3d990e356))
+
+### 📦 create-pr changes
+
+#### Bug Fixes
+
+- 🐛 set git identity before committing (#106) ([1de8c43](https://github.com/tomgrv/actions/commit/1de8c4356458d8c8efc9ff255b141f4d0e807d0a))
+
 ## 2.30.0 (2026-09-08)
 
 *Commits from: v2.29.0..HEAD*
@@ -837,5 +874,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-12 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*

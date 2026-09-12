@@ -1,36 +1,36 @@
 {
-    "name": "split-package",
-    "version": "2.30.0",
-    "description": "Split a package from a monorepo and push the split branch.",
-    "inputs": {
-        "PACKAGE_DIR": {
-            "description": "Relative path to the package directory from the repository root",
-            "required": true
-        },
-        "REPO_ORG": {
-            "description": "GitHub organization or user that owns the origin repository",
-            "required": true
-        },
-        "REPO_NAME": {
-            "description": "Name of the origin repository",
-            "required": true
-        },
-        "SPLITSH_VERSION": {
-            "description": "Version of splitsh-lite to use for splitting the repository",
-            "required": false,
-            "default": "v1.0.1"
-        }
+  "name": "split-package",
+  "version": "2.31.0",
+  "description": "Split a package from a monorepo and push the split branch.",
+  "inputs": {
+    "PACKAGE_DIR": {
+      "description": "Relative path to the package directory from the repository root",
+      "required": true
     },
-    "outputs": {
-        "split-branch": {
-            "description": "Generated split branch name."
-        },
-        "split-sha": {
-            "description": "Generated split commit SHA."
-        },
-        "split-workdir": {
-            "description": "Temporary split workspace directory to use for committing and pushing."
-        }
+    "REPO_ORG": {
+      "description": "GitHub organization or user that owns the origin repository",
+      "required": true
     },
-    "private": true
+    "REPO_NAME": {
+      "description": "Name of the origin repository",
+      "required": true
+    },
+    "SPLITSH_VERSION": {
+      "description": "Version of splitsh-lite to use for splitting the repository",
+      "required": false,
+      "default": "v1.0.1"
+    }
+  },
+  "outputs": {
+    "split-branch": {
+      "description": "Generated split branch name."
+    },
+    "split-sha": {
+      "description": "Generated split commit SHA."
+    },
+    "split-workdir": {
+      "description": "Temporary split workspace directory to use for committing and pushing."
+    }
+  },
+  "private": true
 }
