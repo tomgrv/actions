@@ -24,7 +24,8 @@ if [ -z "${BOT_EMAIL:-}" ]; then
   # A failed/unavailable lookup is not fatal: BOT_EMAIL falls back to the
   # well-known github-actions[bot] user ID below.
   USER_ID="$(gh api "/users/${BOT_NAME}" --jq .id 2>/dev/null || true)"
-  BOT_EMAIL="${USER_ID:-341898282}+${BOT_NAME}@users.noreply.github.com"
+  USER_ID="${USER_ID:-341898282}"
+  BOT_EMAIL="${USER_ID}+${BOT_NAME}@users.noreply.github.com"
 fi
 USER_ID="${USER_ID:-}"
 

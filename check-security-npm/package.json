@@ -14,7 +14,7 @@
             "default": "error"
         },
         "REVIEWDOG_REPORTER": {
-            "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise), which posts a Check annotation for every finding regardless of whether the PR touches the manifest file. Set explicitly to github-pr-review to post applyable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment.",
+            "description": "Reporter of reviewdog command [github-pr-check,github-check,github-pr-review]. Defaults to the reporter resolved by setup-reviewdog for this run's context (github-pr-check on pull requests, github-check otherwise), which posts a Check annotation for every finding regardless of whether the PR touches the manifest file. Set explicitly to github-pr-review to post applicable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment.",
             "required": false,
             "default": ""
         },
