@@ -1,7 +1,7 @@
 # @format
 
-# Tests check-pr-source-branch/run.sh: Reject PRs from the restricted branch
-# unless the title marks them as a hotfix.
+# Tests check-pr-source-branch/run.sh: Reject PRs targeting the restricted
+# branch unless the title marks them as a hotfix.
 
 setup() {
   SCRIPT="${BATS_TEST_DIRNAME}/run.sh"
@@ -9,14 +9,14 @@ setup() {
 
 run_check() {
   (
-    export SOURCE_BRANCH="${1:-}"
+    export TARGET_BRANCH="${1:-}"
     export PR_TITLE="${2:-}"
     export RESTRICTED_BRANCH="${3:-main}"
     sh "$SCRIPT"
   )
 }
 
-@test "non-restricted source branch passes" {
+@test "non-restricted target branch passes" {
   run run_check "feature/foo" "feat: add thing"
   [ "$status" -eq 0 ]
 }
@@ -34,23 +34,23 @@ run_check() {
 @test "restricted branch without hotfix in title fails" {
   run run_check "main" "feat: add thing"
   [ "$status" -eq 1 ]
-  echo "$output" | grep -q "cannot originate from"
+  echo "$output" | grep -q "cannot target"
 }
 
 @test "restricted branch with empty title fails" {
   run run_check "main" ""
   [ "$status" -eq 1 ]
-  echo "$output" | grep -q "cannot originate from"
+  echo "$output" | grep -q "cannot target"
 }
 
 @test "custom restricted branch is honored" {
   run run_check "release" "feat: add thing" "release"
   [ "$status" -eq 1 ]
-  echo "$output" | grep -q "cannot originate from"
+  echo "$output" | grep -q "cannot target"
 }
 
 @test "restricted branch without hotfix in title emits a GitHub error annotation" {
-  run env GITHUB_ACTIONS=true PATH="$PATH" sh -c 'export SOURCE_BRANCH=main PR_TITLE="feat: add thing"; sh "'"$SCRIPT"'"'
+  run env GITHUB_ACTIONS=true PATH="$PATH" sh -c 'export TARGET_BRANCH=main PR_TITLE="feat: add thing"; sh "'"$SCRIPT"'"'
   [ "$status" -eq 1 ]
   echo "$output" | grep -q "::error::"
 }
@@ -60,7 +60,7 @@ run_check() {
   [ "$status" -eq 0 ]
 }
 
-@test "missing SOURCE_BRANCH fails fast" {
+@test "missing TARGET_BRANCH fails fast" {
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
 }

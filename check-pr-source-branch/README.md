@@ -1,14 +1,14 @@
 <!-- @format -->
 
-# GitHub Action: Validate PR Source Branch
+# GitHub Action: Validate PR Target Branch
 
-Rejects pull requests whose source branch is the restricted branch (`main` by default) unless the PR title marks them as a hotfix. Enforces that regular development PRs come from the default development branch, reserving direct PRs from `main` for emergency fixes.
+Rejects pull requests whose target (base) branch is the restricted branch (`main` by default) unless the PR title marks them as a hotfix. Enforces that regular development PRs target the default development branch, reserving direct PRs into `main` for emergency fixes.
 
 ## Inputs
 
 ### restricted-branch
 
-**Optional.** Branch name that requires a hotfix-marked title when used as a PR source. Defaults to `main`.
+**Optional.** Branch name that requires a hotfix-marked title when used as a PR target. Defaults to `main`.
 
 ## Outputs
 
@@ -27,22 +27,22 @@ Required environment variables must be set before running. See [Inputs](#inputs)
 ## Example
 
 ```yaml
-name: Validate PR Source Branch
+name: Validate PR Target Branch
 
 on:
     pull_request:
         types: [opened, reopened, synchronize]
 
 jobs:
-    validate-source:
+    validate-target:
         runs-on: ubuntu-latest
         steps:
-            - name: Validate PR source branch
+            - name: Validate PR target branch
               uses: tomgrv/actions/check-pr-source-branch@v1
 ```
 
 ## Behavior
 
-- Passes silently when the PR source branch is not the restricted branch.
-- Passes when the source branch is the restricted branch and the PR title contains `hotfix`.
-- Fails with a `::error::` annotation, explaining the rule, when the source branch is the restricted branch and the title is not marked as a hotfix.
+- Passes silently when the PR target branch is not the restricted branch.
+- Passes when the target branch is the restricted branch and the PR title contains `hotfix`.
+- Fails with a `::error::` annotation, explaining the rule, when the target branch is the restricted branch and the title is not marked as a hotfix.
