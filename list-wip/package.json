@@ -1,6 +1,34 @@
 {
   "name": "list-wip",
-  "version": "2.30.0",
+  "version": "2.31.0",
   "description": "List files changed on the current pull request, relative to its base branch, optionally filtered by path and extension.",
+  "inputs": {
+    "LIST_PATHS": {
+      "description": "Comma-separated list of paths to restrict the list to. Defaults to `.` (whole repository).",
+      "required": false,
+      "default": "."
+    },
+    "LIST_EXTENSIONS": {
+      "description": "Comma-separated list of file extensions to keep, without the leading dot. Defaults to `php`.",
+      "required": false,
+      "default": "php"
+    },
+    "LIST_BASE_REF": {
+      "description": "Base branch/ref to diff against. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
+      "required": false,
+      "default": ""
+    }
+  },
+  "outputs": {
+    "files": {
+      "description": "Newline-separated list of matching changed files. Empty when none match."
+    },
+    "count": {
+      "description": "Number of matching files."
+    },
+    "has-files": {
+      "description": "true if at least one file matches, false otherwise."
+    }
+  },
   "private": true
 }

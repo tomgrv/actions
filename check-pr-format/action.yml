@@ -30,12 +30,12 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz_log zz_npx
 
     - name: Validate PR title
       shell: sh
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
         FIX: ${{ inputs.fix }}
         PR_TITLE: ${{ github.event.pull_request.title }}
         PR_NUMBER: ${{ github.event.pull_request.number }}

@@ -37,7 +37,7 @@ runs:
     - name: Clean workflow run history
       shell: sh
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
         MIN_DAYS: ${{ inputs.min-days }}
         MIN_RUNS: ${{ inputs.min-runs }}
         WORKFLOWS: ${{ inputs.workflows }}

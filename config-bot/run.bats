@@ -28,6 +28,7 @@ run_config() {
 @test "outputs default values" {
   run run_config
   [ "$status" -eq 0 ]
+  echo "$output" | grep -q "user_id=341898282"
   echo "$output" | grep -q "git_user_name=github-actions\[bot\]"
   echo "$output" | grep -q "git_user_email=341898282+github-actions\[bot\]@users.noreply.github.com"
 }
@@ -51,9 +52,9 @@ run_config() {
   echo "$output" | grep -q "git_user_email=bot@company.com"
 }
 
-@test "returns exactly two output lines" {
+@test "returns exactly three output lines" {
   run run_config "bot" "bot@example.com"
   [ "$status" -eq 0 ]
-  lines_count=$(echo "$output" | grep -c "git_user")
-  [ "$lines_count" -eq 2 ]
+  lines_count=$(printf '%s\n' "$output" | wc -l | tr -d ' ')
+  [ "$lines_count" -eq 3 ]
 }

@@ -1,6 +1,27 @@
 {
   "name": "update-labels",
-  "version": "2.30.0",
+  "version": "2.31.0",
   "description": "Create or update GitHub repository labels from a JSON file or inline list.",
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with repository permissions.",
+      "required": false,
+      "default": "${{ github.token }}"
+    },
+    "REPOSITORY": {
+      "description": "Repository in the format \"owner/name\". Defaults to the current repository.",
+      "required": false
+    },
+    "LABELS_FILE": {
+      "description": "Path to labels.json file. Defaults to .github/labels.json if it exists.",
+      "required": false,
+      "default": ".github/labels.json"
+    },
+    "LABELS": {
+      "description": "Comma-separated list of label names with optional numbers (e.g., \"25 documentation,10 must,20 should\"). Used if labels-file does not exist.",
+      "required": false,
+      "default": "25 documentation,10 must,20 should,30 could,80 duplicate,90 wont"
+    }
+  },
   "private": true
 }

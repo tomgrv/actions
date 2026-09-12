@@ -8,6 +8,9 @@
 # Missing tooling/inputs are setup concerns, not PR title findings: plain
 # log only, no GitHub annotation (see .github/instructions/action-creation.md).
 
+# Export GitHub token for gh CLI
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+
 # Ensure gh CLI is available for fetching PR title
 if ! command -v gh >/dev/null 2>&1; then
   zz_log e "gh CLI could not be found. Please install it to run this action."
@@ -36,7 +39,12 @@ fi
 # Ensure commitlint is available for validating commit messages
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
-npm install -q -D devmoji ${commitlint_extends}
+npm_install_output="$(npm install -q -D --no-audit --no-fund devmoji ${commitlint_extends} 2>&1)"
+npm_install_status=$?
+if [ ${npm_install_status} -ne 0 ]; then
+  zz_log e "${npm_install_output}"
+  exit 1
+fi
 
 # Fetching the PR title from the API (fallback when not passed as input) is
 # a setup detail, not a finding: plain log only. Trim whitespace to detect
@@ -58,9 +66,9 @@ fi
 # Attempt to autocorrect the title with devmoji first, then validate the
 # result with commitlint. Errors are only raised when autocorrection isn't
 # enough (still invalid) or can't be applied (fork PR or missing token).
-formatted_title="$(npx devmoji --text "${PR_TITLE}")"
+formatted_title="$(zz_npx devmoji --text "${PR_TITLE}")"
 
-commitlint_output=$(echo "${formatted_title}" | npx commitlint 2>&1)
+commitlint_output=$(echo "${formatted_title}" | zz_npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
   zz_log e "${commitlint_output}"

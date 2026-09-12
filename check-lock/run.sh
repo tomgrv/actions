@@ -33,12 +33,14 @@ REVIEWDOG_FILTER_MODE="nofilter"
 REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
+# TARGET_PATHS is normally supplied via action.yml's env block; the
+# positional fallback below only matters for local dispatch.sh usage.
 eval "$(zz_args "Check composer/npm lock coherence" "$0" "$@" <<-help
-	- path	paths	Comma-separated list of paths to check (default: .)
+	- path	target_paths	Comma-separated list of paths to check (default: .)
 help
 )"
 
-PATHS="${paths:-.}"
+PATHS="${TARGET_PATHS:-${target_paths:-.}}"
 MAX_DETAILS=20
 
 FINDINGS=$(mktemp)

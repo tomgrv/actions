@@ -2,8 +2,8 @@
 
 # @package tomgrv/actions/check-pr-source-branch
 
-name: Validate PR Source Branch
-description: Reject pull requests from the main branch unless the title marks them as a hotfix.
+name: Validate PR Target Branch
+description: Reject pull requests targeting the main branch unless the title marks them as a hotfix.
 author: Perspikapps
 branding:
   icon: git-branch
@@ -11,7 +11,7 @@ branding:
 
 inputs:
   restricted-branch:
-    description: Branch name that requires a hotfix-marked title when used as a PR source.
+    description: Branch name that requires a hotfix-marked title when used as a PR target.
     required: false
     default: main
 
@@ -23,10 +23,10 @@ runs:
       with:
         scripts: zz_log
 
-    - name: Check PR source branch
+    - name: Check PR target branch
       shell: sh
       env:
-        SOURCE_BRANCH: ${{ github.head_ref }}
+        TARGET_BRANCH: ${{ github.base_ref }}
         PR_TITLE: ${{ github.event.pull_request.title }}
         RESTRICTED_BRANCH: ${{ inputs.restricted-branch }}
       run: sh -c "${{ github.action_path }}/run.sh"

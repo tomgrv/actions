@@ -22,7 +22,7 @@ inputs:
 outputs:
   user-id:
     description: GitHub App bot user ID.
-    value: ${{ steps.get-user-id.outputs.user_id }}
+    value: ${{ steps.configure-bot.outputs.user_id }}
   git-user-name:
     description: Effective Git user.name configured.
     value: ${{ steps.configure-bot.outputs.git_user_name }}
@@ -38,16 +38,10 @@ runs:
       with:
         scripts: zz_log
 
-    - name: Get GitHub App User ID
-      id: get-user-id
-      shell: sh
-      env:
-        GH_TOKEN: ${{ inputs.github-token }}
-      run: echo "user_id=$(gh api "/users/${{ inputs.github-app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
     - name: Configure Git bot credentials
       id: configure-bot
       shell: sh
       env:
-        BOT_NAME: ${{ inputs.github-app-slug }}[bot]
-        BOT_EMAIL: ${{ steps.get-user-id.outputs.user_id || '341898282' }}+${{ inputs.github-app-slug || 'github-actions' }}[bot]@users.noreply.github.com
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITHUB_APP_SLUG: ${{ inputs.github-app-slug }}
       run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

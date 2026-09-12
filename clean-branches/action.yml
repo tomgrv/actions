@@ -42,7 +42,7 @@ runs:
       id: clean
       shell: sh
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
         PROTECTED_BRANCHES: ${{ inputs.protected-branches }}
         MERGED_ONLY: ${{ inputs.merged-only }}
         REPO: ${{ github.repository }}
