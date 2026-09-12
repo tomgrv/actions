@@ -30,7 +30,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz_log zz_npx
 
     - name: Validate PR title
       shell: sh
