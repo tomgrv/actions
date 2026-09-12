@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: tomgrv/actions/setup-node@v1
+        uses: tomgrv/actions/setup-node@v2
 
       - name: Update features
         run: npm exec --yes -- tomgrv/devcontainer-features -u
@@ -34,7 +34,7 @@ jobs:
 
       - name: Create pull request
         if: ${{ steps.changes.outputs.has-changes == 'true' }}
-        uses: tomgrv/actions/create-pr@v1
+        uses: tomgrv/actions/create-pr@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
