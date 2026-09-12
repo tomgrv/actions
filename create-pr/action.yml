@@ -72,6 +72,11 @@ runs:
       with:
         scripts: zz_log
 
+    - name: Configure git bot
+      uses: $/config-bot
+      with:
+        github-token: ${{ inputs.github-token }}
+
     - name: Create or update pull request
       id: create-pr
       shell: sh
