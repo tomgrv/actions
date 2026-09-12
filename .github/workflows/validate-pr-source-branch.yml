@@ -1,6 +1,6 @@
 # @format
 
-name: Validate PR Source Branch
+name: Validate PR Target Branch
 
 on:
   pull_request:
@@ -14,10 +14,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  validate-source:
+  validate-target:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate PR source branch
+      - name: Validate PR target branch
         uses: ./check-pr-source-branch
