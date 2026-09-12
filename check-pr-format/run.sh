@@ -36,7 +36,12 @@ fi
 # Ensure commitlint is available for validating commit messages
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
-zz_npx -i devmoji ${commitlint_extends} || exit 1
+npm_install_output="$(npm install -q -D --no-audit --no-fund devmoji ${commitlint_extends} 2>&1)"
+npm_install_status=$?
+if [ ${npm_install_status} -ne 0 ]; then
+  zz_log e "${npm_install_output}"
+  exit 1
+fi
 
 # Fetching the PR title from the API (fallback when not passed as input) is
 # a setup detail, not a finding: plain log only. Trim whitespace to detect
