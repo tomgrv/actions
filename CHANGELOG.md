@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.33.0 (2026-09-13)
+
+*Commits from: v2.32.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.32.0' into develop ([8d80b58](https://github.com/tomgrv/actions/commit/8d80b5899285e36ecb023f1ed4817fd0eaab986b))
+### 📦 check-pr-format changes
+
+#### Bug Fixes
+
+- 🐛 stop logging a blank line on silent commitlint success (#110) ([1db1df6](https://github.com/tomgrv/actions/commit/1db1df6fec018315731cd44672ef523dc0d36f54))
+
 ## 2.32.0 (2026-09-12)
 
 *Commits from: v2.31.0..HEAD*
@@ -890,5 +905,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-12 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-13 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
