@@ -73,14 +73,15 @@ commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
   zz_log e "${commitlint_output}"
   exit 1
-else
+elif [ -n "${commitlint_output}" ]; then
+  # commitlint is silent on success -- only log when it actually said something.
   zz_log i "${commitlint_output}"
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
   if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
-    zz_log i "PR title updated: ${formatted_title}"
+    zz_log s "PR title updated: ${formatted_title}"
   else
     error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
 
@@ -89,4 +90,6 @@ Expected: ${formatted_title}"
     zz_log e "${error_message}"
     exit 1
   fi
+else
+  zz_log s "PR title is valid: ${formatted_title}"
 fi
