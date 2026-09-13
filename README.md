@@ -74,7 +74,7 @@ For more options, see the test runner help:
 ## Release process
 
 Every repo in the `tomgrv`/`perspikapps` family releases via GitHub →
-Actions → `release-main` → "Run workflow" (no CLI needed), which checks
+Actions → `release-prod` → "Run workflow" (no CLI needed), which checks
 out the repo and calls this repo's
 [**release-promote**](release-promote/README.md) composite action. See
 [`docs/release-process.md`](docs/release-process.md) for the full

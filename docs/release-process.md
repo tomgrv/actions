@@ -4,9 +4,9 @@
 
 Every `tomgrv`/`perspikapps` repo in this family (`devcontainer-features`,
 `actions`, `scripts`, `vps`) releases the same way: **GitHub → Actions →
-`release-main` → "Run workflow"** — a `workflow_dispatch` button in the
+`release-prod` → "Run workflow"** — a `workflow_dispatch` button in the
 GitHub web UI, no `gh`/`git` CLI required. Each repo's own
-`.github/workflows/release-main.yml` checks out the repo (`fetch-depth: 0`,
+`.github/workflows/release-prod.yml` checks out the repo (`fetch-depth: 0`,
 `ref: develop`) and calls this repo's
 [**release-promote**](../release-promote/README.md) composite action,
 which pulls `git-release-beta`/`git-release-prod` from
@@ -46,7 +46,7 @@ For each of `devcontainer-features`, `actions`, `scripts`, and `vps`:
 
 ## Verifying without releasing
 
-Run `release-main` with `dry_run: true` to exercise everything up through
+Run `release-prod` with `dry_run: true` to exercise everything up through
 installing `git-release-beta`/`git-release-prod` without pushing to `main`
 — useful for confirming a change to `release-promote` or a repo's
-`release-main.yml` before trusting it with a real release.
+`release-prod.yml` before trusting it with a real release.

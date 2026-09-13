@@ -48,7 +48,7 @@ hand.
 
 ```yaml
 jobs:
-    release-main:
+    release-prod:
         runs-on: ubuntu-latest
         permissions:
             contents: write
