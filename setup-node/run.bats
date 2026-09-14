@@ -5,6 +5,7 @@
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   ACTION_FILE="${REPO_ROOT}/setup-node/action.yml"
+  SCRIPT="${REPO_ROOT}/setup-node/prepare.sh"
   TEST_DIR="$(mktemp -d)"
   STUB_BIN="$(mktemp -d)"
   CALLS_FILE="$(mktemp)"
@@ -37,21 +38,14 @@ run_setup_node_fixture() {
   bare_input="${3:-false}"
   (
     cd "${repo_dir}"
-    GITHUB_OUTPUT="${repo_dir}/github-output"
     GITHUB_ENV="${repo_dir}/github-env"
-    export GITHUB_OUTPUT GITHUB_ENV
+    export GITHUB_ENV
     if [ "${marker}" = "true" ]; then
       export TOMGRV_NODE_SETUP=true
     else
       unset TOMGRV_NODE_SETUP
     fi
-    bare_repo="$(git rev-parse --is-bare-repository 2> /dev/null || echo false)"
-    if [ "${TOMGRV_NODE_SETUP:-}" != 'true' ] && [ "${bare_input}" != 'true' ] && [ "${bare_repo}" != 'true' ] && [ -f package-lock.json ]; then
-      npm ci --no-progress --workspaces
-    fi
-    if [ "${TOMGRV_NODE_SETUP:-}" != 'true' ]; then
-      echo "TOMGRV_NODE_SETUP=true" >> "${GITHUB_ENV}"
-    fi
+    "${SCRIPT}" "${bare_input}" ""
   )
 }
 

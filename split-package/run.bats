@@ -5,6 +5,13 @@
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/split-package/run.sh"
+  TEMP_DIRS=""
+}
+
+teardown() {
+  for temp_dir in ${TEMP_DIRS}; do
+    rm -rf "${temp_dir}"
+  done
 }
 
 run_split() {
@@ -39,8 +46,8 @@ run_split() {
   # stray package.json from earlier steps on a CI runner, which made this
   # "no manifest" fixture non-hermetic.
   empty_dir="$(mktemp -d "${REPO_ROOT}/split-package-test.XXXXXX")"
+  TEMP_DIRS="${TEMP_DIRS} ${empty_dir}"
   run run_split "${empty_dir#${REPO_ROOT}/}" "org/repo"
-  rm -rf "$empty_dir"
   [ "$status" -ne 0 ]
 }
 
