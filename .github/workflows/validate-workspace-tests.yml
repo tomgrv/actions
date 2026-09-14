@@ -82,8 +82,6 @@ jobs:
 
       - name: Setup Node.js toolchain
         uses: ./setup-node
-        with:
-          bare: 'true'
 
       - name: Setup Bats
         uses: bats-core/bats-action@4.0.0
