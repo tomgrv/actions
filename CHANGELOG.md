@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.34.0 (2026-09-14)
+
+*Commits from: v2.33.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 🔧 correct malformed common-utils optionalDependency name (#114) ([b25be86](https://github.com/tomgrv/actions/commit/b25be86d74df8326752c978bd8ab49ed0499e096))
+- 🐛 🔧 sync package-lock.json with package.json (#111) ([840d48c](https://github.com/tomgrv/actions/commit/840d48c21f0da8e31ff0f5a92def9e7f6ca1c985))
+
+#### Other changes
+
+- Merge tag 'v2.33.0' into develop ([3ad7d54](https://github.com/tomgrv/actions/commit/3ad7d5484957c922b1a0be6d132f7c4786068296))
+- 📚️ 📝 rename release-main to release-prod (#112) ([743bdda](https://github.com/tomgrv/actions/commit/743bdda5c1ff3b03dbf2d4292b9d7e10df64f104))
+
 ## 2.33.0 (2026-09-13)
 
 *Commits from: v2.32.0..HEAD*
@@ -906,5 +922,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-13 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-14 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
