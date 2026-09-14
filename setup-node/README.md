@@ -16,6 +16,10 @@ Shared composite action that prepares Node.js and npm for workflow jobs. Sets up
 
 **Optional.** Node.js version to set up. Defaults to `24`.
 
+### npm-version
+
+**Optional.** npm version to pin after Node.js is set up, so CI and local installs stay on the same npm (an npm major bump can change whether `npm ci` accepts an unresolvable `optionalDependency`, for example). Defaults to empty, which keeps whichever npm version ships with `node-version`.
+
 ## Outputs
 
 This action has no outputs.

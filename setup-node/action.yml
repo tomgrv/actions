@@ -18,6 +18,14 @@ inputs:
     description: Node.js version to set up. Defaults to version specified in package.json or 24.
     required: false
     default: '24'
+  npm-version:
+    description: >-
+      npm version to pin, so CI and local installs stay in sync (an npm
+      major bump can change whether `npm ci` accepts an unresolvable
+      optionalDependency). Empty (the default) keeps the version bundled
+      with the chosen Node.js version.
+    required: false
+    default: ''
   options:
     description: Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.
     required: false
@@ -44,6 +52,11 @@ runs:
         # only request caching once a lock file actually exists.
         cache: ${{ hashFiles('package-lock.json') && inputs.cache || '' }}
         node-version: ${{ inputs.node-version }}
+
+    - name: Pin npm version
+      if: env.TOMGRV_NODE_SETUP != 'true' && inputs.npm-version != ''
+      shell: sh
+      run: npm install -g npm@${{ inputs.npm-version }}
 
     - name: Detect bare git repository
       id: git-bare
