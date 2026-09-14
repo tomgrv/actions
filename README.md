@@ -68,7 +68,7 @@ For more options, see the test runner help:
 
 ### CI/CD
 
-- **validate-pr-tests**: Runs the full test suite on every PR and push to main/develop
+- **validate-workspace-tests**: Discovers every workspace (via `list-packages`) and runs each one's `bats run.bats` suite (via `run-workspace-tests`, driven by its `package.json` `scripts.test` entry) on every PR and push to main/develop
 - **test-run-deployer**: Runs deployer-specific tests
 
 ## Release process
