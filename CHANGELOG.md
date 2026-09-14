@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.36.0 (2026-09-14)
+
+*Commits from: v2.35.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.35.0' into develop ([3c4e31d](https://github.com/tomgrv/actions/commit/3c4e31d39ca4b3f3f7f8614b048bae06a510dcae))
+### 📦 setup-node changes
+
+#### Bug Fixes
+
+- 🐛 resolve prepare.sh relative to action path (#117) ([dd309d2](https://github.com/tomgrv/actions/commit/dd309d2b226b8e11d0e4fd6961b4793e7d293232))
+
+### 📦 setup-scripts changes
+
+#### Bug Fixes
+
+- 🐛 key zz_scripts cache by resolved commit SHA (#118) ([94e085e](https://github.com/tomgrv/actions/commit/94e085e734fd0cb1631d092ed0bb8582272a39d3))
+
 ## 2.35.0 (2026-09-14)
 
 *Commits from: v2.34.0..HEAD*
@@ -925,6 +946,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
