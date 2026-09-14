@@ -49,7 +49,7 @@ run_setup_node_fixture() {
     else
       unset TOMGRV_NODE_SETUP
     fi
-    "${SCRIPT}" "${bare_input}" "${options}"
+    sh "${SCRIPT}" "${bare_input}" "${options}"
   )
 }
 

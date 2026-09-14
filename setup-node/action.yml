@@ -48,4 +48,4 @@ runs:
     - name: Prepare Node workspace
       if: env.TOMGRV_NODE_SETUP != 'true'
       shell: sh
-      run: ./setup-node/prepare.sh "${{ inputs.bare }}" "${{ inputs.options }}"
+      run: sh ./setup-node/prepare.sh "${{ inputs.bare }}" "${{ inputs.options }}"
