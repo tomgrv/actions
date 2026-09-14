@@ -9,8 +9,10 @@ setup() {
 
 run_split() {
   (
-    export PACKAGE_PATH="${1:?}"
-    export REPOSITORY="${2:?}"
+    export PACKAGE_DIR="${1:?}"
+    repository="${2:?}"
+    export REPO_ORG="${repository%%/*}"
+    export REPO_NAME="${repository#*/}"
     export GIT_USER_NAME="${3:-Test Bot}"
     export GIT_USER_EMAIL="${4:-bot@example.com}"
     sh "$SCRIPT" 2>/dev/null

@@ -8,12 +8,14 @@ on:
       - main
       - develop
     paths:
+      - '*/run.bats'
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
       - '.github/workflows/validate-workspace-tests.yml'
   pull_request:
     paths:
+      - '*/run.bats'
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
@@ -54,3 +56,25 @@ jobs:
         uses: ./run-workspace-tests
         with:
           workspace: ${{ matrix.package.path }}
+
+  repository-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - check-dockerfile
+          - self-repo-syntax
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap zz_* scripts for repository tests
+        uses: ./setup-scripts
+        with:
+          scripts: zz_log zz_args
+
+      - name: Setup Bats
+        uses: bats-core/bats-action@4.0.0
+
+      - name: Run repository tests
+        run: bats "${{ matrix.suite }}/run.bats"

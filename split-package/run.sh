@@ -15,9 +15,25 @@ HEAD_OWNER="${HEAD_OWNER:-${REPO_ORG:-}}"
 # Retrieve the package directory from the environment variable or input
 PACKAGE_DIR="${PACKAGE_DIR:-${3:-}}"
 case "${PACKAGE_DIR}" in
-  /*) REL_DIR="${PACKAGE_DIR#${REPO_ROOT}/}" ;;
-  *)  REL_DIR="${PACKAGE_DIR}" ;;
+  /*)
+    ABS_DIR="${PACKAGE_DIR}"
+    REL_DIR="${PACKAGE_DIR#${REPO_ROOT}/}"
+    ;;
+  *)
+    ABS_DIR="${REPO_ROOT}/${PACKAGE_DIR}"
+    REL_DIR="${PACKAGE_DIR}"
+    ;;
 esac
+
+if [ ! -d "${ABS_DIR}" ]; then
+  printf '%s\n' "Package directory not found: ${PACKAGE_DIR}" >&2
+  exit 1
+fi
+
+if [ ! -f "${ABS_DIR}/package.json" ] && [ ! -f "${ABS_DIR}/composer.json" ]; then
+  printf '%s\n' "Package manifest not found in ${PACKAGE_DIR}" >&2
+  exit 1
+fi
 
 # Run splitsh-lite; it outputs the SHA of the tip of the extracted subtree.
 printf '%s\n' "Splitting '${REL_DIR}/' from monorepo at ${REPO_ROOT}..." >&2
@@ -78,4 +94,3 @@ printf '%s\n' "Prepared split workspace in ${WORKDIR}." >&2
 printf 'split-branch=%s\n' "${SPLIT_BRANCH}"
 printf 'split-sha=%s\n' "${SPLIT_SHA}"
 printf 'split-workdir=%s\n' "${WORKDIR}"
-

@@ -32,5 +32,8 @@
             "description": "Temporary split workspace directory to use for committing and pushing."
         }
     },
+    "scripts": {
+        "test": "bats run.bats"
+    },
     "private": true
 }
