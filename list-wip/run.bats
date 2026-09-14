@@ -13,7 +13,9 @@ setup() {
 
   # Setup local repo
   cd "$TEST_DIR"
-  git init -q
+  # -b main: don't rely on the system/global init.defaultBranch default
+  # (still "master" unless configured) -- the push below hardcodes "main".
+  git init -q -b main
   git remote add origin "$REMOTE_DIR"
   git config user.email "test@example.com"
   git config user.name "Test User"
@@ -44,8 +46,11 @@ run_wip() {
     export GITHUB_WORKSPACE="$TEST_DIR"
     export LIST_PATHS="${1:-.}"
     export LIST_EXTENSIONS="${2:-php}"
-    export LIST_BASE_REF="${3:-main}"
-    export GITHUB_BASE_REF="${3:-main}"
+    # ${3-main}, not ${3:-main}: an explicitly empty "" arg (used by the
+    # "missing base-ref" test) must stay empty, only a truly unset/omitted
+    # arg should default to "main".
+    export LIST_BASE_REF="${3-main}"
+    export GITHUB_BASE_REF="${3-main}"
     sh "$SCRIPT" 2>/dev/null
   )
 }
