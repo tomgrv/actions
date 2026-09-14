@@ -47,6 +47,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Bats
+        uses: bats-core/bats-action@4.0.0
+
       - name: Run workspace tests
         uses: ./run-workspace-tests
         with:
