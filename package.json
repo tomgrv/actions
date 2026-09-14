@@ -80,6 +80,7 @@
     "run-phpstan",
     "run-phptests",
     "run-pint",
+    "run-workspace-tests",
     "setup-gitflow",
     "setup-gitversion",
     "setup-node",
