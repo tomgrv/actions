@@ -1,6 +1,6 @@
 # @format
 
-name: Validate Workspace Tests
+name: Test workspaces
 
 on:
   push:
@@ -12,14 +12,14 @@ on:
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
-      - '.github/workflows/validate-workspace-tests.yml'
+      - '.github/workflows/test-workspaces.yaml'
   pull_request:
     paths:
       - '*/run.bats'
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
-      - '.github/workflows/validate-workspace-tests.yml'
+      - '.github/workflows/test-workspaces.yaml'
 
 permissions:
   contents: read
