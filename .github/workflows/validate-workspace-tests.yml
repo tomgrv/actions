@@ -80,17 +80,13 @@ jobs:
         with:
           scripts: zz_log zz_args
 
+      - name: Verify repository lockfile
+        run: test -f package-lock.json
+
       - name: Setup Node.js toolchain
         uses: ./setup-node
         with:
           cache: 'npm'
-          bare: 'true'
-
-      - name: Verify repository lockfile
-        run: test -f package-lock.json
-
-      - name: Install repository Node dependencies
-        run: npm ci --no-progress --workspaces
 
       - name: Setup Bats
         uses: bats-core/bats-action@4.0.0
