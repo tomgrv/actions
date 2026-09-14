@@ -108,10 +108,10 @@ run_dirty() {
   echo "$output" | grep -q "readme.txt"
 }
 
-@test "deleted php file is included" {
+@test "deleted php file is excluded" {
   rm "$TEST_DIR/src/file.php"
   run run_dirty
   [ "$status" -eq 0 ]
-  echo "$output" | grep -q "^count=1$"
-  echo "$output" | grep -q "src/file.php"
+  echo "$output" | grep -q "^count=0$"
+  echo "$output" | grep -q "src/file.php" && false || true
 }

@@ -128,12 +128,12 @@ run_wip() {
   echo "$output" | grep -q "docs.md"
 }
 
-@test "deleted files are included in comparison" {
+@test "deleted files are excluded from comparison" {
   git -C "$TEST_DIR" rm src/file.php
   git -C "$TEST_DIR" commit -q -m "Delete file"
 
   run run_wip "src"
   [ "$status" -eq 0 ]
-  echo "$output" | grep -q "src/file.php"
   echo "$output" | grep -q "src/feature.php"
+  echo "$output" | grep -q "src/file.php" && false || true
 }

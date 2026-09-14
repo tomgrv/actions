@@ -37,8 +37,8 @@ zz_log i "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSION
 
 FILES="$(
     {
-        git diff --name-only --diff-filter=ACMRD -- .
-        git diff --name-only --cached --diff-filter=ACMRD -- .
+        git diff --name-only --diff-filter=ACMR -- .
+        git diff --name-only --cached --diff-filter=ACMR -- .
         git ls-files --others --exclude-standard -- .
     } | sed '/^$/d' | sort -u | grep -E "${_base_regex}" | grep -E "${_ext_regex}" || true
 )"
