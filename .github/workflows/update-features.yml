@@ -20,8 +20,6 @@ jobs:
 
       - name: Set up Node.js
         uses: tomgrv/actions/setup-node@v1
-        with:
-          npm-version: '11.19.0'
 
       - name: Update features
         run: npm exec --yes -- tomgrv/devcontainer-features -u
