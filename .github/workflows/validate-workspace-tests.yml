@@ -64,6 +64,13 @@ jobs:
       matrix:
         suite:
           - check-dockerfile
+          - check-security-composer
+          - check-security-npm
+          - config-bot
+          - detect-changes
+          - resolve-environment
+          - run-deployer
+          - run-workspace-tests
           - self-repo-syntax
     steps:
       - uses: actions/checkout@v4

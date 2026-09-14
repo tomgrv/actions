@@ -16,8 +16,16 @@ HEAD_OWNER="${HEAD_OWNER:-${REPO_ORG:-}}"
 PACKAGE_DIR="${PACKAGE_DIR:-${3:-}}"
 case "${PACKAGE_DIR}" in
   /*)
-    ABS_DIR="${PACKAGE_DIR}"
-    REL_DIR="${PACKAGE_DIR#${REPO_ROOT}/}"
+    case "${PACKAGE_DIR}" in
+      "${REPO_ROOT}"/*)
+        ABS_DIR="${PACKAGE_DIR}"
+        REL_DIR="${PACKAGE_DIR#${REPO_ROOT}/}"
+        ;;
+      *)
+        printf '%s\n' "Package directory must be inside the repository root: ${PACKAGE_DIR}" >&2
+        exit 1
+        ;;
+    esac
     ;;
   *)
     ABS_DIR="${REPO_ROOT}/${PACKAGE_DIR}"

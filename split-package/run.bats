@@ -38,8 +38,8 @@ run_split() {
   # A fresh mktemp dir, not the shared /tmp itself: /tmp can accumulate a
   # stray package.json from earlier steps on a CI runner, which made this
   # "no manifest" fixture non-hermetic.
-  empty_dir="$(mktemp -d)"
-  run run_split "$empty_dir" "org/repo"
+  empty_dir="$(mktemp -d "${REPO_ROOT}/split-package-test.XXXXXX")"
+  run run_split "${empty_dir#${REPO_ROOT}/}" "org/repo"
   rm -rf "$empty_dir"
   [ "$status" -ne 0 ]
 }
