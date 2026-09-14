@@ -1,27 +1,27 @@
 {
-    "name": "resolve-environment",
-    "version": "2.31.0",
-    "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event.",
-    "scripts": {
-        "test": "bats run.bats"
+  "name": "resolve-environment",
+  "version": "2.35.0",
+  "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "inputs": {
+    "DEP": {
+      "description": "The deployer command being run. When \"deploy\" and no other rule matches, falls back to the current branch ref with no environment guess.",
+      "required": false,
+      "default": "deploy"
+    }
+  },
+  "outputs": {
+    "branch": {
+      "description": "Resolved --branch value for Deployer, if any."
     },
-    "inputs": {
-        "DEP": {
-            "description": "The deployer command being run. When \"deploy\" and no other rule matches, falls back to the current branch ref with no environment guess.",
-            "required": false,
-            "default": "deploy"
-        }
+    "tag": {
+      "description": "Resolved --tag value for Deployer, if any."
     },
-    "outputs": {
-        "branch": {
-            "description": "Resolved --branch value for Deployer, if any."
-        },
-        "tag": {
-            "description": "Resolved --tag value for Deployer, if any."
-        },
-        "environment": {
-            "description": "Resolved environment name (unstable/staging/production), if any."
-        }
-    },
-    "private": true
+    "environment": {
+      "description": "Resolved environment name (unstable/staging/production), if any."
+    }
+  },
+  "private": true
 }
