@@ -1,0 +1,53 @@
+# @format
+
+name: Validate Workspace Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '*/package.json'
+      - 'list-packages/**'
+      - 'run-workspace-tests/**'
+      - '.github/workflows/validate-workspace-tests.yml'
+  pull_request:
+    paths:
+      - '*/package.json'
+      - 'list-packages/**'
+      - 'run-workspace-tests/**'
+      - '.github/workflows/validate-workspace-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  list-packages:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.list.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: List packages
+        id: list
+        uses: ./list-packages
+        with:
+          require-repository: 'false'
+
+  test:
+    needs: list-packages
+    if: needs.list-packages.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.list-packages.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run workspace tests
+        uses: ./run-workspace-tests
+        with:
+          workspace: ${{ matrix.package.path }}

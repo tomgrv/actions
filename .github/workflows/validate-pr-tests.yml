@@ -35,4 +35,4 @@ jobs:
         uses: bats-core/bats-action@4.0.0
 
       - name: Run repository tests
-        run: ./run-tests.sh -f "check-dockerfile|check-security|config-bot|detect-changes|resolve-environment|run-deployer"
+        run: ./run-tests.sh -f "check-dockerfile|check-security|config-bot|detect-changes|resolve-environment|run-deployer|run-workspace-tests"
