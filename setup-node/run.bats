@@ -21,6 +21,9 @@ stub_npm() {
   cat > "${STUB_BIN}/npm" << STUB
 #!/bin/sh
 echo "npm \$*" >> "${CALLS_FILE}"
+for arg in "\$@"; do
+  echo "arg:\$arg" >> "${CALLS_FILE}"
+done
 STUB
   chmod +x "${STUB_BIN}/npm"
 }
@@ -36,6 +39,7 @@ run_setup_node_fixture() {
   repo_dir="${1:?}"
   marker="${2:-false}"
   bare_input="${3:-false}"
+  options="${4:-}"
   (
     cd "${repo_dir}"
     GITHUB_ENV="${repo_dir}/github-env"
@@ -45,7 +49,7 @@ run_setup_node_fixture() {
     else
       unset TOMGRV_NODE_SETUP
     fi
-    "${SCRIPT}" "${bare_input}" ""
+    "${SCRIPT}" "${bare_input}" "${options}"
   )
 }
 
@@ -80,4 +84,14 @@ run_setup_node_fixture() {
   [ "$status" -eq 0 ]
   [ ! -s "${CALLS_FILE}" ]
   [ ! -f "${TEST_DIR}/repo/github-env" ]
+}
+
+@test "parses quoted options without shell word-splitting" {
+  stub_npm
+  init_repo
+  run run_setup_node_fixture "${TEST_DIR}/repo" false false '--cache "/tmp/npm cache" --ignore-scripts'
+  [ "$status" -eq 0 ]
+  grep -qF 'arg:--cache' "${CALLS_FILE}"
+  grep -qF 'arg:/tmp/npm cache' "${CALLS_FILE}"
+  grep -qF 'arg:--ignore-scripts' "${CALLS_FILE}"
 }
