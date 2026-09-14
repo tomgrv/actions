@@ -1,6 +1,6 @@
 # @format
 
-name: 'Release Main'
+name: 'Release Prod'
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 jobs:
-  release-main:
+  release-prod:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
