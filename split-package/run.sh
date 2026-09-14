@@ -17,6 +17,10 @@ PACKAGE_DIR="${PACKAGE_DIR:-${3:-}}"
 case "${PACKAGE_DIR}" in
   /*)
     case "${PACKAGE_DIR}" in
+      "${REPO_ROOT}")
+        ABS_DIR="${PACKAGE_DIR}"
+        REL_DIR="."
+        ;;
       "${REPO_ROOT}"/*)
         ABS_DIR="${PACKAGE_DIR}"
         REL_DIR="${PACKAGE_DIR#${REPO_ROOT}/}"
