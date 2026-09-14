@@ -1,7 +1,10 @@
 {
   "name": "clean-branches",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Delete branches whose linked pull request is closed.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "GITHUB_TOKEN": {
       "description": "GitHub token with contents:write and pull-requests:read permissions.",

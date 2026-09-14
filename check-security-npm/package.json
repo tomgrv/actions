@@ -1,7 +1,10 @@
 {
   "name": "check-security-npm",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Run npm dependency security audit and report via reviewdog.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "REVIEWDOG_NAME": {
       "description": "Name reported by reviewdog to identify this check.",

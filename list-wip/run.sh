@@ -49,7 +49,7 @@ _ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9
 zz_log i "Listing files changed since ${LIST_BASE_REF} (merge-base ${MERGE_BASE}) under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
 
 FILES="$(
-    git diff --name-only --diff-filter=ACMR "${MERGE_BASE}" -- . \
+    git diff --no-renames --name-only --diff-filter=ACMR "${MERGE_BASE}" -- . \
         | sed '/^$/d' | sort -u | grep -E "${_base_regex}" | grep -E "${_ext_regex}" || true
 )"
 

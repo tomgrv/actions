@@ -1,7 +1,10 @@
 {
   "name": "run-phptests",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Run pull request test suite for a PHP project.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "WORKING_DIRECTORY": {
       "description": "Directory to run the test suite in, relative to the workspace. Defaults to the workspace root.",

@@ -1,0 +1,29 @@
+# @format
+
+# @package tomgrv/actions/run-workspace-tests
+
+name: Run Workspace Tests
+description: Run a workspace's .scripts.test entry (from each root *.json file) as its test suite.
+author: Perspikapps
+branding:
+  icon: check-square
+  color: blue
+
+inputs:
+  workspace:
+    description: Workspace directory to test.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup scripts toolchain
+      uses: $/setup-scripts
+      with:
+        scripts: run-workspace-tests
+
+    - name: Run workspace tests
+      shell: sh
+      env:
+        WORKSPACE: ${{ inputs.workspace }}
+      run: sh -c "${{ github.action_path }}/run.sh"

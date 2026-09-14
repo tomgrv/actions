@@ -1,7 +1,10 @@
 {
   "name": "resolve-environment",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Resolve the deploy branch, tag, and environment from the triggering GitHub event.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "DEP": {
       "description": "The deployer command being run. When \"deploy\" and no other rule matches, falls back to the current branch ref with no environment guess.",

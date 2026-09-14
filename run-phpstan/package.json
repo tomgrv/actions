@@ -1,7 +1,10 @@
 {
   "name": "run-phpstan",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Run PHPStan with reviewdog.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "TARGET_PATHS": {
       "description": "Paths to analyze with PHPStan, comma-separated. Defaults to `app`.",

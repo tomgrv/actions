@@ -1,0 +1,60 @@
+# @format
+
+name: Test workspaces
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '*/run.bats'
+      - '*/package.json'
+      - 'list-packages/**'
+      - 'run-workspace-tests/**'
+      - '.github/workflows/test-workspaces.yaml'
+  pull_request:
+    paths:
+      - '*/run.bats'
+      - '*/package.json'
+      - 'list-packages/**'
+      - 'run-workspace-tests/**'
+      - '.github/workflows/test-workspaces.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  list-packages:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.list.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: List packages
+        id: list
+        uses: ./list-packages
+        with:
+          require-repository: 'false'
+
+  test:
+    needs: list-packages
+    if: needs.list-packages.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.list-packages.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bats
+        uses: bats-core/bats-action@4.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run workspace tests
+        uses: ./run-workspace-tests
+        with:
+          workspace: ${{ matrix.package.path }}

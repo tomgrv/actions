@@ -47,6 +47,23 @@ STUB
   chmod +x "${STUB_BIN}/git"
 }
 
+stub_passthrough_sudo() {
+  cat > "${STUB_BIN}/sudo" << STUB
+#!/bin/sh
+"\$@"
+STUB
+  chmod +x "${STUB_BIN}/sudo"
+}
+
+stub_zz_log() {
+  cat > "${STUB_BIN}/zz_log" << 'STUB'
+#!/bin/sh
+shift
+echo "$*" >&2
+STUB
+  chmod +x "${STUB_BIN}/zz_log"
+}
+
 @test "skips the install when git-flow is already available" {
   stub_git_dispatcher yes
   stub apt-get 1 # would fail loudly if actually invoked
@@ -65,6 +82,11 @@ touch "${STUB_BIN}/.installed"
 exit 0
 STUB
   chmod +x "${STUB_BIN}/apt-get"
+  # A real `sudo` on the runner applies its own secure_path, dropping
+  # STUB_BIN from PATH for the command it execs -- without this stub it
+  # would silently run the real apt-get instead of ours (the caller isn't
+  # root on a GitHub-hosted runner, so the script does invoke sudo).
+  stub_passthrough_sudo
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
   grep -qF "apt-get update" "${CALLS_FILE}"
@@ -77,12 +99,7 @@ STUB
   # zz_log itself needs to resolve on this exclusive PATH -- in real CI it's
   # put there by the setup-scripts composite step; stub a minimal stand-in
   # that just prints its message so the assertion below still sees it.
-  cat > "${STUB_BIN}/zz_log" << 'STUB'
-#!/bin/sh
-shift
-echo "$*" >&2
-STUB
-  chmod +x "${STUB_BIN}/zz_log"
+  stub_zz_log
   # Exclusive PATH -- this sandbox has a real apt-get on it, which would
   # otherwise mask the branch under test. Invoke via the script's own
   # shebang (an absolute path) rather than `sh "$SCRIPT"`, so resolving
@@ -95,6 +112,8 @@ STUB
 @test "errors when git-flow is still unavailable after a successful install command" {
   stub_git_dispatcher no
   stub apt-get 0 # "succeeds" but never touches .installed marker
+  stub_passthrough_sudo
+  stub_zz_log
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
   [[ "$output" == *"still unavailable after install attempt"* ]]

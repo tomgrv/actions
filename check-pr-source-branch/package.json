@@ -1,7 +1,10 @@
 {
   "name": "check-pr-source-branch",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Reject pull requests from the main branch unless the title marks them as a hotfix.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "RESTRICTED_BRANCH": {
       "description": "Branch name that requires a hotfix-marked title when used as a PR source.",

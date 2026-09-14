@@ -1,6 +1,9 @@
 {
-    "name": "setup-node",
-    "version": "2.19.0",
-    "description": "Setup Node.js and npm for CI jobs.",
-    "private": true
+  "name": "setup-node",
+  "version": "2.35.0",
+  "description": "Setup Node.js and npm for CI jobs.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "private": true
 }

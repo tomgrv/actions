@@ -1,7 +1,10 @@
 {
   "name": "setup-scripts",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Idempotently bootstrap zz_use from tomgrv/scripts, optionally installing specific scripts.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "SCRIPTS": {
       "description": "Space-separated tomgrv/scripts tool names to zz_use after bootstrapping (e.g. \"git-release-beta git-release-prod\"). Leave empty to only bootstrap zz_use itself.",

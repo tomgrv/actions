@@ -5,12 +5,21 @@
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
   SCRIPT="${REPO_ROOT}/split-package/run.sh"
+  TEMP_DIRS=""
+}
+
+teardown() {
+  for temp_dir in ${TEMP_DIRS}; do
+    rm -rf "${temp_dir}"
+  done
 }
 
 run_split() {
   (
-    export PACKAGE_PATH="${1:?}"
-    export REPOSITORY="${2:?}"
+    export PACKAGE_DIR="${1:?}"
+    repository="${2:?}"
+    export REPO_ORG="${repository%%/*}"
+    export REPO_NAME="${repository#*/}"
     export GIT_USER_NAME="${3:-Test Bot}"
     export GIT_USER_EMAIL="${4:-bot@example.com}"
     sh "$SCRIPT" 2>/dev/null
@@ -33,7 +42,12 @@ run_split() {
 }
 
 @test "validates package-path contains package.json or composer.json" {
-  run run_split "/tmp" "org/repo"
+  # A fresh mktemp dir, not the shared /tmp itself: /tmp can accumulate a
+  # stray package.json from earlier steps on a CI runner, which made this
+  # "no manifest" fixture non-hermetic.
+  empty_dir="$(mktemp -d "${REPO_ROOT}/split-package-test.XXXXXX")"
+  TEMP_DIRS="${TEMP_DIRS} ${empty_dir}"
+  run run_split "${empty_dir#${REPO_ROOT}/}" "org/repo"
   [ "$status" -ne 0 ]
 }
 

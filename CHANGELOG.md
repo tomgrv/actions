@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.35.0 (2026-09-14)
+
+*Commits from: v2.34.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.34.0' into develop ([1477401](https://github.com/tomgrv/actions/commit/147740171ebeba9fccde34dc41761bc90083954d))
+### 📦 run-workspace-tests changes
+
+#### Features
+
+- ✨ add composite action for per-workspace tests (#115) ([24da563](https://github.com/tomgrv/actions/commit/24da5633f165bbbd2ebb2e5610f0daadf06f4e23))
+- ✨ wire every bats-tested action into scripts.test (#116) ([f7a2f2f](https://github.com/tomgrv/actions/commit/f7a2f2f57eec971372925052ed9ce941a362116d))
+
 ## 2.34.0 (2026-09-14)
 
 *Commits from: v2.33.0..HEAD*
@@ -909,6 +925,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 

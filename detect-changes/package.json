@@ -1,7 +1,10 @@
 {
   "name": "detect-changes",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Detect uncommitted or untracked changes in a given path using git status.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "WORKDIR": {
       "description": "Base path to check for changes (relative to repo root).",

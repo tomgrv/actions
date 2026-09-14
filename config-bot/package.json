@@ -1,7 +1,10 @@
 {
   "name": "config-bot",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Configure Git identity and authentication for bot commits.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "GITHUB_TOKEN": {
       "description": "GitHub token used for authenticated Git operations.",

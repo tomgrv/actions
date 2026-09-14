@@ -1,7 +1,10 @@
 {
   "name": "run-pint",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Run Laravel Pint with reviewdog.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "TARGET_PATHS": {
       "description": "Comma-separated list of paths to analyze with Pint. Defaults to `app`.",

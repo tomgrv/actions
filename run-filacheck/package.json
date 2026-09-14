@@ -1,7 +1,10 @@
 {
   "name": "run-filacheck",
-  "version": "2.31.0",
+  "version": "2.35.0",
   "description": "Run FilaCheck with reviewdog.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
   "inputs": {
     "FILACHECK_PATH": {
       "description": "Path to analyze with FilaCheck. Defaults to `app/Filament`.",
