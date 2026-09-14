@@ -26,14 +26,26 @@ inputs:
 runs:
   using: composite
   steps:
+    # Cache key must track the actual commit tomgrv/scripts is at, not just
+    # its branch name -- a name-only key (e.g. "...-main-") never changes as
+    # the branch moves forward, so a cache entry saved before some script
+    # existed on that branch would be restored forever after, even once the
+    # script is genuinely there. restore-keys prefix fallbacks have the same
+    # problem (they'd match an older SHA's entry), so this step deliberately
+    # has none: a cache miss just means zz_use fetches fresh, which it
+    # already handles correctly on its own.
+    - name: Resolve tomgrv/scripts branch SHA
+      id: scripts-sha
+      shell: sh
+      run: |
+        sha=$(git ls-remote https://github.com/tomgrv/scripts.git "${{ inputs.scripts-branch }}" | cut -f1)
+        echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+
     - name: Cache zz_scripts (extracted tomgrv/scripts archives)
       uses: actions/cache@v5
       with:
         path: ~/.cache/zz_scripts
-        key: zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-${{ inputs.scripts-ref }}
-        restore-keys: |
-          zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-
-          zz_scripts-${{ runner.os }}-
+        key: zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-${{ inputs.scripts-ref }}-${{ steps.scripts-sha.outputs.sha }}
 
     - name: Bootstrap zz_use and install requested scripts
       shell: sh
