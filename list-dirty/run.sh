@@ -12,7 +12,8 @@ fi
 
 # LIST_PATHS is normally supplied via action.yml's env block; the positional
 # fallback below only matters for local dispatch.sh usage.
-eval "$(zz_args "List dirty files" "$0" "$@" <<-help
+eval "$(
+    zz_args "List dirty files" "$0" "$@" <<- help
 	- path	list_paths	Comma-separated list of paths to restrict the list to (default: .)
 help
 )"

@@ -1,6 +1,6 @@
 # @format
 
-name: Validate Workspace Tests
+name: Test workspaces
 
 on:
   push:
@@ -8,16 +8,18 @@ on:
       - main
       - develop
     paths:
+      - '*/run.bats'
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
-      - '.github/workflows/validate-workspace-tests.yml'
+      - '.github/workflows/test-workspaces.yaml'
   pull_request:
     paths:
+      - '*/run.bats'
       - '*/package.json'
       - 'list-packages/**'
       - 'run-workspace-tests/**'
-      - '.github/workflows/validate-workspace-tests.yml'
+      - '.github/workflows/test-workspaces.yaml'
 
 permissions:
   contents: read
@@ -46,6 +48,11 @@ jobs:
         package: ${{ fromJson(needs.list-packages.outputs.packages) }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Bats
+        uses: bats-core/bats-action@4.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run workspace tests
         uses: ./run-workspace-tests

@@ -1,55 +1,97 @@
 # @format
 
-# Tests setup-node/run.sh: Setup Node.js and npm in CI environment.
+# Tests setup-node/action.yml: shared Node setup and dependency-install guards.
 
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
-  SCRIPT="${REPO_ROOT}/setup-node/run.sh"
+  ACTION_FILE="${REPO_ROOT}/setup-node/action.yml"
+  SCRIPT="${REPO_ROOT}/setup-node/prepare.sh"
+  TEST_DIR="$(mktemp -d)"
+  STUB_BIN="$(mktemp -d)"
+  CALLS_FILE="$(mktemp)"
+  export PATH="${STUB_BIN}:${PATH}"
 }
 
-run_setup_node() {
+teardown() {
+  rm -rf "${TEST_DIR}" "${STUB_BIN}"
+  rm -f "${CALLS_FILE}"
+}
+
+stub_npm() {
+  cat > "${STUB_BIN}/npm" << STUB
+#!/bin/sh
+echo "npm \$*" >> "${CALLS_FILE}"
+for arg in "\$@"; do
+  echo "arg:\$arg" >> "${CALLS_FILE}"
+done
+STUB
+  chmod +x "${STUB_BIN}/npm"
+}
+
+init_repo() {
+  repo_dir="${TEST_DIR}/repo"
+  mkdir -p "${repo_dir}"
+  git -C "${repo_dir}" init -q
+  printf '{}\n' > "${repo_dir}/package-lock.json"
+}
+
+run_setup_node_fixture() {
+  repo_dir="${1:?}"
+  marker="${2:-false}"
+  bare_input="${3:-false}"
+  options="${4:-}"
   (
-    export NODE_VERSION="${1:-}"
-    export NPM_VERSION="${2:-}"
-    sh "$SCRIPT" 2>/dev/null
+    cd "${repo_dir}"
+    GITHUB_ENV="${repo_dir}/github-env"
+    export GITHUB_ENV
+    if [ "${marker}" = "true" ]; then
+      export TOMGRV_NODE_SETUP=true
+    else
+      unset TOMGRV_NODE_SETUP
+    fi
+    sh "${SCRIPT}" "${bare_input}" "${options}"
   )
 }
 
-@test "runs without errors with defaults" {
-  run run_setup_node
+@test "declares a composite action" {
+  run grep -c '^  using: composite$' "$ACTION_FILE"
   [ "$status" -eq 0 ]
+  [ "$output" -eq 1 ]
 }
 
-@test "outputs node_version when Node is installed" {
-  run run_setup_node
+@test "installs dependencies and marks the toolchain for a non-bare repo with a lockfile" {
+  stub_npm
+  init_repo
+  run run_setup_node_fixture "${TEST_DIR}/repo"
   [ "$status" -eq 0 ]
-  echo "$output" | grep -q "^node_version=" || true
+  grep -qF "npm ci --no-progress --workspaces" "${CALLS_FILE}"
+  grep -qF "TOMGRV_NODE_SETUP=true" "${TEST_DIR}/repo/github-env"
 }
 
-@test "outputs npm_version when npm is installed" {
-  run run_setup_node
+@test "skips dependency install when bare=true but still marks the toolchain ready" {
+  stub_npm
+  init_repo
+  run run_setup_node_fixture "${TEST_DIR}/repo" false true
   [ "$status" -eq 0 ]
-  echo "$output" | grep -q "^npm_version=" || true
+  [ ! -s "${CALLS_FILE}" ]
+  grep -qF "TOMGRV_NODE_SETUP=true" "${TEST_DIR}/repo/github-env"
 }
 
-@test "sets Node version when specified" {
-  run run_setup_node "20"
+@test "skips repeated setup once TOMGRV_NODE_SETUP is already true" {
+  stub_npm
+  init_repo
+  run run_setup_node_fixture "${TEST_DIR}/repo" true
   [ "$status" -eq 0 ]
+  [ ! -s "${CALLS_FILE}" ]
+  [ ! -f "${TEST_DIR}/repo/github-env" ]
 }
 
-@test "sets npm version when specified" {
-  run run_setup_node "" "10"
+@test "parses quoted options without shell word-splitting" {
+  stub_npm
+  init_repo
+  run run_setup_node_fixture "${TEST_DIR}/repo" false false '--cache "/tmp/npm cache" --ignore-scripts'
   [ "$status" -eq 0 ]
-}
-
-@test "node command is available after setup" {
-  run run_setup_node
-  [ "$status" -eq 0 ]
-  command -v node >/dev/null 2>&1 || true
-}
-
-@test "npm command is available after setup" {
-  run run_setup_node
-  [ "$status" -eq 0 ]
-  command -v npm >/dev/null 2>&1 || true
+  grep -qF 'arg:--cache' "${CALLS_FILE}"
+  grep -qF 'arg:/tmp/npm cache' "${CALLS_FILE}"
+  grep -qF 'arg:--ignore-scripts' "${CALLS_FILE}"
 }

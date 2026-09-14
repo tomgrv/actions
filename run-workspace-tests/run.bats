@@ -34,7 +34,11 @@ EOF
 
 @test "errors when WORKSPACE is not set" {
   stub_zz_log
-  run sh "$SCRIPT"
+  # Unset explicitly: when this suite runs via the composite action itself
+  # (testing run-workspace-tests with run-workspace-tests), WORKSPACE is
+  # already exported in the surrounding CI step's environment and would
+  # otherwise leak into this subshell, making the check a no-op.
+  run env -u WORKSPACE sh "$SCRIPT"
   [ "$status" -ne 0 ]
   [[ "$output" == *"WORKSPACE"* ]]
 }
