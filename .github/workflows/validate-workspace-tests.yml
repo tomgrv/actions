@@ -83,6 +83,7 @@ jobs:
       - name: Setup Node.js toolchain
         uses: ./setup-node
         with:
+          cache: 'npm'
           bare: 'true'
 
       - name: Verify repository lockfile
