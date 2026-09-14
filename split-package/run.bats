@@ -33,7 +33,12 @@ run_split() {
 }
 
 @test "validates package-path contains package.json or composer.json" {
-  run run_split "/tmp" "org/repo"
+  # A fresh mktemp dir, not the shared /tmp itself: /tmp can accumulate a
+  # stray package.json from earlier steps on a CI runner, which made this
+  # "no manifest" fixture non-hermetic.
+  empty_dir="$(mktemp -d)"
+  run run_split "$empty_dir" "org/repo"
+  rm -rf "$empty_dir"
   [ "$status" -ne 0 ]
 }
 

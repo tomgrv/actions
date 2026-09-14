@@ -65,6 +65,15 @@ touch "${STUB_BIN}/.installed"
 exit 0
 STUB
   chmod +x "${STUB_BIN}/apt-get"
+  # A real `sudo` on the runner applies its own secure_path, dropping
+  # STUB_BIN from PATH for the command it execs -- without this stub it
+  # would silently run the real apt-get instead of ours (the caller isn't
+  # root on a GitHub-hosted runner, so the script does invoke sudo).
+  cat > "${STUB_BIN}/sudo" << STUB
+#!/bin/sh
+"\$@"
+STUB
+  chmod +x "${STUB_BIN}/sudo"
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
   grep -qF "apt-get update" "${CALLS_FILE}"

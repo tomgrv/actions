@@ -2,9 +2,6 @@
     "name": "split-package",
     "version": "2.31.0",
     "description": "Split a package from a monorepo and push the split branch.",
-    "scripts": {
-        "test": "bats run.bats"
-    },
     "inputs": {
         "PACKAGE_DIR": {
             "description": "Relative path to the package directory from the repository root",
