@@ -1,21 +1,21 @@
 {
-    "name": "setup-gitflow",
-    "version": "2.31.0",
-    "description": "Install the git-flow extension if missing, then initialize it against the checked-out repo.",
-    "scripts": {
-        "test": "bats run.bats"
+  "name": "setup-gitflow",
+  "version": "2.35.0",
+  "description": "Install the git-flow extension if missing, then initialize it against the checked-out repo.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "inputs": {
+    "GITFLOW_MASTER_BRANCH": {
+      "description": "Branch git-flow treats as production/master.",
+      "required": false,
+      "default": "main"
     },
-    "inputs": {
-        "GITFLOW_MASTER_BRANCH": {
-            "description": "Branch git-flow treats as production/master.",
-            "required": false,
-            "default": "main"
-        },
-        "GITFLOW_DEVELOP_BRANCH": {
-            "description": "Branch git-flow treats as develop.",
-            "required": false,
-            "default": "develop"
-        }
-    },
-    "private": true
+    "GITFLOW_DEVELOP_BRANCH": {
+      "description": "Branch git-flow treats as develop.",
+      "required": false,
+      "default": "develop"
+    }
+  },
+  "private": true
 }
