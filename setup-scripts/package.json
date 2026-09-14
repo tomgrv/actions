@@ -1,6 +1,6 @@
 {
   "name": "setup-scripts",
-  "version": "2.35.0",
+  "version": "2.36.0",
   "description": "Idempotently bootstrap zz_use from tomgrv/scripts, optionally installing specific scripts.",
   "scripts": {
     "test": "bats run.bats"
