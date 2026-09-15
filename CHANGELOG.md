@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.37.0 (2026-09-15)
+
+*Commits from: v2.36.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 🔧 align workflow version pins, regenerate lockfile (#119) ([a7dd964](https://github.com/tomgrv/actions/commit/a7dd964a7c3a385241eb7d808df4754015493666))
+
+#### Other changes
+
+- Merge tag 'v2.36.0' into develop ([b3646cb](https://github.com/tomgrv/actions/commit/b3646cb27dee00f19bbdc41a6e73fadab9a91938))
+
 ## 2.36.0 (2026-09-14)
 
 *Commits from: v2.35.0..HEAD*
@@ -962,5 +976,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-14 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-09-15 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
