@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.38.0 (2026-09-15)
+
+*Commits from: v2.37.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Bug Fixes
+
+- 🐛 🔧 align update-features workflow with devcontainer-features canonical stub (#120) ([c22ecaf](https://github.com/tomgrv/actions/commit/c22ecafc81aace46a7dcf169fb9d3a3fee9db978))
+
+#### Other changes
+
+- Merge tag 'v2.37.0' into develop ([f293910](https://github.com/tomgrv/actions/commit/f293910de030f4b675daf83f79dd02f60a186fcd))
+
 ## 2.37.0 (2026-09-15)
 
 *Commits from: v2.36.0..HEAD*
@@ -960,6 +974,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
