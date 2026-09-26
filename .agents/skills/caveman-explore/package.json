@@ -8,7 +8,7 @@
     ],
     "type": "module",
     "scripts": {
-        "test": "node --test tests/*.mjs"
+        "test": "node --test --test-force-exit tests/*.mjs"
     },
     "private": true
 }
