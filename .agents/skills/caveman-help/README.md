@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # caveman-help
 
 Quick-reference card. One shot, no mode change.

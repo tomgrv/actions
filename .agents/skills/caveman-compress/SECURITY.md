@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Security
 
 ## Snyk High Risk Rating

@@ -1,129 +1,15 @@
 {
     "name": "@tomgrv/actions",
-    "version": "2.38.0",
     "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
-    "keywords": [
-        "github-actions",
-        "actions",
-        "monorepo",
-        "flekskit"
-    ],
-    "homepage": "https://github.com/tomgrv/actions#readme",
-    "bugs": {
-        "url": "https://github.com/tomgrv/actions/issues"
-    },
-    "license": "MIT",
-    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomgrv/actions.git"
-    },
-    "scripts": {
-        "lint": "npx --yes lint-staged",
-        "prepare": "husky || echo 'Husky not installed'",
-        "release": "npx --yes commit-and-tag-version --no-verify --",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "update": "npx --yes npm-check-updates -i -u",
-        "update-all": "npm run update -w --root"
-    },
+    "version": "2.38.0",
     "config": {
         "commitizen": {
             "path": "@commitlint/cz-commitlint"
         }
     },
-    "devDependencies": {
-        "husky": "*",
-        "npm-check-updates": "*"
-    },
-    "optionalDependencies": {
-        "@tomgrv/devcontainer-features-common-utils": ">=5"
-    },
-    "peerDependencies": {
-        "@commitlint/cli": "*",
-        "@commitlint/config-conventional": "*",
-        "@commitlint/core": "*",
-        "@commitlint/cz-commitlint": "*",
-        "commitizen": "*",
-        "git-precommit-checks": "*",
-        "prettier": "*",
-        "prettier-plugin-sh": "*"
-    },
-    "private": true,
-    "workspaces": [
-        "check-filament",
-        "check-laravel",
-        "check-lock",
-        "check-pr-format",
-        "check-pr-source-branch",
-        "check-secret",
-        "check-security-composer",
-        "check-security-npm",
-        "clean-branches",
-        "clean-history",
-        "config-bot",
-        "confirm-pr-comment",
-        "create-pr",
-        "create-pr-comment",
-        "create-update-ref",
-        "degit-package",
-        "detect-changes",
-        "list-dirty",
-        "list-packages",
-        "list-wip",
-        "publish-npm",
-        "rebase-pr",
-        "release-promote",
-        "reply-pr-comment",
-        "resolve-environment",
-        "run-deployer",
-        "run-phpinsights",
-        "run-filacheck",
-        "run-phpmd",
-        "run-phpstan",
-        "run-phptests",
-        "run-pint",
-        "run-workspace-tests",
-        "setup-gitflow",
-        "setup-gitversion",
-        "setup-node",
-        "setup-php",
-        "setup-reviewdog",
-        "setup-scripts",
-        "split-package",
-        "update-labels"
-    ],
-    "prettier": {
-        "insertPragma": true,
-        "overrides": [
-            {
-                "files": "*.json",
-                "options": {
-                    "tabWidth": 4,
-                    "useTabs": false
-                }
-            },
-            {
-                "files": "*.yml",
-                "options": {
-                    "tabWidth": 2,
-                    "useTabs": false
-                }
-            },
-            {
-                "files": "*.yml",
-                "options": {
-                    "tabWidth": 2,
-                    "useTabs": true
-                }
-            }
-        ],
-        "plugins": [
-            "prettier-plugin-sh"
-        ],
-        "semi": false,
-        "singleQuote": true,
-        "tabWidth": 4,
-        "trailingComma": "es5"
+    "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
+    "bugs": {
+        "url": "https://github.com/tomgrv/actions/issues"
     },
     "bump-changelog": {
         "types": [
@@ -183,6 +69,10 @@
             ]
         }
     },
+    "devDependencies": {
+        "husky": "*",
+        "npm-check-updates": "*"
+    },
     "git-precommit-checks": {
         "rules": [
             {
@@ -197,6 +87,14 @@
             }
         ]
     },
+    "homepage": "https://github.com/tomgrv/actions#readme",
+    "keywords": [
+        "github-actions",
+        "actions",
+        "monorepo",
+        "flekskit"
+    ],
+    "license": "MIT",
     "lint-staged": {
         "!(*schema).json": [
             "normalize-json -c -w -a -i -t 4 -f local -l true"
@@ -214,8 +112,110 @@
             "npm pkg fix"
         ]
     },
+    "optionalDependencies": {
+        "@tomgrv/devcontainer-features-common-utils": ">=5"
+    },
+    "peerDependencies": {
+        "@commitlint/cli": "*",
+        "@commitlint/config-conventional": "*",
+        "@commitlint/core": "*",
+        "@commitlint/cz-commitlint": "*",
+        "commitizen": "*",
+        "git-precommit-checks": "*",
+        "prettier": "*",
+        "prettier-plugin-sh": "*"
+    },
+    "prettier": {
+        "insertPragma": true,
+        "overrides": [
+            {
+                "files": "*.json",
+                "options": {
+                    "tabWidth": 4,
+                    "useTabs": false
+                }
+            },
+            {
+                "files": "*.yml",
+                "options": {
+                    "tabWidth": 2,
+                    "useTabs": false
+                }
+            },
+            {
+                "files": "*.yml",
+                "options": {
+                    "tabWidth": 2,
+                    "useTabs": true
+                }
+            }
+        ],
+        "plugins": [
+            "prettier-plugin-sh"
+        ],
+        "semi": false,
+        "singleQuote": true,
+        "tabWidth": 4,
+        "trailingComma": "es5"
+    },
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tomgrv/actions.git"
+    },
+    "scripts": {
+        "lint": "npx --yes lint-staged",
+        "prepare": "husky || echo 'Husky not installed'",
+        "release": "npx --yes commit-and-tag-version --no-verify --",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "update": "npx --yes npm-check-updates -i -u",
+        "update-all": "npm run update -w --root"
+    },
     "validate-branch-name": {
         "errorMsg": "Cannot push to a branch that does not follow the naming convention.",
         "pattern": "^(master|main|develop){1}$|^(copilot|feature|fix|hotfix|release|claude)/.+$"
-    }
+    },
+    "workspaces": [
+        "check-filament",
+        "check-laravel",
+        "check-lock",
+        "check-pr-format",
+        "check-pr-source-branch",
+        "check-secret",
+        "check-security-composer",
+        "check-security-npm",
+        "clean-branches",
+        "clean-history",
+        "config-bot",
+        "confirm-pr-comment",
+        "create-pr",
+        "create-pr-comment",
+        "create-update-ref",
+        "degit-package",
+        "detect-changes",
+        "list-dirty",
+        "list-packages",
+        "list-wip",
+        "publish-npm",
+        "rebase-pr",
+        "release-promote",
+        "reply-pr-comment",
+        "resolve-environment",
+        "run-deployer",
+        "run-phpinsights",
+        "run-filacheck",
+        "run-phpmd",
+        "run-phpstan",
+        "run-phptests",
+        "run-pint",
+        "run-workspace-tests",
+        "setup-gitflow",
+        "setup-gitversion",
+        "setup-node",
+        "setup-php",
+        "setup-reviewdog",
+        "setup-scripts",
+        "split-package",
+        "update-labels"
+    ]
 }
