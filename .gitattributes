@@ -6,3 +6,5 @@
 *.js linguist-vendored
 *.json merge=json
 CHANGELOG.md export-ignore
+*.yaml merge=yaml
+*.yml merge=yaml

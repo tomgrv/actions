@@ -1,0 +1,54 @@
+# @format
+
+name: 'Configure GitHub'
+on:
+  schedule:
+    - cron: 0 4 * * 1
+  workflow_dispatch: null
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  configure-github:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: tomgrv/actions/setup-node@v2
+      - name: Update labels
+        uses: tomgrv/actions/update-labels@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          labels-file: .github/labels.json
+      - name: Clean branches
+        uses: tomgrv/actions/clean-branches@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.KLICKSPLIT_CLIENT_ID }}
+          private-key: ${{ secrets.KLICKSPLIT_APP_KEY }}
+      - name: Restrict main to GitHub bot
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            await github.rest.repos.updateBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'main',
+              restrictions: {
+                users: [],
+                teams: [],
+                apps: ['github-actions'],
+              },
+              required_status_checks: null,
+              enforce_admins: true,
+              required_pull_request_reviews: null,
+              allow_force_pushes: false,
+              allow_deletions: false,
+            });

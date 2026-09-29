@@ -7,17 +7,17 @@
 # single entry covers both workflows and composite actions.
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: 'weekly'
+      interval: weekly
     groups:
       github-actions:
         patterns:
           - '*'
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: chore
+      include: scope
     labels:
-      - 'dependencies'
-      - 'github-actions'
+      - dependencies
+      - github-actions

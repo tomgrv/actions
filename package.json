@@ -207,6 +207,9 @@
         "*.php": [
             "composer lint"
         ],
+        "*.{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
+            "npx --yes prettier --write"
+        ],
         "composer.json": [
             "composer validate --no-check-all --no-check-lock --no-check-publish"
         ],
