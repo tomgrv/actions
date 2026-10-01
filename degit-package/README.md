@@ -50,10 +50,10 @@ Imports the tip of a source repository branch into a target repository workspace
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh degit-package
+zz_use -x ./degit-package
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

@@ -56,27 +56,27 @@ Every action directory must have a `package.json` with:
 
 Keep `inputs`/`outputs` in sync with `action.yml` whenever either changes — they document the same contract so the action can be reasoned about (and eventually invoked) as a plain script, independent of the GitHub Actions runner.
 
-Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; `dispatch.sh` is a local, unpublished helper for running an action's `run.sh` directly from a clone of this repository (see below).
+Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; an action's `run.sh` can also be run directly from a clone of this repository with `zz_use -x` (see below).
 
-### Local Usage (dispatch.sh)
+### Local Usage (zz_use)
 
-All actions with a `run.sh` can be invoked locally via the root `dispatch.sh`:
+All actions with a `run.sh` can be invoked locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh < action-name > [args...]
+zz_use -x ./<action-name> [args...]
 ```
 
-`dispatch.sh` automatically sets sensible defaults for all `GITHUB_*` environment variables. Users only need to supply `GITHUB_TOKEN` for actions that call the GitHub API.
+`zz_use` installs the action's `run.sh` (and the peers its `package.json` declares) and runs it. It does not set `GITHUB_*` variables: supply the ones the action reads, such as `GITHUB_TOKEN` for actions that call the GitHub API.
 
 Add a `## Local Usage` section to every action README:
 
 ```markdown
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 \`\`\`sh
-./dispatch.sh action-name
+zz_use -x ./action-name
 \`\`\`
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
@@ -191,11 +191,11 @@ printf 'output-name=%s\n' "${value}"
 8. Output variables using `printf` format
 9. Make script executable: `chmod +x run.sh`
 10. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
-11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `dispatch.sh` use, not only multi-flag parsing - use `zz_args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz_args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
+11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `zz_use -x` use, not only multi-flag parsing - use `zz_args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz_args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
 
 ### Logging Conventions
 
-GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `dispatch.sh` use) no annotation line is emitted at all.
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `zz_use -x` use) no annotation line is emitted at all.
 
 - **`zz_log e "..."`/`zz_log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz_log e` is still followed by `exit 1` when fatal.
 - **`zz_log n "..."` only for data the step generated, or a silent skip/no-op the user needs explained** - never to trace a plain success. Data: a PR's number/URL, a rebase's new HEAD SHA - information the step produced that the user has no other way to see. Silent skip: the step ran but did nothing and didn't fail - a missing/empty target, no matching changed files, a PR already up to date - because without the notice that looks indistinguishable from "ran cleanly, found nothing wrong". If a message is just confirming an operation succeeded (imported, title validated, rule exception granted) with no new data attached, it's `zz_log i` instead, however satisfying it feels to report.

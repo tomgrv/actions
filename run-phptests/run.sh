@@ -26,7 +26,7 @@ fi
 TEST_RUNNER="${TEST_RUNNER:-auto}"
 
 # TEST_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local dispatch.sh usage.
+# positional fallback below only matters for local `zz_use -x` usage.
 eval "$(zz_args "Run PHP test suite" "$0" "$@" <<-help
 	- path	test_paths	Test paths to run (default: whole suite)
 help

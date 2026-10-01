@@ -65,10 +65,10 @@ Composite action that installs PHP Deployer and runs a `dep` command over SSH. T
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh run-deployer
+zz_use -x ./run-deployer
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

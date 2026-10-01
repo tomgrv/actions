@@ -22,7 +22,7 @@ if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
 fi
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local dispatch.sh usage.
+# positional fallback below only matters for local `zz_use -x` usage.
 eval "$(zz_args "Run PHP Insights" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help
