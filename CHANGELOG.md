@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.40.0 (2026-10-01)
+
+*Commits from: v2.39.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.39.0' into develop ([3ba5c5b](https://github.com/tomgrv/actions/commit/3ba5c5b7bc9c585e9a8619227b2daa1fb324b1fb))
+
 ## 2.39.0 (2026-10-01)
 
 *Commits from: v2.38.0..HEAD*
@@ -991,6 +1001,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
