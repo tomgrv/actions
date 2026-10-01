@@ -43,12 +43,13 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 #
 # FilaCheck has no native flag for `wip` (unlike `dirty`, which it accepts
 # natively as `--dirty` and is passed straight through below). Emulate it
-# using the file list resolved upstream by the list-wip action, passed in
-# place of the target path.
+# using the file list resolved upstream by the list-wip action. FilaCheck
+# accepts a single path per invocation (extra paths are silently ignored),
+# so it is run once per file below.
 #
 if [ "${WIP}" = "true" ]; then
-    FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d' | tr '\n' ' ')"
-    if [ -z "$(printf '%s' "${FILACHECK_TARGET}" | tr -d '[:space:]')" ]; then
+    FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d')"
+    if [ -z "${FILACHECK_TARGET}" ]; then
         zz_log n "No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck."
         exit 0
     fi
@@ -70,8 +71,12 @@ fi
 exit_code=0
 filacheck_log=$(mktemp)
 trap 'rm -f "${filacheck_log}"' EXIT INT TERM
+# One FilaCheck run per target (one line each); a lone path is a single run.
 # shellcheck disable=SC2086
-"${FILACHECK_BIN}" ${filacheck_args} -- ${FILACHECK_TARGET} 2>"${filacheck_log}" \
+printf '%s\n' "${FILACHECK_TARGET}" \
+    | while IFS= read -r target; do
+        "${FILACHECK_BIN}" ${filacheck_args} -- "${target}" 2>>"${filacheck_log}" || true
+    done \
     | tee -a "${filacheck_log}" \
     | awk '
         /^[[:space:]]+[^[:space:]].*\.(blade\.php|php)$/ {
