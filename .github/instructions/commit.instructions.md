@@ -36,7 +36,7 @@ From `@commitlint/config-conventional`:
 
 ## Scopes
 
-Scopes are automatically derived from npm workspace package names via `@commitlint/config-workspace-scopes`. Valid scopes are the unscoped part of each package `name` found in the workspace paths defined by `workspaces` in root `package.json` (e.g. `@tomgrv-devcontainer-features/gitutils` → `gitutils`).
+Scopes are automatically derived from npm workspace package names via `@commitlint/config-workspace-scopes`. Valid scopes are the unscoped part of each package `name` found in the workspace paths defined by `workspaces` in root `package.json` (e.g. `@tomgrv/devcontainer-features-gitutils` → `gitutils`).
 
 To see valid scopes at any time, run:
 
@@ -59,5 +59,5 @@ perf(common-utils): reduce script startup time
 refactor(gitversion): extract bump logic into shared function
 docs(gateway): document SSL setup
 chore(githooks): bump @commitlint/cli to latest
-feat!(pecl): remove legacy extension installer — breaking change
+feat!(gateway): remove legacy certificate installer — breaking change
 ```

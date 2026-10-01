@@ -30,3 +30,8 @@ if [ "$status" -ne 0 ]; then
     echo "lint-staged-precommit.sh: lint-staged failed (exit $status), blocking commit" >&2
     exit 2
 fi
+# Real git hooks already active (githooks feature: husky + .husky/pre-commit
+# running lint-staged) -- let git's own pre-commit do it, don't run twice.
+case "$(git config core.hooksPath)" in
+.husky*) [ -x .husky/pre-commit ] && exit 0 ;;
+esac

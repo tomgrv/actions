@@ -1,6 +1,6 @@
 {
   "name": "@tomgrv/actions",
-  "version": "2.38.0",
+  "version": "2.39.0",
   "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
   "keywords": [
     "github-actions",
@@ -16,10 +16,11 @@
   "author": "Thomas G. <1809566+tomgrv@users.noreply.github.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomgrv/actions"
+    "url": "git+https://github.com/tomgrv/actions.git"
   },
   "scripts": {
     "lint": "npx --yes lint-staged",
+    "prepare": "husky || echo 'Husky not installed'",
     "release": "npx --yes commit-and-tag-version --no-verify --",
     "test": "echo \"Error: no test specified\" && exit 1",
     "update": "npx --yes npm-check-updates -i -u",
@@ -31,6 +32,7 @@
     }
   },
   "devDependencies": {
+    "husky": "*",
     "npm-check-updates": "*"
   },
   "optionalDependencies": {
@@ -204,6 +206,15 @@
     ],
     "*.php": [
       "composer lint"
+    ],
+    "*.{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
+      "npx --yes prettier --write"
+    ],
+    "composer.json": [
+      "composer validate --no-check-all --no-check-lock --no-check-publish"
+    ],
+    "package.json": [
+      "npm pkg fix"
     ]
   },
   "validate-branch-name": {
