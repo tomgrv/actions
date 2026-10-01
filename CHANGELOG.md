@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.39.0 (2026-10-01)
+
+*Commits from: v2.38.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.38.0' into develop ([667147c](https://github.com/tomgrv/actions/commit/667147c555c1c7b6eb0ceee790d248e9b7f4c07c))
+- 🔧 update devcontainer configuration ([15f8a22](https://github.com/tomgrv/actions/commit/15f8a22b81202248d5663f52b72dd2d62c960eb4))
+- 🔧 update features ([23b67a1](https://github.com/tomgrv/actions/commit/23b67a118d297af7d0c6f57835a2e3ab36255bd0))
+### 📦 run-filacheck changes
+
+#### Bug Fixes
+
+- 🐛 run FilaCheck once per file in wip mode (#124) ([d4fb4a3](https://github.com/tomgrv/actions/commit/d4fb4a32def06c29f7976baafe09b579ad50c28b))
+
 ## 2.38.0 (2026-09-15)
 
 *Commits from: v2.37.0..HEAD*
@@ -992,5 +1009,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-09-15 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-01 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
