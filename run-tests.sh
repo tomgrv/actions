@@ -55,6 +55,20 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# Every script an action runs through `${{ github.action_path }}/...` must be
+# executable, or the step fails with "permission denied" at run time.
+NOT_EXEC=""
+for action_yml in "${REPO_ROOT}"/*/action.yml; do
+  action_dir=$(dirname "${action_yml}")
+  for script in $(grep -oE 'action_path }}/[A-Za-z0-9_./-]+' "${action_yml}" | sed 's|.*}}/||'); do
+    [ -x "${action_dir}/${script}" ] || NOT_EXEC="${NOT_EXEC} ${action_dir#"${REPO_ROOT}"/}/${script}"
+  done
+done
+if [ -n "${NOT_EXEC}" ]; then
+  echo "Error: action scripts are not executable (chmod +x):${NOT_EXEC}" >&2
+  exit 1
+fi
+
 # Check if bats is installed
 if ! command -v bats >/dev/null 2>&1; then
   echo "Error: bats is not installed. Install it with: npm install -g bats" >&2
