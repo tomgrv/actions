@@ -22,7 +22,7 @@ runs:
   using: composite
   steps:
     - name: Run gitleaks
-      uses: gitleaks/gitleaks-action@v2
+      uses: gitleaks/gitleaks-action@v3
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         GITLEAKS_LICENSE: ${{ inputs.gitleaks-license }}
