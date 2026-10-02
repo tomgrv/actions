@@ -23,12 +23,12 @@ Requires a checkout with `fetch-depth: 0` (the diff is taken from the merge-base
 
 ## Outputs
 
-- `matrix`: JSON array of affected parts, each `{name,suite,path}` (`suite` is the testsuite name; `core` is `Unit,Feature`).
+- `matrix`: JSON array of affected parts, each `{name,suite,path}` (`path` is the test directory to pass to `run-phptests`; `suite` assumes testsuite names match directory names).
 - `has-parts`: `true` if at least one part has tests to run, `false` otherwise.
 
 ## Works well with
 
-- [**run-phptests**](../run-phptests/README.md) — run one matrix entry with `flags: --testsuite=<suite>`.
+- [**run-phptests**](../run-phptests/README.md) — run one matrix entry with `paths: <path>`.
 - [**list-wip**](../list-wip/README.md) — file-level equivalent for linters.
 
 ## Local Usage
@@ -65,6 +65,6 @@ jobs:
             - uses: actions/checkout@v6
             - uses: tomgrv/actions/run-phptests@v2
               with:
-                  flags: --testsuite=${{ matrix.part.suite }}
+                  paths: ${{ matrix.part.path }}
                   name: phpunit (${{ matrix.part.name }})
 ```
