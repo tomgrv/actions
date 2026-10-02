@@ -13,7 +13,7 @@ Root `.mcp.json` wires it for Claude Code auto-load on session start.
 | `list_actions`         | Get every action id + name + description (check-lock, create-pr, ...).  |
 | `get_action_readme`    | Read one action's full docs (usage, inputs, outputs) before wiring it.  |
 | `get_action_yaml`      | Read an action's raw `action.yml` for precise input/output names.       |
-| `get_dispatch_command` | Get the exact `dispatch.sh` command to run an action locally.           |
+| `get_local_command`    | Get the exact `zz_use -x` command to run an action locally.             |
 | `get_usage_snippet`    | Get the `uses:` line to reference the action from a consumer workflow.  |
 
 ## Run it

@@ -41,10 +41,10 @@ This action also puts `vendor/bin` (project-local) and the global Composer bin d
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh setup-php
+zz_use -x ./setup-php
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

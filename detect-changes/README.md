@@ -31,10 +31,10 @@ Includes both tracked modifications and untracked files.
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh detect-changes
+zz_use -x ./detect-changes
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

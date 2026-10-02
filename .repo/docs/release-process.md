@@ -8,7 +8,7 @@ Every `tomgrv`/`perspikapps` repo in this family (`devcontainer-features`,
 GitHub web UI, no `gh`/`git` CLI required. Each repo's own
 `.github/workflows/release-prod.yml` checks out the repo (`fetch-depth: 0`,
 `ref: develop`) and calls this repo's
-[**release-promote**](../release-promote/README.md) composite action,
+[**release-promote**](../../release-promote/README.md) composite action,
 which pulls `git-release-beta`/`git-release-prod` from
 [`tomgrv/scripts`](https://github.com/tomgrv/scripts) (pinned via the
 caller's `scripts-ref` input) and runs them non-interactively.
@@ -34,7 +34,7 @@ For each of `devcontainer-features`, `actions`, `scripts`, and `vps`:
    legacy UI) on the rule targeting `main`. If "Restrict pushes" or
    "Require a pull request" is active, add the `github-actions` app (the
    identity `release-promote` commits and pushes as, via
-   [`config-bot`](../config-bot/README.md) — `github-actions[bot]`) to
+   [`config-bot`](../../config-bot/README.md) — `github-actions[bot]`) to
    that rule's **bypass list**.
 2. If a **tag protection ruleset** exists (e.g. targeting `v*`), add the
    same bypass actor there too — otherwise the version tag push fails even

@@ -177,10 +177,10 @@ Running the action multiple times with the same input produces the same result w
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh update-labels
+zz_use -x ./update-labels
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

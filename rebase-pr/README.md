@@ -91,10 +91,10 @@ jobs:
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh rebase-pr
+zz_use -x ./rebase-pr
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

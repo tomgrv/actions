@@ -2,7 +2,7 @@
 
 # Run all BATS tests for composite actions.
 #
-# Usage: ./run-tests.sh [options]
+# Usage: ./.repo/tests/run-tests.sh [options]
 #   -v, --verbose       Show detailed test output
 #   -f, --filter PATTERN Only run tests matching PATTERN
 #   -q, --quiet         Suppress test output
@@ -11,13 +11,13 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_ROOT="${SCRIPT_DIR}"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 _help() {
   cat >&2 <<'EOF'
 Run all BATS tests for composite actions.
 
-Usage: ./run-tests.sh [options]
+Usage: ./.repo/tests/run-tests.sh [options]
 
 Options:
   -v, --verbose       Show detailed test output
@@ -27,16 +27,16 @@ Options:
 
 Examples:
   # Run all tests
-  ./run-tests.sh
+  ./.repo/tests/run-tests.sh
 
   # Run tests with verbose output
-  ./run-tests.sh -v
+  ./.repo/tests/run-tests.sh -v
 
   # Run only resolve-environment tests
-  ./run-tests.sh -f resolve-environment
+  ./.repo/tests/run-tests.sh -f resolve-environment
 
   # Run only tests with 'changes' in the name
-  ./run-tests.sh -f changes
+  ./.repo/tests/run-tests.sh -f changes
 EOF
 }
 

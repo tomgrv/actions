@@ -10,29 +10,29 @@ Reusable GitHub Actions
 
 tomgrv/actions is a suite of modular, reusable GitHub composite actions designed to automate code quality, PR management, and package maintenance for monorepos and composer-based projects. Each action is self-contained, follows strict output/logging conventions, and is documented for easy integration into your workflows.
 
-Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository via the bundled `dispatch.sh`, which sets sensible `GITHUB_*` defaults:
+Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use) from `tomgrv/scripts`, which installs the action's `run.sh` and runs it. Set the `GITHUB_*` variables the action reads (for example `GITHUB_TOKEN`) yourself:
 
 ```sh
-./dispatch.sh < action > [args...]
+zz_use -x ./<action> [args...]
 ```
 
 For example:
 
 ```sh
 # Run lock coherence validation locally
-GITHUB_TOKEN=ghp_xxx ./dispatch.sh check-lock
+GITHUB_TOKEN=ghp_xxx zz_use -x ./check-lock
 
 # List monorepo packages
-./dispatch.sh list-packages
+zz_use -x ./list-packages
 
 # Detect uncommitted changes
-./dispatch.sh detect-changes
+zz_use -x ./detect-changes
 ```
 
-Run without arguments to see all available actions:
+Run a published release without cloning the repository:
 
 ```sh
-./dispatch.sh
+zz_use -x tomgrv/actions/list-packages@v2
 ```
 
 ## Testing
@@ -44,26 +44,26 @@ Each action includes a test suite using [BATS](https://github.com/bats-core/bats
 Run all tests:
 
 ```sh
-./run-tests.sh
+./.repo/tests/run-tests.sh
 ```
 
 Run tests for a specific action:
 
 ```sh
-./run-tests.sh -f resolve-environment
-./run-tests.sh -f detect-changes
+./.repo/tests/run-tests.sh -f resolve-environment
+./.repo/tests/run-tests.sh -f detect-changes
 ```
 
 Run with verbose output:
 
 ```sh
-./run-tests.sh -v
+./.repo/tests/run-tests.sh -v
 ```
 
 For more options, see the test runner help:
 
 ```sh
-./run-tests.sh -h
+./.repo/tests/run-tests.sh -h
 ```
 
 ### CI/CD
@@ -77,7 +77,7 @@ Every repo in the `tomgrv`/`perspikapps` family releases via GitHub →
 Actions → `release-prod` → "Run workflow" (no CLI needed), which checks
 out the repo and calls this repo's
 [**release-promote**](release-promote/README.md) composite action. See
-[`docs/release-process.md`](docs/release-process.md) for the full
+[`.repo/docs/release-process.md`](.repo/docs/release-process.md) for the full
 picture, including the tag/branch-protection bypass checklist every repo
 needs applied once by hand.
 
