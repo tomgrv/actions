@@ -15,9 +15,10 @@ updates:
       github-actions:
         patterns:
           - '*'
+    # No `include: scope`: it adds `(deps)`, which commitlint's workspace-scopes
+    # list rejects, so dependabot PR titles would fail validate-pr-title.
     commit-message:
       prefix: chore
-      include: scope
     labels:
       - dependencies
       - github-actions
