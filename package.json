@@ -70,6 +70,7 @@
     "list-dirty",
     "list-packages",
     "list-wip",
+    "list-php-parts",
     "publish-npm",
     "rebase-pr",
     "release-promote",

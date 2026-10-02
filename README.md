@@ -127,6 +127,7 @@ needs applied once by hand.
 - [**check-security-composer**](check-security-composer/README.md) ![stable](https://img.shields.io/badge/stable-green): Audit Composer dependencies for known vulnerabilities.
 - [**list-dirty**](list-dirty/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List files with uncommitted git changes, used by the PHP checks' `dirty` input.
 - [**list-wip**](list-wip/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List files changed on the current pull request, used by the PHP checks' `wip` input.
+- [**list-php-parts**](list-php-parts/README.md) ![beta](https://img.shields.io/badge/beta-yellow): List the PHP test parts (core, modules, packages) affected by a change, as a matrix for per-part test jobs.
 
 ### 🔀 Pull Request
 
