@@ -1,0 +1,46 @@
+# @format
+
+# @package tomgrv/actions/list-php-parts
+
+name: List PHP Parts
+description: List the PHP test parts (core, modules, packages) affected by the current change, as a matrix ready for per-part test jobs.
+author: Perspikapps
+branding:
+  icon: layers
+  color: green
+
+inputs:
+  base-ref:
+    description: >-
+      Base branch/ref to diff against. Defaults to `GITHUB_BASE_REF`, which
+      GitHub Actions sets automatically on `pull_request` events.
+    required: false
+    default: ''
+  all:
+    description: 'Select every part regardless of the diff [true,false].'
+    required: false
+    default: 'false'
+
+outputs:
+  matrix:
+    description: 'JSON array of affected parts, each `{name,suite,path}`. Use with `fromJson`.'
+    value: ${{ steps.list.outputs.matrix }}
+  has-parts:
+    description: 'true if at least one part has tests to run, false otherwise.'
+    value: ${{ steps.list.outputs.has-parts }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup scripts toolchain
+      uses: $/setup-scripts
+      with:
+        scripts: zz_log zz_args php-list-changed
+
+    - name: List affected PHP parts
+      id: list
+      shell: sh
+      env:
+        LIST_BASE_REF: ${{ inputs.base-ref }}
+        LIST_ALL: ${{ inputs.all }}
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"

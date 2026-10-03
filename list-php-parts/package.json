@@ -1,0 +1,29 @@
+{
+  "name": "list-php-parts",
+  "version": "2.35.0",
+  "description": "List the PHP test parts (core, modules, packages) affected by the current change, as a matrix ready for per-part test jobs.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "inputs": {
+    "LIST_BASE_REF": {
+      "description": "Base branch/ref to diff against. Defaults to `GITHUB_BASE_REF`, which GitHub Actions sets automatically on `pull_request` events.",
+      "required": false,
+      "default": ""
+    },
+    "LIST_ALL": {
+      "description": "Select every part regardless of the diff [true,false].",
+      "required": false,
+      "default": "false"
+    }
+  },
+  "outputs": {
+    "matrix": {
+      "description": "JSON array of affected parts, each `{name,suite,path}`. Use with `fromJson`."
+    },
+    "has-parts": {
+      "description": "true if at least one part has tests to run, false otherwise."
+    }
+  },
+  "private": true
+}
