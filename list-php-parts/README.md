@@ -2,7 +2,7 @@
 
 # GitHub Action: List PHP Parts
 
-Lists the PHP test parts affected by the current change — `core`, `modules/*` and `packages/*/*`, discovered from the root `composer.json` merge-plugin globs — as a JSON matrix, so each pull request only runs the test suites it can impact. Selection is done by the [`php-changed`](https://github.com/tomgrv/scripts/tree/develop/php-changed) script:
+Lists the PHP test parts affected by the current change — `core`, `modules/*` and `packages/*/*`, discovered from the root `composer.json` merge-plugin globs — as a JSON matrix, so each pull request only runs the test suites it can impact. Selection is done by the [`php-list-changed`](https://github.com/tomgrv/scripts/tree/develop/php-list-changed) script:
 
 - a change inside a part selects it and every part that `require`s it;
 - a change to `tests/` selects `core`;

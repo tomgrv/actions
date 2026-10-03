@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 # List the PHP test parts (core, modules, packages) affected by the current
-# change, as a JSON matrix. Selection logic lives in the php-changed script.
+# change, as a JSON matrix. Selection logic lives in the php-list-changed script.
 
 set -e
 
@@ -21,7 +21,7 @@ set -- -f json
 [ -n "${LIST_BASE_REF}" ] && set -- "$@" -b "origin/${LIST_BASE_REF}"
 [ "${LIST_ALL}" = "true" ] && set -- "$@" -a
 
-MATRIX="$(php-changed "$@")" || exit 1
+MATRIX="$(php-list-changed "$@")" || exit 1
 [ -n "${MATRIX}" ] || MATRIX="[]"
 
 COUNT="$(printf '%s' "${MATRIX}" | jq 'length')"

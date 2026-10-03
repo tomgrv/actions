@@ -1,6 +1,6 @@
 # @format
 
-# Tests list-php-parts/run.sh: wraps php-changed and emits matrix/has-parts outputs.
+# Tests list-php-parts/run.sh: wraps php-list-changed and emits matrix/has-parts outputs.
 
 setup() {
   REPO_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
@@ -9,10 +9,10 @@ setup() {
   STUB_BIN="$(mktemp -d)"
   ARGS_FILE="${STUB_BIN}/args"
 
-  # zz_log is a no-op; php-changed records its arguments and prints $STUB_MATRIX.
+  # zz_log is a no-op; php-list-changed records its arguments and prints $STUB_MATRIX.
   printf '#!/bin/sh\nexit 0\n' > "${STUB_BIN}/zz_log"
-  printf '#!/bin/sh\necho "$@" > "%s"\nprintf "%%s" "$STUB_MATRIX"\n' "${ARGS_FILE}" > "${STUB_BIN}/php-changed"
-  chmod +x "${STUB_BIN}/zz_log" "${STUB_BIN}/php-changed"
+  printf '#!/bin/sh\necho "$@" > "%s"\nprintf "%%s" "$STUB_MATRIX"\n' "${ARGS_FILE}" > "${STUB_BIN}/php-list-changed"
+  chmod +x "${STUB_BIN}/zz_log" "${STUB_BIN}/php-list-changed"
 
   cd "$TEST_DIR"
   git init -q -b main
@@ -48,13 +48,13 @@ run_parts() {
   echo "$output" | grep -q "^has-parts=false$"
 }
 
-@test "forwards base-ref to php-changed as origin/<ref>" {
+@test "forwards base-ref to php-list-changed as origin/<ref>" {
   run run_parts '[]' develop
   [ "$status" -eq 0 ]
   grep -q -- "-f json -b origin/develop" "$ARGS_FILE"
 }
 
-@test "forwards all=true to php-changed" {
+@test "forwards all=true to php-list-changed" {
   run run_parts '[]' '' true
   [ "$status" -eq 0 ]
   grep -q -- "-a" "$ARGS_FILE"
