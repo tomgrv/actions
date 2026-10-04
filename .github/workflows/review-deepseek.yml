@@ -9,7 +9,10 @@ permissions:
   issues: write
 jobs:
   deepseek-review:
-    if: contains(github.event.comment.body, '@deepseek')
+    if: >-
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@deepseek') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     timeout-minutes: 30
     runs-on: ubuntu-latest
     name: DeepSeek Code Review

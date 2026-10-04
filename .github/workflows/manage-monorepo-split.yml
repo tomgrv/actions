@@ -8,10 +8,16 @@ on:
     tags:
       - '*'
   workflow_dispatch: null
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 jobs:
   list-packages:
     name: List packages
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       packages: ${{ steps.list.outputs.packages }}
     steps:
@@ -29,12 +35,10 @@ jobs:
         with:
           workdir: ${{ github.workspace }}
           filter: .private == true || .repository_url != null
-      - name: List packages
-        id: list
-        uses: tomgrv/actions/list-packages@v2
   split-packages:
     name: Split packages
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: list-packages
     strategy:
       fail-fast: false
