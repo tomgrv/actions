@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.41.0 (2026-10-04)
+
+*Commits from: v2.40.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.40.0' into develop ([257b955](https://github.com/tomgrv/actions/commit/257b9553d8edb45eed92c640243bd6ed92b5ec01))
+- 👷 drop scope from dependabot commit messages (#125) ([037f0c9](https://github.com/tomgrv/actions/commit/037f0c9601dbef0797eb81ec6394773ec3aed56b))
+- 🔧 bump gitleaks/gitleaks-action from 2 to 3 in the github-actions group across 1 directory (#122) ([2daddac](https://github.com/tomgrv/actions/commit/2daddac306326fc94c09dd6dd4ea4a4a8b18d077))
+- 🔧 bump the npm_and_yarn group across 1 directory with 3 updates (#128) ([17a7bac](https://github.com/tomgrv/actions/commit/17a7bac1d8fe73a37be0514fb8e3c72bedec0d00))
+### 📦 list-php-parts changes
+
+#### Features
+
+- ✨ add action listing PHP test parts affected by a change (#129) ([466aab6](https://github.com/tomgrv/actions/commit/466aab6634b0cca54ada4923f9c3180dd79def3c))
+
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 remove duplicated workflow steps left by feature update (#130) ([74b7bfe](https://github.com/tomgrv/actions/commit/74b7bfeca74567374506bf25d0d92c8cc4f5c097))
+
 ## 2.40.0 (2026-10-01)
 
 *Commits from: v2.39.0..HEAD*
@@ -1021,5 +1045,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-10-01 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*

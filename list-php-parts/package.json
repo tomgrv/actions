@@ -1,6 +1,6 @@
 {
   "name": "list-php-parts",
-  "version": "2.35.0",
+  "version": "2.41.0",
   "description": "List the PHP test parts (core, modules, packages) affected by the current change, as a matrix ready for per-part test jobs.",
   "scripts": {
     "test": "bats run.bats"
