@@ -21,32 +21,14 @@ GITFLOW_VERSIONTAG_PREFIX="${GITFLOW_VERSIONTAG_PREFIX:-v}"
 # Idempotent: skip the (network) install when a previous step in the same
 # job, or a caller image that ships it, already has git-flow.
 if ! git flow version > /dev/null 2>&1; then
-    # Most package managers need root; a GitHub-hosted runner's default user
-    # is not root but has passwordless sudo -- fall back to it, matching the
-    # gitversion devcontainer feature's own install-gitflow.sh.
-    SUDO=""
-    if [ "$(id -u)" -ne 0 ]; then
-        command -v sudo > /dev/null 2>&1 && SUDO="sudo"
-    fi
-
-    if command -v apt-get > /dev/null 2>&1; then
-        ${SUDO} apt-get update && ${SUDO} apt-get install -y git-flow
-    elif command -v apk > /dev/null 2>&1; then
-        ${SUDO} apk add --no-cache gitflow-avh
-    elif command -v dnf > /dev/null 2>&1; then
-        ${SUDO} dnf install -y gitflow
-    elif command -v yum > /dev/null 2>&1; then
-        ${SUDO} yum install -y gitflow
-    elif command -v brew > /dev/null 2>&1; then
-        brew install git-flow-avh
-    elif command -v pacman > /dev/null 2>&1; then
-        ${SUDO} pacman -S --noconfirm gitflow-avh
-    elif command -v zypper > /dev/null 2>&1; then
-        ${SUDO} zypper --non-interactive install git-flow
-    else
-        zz_log e "setup-gitflow: no supported package manager found to install git-flow"
+    # zz_install (tomgrv/scripts, put on PATH by this action's setup-scripts
+    # step) picks the available package manager and escalates through sudo
+    # when not root; the names below are the ones that differ from `git-flow`.
+    zz_install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow \
+        brew=git-flow-avh pacman=gitflow-avh || {
+        zz_log e "setup-gitflow: unable to install git-flow automatically on this system"
         exit 1
-    fi
+    }
 
     git flow version > /dev/null 2>&1 || {
         zz_log e "setup-gitflow: git-flow still unavailable after install attempt"
