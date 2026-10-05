@@ -35,6 +35,13 @@ running them, so nothing gets pushed to `main`. Defaults to `false`.
 git bot identity (via [`config-bot`](../config-bot/README.md)). Defaults
 to `github.token`.
 
+## PR comments
+
+After a successful release, every PR merged since the previous `vX.Y.Z`
+release gets a comment `Released to main branch as vX.Y.Z`. This is
+best-effort and never fails the release. The calling job needs
+`pull-requests: write` (in addition to `contents: write`).
+
 ## Tag/branch protection
 
 `git-release-prod` merges to `main` and pushes a version tag. If a
