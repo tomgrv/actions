@@ -38,9 +38,10 @@ to `github.token`.
 ## PR comments
 
 After a successful release, every PR merged since the previous `vX.Y.Z`
-release gets a comment `Released to main branch as vX.Y.Z`. This is
+release gets a comment `Released to main branch as vX.Y.Z`, as do the
+issues those PRs close. This is
 best-effort and never fails the release. The calling job needs
-`pull-requests: write` (in addition to `contents: write`).
+`pull-requests: write` and `issues: write` (in addition to `contents: write`).
 
 ## Tag/branch protection
 

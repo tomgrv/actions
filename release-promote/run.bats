@@ -88,7 +88,8 @@ STUB
 #!/bin/sh
 case "$1" in
   api) echo 7 ;;
-  pr) echo "gh $*" >&2 ;;
+  pr) [ "$2" = view ] && echo 9 || echo "gh $*" >&2 ;;
+  issue) echo "gh $*" >&2 ;;
 esac
 GH
   chmod +x "${STUB_BIN}/gh"
@@ -96,4 +97,5 @@ GH
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
   [[ "$output" == *"pr comment 7 --repo o/r --body Released to main branch as v1.1.0"* ]]
+  [[ "$output" == *"issue comment 9 --repo o/r --body Released to main branch as v1.1.0"* ]]
 }

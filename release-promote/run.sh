@@ -18,7 +18,7 @@ command -v git-release-prod > /dev/null || {
 }
 
 # Comment "Released to main branch as vX.Y.Z" on every PR merged since the
-# previous release. Best-effort: the release itself already succeeded, so
+# previous release, and on the issues those PRs close. Best-effort: the release itself already succeeded, so
 # nothing here may fail the run.
 comment_released_prs() {
     NEW_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' main 2> /dev/null || true)"
@@ -43,6 +43,11 @@ comment_released_prs() {
     for pr in ${PRS}; do
         gh pr comment "${pr}" --repo "${REPO}" --body "Released to main branch as ${NEW_TAG}" ||
             zz_log w "release-promote: could not comment on PR #${pr}"
+        # Issues the PR closes get the same notice.
+        for issue in $(gh pr view "${pr}" --repo "${REPO}" --json closingIssuesReferences --jq '.closingIssuesReferences[].number' 2> /dev/null || true); do
+            gh issue comment "${issue}" --repo "${REPO}" --body "Released to main branch as ${NEW_TAG}" ||
+                zz_log w "release-promote: could not comment on issue #${issue}"
+        done
     done
 }
 
