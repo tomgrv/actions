@@ -25,7 +25,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz_log zz_install
 
     - name: Install and initialize git-flow
       shell: sh

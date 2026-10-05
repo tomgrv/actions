@@ -36,10 +36,13 @@ if [ -z "${HEAD_REPO_FULL_NAME}" ]; then
   zz_log i "HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped"
 fi
 
-# Ensure commitlint is available for validating commit messages
+# Ensure commitlint is available for validating commit messages. --no-save and
+# --no-package-lock keep the caller's package.json and lockfile untouched; the
+# packages still land in ./node_modules, where zz_npx and the commitlint
+# `extends` presets are resolved from.
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
-npm_install_output="$(npm install -q -D --no-audit --no-fund devmoji ${commitlint_extends} 2>&1)"
+npm_install_output="$(npm install -q --no-save --no-package-lock --no-audit --no-fund devmoji ${commitlint_extends} 2>&1)"
 npm_install_status=$?
 if [ ${npm_install_status} -ne 0 ]; then
   zz_log e "${npm_install_output}"

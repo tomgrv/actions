@@ -14,10 +14,15 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-lock:
     name: Validate lock coherence
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
         with:

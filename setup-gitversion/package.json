@@ -1,9 +1,16 @@
 {
   "name": "setup-gitversion",
-  "version": "2.35.0",
+  "version": "2.43.0",
   "description": "Idempotently install the gitversion devcontainer feature's toolchain (GitVersion CLI plus gv/bump-tag/bump-changelog/bump-version).",
   "scripts": {
     "test": "bats run.bats"
   },
-  "private": true
+  "private": true,
+  "inputs": {
+    "GITVERSION_VERSION": {
+      "description": "Tag of the gittools/gitversion Docker image the `gitversion` wrapper runs.",
+      "required": false,
+      "default": "6.5.1"
+    }
+  }
 }

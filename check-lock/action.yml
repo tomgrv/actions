@@ -66,11 +66,18 @@ runs:
       id: setup-php
       if: ${{ hashFiles('**/composer.json') || hashFiles('**/composer.lock') }}
       uses: $/setup-php
+      with:
+        # `composer validate` and `npm ci --dry-run --package-lock-only` need
+        # the manifests only, not installed dependencies or a coverage driver.
+        bare: 'true'
+        coverage: none
 
     - name: Setup Node toolchain
       id: setup-node
       if: ${{ hashFiles('**/package.json') || hashFiles('**/package-lock.json') }}
       uses: $/setup-node
+      with:
+        bare: 'true'
 
     - name: Setup Reviewdog toolchain
       id: setup-reviewdog

@@ -11,9 +11,14 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   update-features:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v7
