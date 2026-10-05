@@ -6,26 +6,15 @@ on:
     - cron: 0 4 * * 1
   workflow_dispatch: null
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 jobs:
   configure-github:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Set up Node.js
-        uses: tomgrv/actions/setup-node@v2
-      - name: Update labels
-        uses: tomgrv/actions/update-labels@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          labels-file: .github/labels.json
-      - name: Clean branches
-        uses: tomgrv/actions/clean-branches@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate a token
         id: app-token
         uses: actions/create-github-app-token@v3

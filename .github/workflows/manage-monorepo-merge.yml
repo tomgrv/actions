@@ -14,39 +14,37 @@ on:
         required: false
         default: .github,.devcontainer,.git
         type: string
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 jobs:
   list-packages:
     name: List packages
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       packages: ${{ steps.list.outputs.packages }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Set up PHP
-        uses: $/setup-php
+        uses: ./setup-php
         with:
           options: --no-dev
       - name: Set up Node.js
-        uses: $/setup-node
+        uses: ./setup-node
       - name: List packages
         id: list
-        uses: $/list-packages
+        uses: ./list-packages
         with:
           workdir: ${{ github.workspace }}
           filter: .private == true || .repository_url != null
-      - name: Set up PHP
-        uses: tomgrv/actions/setup-php@v2
-        with:
-          options: --no-dev
-      - name: Set up Node.js
-        uses: tomgrv/actions/setup-node@v2
-      - name: List packages
-        id: list
-        uses: tomgrv/actions/list-packages@v2
   degit-packages:
     name: Degit package
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: list-packages
     strategy:
       fail-fast: false
@@ -64,13 +62,13 @@ jobs:
           owner: ${{ matrix.package.org }}
           repositories: ${{ matrix.package.name }}
       - name: Configure bot identity
-        uses: $/config-bot
+        uses: ./config-bot
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           github-app-slug: ${{ steps.app-token.outputs.app-slug }}
       - name: Degit package content
         id: degit
-        uses: $/degit-package
+        uses: ./degit-package
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           source-organization: ${{ matrix.package.org }}
@@ -80,40 +78,10 @@ jobs:
           exclude-paths: ${{ inputs.exclude-paths }}
       - name: Create or update pull request
         if: ${{ steps.degit.outputs.has-changes == 'true' }}
-        uses: $/create-pr
+        uses: ./create-pr
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          repository: ${{ matrix.package.org }}/{{ matrix.package.name }}
-          head-branch: ${{ steps.degit.outputs.degit-branch }}
-          workdir: ${{ steps.degit.outputs.degit-workdir }}
-          commit-message: 'sync: degit from ${{ matrix.package.org }}/${{ matrix.package.name }}@${{ steps.degit.outputs.source-branch }}'
-          pr-title: 'sync: degit from ${{ matrix.package.org }}/${{ matrix.package.name }}'
-          pr-body: |
-            ### Automated degit sync from [${{ matrix.package.org }}/${{ matrix.package.name }}](${{ matrix.package.repository_url }})
-
-            - Source branch: `${{ steps.degit.outputs.source-branch }}`
-            - Source commit: `${{ steps.degit.outputs.source-sha }}`
-      - name: Configure bot identity
-        uses: tomgrv/actions/config-bot@v2
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          github-app-slug: ${{ steps.app-token.outputs.app-slug }}
-      - name: Degit package content
-        id: degit
-        uses: tomgrv/actions/degit-package@v2
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          source-organization: ${{ matrix.package.org }}
-          source-repository: ${{ matrix.package.name }}
-          target-subdir: ${{ matrix.package.location }}
-          source-branch: ${{ inputs.source-branch }}
-          exclude-paths: ${{ inputs.exclude-paths }}
-      - name: Create or update pull request
-        if: ${{ steps.degit.outputs.has-changes == 'true' }}
-        uses: tomgrv/actions/create-pr@v2
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          repository: ${{ matrix.package.org }}/{{ matrix.package.name }}
+          repository: ${{ matrix.package.org }}/${{ matrix.package.name }}
           head-branch: ${{ steps.degit.outputs.degit-branch }}
           workdir: ${{ steps.degit.outputs.degit-workdir }}
           commit-message: 'sync: degit from ${{ matrix.package.org }}/${{ matrix.package.name }}@${{ steps.degit.outputs.source-branch }}'

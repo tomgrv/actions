@@ -14,6 +14,10 @@ This action also puts `vendor/bin` (project-local) and the global Composer bin d
 
 **Optional.** Additional options to pass to `composer install`, such as `--no-dev`. Defaults to none.
 
+### coverage
+
+**Optional.** Coverage driver passed to `shivammathur/setup-php`: `xdebug`, `pcov` or `none`. Defaults to `xdebug`. Validation-only callers (such as `check-lock`) pass `none` to skip loading xdebug. Like the rest of the PHP setup it is applied by the first caller in a job.
+
 ### tools
 
 **Optional.** Comma-separated tools to install with `shivammathur/setup-php`, such as `reviewdog,phpstan,phpmd`. Defaults to none.
