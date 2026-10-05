@@ -1,6 +1,15 @@
-<!-- @format -->
-
 # Changelog
+
+## 2.43.0 (2026-10-05)
+
+*Commits from: v2.42.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.42.0' into develop ([68677fc](https://github.com/tomgrv/actions/commit/68677fc42d93782f99df91d0c0178535afd88cc9))
+- 👷 dedupe workflows and skip redundant setup work (#131) ([45424f3](https://github.com/tomgrv/actions/commit/45424f3e25abd8a7e58197774b3149ac38807db4))
 
 ## 2.42.0 (2026-10-05)
 
@@ -1064,6 +1073,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
----
 
-_Generated on 2026-10-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)_
+---
+*Generated on 2026-10-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
