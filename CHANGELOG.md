@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.42.0 (2026-10-05)
+
+*Commits from: v2.41.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.41.0' into develop ([bf2f551](https://github.com/tomgrv/actions/commit/bf2f551760bca450e89be48ebe46d3e212f38e26))
+### 📦 check-secret changes
+
+#### Bug Fixes
+
+- 🐛 use gitleaks-action v3 (Node 24) (#126) ([f3ece68](https://github.com/tomgrv/actions/commit/f3ece6832f721f08b48229e427fb7d4c8314eea5))
+
+### 📦 release-promote changes
+
+#### Features
+
+- ✨ comment released version on merged PRs (#132) ([8ccbaf0](https://github.com/tomgrv/actions/commit/8ccbaf0764ab50fc659054204810e9d4827819d3))
+
 ## 2.41.0 (2026-10-04)
 
 *Commits from: v2.40.0..HEAD*
@@ -1046,5 +1067,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-10-04 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
