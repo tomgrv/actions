@@ -3,8 +3,6 @@ name: surgical-patch
 description: Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.
 ---
 
-<!-- @format -->
-
 # Surgical patch
 
 Reproduce failure first when economical; otherwise capture strongest available evidence.
