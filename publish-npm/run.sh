@@ -51,70 +51,16 @@ fi
 
 zz_log i "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}"
 
-# Request OIDC token from GitHub
-# This uses the built-in support in GitHub Actions for requesting ID tokens
-OIDC_TOKEN=$( \
-  node -e "
-    const https = require('https');
-    const token_url = process.env.ACTIONS_ID_TOKEN_REQUEST_URL;
-    const token_audience = process.env.ACTIONS_ID_TOKEN_REQUEST_AUDIENCE;
-
-    if (!token_url || !token_audience) {
-      console.error('Error: GitHub Actions OIDC not available. Ensure the job has id-token: write permission.');
-      process.exit(1);
-    }
-
-    const req = https.request(token_url + '&audience=' + token_audience, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + process.env.ACTIONS_RUNTIME_TOKEN,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    }, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          if (json.token) {
-            console.log(json.token);
-          } else {
-            console.error('Error: No token in response');
-            process.exit(1);
-          }
-        } catch (e) {
-          console.error('Error: Failed to parse token response:', e.message);
-          process.exit(1);
-        }
-      });
-    });
-
-    req.on('error', (e) => {
-      console.error('Error: Failed to request OIDC token:', e.message);
-      process.exit(1);
-    });
-
-    req.end();
-  " \
-)
-
-if [ -z "${OIDC_TOKEN}" ]; then
-  zz_log e "Failed to obtain OIDC token from GitHub Actions"
+# Authentication is handled by npm itself: with `id-token: write` on the job (npm 11.5.1+), `npm publish`
+# requests the OIDC token for the registry and exchanges it for a short-lived publish token.
+# Do not write an _authToken to .npmrc, it would take precedence over this exchange.
+if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && [ "${DRY_RUN}" != "true" ]; then
+  zz_log e "GitHub Actions OIDC not available. Ensure the job has id-token: write permission."
   exit 1
 fi
 
-# Configure npm registry and OIDC auth token via a project-local .npmrc.
-# `npm config set` runs the "config" command, which does not support
-# workspaces and errors with ENOWORKSPACES when PACKAGE_PATH is a workspace
-# member of a monorepo. Writing the .npmrc directly avoids that command.
-{
-  echo "registry=${REGISTRY_URL}"
-  echo "//${REGISTRY_URL#https://}:_authToken=${OIDC_TOKEN}"
-} >> .npmrc
-
 # Build npm publish command
-PUBLISH_CMD="npm publish"
+PUBLISH_CMD="npm publish --registry ${REGISTRY_URL}"
 
 # Add tag if not "latest" (npm defaults to latest anyway, but be explicit for clarity)
 if [ "${DIST_TAG}" != "latest" ]; then

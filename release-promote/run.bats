@@ -74,3 +74,28 @@ STUB
   [ "$status" -ne 0 ]
   [[ "$output" != *"called: git-release-prod"* ]]
 }
+
+@test "comments on each PR merged since the previous release" {
+  cd "$(mktemp -d)"
+  git init -q -b main . && git config user.email a@b && git config user.name n
+  git commit -q --allow-empty -m one && git tag v1.0.0
+  git update-ref refs/remotes/origin/main HEAD
+  git commit -q --allow-empty -m "two (#7)" && git tag v1.1.0
+  stub git-release-beta 0
+  stub git-release-prod 0
+  stub zz_log 0
+  cat >"${STUB_BIN}/gh" <<'GH'
+#!/bin/sh
+case "$1" in
+  api) echo 7 ;;
+  pr) [ "$2" = view ] && echo 9 || echo "gh $*" >&2 ;;
+  issue) echo "gh $*" >&2 ;;
+esac
+GH
+  chmod +x "${STUB_BIN}/gh"
+  export DRY_RUN=false GITHUB_REPOSITORY=o/r
+  run sh "$SCRIPT"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"pr comment 7 --repo o/r --body Released to main branch as v1.1.0"* ]]
+  [[ "$output" == *"issue comment 9 --repo o/r --body Released to main branch as v1.1.0"* ]]
+}

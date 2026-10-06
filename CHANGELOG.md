@@ -1,8 +1,81 @@
 # Changelog
 
+## 2.44.0 (2026-10-06)
+
+*Commits from: v2.43.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.43.0' into develop ([43f89b1](https://github.com/tomgrv/actions/commit/43f89b1131735946abdd802555282bec973f6e15))
+### 📦 publish-npm changes
+
+#### Bug Fixes
+
+- 🐛 let npm exchange the OIDC token itself (#133) ([dae8330](https://github.com/tomgrv/actions/commit/dae833078a4b46f61beae593ab3864dea6aead2a))
+
+## 2.43.0 (2026-10-05)
+
+*Commits from: v2.42.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.42.0' into develop ([68677fc](https://github.com/tomgrv/actions/commit/68677fc42d93782f99df91d0c0178535afd88cc9))
+- 👷 dedupe workflows and skip redundant setup work (#131) ([45424f3](https://github.com/tomgrv/actions/commit/45424f3e25abd8a7e58197774b3149ac38807db4))
+
+## 2.42.0 (2026-10-05)
+
+_Commits from: v2.41.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.41.0' into develop ([bf2f551](https://github.com/tomgrv/actions/commit/bf2f551760bca450e89be48ebe46d3e212f38e26))
+
+### 📦 check-secret changes
+
+#### Bug Fixes
+
+- 🐛 use gitleaks-action v3 (Node 24) (#126) ([f3ece68](https://github.com/tomgrv/actions/commit/f3ece6832f721f08b48229e427fb7d4c8314eea5))
+
+### 📦 release-promote changes
+
+#### Features
+
+- ✨ comment released version on merged PRs (#132) ([8ccbaf0](https://github.com/tomgrv/actions/commit/8ccbaf0764ab50fc659054204810e9d4827819d3))
+
+## 2.41.0 (2026-10-04)
+
+_Commits from: v2.40.0..HEAD_
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.40.0' into develop ([257b955](https://github.com/tomgrv/actions/commit/257b9553d8edb45eed92c640243bd6ed92b5ec01))
+- 👷 drop scope from dependabot commit messages (#125) ([037f0c9](https://github.com/tomgrv/actions/commit/037f0c9601dbef0797eb81ec6394773ec3aed56b))
+- 🔧 bump gitleaks/gitleaks-action from 2 to 3 in the github-actions group across 1 directory (#122) ([2daddac](https://github.com/tomgrv/actions/commit/2daddac306326fc94c09dd6dd4ea4a4a8b18d077))
+- 🔧 bump the npm_and_yarn group across 1 directory with 3 updates (#128) ([17a7bac](https://github.com/tomgrv/actions/commit/17a7bac1d8fe73a37be0514fb8e3c72bedec0d00))
+
+### 📦 list-php-parts changes
+
+#### Features
+
+- ✨ add action listing PHP test parts affected by a change (#129) ([466aab6](https://github.com/tomgrv/actions/commit/466aab6634b0cca54ada4923f9c3180dd79def3c))
+
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 remove duplicated workflow steps left by feature update (#130) ([74b7bfe](https://github.com/tomgrv/actions/commit/74b7bfeca74567374506bf25d0d92c8cc4f5c097))
+
 ## 2.40.0 (2026-10-01)
 
-*Commits from: v2.39.0..HEAD*
+_Commits from: v2.39.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -12,7 +85,7 @@
 
 ## 2.39.0 (2026-10-01)
 
-*Commits from: v2.38.0..HEAD*
+_Commits from: v2.38.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -21,6 +94,7 @@
 - Merge tag 'v2.38.0' into develop ([667147c](https://github.com/tomgrv/actions/commit/667147c555c1c7b6eb0ceee790d248e9b7f4c07c))
 - 🔧 update devcontainer configuration ([15f8a22](https://github.com/tomgrv/actions/commit/15f8a22b81202248d5663f52b72dd2d62c960eb4))
 - 🔧 update features ([23b67a1](https://github.com/tomgrv/actions/commit/23b67a118d297af7d0c6f57835a2e3ab36255bd0))
+
 ### 📦 run-filacheck changes
 
 #### Bug Fixes
@@ -29,7 +103,7 @@
 
 ## 2.38.0 (2026-09-15)
 
-*Commits from: v2.37.0..HEAD*
+_Commits from: v2.37.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -43,7 +117,7 @@
 
 ## 2.37.0 (2026-09-15)
 
-*Commits from: v2.36.0..HEAD*
+_Commits from: v2.36.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -57,13 +131,14 @@
 
 ## 2.36.0 (2026-09-14)
 
-*Commits from: v2.35.0..HEAD*
+_Commits from: v2.35.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.35.0' into develop ([3c4e31d](https://github.com/tomgrv/actions/commit/3c4e31d39ca4b3f3f7f8614b048bae06a510dcae))
+
 ### 📦 setup-node changes
 
 #### Bug Fixes
@@ -78,13 +153,14 @@
 
 ## 2.35.0 (2026-09-14)
 
-*Commits from: v2.34.0..HEAD*
+_Commits from: v2.34.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.34.0' into develop ([1477401](https://github.com/tomgrv/actions/commit/147740171ebeba9fccde34dc41761bc90083954d))
+
 ### 📦 run-workspace-tests changes
 
 #### Features
@@ -94,7 +170,7 @@
 
 ## 2.34.0 (2026-09-14)
 
-*Commits from: v2.33.0..HEAD*
+_Commits from: v2.33.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -110,13 +186,14 @@
 
 ## 2.33.0 (2026-09-13)
 
-*Commits from: v2.32.0..HEAD*
+_Commits from: v2.32.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.32.0' into develop ([8d80b58](https://github.com/tomgrv/actions/commit/8d80b5899285e36ecb023f1ed4817fd0eaab986b))
+
 ### 📦 check-pr-format changes
 
 #### Bug Fixes
@@ -125,7 +202,7 @@
 
 ## 2.32.0 (2026-09-12)
 
-*Commits from: v2.31.0..HEAD*
+_Commits from: v2.31.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -139,7 +216,7 @@
 
 ## 2.31.0 (2026-09-12)
 
-*Commits from: v2.30.0..HEAD*
+_Commits from: v2.30.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -150,6 +227,7 @@
 #### Other changes
 
 - Merge tag 'v2.30.0' into develop ([ecfaa68](https://github.com/tomgrv/actions/commit/ecfaa6874209dc8134bf4864341fc429e6a44654))
+
 ### 📦 check-lock changes
 
 #### Bug Fixes
@@ -176,7 +254,7 @@
 
 ## 2.30.0 (2026-09-08)
 
-*Commits from: v2.29.0..HEAD*
+_Commits from: v2.29.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -186,6 +264,7 @@
 - use $/name self-repository syntax for every internal uses: (#99) ([15c850d](https://github.com/tomgrv/actions/commit/15c850dff0cac740760388c6845de5f9dcf0af6d))
 - 🔧 bump stale tomgrv/scripts-ref pin (v0.3.0 -> v0.9.0) (#97) ([23a5c90](https://github.com/tomgrv/actions/commit/23a5c90a1bea6adb741daac7e02823ddb2a1c058))
 - 🚨 guard against reintroducing pinned same-repo action references (#100) ([9915445](https://github.com/tomgrv/actions/commit/9915445ced9a92c58276a8a42c9d60fda6246462))
+
 ### 📦 release-promote changes
 
 #### Other changes
@@ -194,13 +273,14 @@
 
 ## 2.29.0 (2026-09-08)
 
-*Commits from: v2.28.0..HEAD*
+_Commits from: v2.28.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.28.0' into develop ([cfe9bfc](https://github.com/tomgrv/actions/commit/cfe9bfca186f383854fb9e898280dab1a5ca27cf))
+
 ### 📦 list-packages changes
 
 #### Features
@@ -221,13 +301,14 @@
 
 ## 2.28.0 (2026-09-08)
 
-*Commits from: v2.27.0..HEAD*
+_Commits from: v2.27.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.27.0' into develop ([9a54439](https://github.com/tomgrv/actions/commit/9a54439cbf575f12f2bb4ae2cd7e84e0b5d086a3))
+
 ### 📦 clean-branches changes
 
 #### Features
@@ -236,13 +317,14 @@
 
 ## 2.27.0 (2026-09-08)
 
-*Commits from: v2.26.0..HEAD*
+_Commits from: v2.26.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.26.0' into develop ([995443b](https://github.com/tomgrv/actions/commit/995443b1f54e456fd548b0f339dcf86822934193))
+
 ### 📦 list-packages changes
 
 #### Bug Fixes
@@ -257,7 +339,7 @@
 
 ## 2.26.0 (2026-09-07)
 
-*Commits from: v2.25.0..HEAD*
+_Commits from: v2.25.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -266,6 +348,7 @@
 - Merge tag 'v2.25.0' into develop ([7a18363](https://github.com/tomgrv/actions/commit/7a183638c2f2611de7b1ef1467f5e23d4a965f97))
 - ♻️ harmonize run.sh logging on zz_log/zz_args bundle (#85) ([b505f47](https://github.com/tomgrv/actions/commit/b505f47738a210561cfe7414b695ca961fc717e5))
 - ♻️ zz_log emits GitHub annotations, migrate manual ::error::/:⚠️: (#87) ([80c7837](https://github.com/tomgrv/actions/commit/80c7837c2ac99483d40f63c70995ac980fa04260))
+
 ### 📦 release-promote changes
 
 #### Bug Fixes
@@ -280,13 +363,14 @@
 
 ## 2.25.0 (2026-09-06)
 
-*Commits from: v2.24.0..HEAD*
+_Commits from: v2.24.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.24.0' into develop ([e44952a](https://github.com/tomgrv/actions/commit/e44952ac5ce77c720df8128c1f8663c49020b6a4))
+
 ### 📦 setup-scripts changes
 
 #### Features
@@ -295,7 +379,7 @@
 
 ## 2.24.0 (2026-09-04)
 
-*Commits from: v2.23.0..HEAD*
+_Commits from: v2.23.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -309,13 +393,14 @@
 
 ## 2.23.0 (2026-09-04)
 
-*Commits from: v2.22.0..HEAD*
+_Commits from: v2.22.0..HEAD_
 
 ### 📂 Unscoped changes
 
 #### Other changes
 
 - Merge tag 'v2.22.0' into develop ([e3a307c](https://github.com/tomgrv/actions/commit/e3a307cf8e45181cd138ac475a365cbef44b563a))
+
 ### 📦 check-pr-format changes
 
 #### Bug Fixes
@@ -324,7 +409,7 @@
 
 ## 2.22.0 (2026-09-03)
 
-*Commits from: v2.21.0..HEAD*
+_Commits from: v2.21.0..HEAD_
 
 ### 📂 Unscoped changes
 
@@ -338,6 +423,7 @@
 - Merge tag 'v2.21.0' into develop ([b43bf62](https://github.com/tomgrv/actions/commit/b43bf623f53c85eec777a2b52da2feaf556e385a))
 - Merge tag 'v2.21.1' into develop ([ba8d3f3](https://github.com/tomgrv/actions/commit/ba8d3f3b3ea048d69bc9e6e5c20ea11c8eb90fd3))
 - 🔧 allow git push/tag without prompting (#75) ([36857b8](https://github.com/tomgrv/actions/commit/36857b8170521874fdb9572ba852405ed430c020))
+
 ### 📦 release changes
 
 #### Other changes
@@ -1004,22 +1090,5 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---
-*Generated on 2026-10-01 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-06 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*

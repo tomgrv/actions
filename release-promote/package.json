@@ -1,10 +1,11 @@
 {
   "name": "release-promote",
-  "version": "2.35.0",
+  "version": "2.43.0",
   "description": "Run git-release-beta then git-release-prod (git-flow beta->prod promotion).",
   "scripts": {
     "test": "bats run.bats"
   },
+  "private": true,
   "inputs": {
     "DRY_RUN": {
       "description": "Run through beta/prod without pushing to main (verification only).",
@@ -16,6 +17,5 @@
       "required": false,
       "default": "${{ github.token }}"
     }
-  },
-  "private": true
+  }
 }

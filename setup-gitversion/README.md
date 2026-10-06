@@ -24,7 +24,15 @@ The target repo must have a `.gitversion` config file at its root (see
 
 ## Inputs
 
-None.
+### gitversion-version
+
+**Optional.** Tag of the `gittools/gitversion` Docker image the `gitversion`
+wrapper runs. Defaults to `6.5.1`.
+
+The image is archived with `docker save` under `~/.cache/gitversion` and kept
+by `actions/cache`, keyed on the runner OS and this version. A cache miss, or a
+cached archive that fails to load, falls back to pulling the image from Docker
+Hub, so the cache only ever saves a pull and never changes the result.
 
 ## Works well with
 

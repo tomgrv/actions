@@ -21,9 +21,13 @@ on:
             - .github/workflows/test-workspaces.yaml
 permissions:
     contents: read
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 jobs:
     list-packages:
         runs-on: ubuntu-latest
+        timeout-minutes: 10
         outputs:
             packages: ${{ steps.list.outputs.packages }}
         steps:
@@ -33,15 +37,11 @@ jobs:
               uses: ./list-packages
               with:
                   require-repository: 'false'
-            - name: List packages
-              id: list
-              uses: tomgrv/actions/list-packages@v2
-              with:
-                  require-repository: 'false'
     test:
         needs: list-packages
         if: needs.list-packages.outputs.packages != '[]'
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         strategy:
             fail-fast: false
             matrix:
@@ -56,12 +56,9 @@ jobs:
               uses: ./run-workspace-tests
               with:
                   workspace: ${{ matrix.package.path }}
-            - name: Run workspace tests
-              uses: tomgrv/actions/run-workspace-tests@v2
-              with:
-                  workspace: ${{ matrix.package.path }}
     repo-tests:
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         steps:
             - uses: actions/checkout@v7
             - name: Setup Bats

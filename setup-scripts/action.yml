@@ -36,16 +36,25 @@ runs:
     # already handles correctly on its own.
     - name: Resolve tomgrv/scripts branch SHA
       id: scripts-sha
+      # Several actions in one job each embed this one: only the first call
+      # for a given branch/ref pays for ls-remote and the cache restore.
+      if: env.TOMGRV_SCRIPTS_CACHE != format('{0}/{1}', inputs.scripts-branch, inputs.scripts-ref)
       shell: sh
       run: |
         sha=$(git ls-remote https://github.com/tomgrv/scripts.git "${{ inputs.scripts-branch }}" | cut -f1)
         echo "sha=${sha}" >> "$GITHUB_OUTPUT"
 
     - name: Cache zz_scripts (extracted tomgrv/scripts archives)
+      if: env.TOMGRV_SCRIPTS_CACHE != format('{0}/{1}', inputs.scripts-branch, inputs.scripts-ref)
       uses: actions/cache@v5
       with:
         path: ~/.cache/zz_scripts
         key: zz_scripts-${{ runner.os }}-${{ inputs.scripts-branch }}-${{ inputs.scripts-ref }}-${{ steps.scripts-sha.outputs.sha }}
+
+    - name: Remember the restored cache for later calls in this job
+      if: env.TOMGRV_SCRIPTS_CACHE != format('{0}/{1}', inputs.scripts-branch, inputs.scripts-ref)
+      shell: sh
+      run: echo "TOMGRV_SCRIPTS_CACHE=${{ inputs.scripts-branch }}/${{ inputs.scripts-ref }}" >> "$GITHUB_ENV"
 
     - name: Bootstrap zz_use and install requested scripts
       shell: sh

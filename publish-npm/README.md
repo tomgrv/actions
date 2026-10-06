@@ -11,15 +11,16 @@ Publishes a package to the npm registry using [GitHub's OIDC trusted publishers]
 Before using this action, configure the npm registry to trust GitHub Actions as a publisher for your package:
 
 **On npmjs.com:**
+
 1. Log in to your npm account at https://www.npmjs.com/settings/~profile
 2. Go to the **Publishing** tab in your profile settings
 3. Click **Configure Trusted Publishers**
 4. Add a new trusted publisher:
-   - **Where to publish:** npm registry
-   - **Repository name:** `<owner>/<repo>` (e.g., `tomgrv/actions`)
-   - **Repository owner:** Your GitHub username or organization
-   - **Workflow filename:** The GitHub Actions workflow file using this action (e.g., `release.yml`)
-   - **Environment name:** (optional) Leave blank unless you use GitHub Environments
+    - **Where to publish:** npm registry
+    - **Repository name:** `<owner>/<repo>` (e.g., `tomgrv/actions`)
+    - **Repository owner:** Your GitHub username or organization
+    - **Workflow filename:** The GitHub Actions workflow file using this action (e.g., `release.yml`)
+    - **Environment name:** (optional) Leave blank unless you use GitHub Environments
 
 See [npm's trusted publishers documentation](https://docs.npmjs.com/trusted-publishers) for detailed setup instructions.
 
@@ -29,8 +30,8 @@ The job running this action must have `id-token: write` permission to request OI
 
 ```yaml
 permissions:
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
 ```
 
 ## Inputs
@@ -41,7 +42,7 @@ permissions:
 
 ```yaml
 with:
-  path: './packages/my-package'
+    path: './packages/my-package'
 ```
 
 ### registry-url
@@ -52,7 +53,7 @@ Use this to publish to a private registry or alternative npm registry:
 
 ```yaml
 with:
-  registry-url: 'https://npm.example.com/'
+    registry-url: 'https://npm.example.com/'
 ```
 
 ### provenance
@@ -63,7 +64,7 @@ Provenance attestations allow consumers to verify the package was built by your 
 
 ```yaml
 with:
-  provenance: 'false'  # Disable if using older npm versions
+    provenance: 'false' # Disable if using older npm versions
 ```
 
 ### tag
@@ -74,7 +75,7 @@ Use this for pre-release versions or different release channels:
 
 ```yaml
 with:
-  tag: 'next'  # Publish as latest-next release, not stable
+    tag: 'next' # Publish as latest-next release, not stable
 ```
 
 ### dry-run
@@ -85,7 +86,7 @@ Useful for testing the publish process:
 
 ```yaml
 with:
-  dry-run: 'true'
+    dry-run: 'true'
 ```
 
 ## Outputs
@@ -120,23 +121,23 @@ The published package name (extracted from `package.json`).
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
+    publish:
+        runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Publish package
-        uses: tomgrv/actions/publish-npm@v1
+            - name: Publish package
+              uses: tomgrv/actions/publish-npm@v1
 
-      - name: Announce publication
-        run: echo "Published ${{ steps.publish.outputs.name }}@${{ steps.publish.outputs.version }}"
+            - name: Announce publication
+              run: echo "Published ${{ steps.publish.outputs.name }}@${{ steps.publish.outputs.version }}"
 ```
 
 ### Publish from monorepo package
@@ -145,7 +146,7 @@ jobs:
 - name: Publish from packages/ui
   uses: tomgrv/actions/publish-npm@v1
   with:
-    path: './packages/ui'
+      path: './packages/ui'
 ```
 
 ### Pre-release to npm with custom tag
@@ -154,8 +155,8 @@ jobs:
 - name: Publish next version
   uses: tomgrv/actions/publish-npm@v1
   with:
-    tag: 'next'
-    provenance: 'true'
+      tag: 'next'
+      provenance: 'true'
 ```
 
 ### Test publish with dry-run
@@ -164,7 +165,7 @@ jobs:
 - name: Validate publish configuration
   uses: tomgrv/actions/publish-npm@v1
   with:
-    dry-run: 'true'
+      dry-run: 'true'
 ```
 
 ## Troubleshooting
@@ -177,8 +178,8 @@ jobs:
 
 ```yaml
 permissions:
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
 ```
 
 ### "Package name or version not found"
@@ -189,8 +190,8 @@ permissions:
 
 ```json
 {
-  "name": "my-package",
-  "version": "1.0.0"
+    "name": "my-package",
+    "version": "1.0.0"
 }
 ```
 
@@ -204,7 +205,7 @@ permissions:
 
 **Cause:** `path` points to a package that is a workspace member of a monorepo (e.g. root `package.json` has a `workspaces` field). npm implicitly scopes commands run from inside a workspace member to that workspace, but some npm commands don't support workspaces at all.
 
-**Solution:** Already handled — the action writes the registry URL and OIDC auth token directly to a project-local `.npmrc` instead of calling `npm config set`, so `npm publish` runs unaffected by implicit workspace detection. If you still see this error, ensure you're using the latest version of this action.
+**Solution:** Already handled — the action never calls `npm config set` (nor writes an auth token to `.npmrc`); it only runs `npm publish --registry <url>`, so it is unaffected by implicit workspace detection. If you still see this error, ensure you're using the latest version of this action.
 
 ### Provenance attestation fails
 
@@ -214,7 +215,7 @@ permissions:
 
 ```yaml
 with:
-  provenance: 'false'
+    provenance: 'false'
 ```
 
 ## Local Usage
@@ -236,9 +237,8 @@ This action:
 1. Validates that Node.js and npm are available
 2. Locates and validates `package.json` in the specified path
 3. Extracts package name and version metadata
-4. Requests an OIDC token from GitHub Actions using the Action's built-in `ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_RUNTIME_TOKEN`
-5. Writes the registry URL and OIDC token to a project-local `.npmrc` for authentication (avoids `npm config set`, which breaks when publishing a workspace member of a monorepo)
-6. Publishes the package with appropriate flags (provenance, tag, dry-run)
-7. Outputs package metadata for downstream steps
+4. Checks that the job can request an OIDC token (`id-token: write`)
+5. Publishes the package with `npm publish` and the appropriate flags (provenance, tag, dry-run); npm 11.5.1+ requests the OIDC token itself and exchanges it for a short-lived publish token (no `.npmrc` token is written, it would override that exchange)
+6. Outputs package metadata for downstream steps
 
-The OIDC token is automatically exchanged by the npm registry for a short-lived publish token, so no long-lived secrets are needed.
+No long-lived secrets are needed. The npm CLI must be 11.5.1 or newer (Node 24 ships it).

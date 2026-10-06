@@ -47,14 +47,6 @@ STUB
   chmod +x "${STUB_BIN}/git"
 }
 
-stub_passthrough_sudo() {
-  cat > "${STUB_BIN}/sudo" << STUB
-#!/bin/sh
-"\$@"
-STUB
-  chmod +x "${STUB_BIN}/sudo"
-}
-
 stub_zz_log() {
   cat > "${STUB_BIN}/zz_log" << 'STUB'
 #!/bin/sh
@@ -66,91 +58,43 @@ STUB
 
 @test "skips the install when git-flow is already available" {
   stub_git_dispatcher yes
-  stub apt-get 1 # would fail loudly if actually invoked
+  stub zz_install 1 # would fail loudly if actually invoked
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
   grep -qF "git flow version" "${CALLS_FILE}"
   grep -qF "git flow init" "${CALLS_FILE}"
 }
 
-@test "installs via apt-get when git-flow is missing, then proceeds to init" {
+@test "installs via zz_install when git-flow is missing, then proceeds to init" {
   stub_git_dispatcher no
-  cat > "${STUB_BIN}/apt-get" << STUB
+  cat > "${STUB_BIN}/zz_install" << STUB
 #!/bin/sh
-echo "apt-get \$*" >> "${CALLS_FILE}"
+echo "zz_install \$*" >> "${CALLS_FILE}"
 touch "${STUB_BIN}/.installed"
 exit 0
 STUB
-  chmod +x "${STUB_BIN}/apt-get"
-  # A real `sudo` on the runner applies its own secure_path, dropping
-  # STUB_BIN from PATH for the command it execs -- without this stub it
-  # would silently run the real apt-get instead of ours (the caller isn't
-  # root on a GitHub-hosted runner, so the script does invoke sudo).
-  stub_passthrough_sudo
+  chmod +x "${STUB_BIN}/zz_install"
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
-  grep -qF "apt-get update" "${CALLS_FILE}"
-  grep -qF "apt-get install -y git-flow" "${CALLS_FILE}"
+  grep -qF "zz_install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow brew=git-flow-avh pacman=gitflow-avh" "${CALLS_FILE}"
   grep -qF "git flow init" "${CALLS_FILE}"
 }
 
-@test "errors when no supported package manager is found" {
+@test "errors when zz_install cannot install git-flow" {
   stub_git_dispatcher no
-  # zz_log itself needs to resolve on this exclusive PATH -- in real CI it's
-  # put there by the setup-scripts composite step; stub a minimal stand-in
-  # that just prints its message so the assertion below still sees it.
+  stub zz_install 1
   stub_zz_log
-  # Exclusive PATH -- this sandbox has a real apt-get on it, which would
-  # otherwise mask the branch under test. Invoke via the script's own
-  # shebang (an absolute path) rather than `sh "$SCRIPT"`, so resolving
-  # `sh` itself doesn't need PATH.
-  run env PATH="${STUB_BIN}" "${SCRIPT}"
+  run sh "$SCRIPT"
   [ "$status" -ne 0 ]
-  [[ "$output" == *"no supported package manager found"* ]]
+  [[ "$output" == *"unable to install git-flow"* ]]
+  ! grep -qF "git flow init" "${CALLS_FILE}"
 }
 
 @test "errors when git-flow is still unavailable after a successful install command" {
   stub_git_dispatcher no
-  stub apt-get 0 # "succeeds" but never touches .installed marker
-  stub_passthrough_sudo
+  stub zz_install 0 # "succeeds" but never touches .installed marker
   stub_zz_log
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
   [[ "$output" == *"still unavailable after install attempt"* ]]
-}
-
-@test "uses sudo for the install command when not running as root" {
-  stub_git_dispatcher no
-  cat > "${STUB_BIN}/id" << STUB
-#!/bin/sh
-echo 1000
-STUB
-  chmod +x "${STUB_BIN}/id"
-  cat > "${STUB_BIN}/sudo" << STUB
-#!/bin/sh
-echo "sudo \$*" >> "${CALLS_FILE}"
-"\$@"
-STUB
-  chmod +x "${STUB_BIN}/sudo"
-  cat > "${STUB_BIN}/apt-get" << STUB
-#!/bin/sh
-echo "apt-get \$*" >> "${CALLS_FILE}"
-touch "${STUB_BIN}/.installed"
-exit 0
-STUB
-  chmod +x "${STUB_BIN}/apt-get"
-  run sh "$SCRIPT"
-  [ "$status" -eq 0 ]
-  grep -qF "sudo apt-get update" "${CALLS_FILE}"
-  grep -qF "sudo apt-get install -y git-flow" "${CALLS_FILE}"
-}
-
-@test "passes master/develop branch config through to git flow init" {
-  stub_git_dispatcher yes
-  export GITFLOW_MASTER_BRANCH="trunk"
-  export GITFLOW_DEVELOP_BRANCH="dev"
-  run sh "$SCRIPT"
-  [ "$status" -eq 0 ]
-  grep -qF "git config gitflow.branch.master trunk" "${CALLS_FILE}"
-  grep -qF "git config gitflow.branch.develop dev" "${CALLS_FILE}"
 }

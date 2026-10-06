@@ -20,6 +20,13 @@ inputs:
     description: Additional options to pass to composer install, such as --no-dev.
     required: false
     default: ''
+  coverage:
+    description: >-
+      Coverage driver passed to shivammathur/setup-php (`xdebug`, `pcov` or `none`). Validation-only
+      callers can pass `none` to avoid loading xdebug. Like the rest of the PHP setup this is applied
+      by the first caller in a job; later callers in the same job do not change it.
+    required: false
+    default: xdebug
   tools:
     description: Additional tools to install with shivammathur/setup-php, comma-separated.
     required: false
@@ -73,7 +80,7 @@ runs:
       with:
         php-version: ${{ steps.php-version.outputs.version }}
         extensions: ${{ steps.php-extensions.outputs.extensions }}
-        coverage: xdebug
+        coverage: ${{ inputs.coverage }}
         tools: ${{ inputs.tools }}
 
     # Shared once per job so every PHP action in this repository can call its

@@ -9,6 +9,12 @@ branding:
   icon: tag
   color: blue
 
+inputs:
+  gitversion-version:
+    description: Tag of the gittools/gitversion Docker image the `gitversion` wrapper runs.
+    required: false
+    default: '6.5.1'
+
 runs:
   using: composite
   steps:
@@ -17,6 +23,16 @@ runs:
       with:
         scripts: zz_log gv bump-tag bump-changelog bump-version
 
+    # The image archive written by run.sh (docker save) is the only thing
+    # cached: a miss just means run.sh pulls the image from Docker Hub as before.
+    - name: Cache GitVersion image
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/gitversion
+        key: gitversion-image-${{ runner.os }}-${{ inputs.gitversion-version }}
+
     - name: Install GitVersion toolchain
       shell: sh
+      env:
+        GITVERSION_VERSION: ${{ inputs.gitversion-version }}
       run: sh -c "${{ github.action_path }}/run.sh"
