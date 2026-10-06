@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.44.0 (2026-10-06)
+
+*Commits from: v2.43.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.43.0' into develop ([43f89b1](https://github.com/tomgrv/actions/commit/43f89b1131735946abdd802555282bec973f6e15))
+### 📦 publish-npm changes
+
+#### Bug Fixes
+
+- 🐛 let npm exchange the OIDC token itself (#133) ([dae8330](https://github.com/tomgrv/actions/commit/dae833078a4b46f61beae593ab3864dea6aead2a))
+
 ## 2.43.0 (2026-10-05)
 
 *Commits from: v2.42.0..HEAD*
@@ -1074,5 +1089,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
 
 
+
 ---
-*Generated on 2026-10-05 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-06 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
