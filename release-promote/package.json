@@ -1,6 +1,6 @@
 {
   "name": "release-promote",
-  "version": "2.43.0",
+  "version": "2.45.0",
   "description": "Run git-release-beta then git-release-prod (git-flow beta->prod promotion).",
   "scripts": {
     "test": "bats run.bats"
