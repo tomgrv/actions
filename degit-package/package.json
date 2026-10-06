@@ -1,6 +1,6 @@
 {
   "name": "degit-package",
-  "version": "2.31.0",
+  "version": "2.45.0",
   "description": "Import the tip of a source branch into a target repository workspace.",
   "inputs": {
     "GITHUB_TOKEN": {

@@ -1,6 +1,6 @@
 {
   "name": "run-workspace-tests",
-  "version": "2.35.0",
+  "version": "2.45.0",
   "description": "Run a workspace's .scripts.test entry (from each root *.json file) as its test suite.",
   "scripts": {
     "test": "bats run.bats"
