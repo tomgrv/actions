@@ -64,5 +64,5 @@ if git-release-beta && git-release-prod; then
     exit 0
 fi
 
-zz_log e "git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See docs/release-process.md in tomgrv/actions for the exact checklist."
+zz_log e "git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See .repo/docs/release-process.md in tomgrv/actions for the exact checklist."
 exit 1

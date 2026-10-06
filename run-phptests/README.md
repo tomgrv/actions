@@ -60,10 +60,10 @@ When an `artisan` file is present, the action bootstraps the application before 
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh run-phptests
+zz_use -x ./run-phptests
 ```
 
 Inputs are read from the matching environment variables when running locally: `WORKING_DIRECTORY`, `INSTALL`, `TEST_RUNNER`, `TEST_PATHS`, `TEST_FLAGS`, `COVERAGE`, `COVERAGE_FILE`, `JUNIT_FILE`, `MIGRATE`, and the usual `REVIEWDOG_*` variables.

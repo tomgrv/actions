@@ -45,5 +45,5 @@ jobs:
 ## Tests
 
 ```sh
-./run-tests.sh -f run-workspace-tests
+./.repo/tests/run-tests.sh -f run-workspace-tests
 ```

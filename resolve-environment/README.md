@@ -20,10 +20,10 @@ Used by [`run-deployer`](../run-deployer/README.md) to determine what to check o
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh resolve-environment
+zz_use -x ./resolve-environment
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

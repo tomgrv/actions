@@ -2,7 +2,7 @@
 /** @format */
 
 // MCP server that teaches an agent how to use this repo's composite GitHub
-// Actions: which actions exist, their full docs, and the exact `dispatch.sh`
+// Actions: which actions exist, their full docs, and the exact `zz_use -x`
 // command to run one locally.
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
@@ -43,9 +43,9 @@ function actionYaml(action) {
     return readFileSync(path, 'utf8')
 }
 
-function dispatchCommand({ action, args }) {
+function localCommand({ action, args }) {
     const argsSuffix = args && args.length ? ` ${args.join(' ')}` : ''
-    return `./dispatch.sh ${action}${argsSuffix}`
+    return `zz_use -x ./${action}${argsSuffix}`
 }
 
 function usageSnippet({ action, ref }) {
@@ -103,21 +103,21 @@ server.registerTool(
 )
 
 server.registerTool(
-    'get_dispatch_command',
+    'get_local_command',
     {
-        title: 'Get local dispatch command',
+        title: 'Get local run command',
         description:
-            'Return the exact dispatch.sh command to run an action locally from a clone of this repo, for actions that ship a run.sh.',
+            'Return the exact zz_use command to run an action locally from a clone of this repo, for actions that ship a run.sh.',
         inputSchema: {
             action: z.string().describe('Action id/directory, e.g. "check-lock"'),
             args: z
                 .array(z.string())
                 .optional()
-                .describe('Extra arguments to pass through to dispatch.sh'),
+                .describe('Extra arguments to pass through to the action'),
         },
     },
     async ({ action, args }) => ({
-        content: [{ type: 'text', text: dispatchCommand({ action, args }) }],
+        content: [{ type: 'text', text: localCommand({ action, args }) }],
     })
 )
 
