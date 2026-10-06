@@ -1,6 +1,6 @@
 {
   "name": "check-security-composer",
-  "version": "2.35.0",
+  "version": "2.45.0",
   "description": "Run Composer dependency security audit and report via reviewdog.",
   "scripts": {
     "test": "bats run.bats"

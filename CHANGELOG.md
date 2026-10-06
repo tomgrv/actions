@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.45.0 (2026-10-06)
+
+*Commits from: v2.44.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.44.0' into develop ([e94f849](https://github.com/tomgrv/actions/commit/e94f849a129e4cb9d52e36cbac5e7f7e042992fa))
+- ♻️ move repo docs and tests to .repo, drop dispatch.sh (#127) ([08a8011](https://github.com/tomgrv/actions/commit/08a80112349022abf4bfea5303d61a01b3d8a320))
+
 ## 2.44.0 (2026-10-06)
 
 *Commits from: v2.43.0..HEAD*
@@ -1087,6 +1098,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 

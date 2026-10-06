@@ -45,10 +45,10 @@ Splits a package from a monorepo a separate repository using [splitsh-lite](http
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-./dispatch.sh split-package
+zz_use -x ./split-package
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

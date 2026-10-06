@@ -8,7 +8,7 @@ PHPMD_RULESET="${PHPMD_RULESET:-}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local dispatch.sh usage.
+# positional fallback below only matters for local `zz_use -x` usage.
 eval "$(zz_args "Run PHP Mess Detector" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help

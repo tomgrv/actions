@@ -31,10 +31,10 @@ Lists files changed on the current pull request — diffed against the merge-bas
 
 ## Local Usage
 
-Run this action locally using the root `./dispatch.sh` dispatcher:
+Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
 
 ```sh
-GITHUB_BASE_REF=main ./dispatch.sh list-wip
+GITHUB_BASE_REF=main zz_use -x ./list-wip
 ```
 
 ## Example

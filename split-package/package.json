@@ -1,6 +1,6 @@
 {
   "name": "split-package",
-  "version": "2.35.0",
+  "version": "2.45.0",
   "description": "Split a package from a monorepo and push the split branch.",
   "inputs": {
     "PACKAGE_DIR": {

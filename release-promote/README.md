@@ -48,7 +48,7 @@ best-effort and never fails the release. The calling job needs
 `git-release-prod` merges to `main` and pushes a version tag. If a
 protected `main`/tag rejects that push, this action fails with a clear
 `::error::` pointing back here — see
-[`tomgrv/actions`'s release-process doc](../docs/release-process.md) for
+[`tomgrv/actions`'s release-process doc](../.repo/docs/release-process.md) for
 the bypass checklist every repo in this family needs applied once, by
 hand.
 
