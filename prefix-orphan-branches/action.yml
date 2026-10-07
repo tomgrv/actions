@@ -1,0 +1,63 @@
+# @format
+
+# @package tomgrv/actions/prefix-orphan-branches
+
+name: Prefix Orphan Branches
+description: Rename remote branches that do not follow the gitflow config and have no pull request to orphan/<name>.
+author: Perspikapps
+branding:
+  icon: git-branch
+  color: orange
+
+inputs:
+  github-token:
+    description: GitHub token with contents:write and pull-requests:read permissions.
+    required: true
+  prefix:
+    description: Prefix prepended to orphan branch names.
+    required: false
+    default: 'orphan/'
+  master-branch:
+    description: Branch git-flow treats as production/master.
+    required: false
+    default: main
+  develop-branch:
+    description: Branch git-flow treats as develop.
+    required: false
+    default: develop
+  dry-run:
+    description: When true, only list the branches that would be renamed.
+    required: false
+    default: 'false'
+
+outputs:
+  renamed-branches:
+    description: Newline-separated list of "old -> new" renames (or planned renames on a dry run). Empty when none.
+    value: ${{ steps.prefix.outputs.renamed-branches }}
+  count:
+    description: Number of branches renamed (or that would be on a dry run).
+    value: ${{ steps.prefix.outputs.count }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup scripts toolchain
+      uses: $/setup-scripts
+      with:
+        scripts: git-fix-orphans zz_log
+
+    - name: Initialize git-flow
+      uses: $/setup-gitflow
+      with:
+        master-branch: ${{ inputs.master-branch }}
+        develop-branch: ${{ inputs.develop-branch }}
+
+    - name: Prefix orphan branches
+      id: prefix
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        ORPHAN_PREFIX: ${{ inputs.prefix }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        GH_REPO: ${{ github.repository }}
+      run: sh "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
