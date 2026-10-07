@@ -13,7 +13,7 @@
 # Usage: configure-skills.sh [sync]   (sync is the default when no command given)
 #
 # Runs from two triggers:
-#  - devcontainer postCreate, via configure-feature (see configure-skills.sh)
+#  - devcontainer postCreate, via feature-configure (see configure-skills.sh)
 #  - Claude Code SessionStart hook, for claude.ai/code web/cloud sessions
 #    (registered in .claude/settings.json), so cloud sessions stay in sync
 #    with ai-coding.json too.

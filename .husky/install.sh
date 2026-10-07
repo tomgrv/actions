@@ -5,7 +5,7 @@
 ### husky point core.hooksPath at .husky/_. Idempotent and never fails its
 ### caller, so it is safe from every entry point:
 ###   - npm `prepare` lifecycle script (plain `npm install`, any machine)
-###   - configure-husky.sh (devcontainer postCreate, via configure-feature)
+###   - configure-husky.sh (devcontainer postCreate, via feature-configure)
 ###   - Claude Code SessionStart hook (.claude/settings.json) - cloud/web
 ###     sessions clone the repo directly and run neither of the above
 ###   - the .husky/<hook> wrappers themselves (sourced), as a last resort
