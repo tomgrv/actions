@@ -71,6 +71,7 @@
     "list-packages",
     "list-wip",
     "list-php-parts",
+    "prefix-orphan-branches",
     "publish-npm",
     "rebase-pr",
     "release-promote",

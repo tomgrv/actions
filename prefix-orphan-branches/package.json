@@ -1,0 +1,48 @@
+{
+  "name": "prefix-orphan-branches",
+  "version": "2.39.0",
+  "description": "Prefix remote branches that do not follow the gitflow config and have no pull request with orphan/.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "inputs": {
+    "GITHUB_TOKEN": {
+      "description": "GitHub token with contents:write and pull-requests:read permissions.",
+      "required": true
+    },
+    "PREFIX": {
+      "description": "Prefix prepended to orphan branch names.",
+      "required": false,
+      "default": "orphan/"
+    },
+    "MASTER_BRANCH": {
+      "description": "Branch git-flow treats as production/master.",
+      "required": false,
+      "default": "main"
+    },
+    "DEVELOP_BRANCH": {
+      "description": "Branch git-flow treats as develop.",
+      "required": false,
+      "default": "develop"
+    },
+    "INIT_GITFLOW": {
+      "description": "When true, initialize git-flow with the branch inputs and default prefixes before running.",
+      "required": false,
+      "default": "true"
+    },
+    "DRY_RUN": {
+      "description": "When true, only list the branches that would be renamed.",
+      "required": false,
+      "default": "false"
+    }
+  },
+  "outputs": {
+    "renamed-branches": {
+      "description": "Newline-separated list of old -> new renames. Empty when none."
+    },
+    "count": {
+      "description": "Number of branches renamed."
+    }
+  },
+  "private": true
+}
