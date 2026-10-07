@@ -32,7 +32,7 @@ The ref that was created or updated.
 
 ```yaml
 - name: Tag deployed version
-  uses: tomgrv/actions/create-update-ref@v2
+  uses: tomgrv/actions/create-update-ref@v3
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       ref: refs/tags/deploy/myhost
