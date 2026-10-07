@@ -59,7 +59,7 @@ runs:
         # swallowed by bump-version's own `2>/dev/null || echo ""`), so
         # every workspace looks unaffected and per-workspace version files
         # never get bumped.
-        scripts: git-release-beta git-release-prod git-workspaces zz_log
+        scripts: git-release-beta git-release-prod git-workspaces zz-log
         scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Configure git bot identity

@@ -2,7 +2,7 @@
 /** @format */
 
 // MCP server that teaches an agent how to use this repo's composite GitHub
-// Actions: which actions exist, their full docs, and the exact `zz_use -x`
+// Actions: which actions exist, their full docs, and the exact `zz-use -x`
 // command to run one locally.
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
@@ -45,7 +45,7 @@ function actionYaml(action) {
 
 function localCommand({ action, args }) {
     const argsSuffix = args && args.length ? ` ${args.join(' ')}` : ''
-    return `zz_use -x ./${action}${argsSuffix}`
+    return `zz-use -x ./${action}${argsSuffix}`
 }
 
 function usageSnippet({ action, ref }) {
@@ -107,7 +107,7 @@ server.registerTool(
     {
         title: 'Get local run command',
         description:
-            'Return the exact zz_use command to run an action locally from a clone of this repo, for actions that ship a run.sh.',
+            'Return the exact zz-use command to run an action locally from a clone of this repo, for actions that ship a run.sh.',
         inputSchema: {
             action: z.string().describe('Action id/directory, e.g. "check-lock"'),
             args: z

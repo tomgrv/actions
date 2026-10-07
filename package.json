@@ -203,7 +203,7 @@
       "npx --yes prettier --write"
     ],
     "!(*schema|package-lock).json": [
-      "normalize-json -c -w -a -i -t 4 -f local -l true"
+      "json-normalize -c -w -a -i -t 4 -f local -l true"
     ],
     "!(templates/**/*|**/package-lock|package-lock).{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
       "npx --yes prettier --write"

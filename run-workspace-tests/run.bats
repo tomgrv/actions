@@ -15,13 +15,13 @@ teardown() {
 }
 
 stub_zz_log() {
-  cat >"${STUB_BIN}/zz_log" <<'EOF'
+  cat >"${STUB_BIN}/zz-log" <<'EOF'
 #!/bin/sh
 lvl="$1"
 shift
 printf '%s %s\n' "$lvl" "$*" >&2
 EOF
-  chmod +x "${STUB_BIN}/zz_log"
+  chmod +x "${STUB_BIN}/zz-log"
 }
 
 stub_run_workspace_tests() {

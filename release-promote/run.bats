@@ -83,7 +83,7 @@ STUB
   git commit -q --allow-empty -m "two (#7)" && git tag v1.1.0
   stub git-release-beta 0
   stub git-release-prod 0
-  stub zz_log 0
+  stub zz-log 0
   cat >"${STUB_BIN}/gh" <<'GH'
 #!/bin/sh
 case "$1" in

@@ -21,7 +21,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log gv bump-tag bump-changelog bump-version
+        scripts: zz-log gv bump-tag bump-changelog bump-version
 
     # The image archive written by run.sh (docker save) is the only thing
     # cached: a miss just means run.sh pulls the image from Docker Hub as before.

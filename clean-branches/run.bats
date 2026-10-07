@@ -8,13 +8,13 @@ setup() {
   STUB_DIR="$(mktemp -d)"
   PATH="${STUB_DIR}:${PATH}"
 
-  cat > "${STUB_DIR}/zz_log" <<'EOF'
+  cat > "${STUB_DIR}/zz-log" <<'EOF'
 #!/usr/bin/sh
 level="$1"
 shift
 echo "[$level] $*" >&2
 EOF
-  chmod +x "${STUB_DIR}/zz_log"
+  chmod +x "${STUB_DIR}/zz-log"
 }
 
 teardown() {

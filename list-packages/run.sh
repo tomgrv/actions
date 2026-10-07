@@ -24,7 +24,7 @@ FILTER="${FILTER:-}"
 
 if command -v composer >/dev/null 2>&1 && [ -f "$WORKDIR/composer.json" ]; then
 
-    zz_log i "Discovering Composer packages..."
+    zz-log i "Discovering Composer packages..."
 
     composer_packages=$(composer show --direct --path --format=json --working-dir="$WORKDIR" \
         | jq -c --arg pwd "$WORKDIR" \
@@ -52,16 +52,16 @@ if command -v composer >/dev/null 2>&1 && [ -f "$WORKDIR/composer.json" ]; then
                 }
             ]')
 
-    zz_log i "Discovered $(echo "$composer_packages" | jq 'length') Composer packages."
+    zz-log i "Discovered $(echo "$composer_packages" | jq 'length') Composer packages."
 
 else
     # Missing binary/manifest is a setup concern, not a finding: plain log only.
-    zz_log i "Composer or composer.json not found, skipping Composer package discovery."
+    zz-log i "Composer or composer.json not found, skipping Composer package discovery."
 fi
 
 if [ -f "$WORKDIR/package.json" ]; then
 
-    zz_log i "Discovering package workspace packages in <$WORKDIR>..."
+    zz-log i "Discovering package workspace packages in <$WORKDIR>..."
 
     node_packages=$(jq -r '.workspaces[]?' "$WORKDIR/package.json" \
         | while IFS= read -r workspace_pattern; do
@@ -97,17 +97,17 @@ if [ -f "$WORKDIR/package.json" ]; then
                     }
                 ' "$package_manifest")
 
-                zz_log i "Discovered package: $(echo "$node_package" | jq -r '.package_name + "@" + .package_version')"
+                zz-log i "Discovered package: $(echo "$node_package" | jq -r '.package_name + "@" + .package_version')"
                 echo "$node_package"
             done
         done | jq -cs '.')
         
 else
     # Functional: absence of a file to analyze in the target repo is a notice.
-    zz_log n "Root package.json not found, skipping workspace package discovery."
+    zz-log n "Root package.json not found, skipping workspace package discovery."
 fi
 
-zz_log i "Combining and normalizing package data..."
+zz-log i "Combining and normalizing package data..."
 
 packages=$(jq -cn \
     --argjson composer "$composer_packages" \
@@ -124,7 +124,7 @@ packages=$(jq -cn \
         | unique_by([.package_name, .ecosystem])
     ')
 
-zz_log i "Checking package registries publication status..."
+zz-log i "Checking package registries publication status..."
 
 # Registries checked per ecosystem. Add more names here (space-separated) to check a
 # package against several registries, and a matching check_<name> function below.
@@ -188,12 +188,12 @@ while [ "$i" -lt "$count" ]; do
 done
 
 if [ "${REQUIRE_REPOSITORY:-true}" = "true" ]; then
-    zz_log i "Filtering out packages without a repository"
+    zz-log i "Filtering out packages without a repository"
     result=$(echo "$result" | jq -c '[.[] | select(.repository_url != null and .repository_url != "")]')
 fi
 
 if [ -n "$FILTER" ]; then
-    zz_log i "Applying filter: select($FILTER)"
+    zz-log i "Applying filter: select($FILTER)"
     result=$(echo "$result" | jq -c "[.[] | select($FILTER)]")
 fi
 

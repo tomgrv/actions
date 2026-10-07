@@ -17,13 +17,13 @@ REVIEWDOG_BIN="reviewdog"
 
 # Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
+    zz-log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
 # FILACHECK_PATH is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "Run FilaCheck" "$0" "$@" <<-help
+# positional fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "Run FilaCheck" "$0" "$@" <<-help
 	- path	filacheck_path	Path to check (default: app/Filament)
 help
 )"
@@ -50,7 +50,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${WIP}" = "true" ]; then
     FILACHECK_TARGET="$(printf '%s\n' "${WIP_FILES}" | sed '/^$/d')"
     if [ -z "${FILACHECK_TARGET}" ]; then
-        zz_log n "No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck."
+        zz-log n "No changed files under: ${FILACHECK_PATH} on this pull request; skipping FilaCheck."
         exit 0
     fi
 else

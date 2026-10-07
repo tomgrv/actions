@@ -12,7 +12,7 @@ GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
 # Input defaulting is a setup detail, not a finding: plain log only, no
 # GitHub annotation.
 if [ "${GITHUB_APP_SLUG}" = "github-actions" ] && [ -z "${BOT_NAME:-}" ]; then
-  zz_log i "GITHUB_APP_SLUG not set, using default: github-actions"
+  zz-log i "GITHUB_APP_SLUG not set, using default: github-actions"
 fi
 
 # BOT_NAME/BOT_EMAIL can be overridden directly (used by run.bats to test
@@ -29,7 +29,7 @@ if [ -z "${BOT_EMAIL:-}" ]; then
 fi
 USER_ID="${USER_ID:-}"
 
-zz_log i "Setting git user name and email for bot as ${BOT_NAME} <${BOT_EMAIL}>"
+zz-log i "Setting git user name and email for bot as ${BOT_NAME} <${BOT_EMAIL}>"
 
 git config --global user.email "${BOT_EMAIL}"
 git config --global user.name "${BOT_NAME}"

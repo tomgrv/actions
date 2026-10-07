@@ -10,29 +10,29 @@ Reusable GitHub Actions
 
 tomgrv/actions is a suite of modular, reusable GitHub composite actions designed to automate code quality, PR management, and package maintenance for monorepos and composer-based projects. Each action is self-contained, follows strict output/logging conventions, and is documented for easy integration into your workflows.
 
-Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use) from `tomgrv/scripts`, which installs the action's `run.sh` and runs it. Set the `GITHUB_*` variables the action reads (for example `GITHUB_TOKEN`) yourself:
+Actions are consumed directly from a workflow with `uses: tomgrv/actions/<action-name>@<ref>` — this repository is never published to npm (every package here, including the root one, is `private: true`; npm workspaces exist only to manage this monorepo's own code and tooling). For local testing, any action with a `run.sh` can be run from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use) from `tomgrv/scripts`, which installs the action's `run.sh` and runs it. Set the `GITHUB_*` variables the action reads (for example `GITHUB_TOKEN`) yourself:
 
 ```sh
-zz_use -x ./<action> [args...]
+zz-use -x ./<action> [args...]
 ```
 
 For example:
 
 ```sh
 # Run lock coherence validation locally
-GITHUB_TOKEN=ghp_xxx zz_use -x ./check-lock
+GITHUB_TOKEN=ghp_xxx zz-use -x ./check-lock
 
 # List monorepo packages
-zz_use -x ./list-packages
+zz-use -x ./list-packages
 
 # Detect uncommitted changes
-zz_use -x ./detect-changes
+zz-use -x ./detect-changes
 ```
 
 Run a published release without cloning the repository:
 
 ```sh
-zz_use -x tomgrv/actions/list-packages@v2
+zz-use -x tomgrv/actions/list-packages@v2
 ```
 
 ## Testing
@@ -99,7 +99,7 @@ needs applied once by hand.
 ### 🔧 Utils
 
 - [**config-bot**](config-bot/README.md) ![stable](https://img.shields.io/badge/stable-green): Configure git bot identity and authentication for CI/CD.
-- [**setup-scripts**](setup-scripts/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently bootstrap `zz_use` from `tomgrv/scripts`, optionally installing specific scripts.
+- [**setup-scripts**](setup-scripts/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently bootstrap `zz-use` from `tomgrv/scripts`, optionally installing specific scripts.
 - [**setup-gitversion**](setup-gitversion/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Idempotently install the `gitversion` devcontainer feature's toolchain (GitVersion CLI plus `gv`/`bump-tag`/`bump-changelog`/`bump-version`).
 - [**setup-gitflow**](setup-gitflow/README.md) ![beta](https://img.shields.io/badge/beta-yellow): Install the git-flow extension if missing, then initialize it against the checked-out repo.
 - [**setup-php**](setup-php/README.md) ![stable](https://img.shields.io/badge/stable-green): Setup PHP, Composer, and extensions as per composer for CI jobs.

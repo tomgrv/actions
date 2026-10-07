@@ -8,8 +8,8 @@ PHPMD_RULESET="${PHPMD_RULESET:-}"
 PHPMD_PRIORITY="${PHPMD_PRIORITY:-max}"
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "Run PHP Mess Detector" "$0" "$@" <<-help
+# positional fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "Run PHP Mess Detector" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help
 )"
@@ -37,7 +37,7 @@ PHPMD_BIN="phpmd"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
+    zz-log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
@@ -54,7 +54,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     PHPMD_TARGET="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | paste -sd, -)"
     if [ -z "${PHPMD_TARGET}" ]; then
-        zz_log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD."
+        zz-log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPMD."
         exit 0
     fi
 else

@@ -11,7 +11,7 @@ WORKING_DIRECTORY="${WORKING_DIRECTORY:-.}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${WORKING_DIRECTORY}" = "." ]; then
-  zz_log i "WORKING_DIRECTORY not set, using default: ."
+  zz-log i "WORKING_DIRECTORY not set, using default: ."
 fi
 
 HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
@@ -30,21 +30,21 @@ PR_BODY="${PR_BODY:-${DEFAULT_TITLE}} \
 _This pull request was created automatically by [tomgrv/actions/create-pr](https://github.com/tomgrv/actions/create-pr)_"
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz_log e "GITHUB_TOKEN is required"
+  zz-log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 export GH_TOKEN="${GITHUB_TOKEN}"
 
 cd "${WORKING_DIRECTORY}" || {
-  zz_log e "Working directory '${WORKING_DIRECTORY}' does not exist"
+  zz-log e "Working directory '${WORKING_DIRECTORY}' does not exist"
   exit 1
 }
 
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
 if [ -z "$(git status --porcelain)" ]; then
-    zz_log n "No changes detected in working directory, skipping PR creation."
+    zz-log n "No changes detected in working directory, skipping PR creation."
     printf 'action=skip\n'
     printf 'has-changes=false\n'
     printf 'pr-number=\n'
@@ -53,7 +53,7 @@ if [ -z "$(git status --porcelain)" ]; then
 fi
 
 if [ -z "${COMMIT_MESSAGE}" ]; then
-    zz_log e "commit-message is required when commit-all is true"
+    zz-log e "commit-message is required when commit-all is true"
     exit 1
 fi
 
@@ -74,7 +74,7 @@ PR_NUMBER=$(gh pr list \
 
 if [ -n "${PR_NUMBER}" ]; then
 
-  zz_log i "Existing PR #${PR_NUMBER} found for head '${HEAD_REF}'"
+  zz-log i "Existing PR #${PR_NUMBER} found for head '${HEAD_REF}'"
 
   if [ -n "${PR_BODY}" ]; then
     gh pr edit "${PR_NUMBER}" \
@@ -91,7 +91,7 @@ if [ -n "${PR_NUMBER}" ]; then
 
 else
 
-  zz_log i "No existing PR found for head '${HEAD_REF}', creating a new one"
+  zz-log i "No existing PR found for head '${HEAD_REF}', creating a new one"
 
   if [ -n "${PR_BODY}" ]; then
     gh pr create \
@@ -119,7 +119,7 @@ else
 fi
 
 PR_URL=$(gh pr view "${PR_NUMBER}" --repo "${REPOSITORY}" --json url --jq '.url')
-zz_log n "PR #${PR_NUMBER} ${ACTION}: ${PR_URL}"
+zz-log n "PR #${PR_NUMBER} ${ACTION}: ${PR_URL}"
 
 printf 'action=%s\n' "${ACTION}"
 printf 'has-changes=true\n'

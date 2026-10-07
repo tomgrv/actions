@@ -3,7 +3,7 @@
 # @package tomgrv/actions/setup-scripts
 
 name: Setup Scripts
-description: Idempotently bootstrap zz_use from tomgrv/scripts, optionally installing specific scripts onto PATH.
+description: Idempotently bootstrap zz-use from tomgrv/scripts, optionally installing specific scripts onto PATH.
 author: Perspikapps
 branding:
   icon: download
@@ -11,7 +11,7 @@ branding:
 
 inputs:
   scripts:
-    description: Space-separated tomgrv/scripts tool names to zz_use after bootstrapping (e.g. "git-release-beta git-release-prod"). Leave empty to only bootstrap zz_use itself.
+    description: Space-separated tomgrv/scripts tool names to zz-use after bootstrapping (e.g. "git-release-beta git-release-prod"). Leave empty to only bootstrap zz-use itself.
     required: false
     default: ''
   scripts-ref:
@@ -19,7 +19,7 @@ inputs:
     required: false
     default: ''
   scripts-branch:
-    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz_use (default "main", typically overridden to a development branch during integration testing).
+    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz-use (default "main", typically overridden to a development branch during integration testing).
     required: false
     default: main
 
@@ -32,7 +32,7 @@ runs:
     # existed on that branch would be restored forever after, even once the
     # script is genuinely there. restore-keys prefix fallbacks have the same
     # problem (they'd match an older SHA's entry), so this step deliberately
-    # has none: a cache miss just means zz_use fetches fresh, which it
+    # has none: a cache miss just means zz-use fetches fresh, which it
     # already handles correctly on its own.
     - name: Resolve tomgrv/scripts branch SHA
       id: scripts-sha
@@ -56,7 +56,7 @@ runs:
       shell: sh
       run: echo "TOMGRV_SCRIPTS_CACHE=${{ inputs.scripts-branch }}/${{ inputs.scripts-ref }}" >> "$GITHUB_ENV"
 
-    - name: Bootstrap zz_use and install requested scripts
+    - name: Bootstrap zz-use and install requested scripts
       shell: sh
       env:
         SCRIPTS: ${{ inputs.scripts }}

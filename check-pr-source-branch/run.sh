@@ -9,18 +9,18 @@ TARGET_BRANCH="${TARGET_BRANCH:?TARGET_BRANCH is required}"
 PR_TITLE="${PR_TITLE:-}"
 
 if [ -z "${RESTRICTED_BRANCH:-}" ]; then
-    zz_log i "RESTRICTED_BRANCH not set, using default: main"
+    zz-log i "RESTRICTED_BRANCH not set, using default: main"
 fi
 RESTRICTED_BRANCH="${RESTRICTED_BRANCH:-main}"
 
 if [ "${TARGET_BRANCH}" != "${RESTRICTED_BRANCH}" ]; then
-    zz_log i "Target branch '${TARGET_BRANCH}' is not restricted, nothing to check."
+    zz-log i "Target branch '${TARGET_BRANCH}' is not restricted, nothing to check."
     exit 0
 fi
 
 case "${PR_TITLE}" in
     *hotfix*)
-        zz_log i "PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed."
+        zz-log i "PR from '${RESTRICTED_BRANCH}' is marked as a hotfix, allowed."
         exit 0
         ;;
 esac
@@ -30,5 +30,5 @@ error_message="PRs cannot target the '${RESTRICTED_BRANCH}' branch unless marked
 Rule: Default PR target (base) branch is not '${RESTRICTED_BRANCH}'.
 - Only open PRs against '${RESTRICTED_BRANCH}' if explicitly requested or marked as 'hotfix/...'.
 - Retarget your PR to the default development branch."
-zz_log e "${error_message}"
+zz-log e "${error_message}"
 exit 1

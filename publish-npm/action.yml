@@ -51,7 +51,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz-log
 
     - name: Setup Node toolchain
       uses: $/setup-node

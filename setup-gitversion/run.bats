@@ -2,7 +2,7 @@
 
 # Tests setup-gitversion/run.sh: idempotently install the gitversion toolchain.
 # gv/bump-tag/bump-changelog/bump-version are installed by this action's own
-# earlier "Setup scripts toolchain" step (setup-scripts@v2, scripts: zz_log
+# earlier "Setup scripts toolchain" step (setup-scripts@v2, scripts: zz-log
 # gv bump-tag bump-changelog bump-version) -- run.sh itself only builds the
 # docker-gitversion wrapper/gitversion symlink and then verifies everything
 # actually landed on PATH.
@@ -18,14 +18,14 @@ setup() {
   # shadow the stub once that line re-prepends its default.
   export INSTALL_BIN_DIR="${STUB_BIN}"
   unset GITHUB_PATH
-  # zz_log itself needs to resolve here -- in real CI it's put on PATH by
+  # zz-log itself needs to resolve here -- in real CI it's put on PATH by
   # the setup-scripts composite step; stub a minimal stand-in.
-  cat > "${STUB_BIN}/zz_log" <<'EOF'
+  cat > "${STUB_BIN}/zz-log" <<'EOF'
 #!/bin/sh
 shift
 echo "$*" >&2
 EOF
-  chmod +x "${STUB_BIN}/zz_log"
+  chmod +x "${STUB_BIN}/zz-log"
   # Keep the image cache inside the sandbox and never reach a real docker.
   export GITVERSION_CACHE_DIR="${STUB_BIN}/cache"
   DOCKER_LOG="${STUB_BIN}/docker.log"

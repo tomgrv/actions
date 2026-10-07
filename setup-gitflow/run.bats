@@ -48,41 +48,41 @@ STUB
 }
 
 stub_zz_log() {
-  cat > "${STUB_BIN}/zz_log" << 'STUB'
+  cat > "${STUB_BIN}/zz-log" << 'STUB'
 #!/bin/sh
 shift
 echo "$*" >&2
 STUB
-  chmod +x "${STUB_BIN}/zz_log"
+  chmod +x "${STUB_BIN}/zz-log"
 }
 
 @test "skips the install when git-flow is already available" {
   stub_git_dispatcher yes
-  stub zz_install 1 # would fail loudly if actually invoked
+  stub zz-install 1 # would fail loudly if actually invoked
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
   grep -qF "git flow version" "${CALLS_FILE}"
   grep -qF "git flow init" "${CALLS_FILE}"
 }
 
-@test "installs via zz_install when git-flow is missing, then proceeds to init" {
+@test "installs via zz-install when git-flow is missing, then proceeds to init" {
   stub_git_dispatcher no
-  cat > "${STUB_BIN}/zz_install" << STUB
+  cat > "${STUB_BIN}/zz-install" << STUB
 #!/bin/sh
-echo "zz_install \$*" >> "${CALLS_FILE}"
+echo "zz-install \$*" >> "${CALLS_FILE}"
 touch "${STUB_BIN}/.installed"
 exit 0
 STUB
-  chmod +x "${STUB_BIN}/zz_install"
+  chmod +x "${STUB_BIN}/zz-install"
   run sh "$SCRIPT"
   [ "$status" -eq 0 ]
-  grep -qF "zz_install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow brew=git-flow-avh pacman=gitflow-avh" "${CALLS_FILE}"
+  grep -qF "zz-install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow brew=git-flow-avh pacman=gitflow-avh" "${CALLS_FILE}"
   grep -qF "git flow init" "${CALLS_FILE}"
 }
 
-@test "errors when zz_install cannot install git-flow" {
+@test "errors when zz-install cannot install git-flow" {
   stub_git_dispatcher no
-  stub zz_install 1
+  stub zz-install 1
   stub_zz_log
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]
@@ -92,7 +92,7 @@ STUB
 
 @test "errors when git-flow is still unavailable after a successful install command" {
   stub_git_dispatcher no
-  stub zz_install 0 # "succeeds" but never touches .installed marker
+  stub zz-install 0 # "succeeds" but never touches .installed marker
   stub_zz_log
   run sh "$SCRIPT"
   [ "$status" -ne 0 ]

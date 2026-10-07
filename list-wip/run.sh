@@ -11,8 +11,8 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 # LIST_PATHS is normally supplied via action.yml's env block; the positional
-# fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "List WIP files" "$0" "$@" <<-help
+# fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "List WIP files" "$0" "$@" <<-help
 	- path	list_paths	Comma-separated list of paths to restrict the list to (default: .)
 help
 )"
@@ -23,13 +23,13 @@ LIST_BASE_REF="${LIST_BASE_REF:-${GITHUB_BASE_REF:-}}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LIST_PATHS}" = "." ]; then
-    zz_log i "path not set, using default: ."
+    zz-log i "path not set, using default: ."
 fi
 
 # Missing base-ref is a setup/configuration problem, not a finding about the
 # analyzed repository: plain log only, no GitHub annotation.
 if [ -z "${LIST_BASE_REF}" ]; then
-    zz_log e "base-ref is required: set GITHUB_BASE_REF (automatic on pull_request events) or the base-ref input"
+    zz-log e "base-ref is required: set GITHUB_BASE_REF (automatic on pull_request events) or the base-ref input"
     printf 'files<<GH_LIST_WIP_EOF\nGH_LIST_WIP_EOF\n'
     printf 'count=0\n'
     printf 'has-files=false\n'
@@ -46,7 +46,7 @@ else
 fi
 _ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))\$"
 
-zz_log i "Listing files changed since ${LIST_BASE_REF} (merge-base ${MERGE_BASE}) under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
+zz-log i "Listing files changed since ${LIST_BASE_REF} (merge-base ${MERGE_BASE}) under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
 
 FILES="$(
     git diff --no-renames --name-only --diff-filter=ACMR "${MERGE_BASE}" -- . \
@@ -58,7 +58,7 @@ if [ -n "${FILES}" ]; then
     COUNT="$(printf '%s\n' "${FILES}" | wc -l | tr -d ' ')"
 fi
 
-zz_log i "Found ${COUNT} changed file(s)"
+zz-log i "Found ${COUNT} changed file(s)"
 
 {
     echo "files<<GH_LIST_WIP_EOF"
