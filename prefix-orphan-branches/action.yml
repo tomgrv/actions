@@ -48,7 +48,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: git-fix-orphans zz_log
+        scripts: git-fix-orphans zz-log
 
     - name: Initialize git-flow
       if: inputs.init-gitflow == 'true'
