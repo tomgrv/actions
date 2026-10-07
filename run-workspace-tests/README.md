@@ -26,7 +26,7 @@ jobs:
             packages: ${{ steps.list.outputs.packages }}
         steps:
             - uses: actions/checkout@v4
-            - uses: tomgrv/actions/list-packages@v2
+            - uses: tomgrv/actions/list-packages@v3
               id: list
 
     test:
@@ -37,7 +37,7 @@ jobs:
                 package: ${{ fromJson(needs.list-packages.outputs.packages) }}
         steps:
             - uses: actions/checkout@v4
-            - uses: tomgrv/actions/run-workspace-tests@v2
+            - uses: tomgrv/actions/run-workspace-tests@v3
               with:
                   workspace: ${{ matrix.package.path }}
 ```
