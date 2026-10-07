@@ -28,7 +28,7 @@ runs:
     # release-promote is uniquely self-referential: it releases the very
     # repo it's defined in, so any sibling action whose *content* changes
     # in the same release (config-bot/setup-gitversion/setup-gitflow's own
-    # run.sh) cannot be called via a fixed `uses: tomgrv/actions/<name>@v2`
+    # run.sh) cannot be called via a fixed `uses: tomgrv/actions/<name>@v3`
     # -- that ref necessarily predates whatever this release is about to
     # ship, so it silently runs the *old* sibling instead of the one just
     # merged. Confirmed live: setup-gitversion@v2 still curled bin/*.sh out

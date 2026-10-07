@@ -47,7 +47,7 @@ Number of branches renamed.
       fetch-depth: 0
 
 - name: Prefix orphan branches
-  uses: tomgrv/actions/prefix-orphan-branches@v2
+  uses: tomgrv/actions/prefix-orphan-branches@v3
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
