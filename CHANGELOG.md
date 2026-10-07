@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.2.0 (2026-10-07)
+
+*Commits from: v3.1.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v3.1.0' into develop ([4319a2b](https://github.com/tomgrv/actions/commit/4319a2b4ab97284f1a90eb439c205740e71df3df))
+### 📦 setup-scripts changes
+
+#### Other changes
+
+- 📝 add UPGRADING guide for breaking changes (#137) ([5f1fb22](https://github.com/tomgrv/actions/commit/5f1fb2230bf65b13166955eea79ae52b5c8aafe3))
+
 ## 3.1.0 (2026-10-07)
 
 *Commits from: v3.0.0..HEAD*
@@ -1141,6 +1156,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
