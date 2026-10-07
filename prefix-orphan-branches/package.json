@@ -1,6 +1,6 @@
 {
   "name": "prefix-orphan-branches",
-  "version": "2.39.0",
+  "version": "2.46.0",
   "description": "Prefix remote branches that do not follow the gitflow config and have no pull request with orphan/.",
   "scripts": {
     "test": "bats run.bats"
