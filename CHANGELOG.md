@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.0 (2026-10-07)
+
+*Commits from: v3.2.0..HEAD*
+
+### 💥 BREAKING CHANGES
+
+- scripts renamed to feature-*; consumers must move to the new major and to tomgrv/scripts v2. ([80e9088](https://github.com/tomgrv/actions/commit/80e9088d88bf963eb1bec68c4da84c43b3887f6d))
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v3.2.0' into develop ([aacb491](https://github.com/tomgrv/actions/commit/aacb4911756b8f85c5ab6d5d0c56dae9fa84fd64))
+
 ## 3.2.0 (2026-10-07)
 
 *Commits from: v3.1.0..HEAD*
@@ -1156,6 +1169,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 
