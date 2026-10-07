@@ -1,6 +1,6 @@
 {
   "name": "clean-history",
-  "version": "2.31.0",
+  "version": "3.0.0",
   "description": "Remove old workflow run history, keeping a minimum number of days and runs per workflow.",
   "inputs": {
     "GITHUB_TOKEN": {

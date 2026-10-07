@@ -1,6 +1,6 @@
 {
   "name": "reply-pr-comment",
-  "version": "2.31.0",
+  "version": "3.0.0",
   "description": "Post a comment on a pull request or issue, referencing the comment that triggered the workflow.",
   "inputs": {
     "GITHUB_TOKEN": {

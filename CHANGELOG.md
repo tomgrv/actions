@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.0.0 (2026-10-07)
+
+*Commits from: v2.46.0..HEAD*
+
+### 💥 BREAKING CHANGES
+
+- requires the renamed tomgrv/scripts; zz_* and <verb>-json commands no longer exist. ([626f566](https://github.com/tomgrv/actions/commit/626f566de277127e6ec5f01125d6ea80698f1fee))
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.46.0' into develop ([f7c2430](https://github.com/tomgrv/actions/commit/f7c243073b5d5bf38b25760cff898c85415c13e4))
+
 ## 2.46.0 (2026-10-07)
 
 *Commits from: v2.45.0..HEAD*
@@ -1113,6 +1126,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 

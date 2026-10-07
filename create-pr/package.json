@@ -1,6 +1,6 @@
 {
   "name": "create-pr",
-  "version": "2.45.0",
+  "version": "3.0.0",
   "description": "Create or update a pull request from a branch.",
   "inputs": {
     "GITHUB_TOKEN": {
