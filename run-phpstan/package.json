@@ -1,6 +1,6 @@
 {
   "name": "run-phpstan",
-  "version": "2.45.0",
+  "version": "3.0.0",
   "description": "Run PHPStan with reviewdog.",
   "scripts": {
     "test": "bats run.bats"

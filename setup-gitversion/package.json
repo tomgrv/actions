@@ -1,6 +1,6 @@
 {
   "name": "setup-gitversion",
-  "version": "2.43.0",
+  "version": "3.0.0",
   "description": "Idempotently install the gitversion devcontainer feature's toolchain (GitVersion CLI plus gv/bump-tag/bump-changelog/bump-version).",
   "scripts": {
     "test": "bats run.bats"
