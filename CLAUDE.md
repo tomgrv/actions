@@ -21,3 +21,7 @@ The `claude.yml` workflow responds to `@claude` mentions in issue/PR comments, P
 ## Minimal Changes Discipline
 
 Change only what the task requires. Don't touch unrelated config files or dependencies unless explicitly asked.
+
+## Upgrading
+
+Breaking renames and major bumps follow [`UPGRADING.md`](UPGRADING.md) (order of operations, pins, pitfalls). Read it before touching script names or `tomgrv/actions@<major>` / `scripts-ref` pins.
