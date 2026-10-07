@@ -15,11 +15,11 @@ setup() {
   export PACKAGE_PATH="${PKG}"
   printf '{"name":"@scope/pkg","version":"1.2.3"}\n' > "${PKG}/package.json"
 
-  # zz_log stub: print level and message
-  printf '#!/bin/sh\nshift\necho "$*" >&2\n' > "${STUB_BIN}/zz_log"
+  # zz-log stub: print level and message
+  printf '#!/bin/sh\nshift\necho "$*" >&2\n' > "${STUB_BIN}/zz-log"
   # npm stub: record the call
   printf '#!/bin/sh\necho "npm $*" >> "%s"\n' "${CALLS_FILE}" > "${STUB_BIN}/npm"
-  chmod +x "${STUB_BIN}/zz_log" "${STUB_BIN}/npm"
+  chmod +x "${STUB_BIN}/zz-log" "${STUB_BIN}/npm"
 }
 
 teardown() {

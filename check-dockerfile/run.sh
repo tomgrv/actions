@@ -10,13 +10,13 @@ ACTION_PATH="${ACTION_PATH:=$(cd "$(dirname "$0")" && pwd)}"
 
 # Ensure reviewdog is available
 if ! command -v reviewdog >/dev/null 2>&1; then
-  zz_log e "reviewdog is not installed. Setup reviewdog before this action."
+  zz-log e "reviewdog is not installed. Setup reviewdog before this action."
   exit 1
 fi
 
 # Check if Dockerfile exists
 if [ ! -f "$DOCKERFILE" ]; then
-  zz_log e "Dockerfile not found at $DOCKERFILE"
+  zz-log e "Dockerfile not found at $DOCKERFILE"
   exit 1
 fi
 

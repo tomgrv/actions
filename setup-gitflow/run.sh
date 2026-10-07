@@ -21,17 +21,17 @@ GITFLOW_VERSIONTAG_PREFIX="${GITFLOW_VERSIONTAG_PREFIX:-v}"
 # Idempotent: skip the (network) install when a previous step in the same
 # job, or a caller image that ships it, already has git-flow.
 if ! git flow version > /dev/null 2>&1; then
-    # zz_install (tomgrv/scripts, put on PATH by this action's setup-scripts
+    # zz-install (tomgrv/scripts, put on PATH by this action's setup-scripts
     # step) picks the available package manager and escalates through sudo
     # when not root; the names below are the ones that differ from `git-flow`.
-    zz_install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow \
+    zz-install git-flow apk=gitflow-avh dnf=gitflow yum=gitflow \
         brew=git-flow-avh pacman=gitflow-avh || {
-        zz_log e "setup-gitflow: unable to install git-flow automatically on this system"
+        zz-log e "setup-gitflow: unable to install git-flow automatically on this system"
         exit 1
     }
 
     git flow version > /dev/null 2>&1 || {
-        zz_log e "setup-gitflow: git-flow still unavailable after install attempt"
+        zz-log e "setup-gitflow: git-flow still unavailable after install attempt"
         exit 1
     }
 fi

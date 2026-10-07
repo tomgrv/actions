@@ -28,8 +28,8 @@ Every action directory must have a `package.json` with:
 - `name`: the folder name (no `@org/` prefix)
 - `description`: brief description matching `action.yml`
 - `inputs`/`outputs` exist in `package.json` **only for what a script this action owns (`run.sh`, or another `.sh` file in the same directory, e.g. `require.sh`) actually reads or produces.** Nothing else is tracked here — `action.yml` stays the sole source of truth for the rest:
-  - No such script at all (composite-only: the action just wires nested actions or a third-party `uses:` step together, nothing for `zz_use` to invoke locally) → omit `inputs` and `outputs` entirely.
-  - `inputs`: one entry per input that maps to an environment variable read by one of this action's own scripts via a step whose `run:` invokes that script (the same env var name used in `action.yml`'s `env:` block for that step; see [Environment Variables and Scripts](#environment-variables-and-scripts) below) — keyed by that **environment variable name** (not the kebab-case `action.yml` input name), each with `description`, `required`, and `default` (only when `action.yml` defines one). This lets `zz_use`/local script invocation inject a value by exporting that variable directly. Not listed here: inputs forwarded as `with:` to a nested composite action or third-party `uses:` step, and inputs only read by an inline `run:` command that doesn't invoke a script file. If none qualify, omit `inputs`.
+  - No such script at all (composite-only: the action just wires nested actions or a third-party `uses:` step together, nothing for `zz-use` to invoke locally) → omit `inputs` and `outputs` entirely.
+  - `inputs`: one entry per input that maps to an environment variable read by one of this action's own scripts via a step whose `run:` invokes that script (the same env var name used in `action.yml`'s `env:` block for that step; see [Environment Variables and Scripts](#environment-variables-and-scripts) below) — keyed by that **environment variable name** (not the kebab-case `action.yml` input name), each with `description`, `required`, and `default` (only when `action.yml` defines one). This lets `zz-use`/local script invocation inject a value by exporting that variable directly. Not listed here: inputs forwarded as `with:` to a nested composite action or third-party `uses:` step, and inputs only read by an inline `run:` command that doesn't invoke a script file. If none qualify, omit `inputs`.
   - `outputs`: one entry per output whose `value: ${{ steps.<id>.outputs... }}` in `action.yml` points at a step that invokes one of this action's own scripts — with `description` only (the `value:` expression itself is an `action.yml`-only concern). Not listed here: outputs from a nested action's own output, or from an inline `run:` command. If none qualify, omit `outputs`.
 - `private: true` — these packages are never published individually
 
@@ -56,27 +56,27 @@ Every action directory must have a `package.json` with:
 
 Keep `inputs`/`outputs` in sync with `action.yml` whenever either changes — they document the same contract so the action can be reasoned about (and eventually invoked) as a plain script, independent of the GitHub Actions runner.
 
-Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; an action's `run.sh` can also be run directly from a clone of this repository with `zz_use -x` (see below).
+Every package in this repository, including the root one, is `private: true` and is **never published to npm**. The npm workspace setup exists solely to manage the monorepo's own code and tooling (commitlint scopes, lint-staged, prettier, `npm-check-updates`, ...). Actions are consumed exclusively via `uses: tomgrv/actions/<action-name>@<ref>` in a workflow; an action's `run.sh` can also be run directly from a clone of this repository with `zz-use -x` (see below).
 
-### Local Usage (zz_use)
+### Local Usage (zz-use)
 
-All actions with a `run.sh` can be invoked locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+All actions with a `run.sh` can be invoked locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 ```sh
-zz_use -x ./<action-name> [args...]
+zz-use -x ./<action-name> [args...]
 ```
 
-`zz_use` installs the action's `run.sh` (and the peers its `package.json` declares) and runs it. It does not set `GITHUB_*` variables: supply the ones the action reads, such as `GITHUB_TOKEN` for actions that call the GitHub API.
+`zz-use` installs the action's `run.sh` (and the peers its `package.json` declares) and runs it. It does not set `GITHUB_*` variables: supply the ones the action reads, such as `GITHUB_TOKEN` for actions that call the GitHub API.
 
 Add a `## Local Usage` section to every action README:
 
 ```markdown
 ## Local Usage
 
-Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 \`\`\`sh
-zz_use -x ./action-name
+zz-use -x ./action-name
 \`\`\`
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
@@ -124,7 +124,7 @@ runs:
 
 ### Shell Script (run.sh)
 
-New actions bootstrap the [`tomgrv/scripts`](https://github.com/tomgrv/scripts) `zz_*` bundle via the [`setup-scripts`](../../setup-scripts/README.md) action as a composite step before the `run.sh` step, requesting at least `zz_log` (add `zz_args` too when the action genuinely parses positional CLI args - see point 4 below). `run.sh` itself does not need to `. zz_colors` - `zz_log` sources it internally (see `tomgrv/scripts`' `zz_log/run.sh`), so scripts just call `zz_log <level> <msg>` once `zz_use`/`setup-scripts` has put it on `PATH`.
+New actions bootstrap the [`tomgrv/scripts`](https://github.com/tomgrv/scripts) `zz-*` bundle via the [`setup-scripts`](../../setup-scripts/README.md) action as a composite step before the `run.sh` step, requesting at least `zz-log` (add `zz-args` too when the action genuinely parses positional CLI args - see point 4 below). `run.sh` itself does not need to `. zz-colors` - `zz-log` sources it internally (see `tomgrv/scripts`' `zz-log/run.sh`), so scripts just call `zz-log <level> <msg>` once `zz-use`/`setup-scripts` has put it on `PATH`.
 
 ```yaml
 runs:
@@ -133,7 +133,7 @@ runs:
         - name: Setup scripts toolchain
           uses: tomgrv/actions/setup-scripts@v2
           with:
-              scripts: zz_log
+              scripts: zz-log
 
         - name: Step name
           id: step-id
@@ -158,7 +158,7 @@ PARAMETER="${PARAMETER:-default-value}"
 # Setup problems (missing token/binary, bad input, defaulted values) are
 # plain logs, not GitHub annotations - see "Logging conventions" below.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-    zz_log e "GITHUB_TOKEN is required"
+    zz-log e "GITHUB_TOKEN is required"
     exit 1
 fi
 
@@ -173,7 +173,7 @@ fi
 
 # Main logic here. A notice is warranted because this is a fact about the
 # analyzed repository (e.g. nothing matched the filter), not about setup.
-zz_log n "Nothing to process, target path is empty."
+zz-log n "Nothing to process, target path is empty."
 
 # Output to GITHUB_OUTPUT
 printf 'output-name=%s\n' "${value}"
@@ -186,20 +186,20 @@ printf 'output-name=%s\n' "${value}"
 3. Use `set -eu` (or `set -ef`/`set -e` when a `noglob`/pipefail comment explains the exception) to exit on errors and undefined variables
 4. Use `${VAR:-default}` for optional variables with defaults
 5. Use `${VAR:?error message}` for required variables
-6. Send user messages to stderr - plain logs via `zz_log` (see below), which writes to stderr itself
+6. Send user messages to stderr - plain logs via `zz-log` (see below), which writes to stderr itself
 7. Follow the **logging conventions** below for `::notice::`/`::warning::`/`::error::` vs. plain logs
 8. Output variables using `printf` format
 9. Make script executable: `chmod +x run.sh`
 10. Use shellcheck disable comments when needed: `# shellcheck disable=SC2086`
-11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `zz_use -x` use, not only multi-flag parsing - use `zz_args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `validate-json/run.sh` plus its `zz_args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz_args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
+11. When the script reads any positional CLI arg - including a single `${VAR:-${1:-default}}` convenience fallback for local `zz-use -x` use, not only multi-flag parsing - use `zz-args` instead of hand-rolled `$1`/`$2`/`getopts` handling; see `list-dirty/run.sh` and `check-lock/run.sh` for this repo's examples, and `tomgrv/scripts`' `json-validate/run.sh` plus its `zz-args/README.md` for the general usage pattern. Most actions in this repository are purely env-var driven (inputs arrive via `action.yml`'s `env:` block, not CLI flags) - leave those alone; `zz-args` only replaces genuine `"$@"`-derived variables, whether single or multiple.
 
 ### Logging Conventions
 
-GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz_log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz_log n "..."`/`zz_log w "..."`/`zz_log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz_log i "..."` (info) never does, and outside Actions (local `zz_use -x` use) no annotation line is emitted at all.
+GitHub workflow-command annotations (`::notice::`, `::warning::`, `::error::`) surface directly on the PR/checks UI of the **repository the action runs against**. `zz-log` (from the `tomgrv/scripts` bundle, bootstrapped by the `setup-scripts` composite step above) is now GitHub-Actions-aware: inside a real Actions run (`GITHUB_ACTIONS=true`), `zz-log n "..."`/`zz-log w "..."`/`zz-log e "..."` also emit a leading `::notice::`/`::warning::`/`::error::` annotation line ahead of the usual colored job-log line, correctly percent-encoding `%`/CR/LF (multi-line messages included) per GitHub's workflow-command syntax - `zz-log i "..."` (info) never does, and outside Actions (local `zz-use -x` use) no annotation line is emitted at all.
 
-- **`zz_log e "..."`/`zz_log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz_log e` is still followed by `exit 1` when fatal.
-- **`zz_log n "..."` only for data the step generated, or a silent skip/no-op the user needs explained** - never to trace a plain success. Data: a PR's number/URL, a rebase's new HEAD SHA - information the step produced that the user has no other way to see. Silent skip: the step ran but did nothing and didn't fail - a missing/empty target, no matching changed files, a PR already up to date - because without the notice that looks indistinguishable from "ran cleanly, found nothing wrong". If a message is just confirming an operation succeeded (imported, title validated, rule exception granted) with no new data attached, it's `zz_log i` instead, however satisfying it feels to report.
-- **`zz_log i "..."` for everything else**: routine progress ("Cloning ...", "Rebasing PR #X onto Y..."), an input left at its default, and plain success confirmations that carry no new data.
+- **`zz-log e "..."`/`zz-log w "..."` for anything actionable** - missing `GITHUB_TOKEN`/`REVIEWDOG_GITHUB_API_TOKEN`, a required CLI tool not found (`jq`, `gh`, `composer`, `npm`, `reviewdog`, the linter binary, ...), a bad/missing config file path, a failed clone/push/label update, a test suite failure, a multi-line validation report, and so on. `zz-log e` is still followed by `exit 1` when fatal.
+- **`zz-log n "..."` only for data the step generated, or a silent skip/no-op the user needs explained** - never to trace a plain success. Data: a PR's number/URL, a rebase's new HEAD SHA - information the step produced that the user has no other way to see. Silent skip: the step ran but did nothing and didn't fail - a missing/empty target, no matching changed files, a PR already up to date - because without the notice that looks indistinguishable from "ran cleanly, found nothing wrong". If a message is just confirming an operation succeeded (imported, title validated, rule exception granted) with no new data attached, it's `zz-log i` instead, however satisfying it feels to report.
+- **`zz-log i "..."` for everything else**: routine progress ("Cloning ...", "Rebasing PR #X onto Y..."), an input left at its default, and plain success confirmations that carry no new data.
 
 ### Documentation (README.md)
 

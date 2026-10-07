@@ -25,7 +25,7 @@ MATRIX="$(php-list-changed "$@")" || exit 1
 [ -n "${MATRIX}" ] || MATRIX="[]"
 
 COUNT="$(printf '%s' "${MATRIX}" | jq 'length')"
-zz_log i "Found ${COUNT} affected part(s): $(printf '%s' "${MATRIX}" | jq -r 'map(.name) | join(", ")')"
+zz-log i "Found ${COUNT} affected part(s): $(printf '%s' "${MATRIX}" | jq -r 'map(.name) | join(", ")')"
 
 printf 'matrix=%s\n' "${MATRIX}"
 if [ "${COUNT}" -gt 0 ]; then

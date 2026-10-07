@@ -48,7 +48,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz-log
 
     - name: Cache splitsh-lite
       id: cache-splitsh

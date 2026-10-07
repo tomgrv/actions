@@ -17,13 +17,13 @@ PHPINSIGHTS_BIN="phpinsights"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
+    zz-log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "Run PHP Insights" "$0" "$@" <<-help
+# positional fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "Run PHP Insights" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help
 )"
@@ -46,7 +46,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
-        zz_log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights."
+        zz-log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHP Insights."
         exit 0
     fi
 else
@@ -55,7 +55,7 @@ fi
 
 if [ -n "${PHPINSIGHTS_CONFIG_PATH}" ]; then
     if [ ! -f "${PHPINSIGHTS_CONFIG_PATH}" ]; then
-        zz_log e "config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}"
+        zz-log e "config-path file not found: ${PHPINSIGHTS_CONFIG_PATH}"
         exit 1
     fi
     CONFIG_FLAG="--config-path=${PHPINSIGHTS_CONFIG_PATH}"

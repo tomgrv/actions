@@ -6,17 +6,17 @@ set -eu
 
 # Missing tooling/tokens are setup concerns: plain log only.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz_log e "GITHUB_TOKEN is required"
+  zz-log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  zz_log e "gh CLI could not be found. Please install it."
+  zz-log e "gh CLI could not be found. Please install it."
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  zz_log e "jq could not be found. Please install it."
+  zz-log e "jq could not be found. Please install it."
   exit 1
 fi
 
@@ -40,11 +40,11 @@ PR_NUMBER=$(printf '%s'   "${PR_JSON}" | jq -r '.number')
 PR_URL=$(printf '%s'      "${PR_JSON}" | jq -r '.url')
 
 if [ -z "${HEAD_BRANCH:-}" ] || [ -z "${BASE_BRANCH:-}" ]; then
-  zz_log e "Could not resolve head or base branch for PR #${PR_NUMBER}."
+  zz-log e "Could not resolve head or base branch for PR #${PR_NUMBER}."
   exit 1
 fi
 
-zz_log i "Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})"
+zz-log i "Rebasing PR #${PR_NUMBER} (${HEAD_BRANCH} onto ${BASE_BRANCH})"
 
 git config --global --add safe.directory "$(pwd)" >/dev/null 2>&1 || true
 
@@ -56,7 +56,7 @@ MERGE_BASE=$(git merge-base "origin/${HEAD_BRANCH}" "origin/${BASE_BRANCH}")
 BASE_TIP=$(git rev-parse "origin/${BASE_BRANCH}")
 
 if [ "${MERGE_BASE}" = "${BASE_TIP}" ]; then
-  zz_log n "PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do."
+  zz-log n "PR #${PR_NUMBER} is already up-to-date with ${BASE_BRANCH}, nothing to do."
   printf 'action=up-to-date\n'
   printf 'head_branch=%s\n' "${HEAD_BRANCH}"
   printf 'base_branch=%s\n' "${BASE_BRANCH}"
@@ -88,7 +88,7 @@ NEW_HEAD=$(git -C "${TMP_DIR}" rev-parse HEAD)
 # Extract short SHA with awk for annotation
 SHORT_SHA=$(git -C "${TMP_DIR}" rev-parse --short=8 HEAD)
 
-zz_log n "PR #${PR_NUMBER} successfully rebased. New HEAD: ${SHORT_SHA} (${NEW_HEAD})"
+zz-log n "PR #${PR_NUMBER} successfully rebased. New HEAD: ${SHORT_SHA} (${NEW_HEAD})"
 
 printf 'action=rebased\n'
 printf 'head_branch=%s\n' "${HEAD_BRANCH}"

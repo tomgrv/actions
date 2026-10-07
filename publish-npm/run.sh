@@ -20,23 +20,23 @@ DRY_RUN="${DRY_RUN:-false}"
 
 # Validate required tools
 if ! command -v node >/dev/null 2>&1; then
-  zz_log e "node could not be found. Please install Node.js to run this action."
+  zz-log e "node could not be found. Please install Node.js to run this action."
   exit 1
 fi
 
 if ! command -v npm >/dev/null 2>&1; then
-  zz_log e "npm could not be found. Please install npm to run this action."
+  zz-log e "npm could not be found. Please install npm to run this action."
   exit 1
 fi
 
 # Navigate to package directory
 if [ "${PACKAGE_PATH}" != "." ]; then
-  cd "${PACKAGE_PATH}" || { zz_log e "Could not change to directory '${PACKAGE_PATH}'"; exit 1; }
+  cd "${PACKAGE_PATH}" || { zz-log e "Could not change to directory '${PACKAGE_PATH}'"; exit 1; }
 fi
 
 # Validate package.json exists
 if [ ! -f "package.json" ]; then
-  zz_log e "package.json not found in '${PACKAGE_PATH}'"
+  zz-log e "package.json not found in '${PACKAGE_PATH}'"
   exit 1
 fi
 
@@ -45,17 +45,17 @@ PACKAGE_NAME=$(node -e "console.log(require('./package.json').name)")
 PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version)")
 
 if [ -z "${PACKAGE_NAME}" ] || [ -z "${PACKAGE_VERSION}" ]; then
-  zz_log e "Failed to extract package name or version from package.json"
+  zz-log e "Failed to extract package name or version from package.json"
   exit 1
 fi
 
-zz_log i "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}"
+zz-log i "Publishing ${PACKAGE_NAME}@${PACKAGE_VERSION} to ${REGISTRY_URL}"
 
 # Authentication is handled by npm itself: with `id-token: write` on the job (npm 11.5.1+), `npm publish`
 # requests the OIDC token for the registry and exchanges it for a short-lived publish token.
 # Do not write an _authToken to .npmrc, it would take precedence over this exchange.
 if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && [ "${DRY_RUN}" != "true" ]; then
-  zz_log e "GitHub Actions OIDC not available. Ensure the job has id-token: write permission."
+  zz-log e "GitHub Actions OIDC not available. Ensure the job has id-token: write permission."
   exit 1
 fi
 
@@ -75,17 +75,17 @@ fi
 # Add dry-run flag if enabled
 if [ "${DRY_RUN}" = "true" ]; then
   PUBLISH_CMD="${PUBLISH_CMD} --dry-run"
-  zz_log i "Running in dry-run mode (no upload will occur)"
+  zz-log i "Running in dry-run mode (no upload will occur)"
 fi
 
 # Execute publish
 if eval "${PUBLISH_CMD}"; then
-  zz_log i "Successfully published ${PACKAGE_NAME}@${PACKAGE_VERSION}"
+  zz-log i "Successfully published ${PACKAGE_NAME}@${PACKAGE_VERSION}"
 
   # Output metadata for downstream steps
   echo "version=${PACKAGE_VERSION}" >> "${GITHUB_OUTPUT}"
   echo "name=${PACKAGE_NAME}" >> "${GITHUB_OUTPUT}"
 else
-  zz_log e "Failed to publish package"
+  zz-log e "Failed to publish package"
   exit 1
 fi

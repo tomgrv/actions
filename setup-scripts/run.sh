@@ -1,15 +1,15 @@
 #!/usr/bin/sh
 
-# Idempotently bootstrap zz_use from tomgrv/scripts, then optionally
-# zz_use every tool listed in SCRIPTS (each pinned to SCRIPTS_REF, when
+# Idempotently bootstrap zz-use from tomgrv/scripts, then optionally
+# zz-use every tool listed in SCRIPTS (each pinned to SCRIPTS_REF, when
 # set, as "<name>@<ref>").
 
 set -eu
 
-# Idempotent: a zz_use already on PATH (a previous step, a caller image
+# Idempotent: a zz-use already on PATH (a previous step, a caller image
 # that ships it, or a re-run in the same job) is reused as-is -- only
 # fetch/install when it's genuinely missing.
-if ! command -v zz_use > /dev/null 2>&1; then
+if ! command -v zz-use > /dev/null 2>&1; then
     ZZ_SCRIPTS_BRANCH="${ZZ_SCRIPTS_BRANCH:-main}"
     curl -fsSL "${ZZ_SCRIPTS_SETUP_URL:-https://raw.githubusercontent.com/tomgrv/scripts/${ZZ_SCRIPTS_BRANCH}/setup.sh}" -o /tmp/zz_setup.sh
     sh /tmp/zz_setup.sh
@@ -37,11 +37,11 @@ for name in ${SCRIPTS}; do
 done
 
 # shellcheck disable=SC2086 -- $pinned is an intentional word-split list
-zz_use ${pinned}
+zz-use ${pinned}
 
 for name in ${SCRIPTS}; do
     command -v "${name}" > /dev/null || {
-        echo "setup-scripts: ${name} not on PATH after zz_use" >&2
+        echo "setup-scripts: ${name} not on PATH after zz-use" >&2
         exit 1
     }
 done

@@ -9,11 +9,11 @@ set -eu
 DRY_RUN="${DRY_RUN:-false}"
 
 command -v git-release-beta > /dev/null || {
-    zz_log e "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)"
+    zz-log e "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 command -v git-release-prod > /dev/null || {
-    zz_log e "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)"
+    zz-log e "release-promote: git-release-prod not on PATH (the setup-scripts step should have installed it)"
     exit 1
 }
 
@@ -24,11 +24,11 @@ comment_released_prs() {
     NEW_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' main 2> /dev/null || true)"
 
     if [ -z "${PREV_TAG}" ] || [ -z "${NEW_TAG}" ] || [ "${PREV_TAG}" = "${NEW_TAG}" ]; then
-        zz_log w "release-promote: no previous/new release tag found (prev='${PREV_TAG}' new='${NEW_TAG}'), skipping PR comments"
+        zz-log w "release-promote: no previous/new release tag found (prev='${PREV_TAG}' new='${NEW_TAG}'), skipping PR comments"
         return 0
     fi
     command -v gh > /dev/null || {
-        zz_log w "release-promote: gh not on PATH, skipping PR comments"
+        zz-log w "release-promote: gh not on PATH, skipping PR comments"
         return 0
     }
 
@@ -42,11 +42,11 @@ comment_released_prs() {
     echo
     for pr in ${PRS}; do
         gh pr comment "${pr}" --repo "${REPO}" --body "Released to main branch as ${NEW_TAG}" ||
-            zz_log w "release-promote: could not comment on PR #${pr}"
+            zz-log w "release-promote: could not comment on PR #${pr}"
         # Issues the PR closes get the same notice.
         for issue in $(gh pr view "${pr}" --repo "${REPO}" --json closingIssuesReferences --jq '.closingIssuesReferences[].number' 2> /dev/null || true); do
             gh issue comment "${issue}" --repo "${REPO}" --body "Released to main branch as ${NEW_TAG}" ||
-                zz_log w "release-promote: could not comment on issue #${issue}"
+                zz-log w "release-promote: could not comment on issue #${issue}"
         done
     done
 }
@@ -64,5 +64,5 @@ if git-release-beta && git-release-prod; then
     exit 0
 fi
 
-zz_log e "git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See .repo/docs/release-process.md in tomgrv/actions for the exact checklist."
+zz-log e "git-release-prod failed to push -- if this looks like a protected-ref rejection, main/tag protection needs a bypass entry for github-actions[bot]. See .repo/docs/release-process.md in tomgrv/actions for the exact checklist."
 exit 1

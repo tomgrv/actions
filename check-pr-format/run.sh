@@ -13,19 +13,19 @@ export GH_TOKEN="${GITHUB_TOKEN:-}"
 
 # Ensure gh CLI is available for fetching PR title
 if ! command -v gh >/dev/null 2>&1; then
-  zz_log e "gh CLI could not be found. Please install it to run this action."
+  zz-log e "gh CLI could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Ensure jq is available for parsing JSON
 if ! command -v jq >/dev/null 2>&1; then
-  zz_log e "jq could not be found. Please install it to run this action."
+  zz-log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Validate required environment variables
 if [ -z "${REPO:-}" ]; then
-  zz_log e "REPO (github.repository) is required"
+  zz-log e "REPO (github.repository) is required"
   exit 1
 fi
 
@@ -33,19 +33,19 @@ fi
 # when running locally, it defaults to empty (treated as a fork PR).
 HEAD_REPO_FULL_NAME="${HEAD_REPO_FULL_NAME:-}"
 if [ -z "${HEAD_REPO_FULL_NAME}" ]; then
-  zz_log i "HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped"
+  zz-log i "HEAD_REPO_FULL_NAME not set, auto-update of PR title will be skipped"
 fi
 
 # Ensure commitlint is available for validating commit messages. --no-save and
 # --no-package-lock keep the caller's package.json and lockfile untouched; the
-# packages still land in ./node_modules, where zz_npx and the commitlint
+# packages still land in ./node_modules, where zz-npx and the commitlint
 # `extends` presets are resolved from.
 commitlint_extends="$(jq -r '.commitlint.extends // [] | if type=="array" then join(" ") else . end' package.json 2>/dev/null || true)"
 commitlint_extends_trimmed="$(printf '%s' "${commitlint_extends}" | tr -d '[:space:]')"
 npm_install_output="$(npm install -q --no-save --no-package-lock --no-audit --no-fund devmoji ${commitlint_extends} 2>&1)"
 npm_install_status=$?
 if [ ${npm_install_status} -ne 0 ]; then
-  zz_log e "${npm_install_output}"
+  zz-log e "${npm_install_output}"
   exit 1
 fi
 
@@ -54,11 +54,11 @@ fi
 # truly empty titles from YAML expansion of null/missing fields.
 PR_TITLE_TRIMMED="$(printf '%s' "${PR_TITLE:-}" | tr -d ' \t')"
 if [ -z "${PR_TITLE_TRIMMED}" ]; then
-  zz_log i "PR_TITLE not set or empty, fetching from GitHub API"
+  zz-log i "PR_TITLE not set or empty, fetching from GitHub API"
   PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
   # Validate that we got a title from the API
   if [ -z "${PR_TITLE}" ]; then
-    zz_log e "PR title could not be fetched from GitHub API"
+    zz-log e "PR title could not be fetched from GitHub API"
     exit 1
   fi
 fi
@@ -69,30 +69,30 @@ fi
 # Attempt to autocorrect the title with devmoji first, then validate the
 # result with commitlint. Errors are only raised when autocorrection isn't
 # enough (still invalid) or can't be applied (fork PR or missing token).
-formatted_title="$(zz_npx devmoji --text "${PR_TITLE}")"
+formatted_title="$(zz-npx devmoji --text "${PR_TITLE}")"
 
-commitlint_output=$(echo "${formatted_title}" | zz_npx commitlint 2>&1)
+commitlint_output=$(echo "${formatted_title}" | zz-npx commitlint 2>&1)
 commitlint_status=$?
 if [ ${commitlint_status} -ne 0 ]; then
-  zz_log e "${commitlint_output}"
+  zz-log e "${commitlint_output}"
   exit 1
 elif [ -n "${commitlint_output}" ]; then
   # commitlint is silent on success -- only log when it actually said something.
-  zz_log i "${commitlint_output}"
+  zz-log i "${commitlint_output}"
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
   if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
     gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
-    zz_log s "PR title updated: ${formatted_title}"
+    zz-log s "PR title updated: ${formatted_title}"
   else
     error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
 
 Current:  ${PR_TITLE}
 Expected: ${formatted_title}"
-    zz_log e "${error_message}"
+    zz-log e "${error_message}"
     exit 1
   fi
 else
-  zz_log s "PR title is valid: ${formatted_title}"
+  zz-log s "PR title is valid: ${formatted_title}"
 fi

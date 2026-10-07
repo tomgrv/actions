@@ -11,18 +11,18 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 if ! command -v reviewdog >/dev/null 2>&1; then
-  zz_log e "reviewdog could not be found. Please install it to run this action."
+  zz-log e "reviewdog could not be found. Please install it to run this action."
   exit 1
 fi
 
 # Token resolution (input vs GITHUB_TOKEN) happens in setup-reviewdog.
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-  zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
+  zz-log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  zz_log e "jq could not be found. Please install it to run this action."
+  zz-log e "jq could not be found. Please install it to run this action."
   exit 1
 fi
 
@@ -34,8 +34,8 @@ REVIEWDOG_FAIL_LEVEL="${REVIEWDOG_FAIL_LEVEL:-error}"
 REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "Check composer/npm lock coherence" "$0" "$@" <<-help
+# positional fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "Check composer/npm lock coherence" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to check (default: .)
 help
 )"
@@ -78,7 +78,7 @@ _check_composer() {
     return 0
   fi
 
-  zz_log i "Validating composer.json / composer.lock in ${_dir}..."
+  zz-log i "Validating composer.json / composer.lock in ${_dir}..."
 
   if _out=$(cd "${_dir}" && composer validate --strict --no-interaction 2>&1); then
     _exit=0
@@ -157,7 +157,7 @@ _check_npm() {
     _workspaces='--workspaces --include-workspace-root'
   fi
 
-  zz_log i "Checking npm lock coherence in ${_dir}..."
+  zz-log i "Checking npm lock coherence in ${_dir}..."
 
   # shellcheck disable=SC2086
   if _out=$(cd "${_dir}" && npm ci --dry-run --package-lock-only --no-audit --no-fund ${_workspaces} 2>&1); then
@@ -195,7 +195,7 @@ ${_shown}"
   return 0
 }
 
-zz_log i "Checking lock coherence in: ${PATHS}"
+zz-log i "Checking lock coherence in: ${PATHS}"
 
 set -f
 _oldifs=$IFS
@@ -211,7 +211,7 @@ for _target in ${PATHS}; do
   if [ ! -d "${_target}" ]; then
     # Functional: absence of a target to analyze is a notice about the
     # analyzed repo, not a setup error.
-    zz_log n "Directory not found, skipping: ${_target}"
+    zz-log n "Directory not found, skipping: ${_target}"
     IFS=','
     continue
   fi
@@ -226,7 +226,7 @@ IFS=$_oldifs
 set +f
 
 if [ -s "${FINDINGS}" ]; then
-  zz_log i "Lock coherence findings:"
+  zz-log i "Lock coherence findings:"
   cat "${FINDINGS}" >&2
 fi
 
@@ -245,7 +245,7 @@ jq -R -s -f "$(dirname "$0")/rdjson.jq" <"${FINDINGS}" | \
 if [ -s "${FINDINGS}" ]; then
   printf 'has-drift=true\n' >> "${GITHUB_OUTPUT}"
 else
-  zz_log i "All lock files are in sync."
+  zz-log i "All lock files are in sync."
   printf 'has-drift=false\n' >> "${GITHUB_OUTPUT}"
 fi
 printf 'drift-files=%s\n' "${DRIFT_FILES}" >> "${GITHUB_OUTPUT}"

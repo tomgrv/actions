@@ -34,7 +34,7 @@ Requires a checkout with `fetch-depth: 0` (the diff is taken from the merge-base
 ## Local Usage
 
 ```sh
-GITHUB_BASE_REF=develop zz_use -x ./list-php-parts
+GITHUB_BASE_REF=develop zz-use -x ./list-php-parts
 ```
 
 ## Example
