@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.46.0 (2026-10-07)
+
+*Commits from: v2.45.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v2.45.0' into develop ([71d0c6c](https://github.com/tomgrv/actions/commit/71d0c6c6556eb979d7b54243c66168f7eeae948e))
+### 📦 prefix-orphan-branches changes
+
+#### Features
+
+- ✨ add action prefixing non-gitflow branches without a PR (#134) ([a8f7b59](https://github.com/tomgrv/actions/commit/a8f7b598123bd932623068909cd3cb5260924670))
+
 ## 2.45.0 (2026-10-06)
 
 *Commits from: v2.44.0..HEAD*
@@ -1102,5 +1117,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-10-06 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
