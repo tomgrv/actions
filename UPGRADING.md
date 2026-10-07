@@ -1,77 +1,202 @@
 <!-- @format -->
 
-# Upgrading
+# Upgrading and breaking-change management
 
-How to ship, and consume, a **breaking change** in the scripts that these
-composite actions bootstrap, without deadlocking CI or releases. Written from
-the v3.0.0 release (`tomgrv/scripts` v1: `zz_*` → `zz-*`,
-`<verb>-json|yaml` → `json-<verb>|yaml-<verb>`). The full rename tables and the
-renaming-repo checklist live in
-[`tomgrv/scripts/UPGRADING.md`](https://github.com/tomgrv/scripts/blob/main/UPGRADING.md).
+A reusable procedure for shipping, and consuming, a **breaking change** across
+the repos that depend on each other (`tomgrv/scripts` → `tomgrv/actions` →
+`tomgrv/devcontainer-features` → consumers such as `perspikapps/vps`). The same
+generic core is kept in each repo's `UPGRADING.md`; only section 0 differs.
 
-## Why a major is required
+## 0. In this repo: `tomgrv/actions` (tooling)
 
-Every action here that installs scripts goes through `setup-scripts`, which
-bootstraps `tomgrv/scripts` **`main`**. When script names change, the
-previously published actions (`@v2`) call `zz_use`, which no longer exists, and
-fail with `setup-scripts/run.sh: zz_use: not found`. Floating tags only move
-within a major, so the breaking release must be a new major (`v3`) and every
-consumer must move off `@v2`.
+- **Role:** tooling. The composite actions bootstrap `tomgrv/scripts` `main`
+  through `setup-scripts`; consumers pin `tomgrv/actions@v<major>`.
+- **What breaks consumers:** any script name an action calls, `setup-scripts`
+  `scripts:` inputs/defaults, action inputs/outputs, and the **major** itself.
+  A provider rename forces a new major here even if no action input changed.
+- **Bootstrap rule:** `.github/workflows/release-prod.yml` must run
+  `uses: ./release-promote` (checkout is `develop`) for the release that follows
+  a provider rename; the previously published tag cannot run against the new
+  provider. Keep the local reference only as long as needed, then return to the
+  published tag.
+- **Self-references:** `$/<action>` inside composite actions follow the running
+  commit; they need no pin change.
+- **Tests:** `ZZ_CACHE_DIR=$(mktemp -d) bats <folder>/run.bats`. `config-bot` and
+  `detect-changes` fail in minimal containers; compare against the base commit.
+- **PR title scope:** an action folder name (e.g. `setup-scripts`).
+- **Release:** `.github/workflows/release-prod.yml` (`dry_run` first).
 
-| Repo             | Before | After  |
-| ---------------- | ------ | ------ |
-| `tomgrv/scripts` | v0.34  | v1.0.0 |
-| `tomgrv/actions` | v2.46  | v3.0.0 |
+## 1. Principles
 
-## Order of operations
+- **A breaking change promotes the major, everywhere it is visible.** Floating
+  tags (`v1`, `v3`) only move inside a major, so anything pinned to the old major
+  keeps resolving to the old code forever. That is a feature (rollback) and a
+  trap (stale pins).
+- **Providers ship before consumers.** Order work along the dependency chain;
+  never the other way round.
+- **Every consumer needs two things: the new name/behaviour and a new pin.**
+  Changing one without the other is the usual cause of a broken upgrade.
+- **Dry-run before every release**, and verify the resulting tags afterwards.
+- **Write the breaking marker where the release tooling reads it:** `!` in the
+  Conventional Commit title **and** a `BREAKING CHANGE:` footer in the squash
+  commit.
 
-1. **scripts** is merged and released first (its `main` carries the new names).
-2. **This repo** — merge the rename PR. Its checks are red by construction (they
-   run the old published `@v2`); merging red needs an explicit decision.
-3. **Bootstrap the release from the checked-out code.** In
-   `.github/workflows/release-prod.yml` use `uses: ./release-promote` (checkout
-   is `develop`) instead of `tomgrv/actions/release-promote@v<old>`: the old
-   tag's `setup-scripts` cannot run against the new scripts.
-4. Dry run (`dry_run: true`), then the real `release-prod`. Confirm the new
-   `v<major>` tags.
-5. Follow-up PR: move every remaining `@v<old>` and `scripts-ref: v<old>`
-   (workflows, action files, docs, stubs) to the new majors; merge when green;
-   patch release. `$/<name>` self-references in composite actions need no change.
+## 2. Roles and the dependency chain
 
-## Checklist in this repo
+| Role                  | Owns                              | Typical repos here                     |
+| --------------------- | --------------------------------- | -------------------------------------- |
+| **Provider**          | The commands/APIs being changed   | `tomgrv/scripts`                       |
+| **Tooling**           | Actions that install and run them | `tomgrv/actions`                       |
+| **Distributor**       | Features/stubs copied to others   | `tomgrv/devcontainer-features`         |
+| **Consumer**          | Calls everything above            | `perspikapps/vps`, any downstream repo |
 
-1. Rewrite script names in every `run.sh`, `action.yml`, workflow, README and
-   `run.bats` — regular files only (never `sed -i` through symlinks), skipping
-   `CHANGELOG.md` and `package-lock.json`.
-2. `setup-scripts` `scripts:` inputs and defaults use the new names
-   (`zz-log zz-npx`).
-3. Bats stubs that define a script as a shell **function** must become
-   executables: `sh` cannot define `zz-log() { … }`.
-4. Merge `develop` right before finishing — actions added meanwhile (e.g.
-   `prefix-orphan-branches`) still reference old names.
-5. PR title scope must be one of the action folder names (e.g. `setup-scripts`),
-   header ≤ 100 chars. Squash-merge with `!` in the title and a
-   `BREAKING CHANGE:` footer.
-6. Run `bats` with a fresh cache (`ZZ_CACHE_DIR=$(mktemp -d)`) and compare any
-   failure with the pre-change commit — `config-bot` and `detect-changes` fail
-   in minimal containers regardless of the rename.
+Chain: **Provider → Tooling → Distributor → Consumer.** CI in every repo
+installs the provider's `main` and runs the **published** tooling major, so a
+change in the provider is visible to every repo's CI the moment it reaches
+`main`.
 
-## Pitfalls we hit
+## 3. Procedure
 
-- A check re-run reuses the original event payload (old PR title): push, or
-  mark the PR ready for review.
-- Ready-for-review starts checks that never ran on the draft.
-- Pinning an old `release-promote` (`@v2.22.0`) does **not** protect a release:
-  it still bootstraps `scripts` `main`. Move to the new major.
-- After a squash merge the remote branch can survive; before reusing the name
-  verify its tree equals `develop`, then `--force-with-lease`.
+### 3.1 Plan
 
-## Upgrading a consuming workflow
+1. Write down the change as a table: old → new (names, flags, paths, config
+   keys, tags). Decide what is **deliberately unchanged** (data formats, cache
+   directories, environment variables) and say so in the table.
+2. Inventory consumers: `grep` every repo for the old names **and** for the pins
+   (`tomgrv/actions@v<old>`, `scripts-ref: v<old>`, pinned `release-promote`
+   tags, workflow stubs deployed to other repos).
+3. Compute the version map (old → new major) for every repo in the chain.
+4. Decide compatibility: hard break (preferred when old and new cannot coexist)
+   or a deprecation window with aliases. Record the decision in the PR.
+
+### 3.2 Implement (per repo, provider first)
+
+1. Rename files/folders with `git mv`; update manifests, workspace lists,
+   `bin` entries, peer dependencies.
+2. Rewrite references with a **word-bounded** pattern on **regular files only**.
+   Skip `CHANGELOG.md`, lockfiles, symlinks, historical review documents.
+3. Rewrite the **pins** in the same change: workflows, composite actions, docs,
+   and **stubs that are deployed to other repos**.
+4. **Merge the base branch again before finishing.** Work merged meanwhile still
+   uses the old names and can break the merge tree.
+5. Add a compatibility layer only if step 3.1.4 says so.
+
+### 3.3 Verify
+
+1. Run the suite with a **fresh cache** and a clean `PATH`; a stale local cache
+   makes a correct install look broken.
+2. Compare every failure with the pre-change commit (`git worktree add <dir> <base>`).
+   Only failures that are new count; environmental ones (tool flavour, git
+   identity) fail on the base too.
+3. Re-grep for leftovers, including **quoted** forms (`"$BIN/old"`) and
+   **escaped Markdown** (`old\_name`).
+4. Read your own diff adversarially: what would make CI or a consumer reject it?
+
+### 3.4 Ship
+
+Follow the chain; for each repo:
+
+1. Open the PR (title scope and ≤ 100-character header per repo rules).
+2. Mark it **ready for review** only when you want the full check set; some
+   checks never run on drafts.
+3. Merge when green. If CI is red **only** because it runs the not-yet-released
+   provider/tooling, that is the known deadlock: merge needs an explicit
+   decision, and the release workflow must bootstrap from the checked-out code
+   (e.g. `uses: ./<action>`) instead of the previous published tag.
+4. Squash-merge when merge commits are disabled; carry the breaking marker.
+5. `workflow_dispatch` the release with `dry_run: true`, read the result, then
+   run it for real.
+6. Verify the new tags (`v<major>`, `v<major>.<minor>`, `v<major>.<minor>.<patch>`).
+7. Only then move on to the next repo in the chain.
+
+### 3.5 Follow-up pins
+
+After the new majors exist, bump every remaining `@v<old>` /
+`scripts-ref: v<old>` (including the provider's and tooling's own workflows),
+merge, and cut a patch release. Re-run the leftover grep on each repo's
+released `develop`.
+
+### 3.6 Communicate
+
+Link this guide from the README/`CLAUDE.md`, put the old → new table and the
+new pins in the release notes, and tell consumers the order in section 5.
+
+## 4. Failure catalogue
+
+| Symptom                                                      | Cause                                                                    | Fix                                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `<old>: not found` in CI of every repo                       | CI runs the published tooling major that still calls the old name        | Release provider, then tooling; pin the new major                    |
+| Release fails although the pin points at an old tag          | The pinned tooling bootstraps the provider's **`main`**, not its pin     | Move the release workflow to the new tooling major                   |
+| `npm install` 404 on a renamed package                       | A file merged from the base still lists the old package name             | Merge the base again, rewrite the new files                          |
+| `Syntax error: Bad function name` in a stub                  | POSIX `sh` function names cannot contain `-`                             | Make the stub an executable on `PATH`                                |
+| A test still looks for the old name                          | Quoted or Markdown-escaped occurrences missed by the rewrite             | Grep for quotes and `\_` after rewriting                             |
+| A symlinked file became a regular file                       | `sed -i` replaces symlinks                                               | Rewrite regular files only                                           |
+| Check re-run still sees the old PR title                     | Re-runs reuse the original event payload                                 | Push a commit or mark the PR ready for review                        |
+| `non-fast-forward` when reusing the PR branch name           | The remote branch survived the squash merge                              | Verify its tree equals the base, then `--force-with-lease=<ref>:<sha>` |
+| Install fails only locally                                   | Stale cache from before the provider release                             | Use a fresh cache directory                                          |
+| Title check fails on scope                                   | Each repo has its own scope enum                                         | Use a scope from the repo's list                                     |
+
+## 5. Upgrading a consumer
 
 ```sh
-grep -rn -E 'tomgrv/actions[^ ]*@v2|scripts-ref: v0' .github
+# 1. find old names (adapt the pattern to the change table)
+grep -rIl -E '<old-name-1>|<old-name-2>' . --exclude-dir=node_modules --exclude-dir=.git
+# 2. find stale pins
+grep -rn -E 'tomgrv/actions[^ ]*@v<old>|scripts-ref: v<old>' .github
 ```
 
-Change `@v2` → `@v3` and `scripts-ref: v0` → `v1` together, rename any script
-you call directly, and run the workflow once with `workflow_dispatch`.
-Rollback is the reverse, again **together**.
+1. Rename per the table.
+2. Move **all** pins to the new majors **together**.
+3. Re-run the installers (`configure-feature`, `zz-update`, rebuild the
+   container) so deployed stubs are replaced.
+4. Trigger each workflow once with `workflow_dispatch`.
+
+## 6. Rollback
+
+Pin the previous majors **together** (tooling, provider ref, any pinned release
+action). Mixing a new provider with old tooling, or the reverse, fails at the
+first renamed call. Rollback never needs a revert commit: re-pin, rerun.
+
+## 7. Worked example: the `zz-*` rename
+
+Provider `tomgrv/scripts` renamed `zz_*` → `zz-*` and
+`<verb>-json|yaml` → `json-<verb>|yaml-<verb>`, adding `json` / `yaml`
+dispatchers.
+
+| Repo                           | Before | After  |
+| ------------------------------ | ------ | ------ |
+| `tomgrv/scripts`               | v0.34  | v1.0.0 |
+| `tomgrv/actions`               | v2.46  | v3.0.0 |
+| `tomgrv/devcontainer-features` | v8.29  | v9.0.0 |
+| `perspikapps/vps`              | v0.3.0 | v1.0.0 |
+
+| Old                                                                      | New                                                                      |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `zz_args zz_ask zz_bindir zz_call zz_colors zz_dispatch zz_input`        | `zz-args zz-ask zz-bindir zz-call zz-colors zz-dispatch zz-input`        |
+| `zz_install zz_log zz_menu zz_npx zz_persist zz_prompt zz_update zz_use` | `zz-install zz-log zz-menu zz-npx zz-persist zz-prompt zz-update zz-use` |
+| glob `zz_*`, `config/zz_use.json`                                        | glob `zz-*`, `config/zz-use.json`                                        |
+| `normalize-json merge-json validate-json load-json`                      | `json-normalize json-merge json-validate json-load` (+ `json <sub>`)     |
+| `merge-yaml`                                                             | `yaml-merge` (+ `yaml <sub>`)                                            |
+| npm `@tomgrv/scripts-zz_args` …                                          | `@tomgrv/scripts-zz-args` …                                              |
+| shims `zz_context zz_dist zz_edit zz_json`                               | `zz-context zz-dist zz-edit zz-json`                                     |
+| pins `tomgrv/actions@v2`, `scripts-ref: v0`                              | `tomgrv/actions@v3`, `scripts-ref: v1`                                   |
+
+Unchanged on purpose: `.zz_dist`, `config.zz_dist`, `~/.cache/zz_scripts`, the
+`.zz_use` marker directory, `ZZ_*` environment variables.
+
+Rewrite pattern used (Perl, regular files only):
+
+```perl
+my $lb = qr/(?<![A-Za-z0-9_.\$])/;   # not part of a longer identifier or a dotted name
+my $la = qr/(?![A-Za-z0-9_])/;
+s/${lb}zz_(args|ask|bindir|call|colors|dispatch|input|install|log|menu|npx|persist|prompt|update|use)${la}/zz-$1/g;
+s/${lb}zz_\*/zz-*/g;
+s/${lb}(normalize|merge|validate|load)-json${la}/json-$1/g;
+s/${lb}merge-yaml${la}/yaml-merge/g;
+```
+
+Sequence actually followed: scripts merged and released (v1.0.0) → actions merged
+red (release workflow bootstrapped with `./release-promote`, dry run, v3.0.0) →
+devcontainer-features and vps pinned to `@v3`, merged, released → follow-up pin
+PRs (`@v2`→`@v3`, `scripts-ref: v0`→`v1`, `vps` `release-main.yml` →
+`release-promote@v3`) → patch releases.
