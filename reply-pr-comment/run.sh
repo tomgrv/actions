@@ -7,12 +7,12 @@ set -eu
 
 # Missing tooling/tokens are setup concerns: plain log only.
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz_log e "GITHUB_TOKEN is required"
+  zz-log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  zz_log e "gh CLI could not be found. Please install it."
+  zz-log e "gh CLI could not be found. Please install it."
   exit 1
 fi
 
@@ -24,17 +24,17 @@ REPLY_TO_URL="${REPLY_TO_URL:-}"
 BODY="${BODY:-}"
 
 if [ -z "${REPOSITORY}" ]; then
-  zz_log e "Provide repository or set GITHUB_REPOSITORY."
+  zz-log e "Provide repository or set GITHUB_REPOSITORY."
   exit 1
 fi
 
 if [ -z "${ISSUE_NUMBER}" ]; then
-  zz_log e "issue-number is required."
+  zz-log e "issue-number is required."
   exit 1
 fi
 
 if [ -z "${BODY}" ]; then
-  zz_log e "body is required."
+  zz-log e "body is required."
   exit 1
 fi
 
@@ -44,7 +44,7 @@ else
   FULL_BODY="${BODY}"
 fi
 
-zz_log i "Posting comment on ${REPOSITORY}#${ISSUE_NUMBER}"
+zz-log i "Posting comment on ${REPOSITORY}#${ISSUE_NUMBER}"
 
 COMMENT_RESULT=$(gh api \
   --method POST \
@@ -57,7 +57,7 @@ COMMENT_RESULT=$(gh api \
 COMMENT_ID=$(printf '%s' "${COMMENT_RESULT}" | cut -f1)
 COMMENT_URL=$(printf '%s' "${COMMENT_RESULT}" | cut -f2)
 
-zz_log i "Comment posted: id=${COMMENT_ID}, url=${COMMENT_URL}"
+zz-log i "Comment posted: id=${COMMENT_ID}, url=${COMMENT_URL}"
 
 printf 'comment-id=%s\n' "${COMMENT_ID}"
 printf 'comment-url=%s\n' "${COMMENT_URL}"

@@ -1,6 +1,6 @@
 {
   "name": "confirm-pr-comment",
-  "version": "2.31.0",
+  "version": "3.0.0",
   "description": "Add a reaction emoji to the current GitHub event comment.",
   "inputs": {
     "GITHUB_TOKEN": {

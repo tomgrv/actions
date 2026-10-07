@@ -1,6 +1,6 @@
 {
   "name": "@tomgrv/actions",
-  "version": "2.46.0",
+  "version": "3.0.0",
   "description": "Composite GitHub Actions for monorepo split, PR validation and PHP setup",
   "keywords": [
     "github-actions",
@@ -204,7 +204,7 @@
       "npx --yes prettier --write"
     ],
     "!(*schema|package-lock).json": [
-      "normalize-json -c -w -a -i -t 4 -f local -l true"
+      "json-normalize -c -w -a -i -t 4 -f local -l true"
     ],
     "!(templates/**/*|**/package-lock|package-lock).{js,jsx,ts,tsx,md,html,css,vue,yaml,yml,json}": [
       "npx --yes prettier --write"

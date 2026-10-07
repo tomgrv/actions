@@ -11,11 +11,11 @@ LABELS="${LABELS:-25 documentation,10 must,20 should,30 could,80 duplicate,90 wo
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LABELS_FILE}" = ".github/labels.json" ] && [ ! -f "${LABELS_FILE}" ]; then
-  zz_log i "LABELS_FILE not set and .github/labels.json not found, using default inline labels"
+  zz-log i "LABELS_FILE not set and .github/labels.json not found, using default inline labels"
 fi
 
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz_log e "GITHUB_TOKEN is required"
+  zz-log e "GITHUB_TOKEN is required"
   exit 1
 fi
 
@@ -58,19 +58,19 @@ TMP_DIR=$(mktemp -d)
 
 # Check if labels file exists and is readable
 if [ -f "${LABELS_FILE}" ]; then
-  zz_log i "Using labels from file: ${LABELS_FILE}"
+  zz-log i "Using labels from file: ${LABELS_FILE}"
 
   # Parse JSON file (array of objects with name, color, description)
   # Expected format: [{"name":"label-name","color":"hex","description":"desc"},...]
   if ! command -v jq >/dev/null 2>&1; then
-    zz_log e "jq is required to parse JSON labels file"
+    zz-log e "jq is required to parse JSON labels file"
     exit 1
   fi
 
   # Extract label definitions from JSON to @sh format: name color description
   jq -r '.[] | [.name, .color, .description] | @tsv' "${LABELS_FILE}" 2>/dev/null
 else
-  zz_log i "Using comma-separated labels from input: ${LABELS}"
+  zz-log i "Using comma-separated labels from input: ${LABELS}"
 
   
   echo "${LABELS}" | tr ',' '\n' | while read -r line; do
@@ -80,7 +80,7 @@ else
 fi > "${TMP_DIR}/desired_labels"
 
 # Get existing labels from repository
-zz_log i "Fetching existing labels from ${REPOSITORY}"
+zz-log i "Fetching existing labels from ${REPOSITORY}"
 gh label list --repo "${REPOSITORY}" --limit 1000 --json name,color,description --jq '.[] | [.name, .color, .description] | @tsv' 2>/dev/null > "${TMP_DIR}/existing_labels"
 
 
@@ -94,7 +94,7 @@ cat ${TMP_DIR}/existing_labels | tr '\t' '|' | while IFS='|' read -r fullname co
 
     # Attempt to delete label
     if ! gh label delete "${fullname}" --repo "${REPOSITORY}" --yes >&2; then
-      zz_log w "Failed to delete label: ${fullname}"
+      zz-log w "Failed to delete label: ${fullname}"
     fi
   fi
 done
@@ -109,7 +109,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
 
      # Attempt to create label
     if ! gh label create "${fullname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" >&2; then
-      zz_log w "Failed to create label: ${fullname}"
+      zz-log w "Failed to create label: ${fullname}"
     fi
 
   # If label exists but color or description differ, attempt to update (case-insensitive name match)
@@ -120,7 +120,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
 
     # Attempt to update label (color and description)
     if ! gh label edit "${oldname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" --name "${fullname}" >&2; then
-      zz_log w "Failed to update label: ${fullname}"
+      zz-log w "Failed to update label: ${fullname}"
     fi
   fi
 done

@@ -12,14 +12,14 @@ REPO="${REPO:-${GITHUB_REPOSITORY:-}}"
 if [ -z "$REPO" ]; then
   REPO=$(git config --get remote.origin.url | sed -E 's/.*[:\/]([^\/]+\/[^\.]+)(\.git)?$/\1/')
   if [ -z "$REPO" ]; then
-    zz_log e "could not determine repository from GITHUB_REPOSITORY or git remote."
+    zz-log e "could not determine repository from GITHUB_REPOSITORY or git remote."
     exit 1
   fi
 fi
 
-zz_log i "Cleaning branches with closed PRs for repo: ${REPO}"
-zz_log i "Protected branches: ${PROTECTED_BRANCHES}"
-zz_log i "Merged only: ${MERGED_ONLY}"
+zz-log i "Cleaning branches with closed PRs for repo: ${REPO}"
+zz-log i "Protected branches: ${PROTECTED_BRANCHES}"
+zz-log i "Merged only: ${MERGED_ONLY}"
 
 is_protected() {
   branch="$1"
@@ -60,37 +60,37 @@ for line in $closed_branches; do
   fi
 
   if is_protected "$branch"; then
-    zz_log i "Skipping protected branch: ${branch}"
+    zz-log i "Skipping protected branch: ${branch}"
     continue
   fi
 
   if [ "$MERGED_ONLY" = "true" ] && [ "$merged" != "true" ]; then
-    zz_log i "Skipping unmerged closed PR branch: ${branch}"
+    zz-log i "Skipping unmerged closed PR branch: ${branch}"
     continue
   fi
 
   if printf '%s\n' "$open_branches" | grep -qx "$branch"; then
-    zz_log i "Skipping branch still referenced by an open PR: ${branch}"
+    zz-log i "Skipping branch still referenced by an open PR: ${branch}"
     continue
   fi
 
   if ! gh api "repos/${REPO}/git/refs/heads/${branch}" >/dev/null 2>&1; then
-    zz_log i "Branch already deleted: ${branch}"
+    zz-log i "Branch already deleted: ${branch}"
     continue
   fi
 
-  zz_log i "Deleting branch: ${branch}"
+  zz-log i "Deleting branch: ${branch}"
   if gh api -X DELETE "repos/${REPO}/git/refs/heads/${branch}" >/dev/null 2>&1; then
     deleted="${deleted}${branch}
 "
     count=$((count + 1))
   else
-    zz_log w "Failed to delete branch: ${branch}"
+    zz-log w "Failed to delete branch: ${branch}"
   fi
 done
 IFS="$old_ifs"
 
-zz_log i "Deleted ${count} branch(es)."
+zz-log i "Deleted ${count} branch(es)."
 
 {
   echo "deleted-branches<<EOF"

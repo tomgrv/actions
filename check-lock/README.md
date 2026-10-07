@@ -75,11 +75,11 @@ If a lock file's tool is not on the runner, the action reports that as an error 
 
 ## Local Usage
 
-Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 ```sh
-zz_use -x ./check-lock
-zz_use -x ./check-lock .,packages/foo
+zz-use -x ./check-lock
+zz-use -x ./check-lock .,packages/foo
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

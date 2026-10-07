@@ -26,21 +26,21 @@ prepare_image() {
 
     if [ -f "${archive}" ]; then
         if gunzip -c "${archive}" | docker load > /dev/null 2>&1; then
-            zz_log i "setup-gitversion: loaded ${image} from cache"
+            zz-log i "setup-gitversion: loaded ${image} from cache"
             return 0
         fi
-        zz_log w "setup-gitversion: cached image archive unusable, pulling instead"
+        zz-log w "setup-gitversion: cached image archive unusable, pulling instead"
         rm -f "${archive}"
     fi
 
     if ! docker pull -q "${image}" > /dev/null 2>&1; then
-        zz_log w "setup-gitversion: could not pre-pull ${image}, it will be pulled on first use"
+        zz-log w "setup-gitversion: could not pre-pull ${image}, it will be pulled on first use"
         return 0
     fi
 
     mkdir -p "${GITVERSION_CACHE_DIR}" || return 0
     if docker save -o "${archive%.gz}" "${image}" > /dev/null 2>&1 && gzip -1 -f "${archive%.gz}"; then
-        zz_log i "setup-gitversion: archived ${image} for the next run"
+        zz-log i "setup-gitversion: archived ${image} for the next run"
     else
         rm -f "${archive%.gz}" "${archive}"
     fi
@@ -69,9 +69,9 @@ fi
 
 for name in gv bump-tag bump-changelog bump-version gitversion; do
     command -v "${name}" > /dev/null || {
-        zz_log e "setup-gitversion: ${name} not on PATH after install"
+        zz-log e "setup-gitversion: ${name} not on PATH after install"
         exit 1
     }
 done
 
-zz_log i "setup-gitversion: installed gitversion ${GITVERSION_VERSION}"
+zz-log i "setup-gitversion: installed gitversion ${GITVERSION_VERSION}"

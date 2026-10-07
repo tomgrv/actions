@@ -15,13 +15,13 @@ PHPSTAN_BIN="phpstan"
 REVIEWDOG_BIN="reviewdog"
 
 if [ -z "${REVIEWDOG_GITHUB_API_TOKEN:-}" ]; then
-    zz_log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
+    zz-log e "GITHUB_TOKEN or REVIEWDOG_GITHUB_API_TOKEN is required"
     exit 1
 fi
 
 # TARGET_PATHS is normally supplied via action.yml's env block; the
-# positional fallback below only matters for local `zz_use -x` usage.
-eval "$(zz_args "Run PHPStan" "$0" "$@" <<-help
+# positional fallback below only matters for local `zz-use -x` usage.
+eval "$(zz-args "Run PHPStan" "$0" "$@" <<-help
 	- path	target_paths	Comma-separated list of paths to analyse (default: app)
 help
 )"
@@ -44,7 +44,7 @@ REVIEWDOG_FLAGS="${REVIEWDOG_FLAGS:-}"
 if [ "${DIRTY}" = "true" ] || [ "${WIP}" = "true" ]; then
     TARGET_ARGS="$(printf '%s\n%s\n' "${DIRTY_FILES}" "${WIP_FILES}" | sed '/^$/d' | sort -u | tr '\n' ' ')"
     if [ -z "$(printf '%s' "${TARGET_ARGS}" | tr -d '[:space:]')" ]; then
-        zz_log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan."
+        zz-log n "No changed PHP files under: ${TARGET_PATHS} (dirty=${DIRTY}, wip=${WIP}); skipping PHPStan."
         exit 0
     fi
 else
@@ -53,7 +53,7 @@ fi
 
 if [ -n "${PHPSTAN_CONFIG}" ]; then
     if [ ! -f "${PHPSTAN_CONFIG}" ]; then
-        zz_log e "config file not found: ${PHPSTAN_CONFIG}"
+        zz-log e "config file not found: ${PHPSTAN_CONFIG}"
         exit 1
     fi
     CONFIG_FLAG="-c ${PHPSTAN_CONFIG}"
@@ -61,8 +61,8 @@ else
     CONFIG_FLAG=""
 fi
 
-command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { zz_log e "${PHPSTAN_BIN} not found in PATH"; exit 1; }
-command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { zz_log e "${REVIEWDOG_BIN} not found in PATH"; exit 1; }
+command -v "${PHPSTAN_BIN}" >/dev/null 2>&1 || { zz-log e "${PHPSTAN_BIN} not found in PATH"; exit 1; }
+command -v "${REVIEWDOG_BIN}" >/dev/null 2>&1 || { zz-log e "${REVIEWDOG_BIN} not found in PATH"; exit 1; }
 
 # Run PHPStan to a temp file so its report can be validated before passing it
 # to reviewdog.
@@ -74,12 +74,12 @@ trap 'rm -f "${phpstan_log}"' EXIT INT TERM
 # PHPStan crashing before producing any report is a tooling/setup failure,
 # not an analysis finding.
 if [ ! -s "${phpstan_log}" ]; then
-    zz_log e "PHPStan produced no output."
+    zz-log e "PHPStan produced no output."
     exit 1
 fi
 
 if grep -qi "no files found to analyse" "${phpstan_log}"; then
-    zz_log n "PHPStan: No files found to analyse; nothing to do."
+    zz-log n "PHPStan: No files found to analyse; nothing to do."
     exit 0
 fi
 

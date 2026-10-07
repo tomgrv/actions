@@ -1,6 +1,6 @@
 {
   "name": "check-pr-format",
-  "version": "2.45.0",
+  "version": "3.0.0",
   "description": "Validate and optionally normalize pull request title format.",
   "inputs": {
     "GITHUB_TOKEN": {

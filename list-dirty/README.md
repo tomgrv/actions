@@ -27,10 +27,10 @@ Lists files with uncommitted git changes — staged, unstaged, or untracked — 
 
 ## Local Usage
 
-Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 ```sh
-zz_use -x ./list-dirty
+zz-use -x ./list-dirty
 ```
 
 ## Example

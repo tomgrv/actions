@@ -11,9 +11,9 @@ if [ -n "${GITHUB_WORKSPACE:-}" ]; then
 fi
 
 # LIST_PATHS is normally supplied via action.yml's env block; the positional
-# fallback below only matters for local `zz_use -x` usage.
+# fallback below only matters for local `zz-use -x` usage.
 eval "$(
-    zz_args "List dirty files" "$0" "$@" <<- help
+    zz-args "List dirty files" "$0" "$@" <<- help
 	- path	list_paths	Comma-separated list of paths to restrict the list to (default: .)
 help
 )"
@@ -23,7 +23,7 @@ LIST_EXTENSIONS="${LIST_EXTENSIONS:-php}"
 
 # Input defaulting is a setup detail, not a finding: plain log only.
 if [ "${LIST_PATHS}" = "." ]; then
-    zz_log i "path not set, using default: ."
+    zz-log i "path not set, using default: ."
 fi
 
 if [ "${LIST_PATHS}" = "." ]; then
@@ -33,7 +33,7 @@ else
 fi
 _ext_regex="\\.($(printf '%s' "${LIST_EXTENSIONS}" | sed 's/,/|/g; s/[^A-Za-z0-9|_.\/-]//g; s/\./\\./g'))\$"
 
-zz_log i "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
+zz-log i "Listing dirty files under: ${LIST_PATHS} (extensions: ${LIST_EXTENSIONS})"
 
 FILES="$(
     {
@@ -48,7 +48,7 @@ if [ -n "${FILES}" ]; then
     COUNT="$(printf '%s\n' "${FILES}" | wc -l | tr -d ' ')"
 fi
 
-zz_log i "Found ${COUNT} dirty file(s)"
+zz-log i "Found ${COUNT} dirty file(s)"
 
 {
     echo "files<<GH_LIST_DIRTY_EOF"

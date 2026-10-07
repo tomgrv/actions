@@ -59,7 +59,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz-log
 
     # Installs deployer/deployer globally (via setup-php's require.sh); setup-php
     # itself puts the global Composer bin directory on PATH, so `dep` resolves.

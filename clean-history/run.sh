@@ -13,18 +13,18 @@ REPO="${REPO:-${GITHUB_REPOSITORY:-}}"
 if [ -z "$REPO" ]; then
   REPO=$(git config --get remote.origin.url | sed -E 's/.*[:\/]([^\/]+\/[^\.]+)(\.git)?$/\1/')
   if [ -z "$REPO" ]; then
-    zz_log e "could not determine repository from GITHUB_REPOSITORY or git remote."
+    zz-log e "could not determine repository from GITHUB_REPOSITORY or git remote."
     exit 1
   fi
 fi
 
-zz_log i "Cleaning history for repo: ${REPO}"
-zz_log i "Keeping at least ${MIN_DAYS} days and ${MIN_RUNS} runs per workflow"
+zz-log i "Cleaning history for repo: ${REPO}"
+zz-log i "Keeping at least ${MIN_DAYS} days and ${MIN_RUNS} runs per workflow"
 
 # Calculate cutoff date (runs older than this AND beyond the min-runs window are deleted)
 cutoff=$(date -d "-${MIN_DAYS} days" "+%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || \
          date -v-${MIN_DAYS}d "+%Y-%m-%dT%H:%M:%SZ" 2>/dev/null)
-zz_log i "Cutoff date: ${cutoff}"
+zz-log i "Cutoff date: ${cutoff}"
 
 # Build list of workflow IDs to process
 if [ -n "$WORKFLOWS" ]; then
@@ -36,7 +36,7 @@ if [ -n "$WORKFLOWS" ]; then
     if [ -n "$wf_id" ]; then
       workflow_ids="${workflow_ids} ${wf_id}"
     else
-      zz_log w "workflow '${wf_file}' not found, skipping."
+      zz-log w "workflow '${wf_file}' not found, skipping."
     fi
   done
 else
@@ -44,12 +44,12 @@ else
 fi
 
 if [ -z "$(echo "$workflow_ids" | tr -d ' ')" ]; then
-  zz_log w "No workflows found."
+  zz-log w "No workflows found."
   exit 0
 fi
 
 for workflow_id in $workflow_ids; do
-  zz_log i "Processing workflow ID: ${workflow_id}"
+  zz-log i "Processing workflow ID: ${workflow_id}"
 
   # Fetch up to 500 runs sorted newest-first (default gh ordering)
   runs_json=$(gh run list --workflow="${workflow_id}" --limit=500 --json databaseId,createdAt 2>/dev/null || echo "[]")
@@ -65,12 +65,12 @@ for workflow_id in $workflow_ids; do
 
   count=0
   for run_id in $to_delete; do
-    zz_log i "Deleting run ${run_id}..."
+    zz-log i "Deleting run ${run_id}..."
     gh run delete "${run_id}" --repo "${REPO}" 2>/dev/null || true
     count=$((count + 1))
   done
 
-  zz_log i "Deleted ${count} runs for workflow ${workflow_id}."
+  zz-log i "Deleted ${count} runs for workflow ${workflow_id}."
 done
 
-zz_log i "Done."
+zz-log i "Done."

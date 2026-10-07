@@ -9,10 +9,10 @@ setup() {
   STUB_BIN="$(mktemp -d)"
   ARGS_FILE="${STUB_BIN}/args"
 
-  # zz_log is a no-op; php-list-changed records its arguments and prints $STUB_MATRIX.
-  printf '#!/bin/sh\nexit 0\n' > "${STUB_BIN}/zz_log"
+  # zz-log is a no-op; php-list-changed records its arguments and prints $STUB_MATRIX.
+  printf '#!/bin/sh\nexit 0\n' > "${STUB_BIN}/zz-log"
   printf '#!/bin/sh\necho "$@" > "%s"\nprintf "%%s" "$STUB_MATRIX"\n' "${ARGS_FILE}" > "${STUB_BIN}/php-list-changed"
-  chmod +x "${STUB_BIN}/zz_log" "${STUB_BIN}/php-list-changed"
+  chmod +x "${STUB_BIN}/zz-log" "${STUB_BIN}/php-list-changed"
 
   cd "$TEST_DIR"
   git init -q -b main

@@ -27,10 +27,10 @@ This action has no outputs.
 
 ## Local Usage
 
-Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 ```sh
-zz_use -x ./check-pr-format
+zz-use -x ./check-pr-format
 ```
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.

@@ -32,7 +32,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: zz_log
+        scripts: zz-log
 
     # Intentionally the ONLY place that inspects github.event_name/github.ref, so
     # every trigger (push, PR review, tag, or workflow_dispatch/unlock with no

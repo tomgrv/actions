@@ -60,10 +60,10 @@ When an `artisan` file is present, the action bootstraps the application before 
 
 ## Local Usage
 
-Run this action locally from a clone of this repository with [`zz_use`](https://github.com/tomgrv/scripts/tree/main/zz_use):
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
 
 ```sh
-zz_use -x ./run-phptests
+zz-use -x ./run-phptests
 ```
 
 Inputs are read from the matching environment variables when running locally: `WORKING_DIRECTORY`, `INSTALL`, `TEST_RUNNER`, `TEST_PATHS`, `TEST_FLAGS`, `COVERAGE`, `COVERAGE_FILE`, `JUNIT_FILE`, `MIGRATE`, and the usual `REVIEWDOG_*` variables.
