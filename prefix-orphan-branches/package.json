@@ -25,6 +25,11 @@
       "required": false,
       "default": "develop"
     },
+    "INIT_GITFLOW": {
+      "description": "When true, initialize git-flow with the branch inputs and default prefixes before running.",
+      "required": false,
+      "default": "true"
+    },
     "DRY_RUN": {
       "description": "When true, only list the branches that would be renamed.",
       "required": false,

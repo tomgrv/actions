@@ -25,6 +25,10 @@ inputs:
     description: Branch git-flow treats as develop.
     required: false
     default: develop
+  init-gitflow:
+    description: When true, initialize git-flow with the branch inputs and default prefixes before running. When false, only a git-flow config already present is used, and nothing is renamed without one.
+    required: false
+    default: 'true'
   dry-run:
     description: When true, only list the branches that would be renamed.
     required: false
@@ -47,6 +51,7 @@ runs:
         scripts: git-fix-orphans zz_log
 
     - name: Initialize git-flow
+      if: inputs.init-gitflow == 'true'
       uses: $/setup-gitflow
       with:
         master-branch: ${{ inputs.master-branch }}

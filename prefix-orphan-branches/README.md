@@ -20,6 +20,10 @@ Optional. Prefix prepended to orphan branch names. Defaults to `orphan/`.
 
 Optional. Branches git-flow treats as production and develop. Default to `main` and `develop`.
 
+### init-gitflow
+
+Optional. When `true` (default), initializes git-flow with the branch inputs and default prefixes first. When `false`, only a git-flow config already present on the runner is used, and nothing is renamed without one.
+
 ### dry-run
 
 Optional. When `true`, only lists the branches that would be renamed. Defaults to `false`.
