@@ -1,6 +1,6 @@
 {
   "name": "create-update-ref",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Create a git ref (tag/branch), force-updating it if it already exists.",
   "inputs": {
     "GITHUB_TOKEN": {
