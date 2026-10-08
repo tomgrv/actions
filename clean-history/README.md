@@ -25,7 +25,7 @@ Optional. Comma-separated list of workflow file names to clean (e.g. `deploy.yml
 
 ```yaml
 - name: Clean workflow history
-  uses: tomgrv/actions/clean-history@v3
+  uses: tomgrv/actions/clean-history@v4
   with:
     min-days: '10'
     min-runs: '10'
@@ -33,7 +33,7 @@ Optional. Comma-separated list of workflow file names to clean (e.g. `deploy.yml
 
 ```yaml
 - name: Clean specific workflows
-  uses: tomgrv/actions/clean-history@v3
+  uses: tomgrv/actions/clean-history@v4
   with:
     workflows: deploy.yml,clean.yml,split.yml
     min-days: '10'

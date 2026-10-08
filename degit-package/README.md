@@ -76,7 +76,7 @@ jobs:
 
             - name: List packages
               id: list
-              uses: tomgrv/actions/list-packages@v1
+              uses: tomgrv/actions/list-packages@v4
 
     degit-packages:
         runs-on: ubuntu-latest
@@ -97,14 +97,14 @@ jobs:
                   repositories: ${{ matrix.package.name }}
 
             - name: Configure git bot
-              uses: tomgrv/actions/config-bot@v1
+              uses: tomgrv/actions/config-bot@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   github-app-slug: ${{ steps.app-token.outputs.app-slug }}
 
             - name: Import package content
               id: degit
-              uses: tomgrv/actions/degit-package@v1
+              uses: tomgrv/actions/degit-package@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   source-organization: ${{ matrix.package.org }}
@@ -113,7 +113,7 @@ jobs:
 
             - name: Create or update pull request
               if: ${{ steps.degit.outputs.has-changes == 'true' }}
-              uses: tomgrv/actions/create-pr@v1
+              uses: tomgrv/actions/create-pr@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   repository: ${{ matrix.package.org }}/${{ matrix.package.name }}

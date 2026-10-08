@@ -60,13 +60,13 @@ jobs:
                   private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
             - name: Configure git bot
-              uses: tomgrv/actions/config-bot@v1
+              uses: tomgrv/actions/config-bot@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   github-app-slug: ${{ steps.app-token.outputs.app-slug }}
 
             - name: Create pull request
-              uses: tomgrv/actions/create-pr@v1
+              uses: tomgrv/actions/create-pr@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   head-branch: chore/automated-update

@@ -71,16 +71,16 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
+              uses: tomgrv/actions/setup-php@v4
               with:
                   options: '--no-dev'
 
             - name: Setup Node.js toolchain
-              uses: tomgrv/actions/setup-node@v1
+              uses: tomgrv/actions/setup-node@v4
 
             - name: List packages
               id: list
-              uses: tomgrv/actions/list-packages@v1
+              uses: tomgrv/actions/list-packages@v4
 
     split-package:
         runs-on: ubuntu-latest
@@ -103,14 +103,14 @@ jobs:
                   repositories: ${{ matrix.package.name }}
 
             - name: Configure git bot
-              uses: tomgrv/actions/config-bot@v1
+              uses: tomgrv/actions/config-bot@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   github-app-slug: ${{ steps.app-token.outputs.app-slug }}
 
             - name: Split package
               id: split
-              uses: tomgrv/actions/split-package@v1
+              uses: tomgrv/actions/split-package@v4
               with:
                   package-directory: ${{ matrix.package.path }}
                   repository-organization: ${{ matrix.package.org }}
@@ -119,7 +119,7 @@ jobs:
 
             - name: Create pull request
               if: ${{ steps.split.outputs.split-branch != '' }}
-              uses: tomgrv/actions/create-pr@v1
+              uses: tomgrv/actions/create-pr@v4
               with:
                   github-token: ${{ steps.app-token.outputs.token }}
                   repository: ${{ matrix.package.org }}/${{ matrix.package.name }}

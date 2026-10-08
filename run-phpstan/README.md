@@ -91,7 +91,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run PHPStan
-              uses: tomgrv/actions/run-phpstan@v1
+              uses: tomgrv/actions/run-phpstan@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app,modules

@@ -33,12 +33,12 @@ Required environment variables must be set before running. See [Inputs](#inputs)
 ```yaml
 - name: Resolve deploy target
   id: target
-  uses: tomgrv/actions/resolve-environment@v0
+  uses: tomgrv/actions/resolve-environment@v4
   with:
     dep: deploy
 
 - name: Run Deployer
-  uses: tomgrv/actions/run-deployer@v0
+  uses: tomgrv/actions/run-deployer@v4
   with:
     dep: deploy
     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}

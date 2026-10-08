@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.1.0 (2026-10-08)
+
+*Commits from: v4.0.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v4.0.0' into develop ([dbd19f7](https://github.com/tomgrv/actions/commit/dbd19f79c06f4e2c54dd67a22698995e5d14685e))
+### 📦 setup-scripts changes
+
+#### Other changes
+
+- 👷 pin sibling actions to v4, scripts-ref to v2 and features to v10 (#140) ([80671a4](https://github.com/tomgrv/actions/commit/80671a46712d4703f5b7a088d9276500dd1e9fb8))
+- 👷 run update-features every night instead of every week (#139) ([2747803](https://github.com/tomgrv/actions/commit/274780352e6611b060dd9063655551d2fdd66cdc))
+
 ## 4.0.0 (2026-10-07)
 
 *Commits from: v3.2.0..HEAD*
@@ -1178,5 +1194,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-10-07 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*

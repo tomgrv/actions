@@ -1,6 +1,6 @@
 {
   "name": "publish-npm",
-  "version": "3.0.0",
+  "version": "4.1.0",
   "description": "Publish an npm package to registry using GitHub OIDC trusted publishers.",
   "inputs": {
     "PACKAGE_PATH": {

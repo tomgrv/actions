@@ -81,7 +81,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Audit Composer dependencies
-              uses: tomgrv/actions/check-security-composer@v1
+              uses: tomgrv/actions/check-security-composer@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

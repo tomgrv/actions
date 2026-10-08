@@ -99,7 +99,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run Pint
-              uses: tomgrv/actions/run-pint@v1
+              uses: tomgrv/actions/run-pint@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app,config,routes,tests
