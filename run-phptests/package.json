@@ -1,6 +1,6 @@
 {
   "name": "run-phptests",
-  "version": "3.0.0",
+  "version": "4.1.0",
   "description": "Run pull request test suite for a PHP project.",
   "scripts": {
     "test": "bats run.bats"
