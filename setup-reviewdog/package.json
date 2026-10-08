@@ -1,6 +1,6 @@
 {
   "name": "setup-reviewdog",
-  "version": "3.0.0",
+  "version": "4.1.0",
   "description": "Setup reviewdog for PR validation actions.",
   "scripts": {
     "test": "bats run.bats"

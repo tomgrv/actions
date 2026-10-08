@@ -1,6 +1,6 @@
 {
   "name": "setup-php",
-  "version": "3.0.0",
+  "version": "4.1.0",
   "description": "Shared PHP and Composer setup for PR validation actions.",
   "scripts": {
     "test": "bats run.bats"

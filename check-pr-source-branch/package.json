@@ -1,6 +1,6 @@
 {
   "name": "check-pr-source-branch",
-  "version": "3.0.0",
+  "version": "4.1.0",
   "description": "Reject pull requests from the main branch unless the title marks them as a hotfix.",
   "scripts": {
     "test": "bats run.bats"
