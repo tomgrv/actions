@@ -81,7 +81,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Audit npm dependencies
-              uses: tomgrv/actions/check-security-npm@v1
+              uses: tomgrv/actions/check-security-npm@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

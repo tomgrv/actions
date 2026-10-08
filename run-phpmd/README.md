@@ -96,7 +96,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run PHPMD
-              uses: tomgrv/actions/run-phpmd@v1
+              uses: tomgrv/actions/run-phpmd@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app

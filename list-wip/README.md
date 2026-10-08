@@ -42,7 +42,7 @@ GITHUB_BASE_REF=main zz-use -x ./list-wip
 ```yaml
 - name: List WIP PHP files
   id: wip
-  uses: tomgrv/actions/list-wip@v1
+  uses: tomgrv/actions/list-wip@v4
   with:
       path: app,config
 

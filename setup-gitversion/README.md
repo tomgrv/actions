@@ -43,7 +43,7 @@ Hub, so the cache only ever saves a pull and never changes the result.
 
 ```yaml
 steps:
-    - uses: tomgrv/actions/setup-gitversion@v1
+    - uses: tomgrv/actions/setup-gitversion@v4
 
     - run: gv -showvariable MajorMinorPatch
 ```

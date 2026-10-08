@@ -134,7 +134,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Publish package
-              uses: tomgrv/actions/publish-npm@v1
+              uses: tomgrv/actions/publish-npm@v4
 
             - name: Announce publication
               run: echo "Published ${{ steps.publish.outputs.name }}@${{ steps.publish.outputs.version }}"
@@ -144,7 +144,7 @@ jobs:
 
 ```yaml
 - name: Publish from packages/ui
-  uses: tomgrv/actions/publish-npm@v1
+  uses: tomgrv/actions/publish-npm@v4
   with:
       path: './packages/ui'
 ```
@@ -153,7 +153,7 @@ jobs:
 
 ```yaml
 - name: Publish next version
-  uses: tomgrv/actions/publish-npm@v1
+  uses: tomgrv/actions/publish-npm@v4
   with:
       tag: 'next'
       provenance: 'true'
@@ -163,7 +163,7 @@ jobs:
 
 ```yaml
 - name: Validate publish configuration
-  uses: tomgrv/actions/publish-npm@v1
+  uses: tomgrv/actions/publish-npm@v4
   with:
       dry-run: 'true'
 ```

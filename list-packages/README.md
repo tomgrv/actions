@@ -97,16 +97,16 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
+              uses: tomgrv/actions/setup-php@v4
               with:
                   options: '--no-dev'
 
             - name: Setup Node.js toolchain
-              uses: tomgrv/actions/setup-node@v1
+              uses: tomgrv/actions/setup-node@v4
 
             - name: List packages
               id: list
-              uses: tomgrv/actions/list-packages@v1
+              uses: tomgrv/actions/list-packages@v4
               with:
                   filter: '.private == false'
 
@@ -122,7 +122,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Split package
-              uses: tomgrv/actions/split-packages@v1
+              uses: tomgrv/actions/split-packages@v4
               with:
                   package-directory: ${{ matrix.package.path }}
                   repository-organization: ${{ matrix.package.org }}

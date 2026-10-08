@@ -90,7 +90,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run PHP Insights
-              uses: tomgrv/actions/run-phpinsights@v1
+              uses: tomgrv/actions/run-phpinsights@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app,config,routes
