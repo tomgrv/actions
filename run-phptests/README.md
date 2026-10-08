@@ -84,7 +84,7 @@ jobs:
 
             - name: Run test suite
               id: tests
-              uses: tomgrv/actions/run-phptests@v1
+              uses: tomgrv/actions/run-phptests@v4
 
             - name: Upload coverage
               if: ${{ steps.tests.outputs.coverage-file != '' }}

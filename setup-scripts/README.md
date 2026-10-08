@@ -45,7 +45,7 @@ run.
 
 ```yaml
 steps:
-    - uses: tomgrv/actions/setup-scripts@v1
+    - uses: tomgrv/actions/setup-scripts@v4
       with:
           scripts: json-validate json-merge
           scripts-ref: v2

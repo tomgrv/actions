@@ -91,7 +91,7 @@ jobs:
             # ... steps that produce changes in the working directory ...
 
             - name: Create or update pull request
-              uses: tomgrv/actions/create-pr@v1
+              uses: tomgrv/actions/create-pr@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   head-branch: chore/automated-update

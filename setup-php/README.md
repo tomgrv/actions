@@ -68,25 +68,25 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Setup PHP toolchain
-              uses: tomgrv/actions/setup-php@v1
+              uses: tomgrv/actions/setup-php@v4
               with:
                   tools: reviewdog,phpstan,phpmd,phpinsights,pint
 
             - name: Validate composer
-              uses: tomgrv/actions/check-lock@v1
+              uses: tomgrv/actions/check-lock@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Audit Composer dependencies
-              uses: tomgrv/actions/check-security-composer@v1
+              uses: tomgrv/actions/check-security-composer@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run PHPStan
-              uses: tomgrv/actions/run-phpstan@v1
+              uses: tomgrv/actions/run-phpstan@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run tests
-              uses: tomgrv/actions/run-phptests@v1
+              uses: tomgrv/actions/run-phptests@v4
 ```

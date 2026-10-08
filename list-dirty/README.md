@@ -38,7 +38,7 @@ zz-use -x ./list-dirty
 ```yaml
 - name: List dirty PHP files
   id: dirty
-  uses: tomgrv/actions/list-dirty@v1
+  uses: tomgrv/actions/list-dirty@v4
   with:
       path: app,config
       extensions: php

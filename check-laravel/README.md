@@ -84,7 +84,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Validate Laravel
-              uses: tomgrv/actions/check-laravel@v1
+              uses: tomgrv/actions/check-laravel@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   paths: app,config,routes
@@ -100,7 +100,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Validate Laravel (no PHPMD)
-              uses: tomgrv/actions/check-laravel@v1
+              uses: tomgrv/actions/check-laravel@v4
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   phpmd: 'false'

@@ -38,7 +38,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Validate PR target branch
-              uses: tomgrv/actions/check-pr-source-branch@v1
+              uses: tomgrv/actions/check-pr-source-branch@v4
 ```
 
 ## Behavior
