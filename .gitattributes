@@ -8,3 +8,11 @@
 CHANGELOG.md export-ignore
 *.yaml merge=yaml
 *.yml merge=yaml
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+.devcontainer export-ignore
+.github export-ignore
+.vscode export-ignore
+.agents export-ignore
+.claude export-ignore
+.gemini export-ignore
