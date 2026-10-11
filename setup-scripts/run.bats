@@ -94,3 +94,19 @@ STUB
   grep -qF "$STUB_BIN" "$gh_path_file"
   rm -f "$gh_path_file"
 }
+
+@test "bootstraps from the pinned v0 ref by default and passes it to setup.sh" {
+  # curl stub: records the URL, writes a setup script that records its argv
+  cat >"${STUB_BIN}/curl" <<'STUB'
+#!/bin/sh
+echo "curl url: $*" >&2
+out=""
+while [ "$#" -gt 0 ]; do [ "$1" = "-o" ] && out="$2"; shift; done
+printf '#!/bin/sh\necho "setup ref: $1 env: $ZZ_ORIGIN_REF" >&2\n' >"$out"
+STUB
+  chmod +x "${STUB_BIN}/curl"
+  unset ZZ_SCRIPTS_BRANCH ZZ_ORIGIN_REF ZZ_SCRIPTS_SETUP_URL
+  run sh "$SCRIPT"
+  [[ "$output" == *"tomgrv/scripts/v0/setup.sh"* ]]
+  [[ "$output" == *"setup ref: v0 env: v0"* ]]
+}
