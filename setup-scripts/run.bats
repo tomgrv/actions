@@ -106,7 +106,9 @@ printf '#!/bin/sh\necho "setup ref: $1 env: $ZZ_ORIGIN_REF" >&2\n' >"$out"
 STUB
   chmod +x "${STUB_BIN}/curl"
   unset ZZ_SCRIPTS_BRANCH ZZ_ORIGIN_REF ZZ_SCRIPTS_SETUP_URL
-  run sh "$SCRIPT"
+  # Hide any zz_use already installed on the machine (CI runners have one on PATH),
+  # which would skip the bootstrap this test is about.
+  run env PATH="${STUB_BIN}:/usr/bin:/bin" sh "$SCRIPT"
   [[ "$output" == *"tomgrv/scripts/v0/setup.sh"* ]]
   [[ "$output" == *"setup ref: v0 env: v0"* ]]
 }
