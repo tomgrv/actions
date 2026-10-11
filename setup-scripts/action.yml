@@ -19,9 +19,9 @@ inputs:
     required: false
     default: ''
   scripts-branch:
-    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz_use (default "main", typically overridden to a development branch during integration testing).
+    description: Branch to fetch tomgrv/scripts setup.sh from when bootstrapping zz_use (default "v0", the last tomgrv/scripts line with the zz_* names, typically overridden to a development branch during integration testing).
     required: false
-    default: main
+    default: v0
 
 runs:
   using: composite

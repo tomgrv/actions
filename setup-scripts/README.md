@@ -24,7 +24,7 @@ each script's own default origin/ref (its repo's default branch).
 ### scripts-branch
 
 **Optional.** Branch to fetch `tomgrv/scripts` `setup.sh` from when
-bootstrapping `zz_use` (default `main`, typically overridden to a
+bootstrapping `zz_use` (default `v0`, the last `tomgrv/scripts` line with the `zz_*` names, typically overridden to a
 development branch during integration testing).
 
 ## Caching
