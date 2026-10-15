@@ -6,4 +6,4 @@ if [ -z "${WORKSPACE:-}" ]; then
     exit 1
 fi
 
-run-workspace-tests "$WORKSPACE"
+ws-test "$WORKSPACE"
