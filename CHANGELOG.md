@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.0.0 (2026-10-15)
+
+*Commits from: v4.1.0..HEAD*
+
+### 💥 BREAKING CHANGES
+
+- run-workspace-tests and release-promote need the tomgrv/scripts ([4ecb2df](https://github.com/tomgrv/actions/commit/4ecb2dfa7571d068b11517002dd4fc24b2ae9725))
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v4.1.0' into develop ([b30e13c](https://github.com/tomgrv/actions/commit/b30e13c00af3bbcd73b19747a0a1a52ad6b3bcad))
+- update features (#142) ([c3bc032](https://github.com/tomgrv/actions/commit/c3bc032b48c38bc27ce3758406ff058d4d440120))
+### 📦 release-promote changes
+
+#### Bug Fixes
+
+- 🐛 pin the release scripts-ref to v3 (#146) ([e9efb1c](https://github.com/tomgrv/actions/commit/e9efb1c55f04c05fc04bfdb577628b695d00c371))
+
+### 📦 setup-scripts changes
+
+#### Bug Fixes
+
+- 🐛 let update-features push workflow changes with an optional token (#141) ([0fc752b](https://github.com/tomgrv/actions/commit/0fc752bb50822cae53283795d819d3c5058121cc))
+
 ## 4.1.0 (2026-10-08)
 
 *Commits from: v4.0.0..HEAD*
@@ -1195,5 +1220,6 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 
 
 
+
 ---
-*Generated on 2026-10-08 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
+*Generated on 2026-10-15 by [tomgrv/devcontainer-features](https://github.com/tomgrv/devcontainer-features)*
