@@ -91,7 +91,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run FilaCheck
-              uses: tomgrv/actions/run-filacheck@v4
+              uses: tomgrv/actions/run-filacheck@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   path: app/Filament

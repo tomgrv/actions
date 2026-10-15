@@ -131,7 +131,7 @@ runs:
     using: composite
     steps:
         - name: Setup scripts toolchain
-          uses: tomgrv/actions/setup-scripts@v4
+          uses: tomgrv/actions/setup-scripts@v5
           with:
               scripts: zz-log
 

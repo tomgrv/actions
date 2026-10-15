@@ -32,7 +32,7 @@ zz-use -x ./detect-changes
 Run a published release without cloning the repository:
 
 ```sh
-zz-use -x tomgrv/actions/list-packages@v4
+zz-use -x tomgrv/actions/list-packages@v5
 ```
 
 ## Testing

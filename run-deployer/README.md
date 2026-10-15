@@ -77,7 +77,7 @@ Required environment variables must be set before running. See [Inputs](#inputs)
 
 ```yaml
 - name: Run Deployer
-  uses: tomgrv/actions/run-deployer@v4
+  uses: tomgrv/actions/run-deployer@v5
   with:
     dep: deploy
     selector: env=production

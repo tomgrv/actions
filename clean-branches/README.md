@@ -30,14 +30,14 @@ Number of branches deleted.
 
 ```yaml
 - name: Clean branches
-  uses: tomgrv/actions/clean-branches@v4
+  uses: tomgrv/actions/clean-branches@v5
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ```yaml
 - name: Clean merged branches only
-  uses: tomgrv/actions/clean-branches@v4
+  uses: tomgrv/actions/clean-branches@v5
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       protected-branches: main,develop,staging
