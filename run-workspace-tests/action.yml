@@ -20,7 +20,7 @@ runs:
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:
-        scripts: run-workspace-tests
+        scripts: ws-test
 
     - name: Run workspace tests
       shell: sh

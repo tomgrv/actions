@@ -53,13 +53,13 @@ runs:
       uses: $/setup-scripts
       with:
         # bump-version (installed separately by setup-gitversion, from
-        # tomgrv/devcontainer-features) shells out to `git workspaces` for
+        # tomgrv/devcontainer-features) shells out to `ws-list` for
         # its minimal-mode affected-workspace check -- without it on PATH
-        # that call silently fails (git: 'workspaces' is not a git command,
+        # that call silently fails (ws-list: command not found,
         # swallowed by bump-version's own `2>/dev/null || echo ""`), so
         # every workspace looks unaffected and per-workspace version files
         # never get bumped.
-        scripts: git-release-beta git-release-prod git-workspaces zz-log
+        scripts: git-release-beta git-release-prod ws-list zz-log
         scripts-ref: ${{ inputs.scripts-ref }}
 
     - name: Configure git bot identity

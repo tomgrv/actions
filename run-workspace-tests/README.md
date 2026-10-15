@@ -2,7 +2,7 @@
 
 # GitHub Action: Run Workspace Tests
 
-Runs a workspace's `.scripts.test` entry (from each root `*.json` file, typically `package.json`) as its test suite, via [`tomgrv/scripts/run-workspace-tests`](https://github.com/tomgrv/scripts/tree/main/run-workspace-tests).
+Runs a workspace's `.scripts.test` entry (from each root `*.json` file, typically `package.json`) as its test suite, via [`tomgrv/scripts/ws-test`](https://github.com/tomgrv/scripts/tree/main/ws-test).
 
 - No root `*.json` file in the workspace → silently skipped.
 - `*.json` present but no `.scripts.test` entry → warns, does not fail.
