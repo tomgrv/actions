@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.0 (2026-10-15)
+
+*Commits from: v5.0.0..HEAD*
+
+### 📂 Unscoped changes
+
+#### Other changes
+
+- Merge tag 'v5.0.0' into develop ([7d8aca2](https://github.com/tomgrv/actions/commit/7d8aca20490123f712406d2226d52234e06e14a4))
+### 📦 setup-scripts changes
+
+#### Other changes
+
+- 👷 pin sibling actions to v5, scripts to v3 and features to v11 (#147) ([40c2900](https://github.com/tomgrv/actions/commit/40c29009c1f958784ad2931dbe8505211b3d03ee))
+
 ## 5.0.0 (2026-10-15)
 
 *Commits from: v4.1.0..HEAD*
@@ -1210,6 +1225,7 @@ _Commits from: 7de041a1f6cc92abe82b86a200dfa0df0a404d7e..HEAD_
 #### Other changes
 
 - import from monorepo perspikapps/flekskit (#4) ([6f53a6f](https://github.com/tomgrv/actions/commit/6f53a6f8edb7721d1ad674e432488838f2c54b4c))
+
 
 
 

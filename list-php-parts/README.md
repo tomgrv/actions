@@ -51,7 +51,7 @@ jobs:
               with:
                   fetch-depth: 0
             - id: parts
-              uses: tomgrv/actions/list-php-parts@v4
+              uses: tomgrv/actions/list-php-parts@v5
 
     test:
         needs: detect
@@ -63,7 +63,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - uses: tomgrv/actions/run-phptests@v4
+            - uses: tomgrv/actions/run-phptests@v5
               with:
                   paths: ${{ matrix.part.path }}
                   name: phpunit (${{ matrix.part.name }})

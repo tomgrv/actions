@@ -49,7 +49,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Validate PR title format
-              uses: tomgrv/actions/check-pr-format@v4
+              uses: tomgrv/actions/check-pr-format@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   fix: true

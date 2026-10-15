@@ -66,7 +66,7 @@ jobs:
                   fetch-depth: 0
                   ref: develop
 
-            - uses: tomgrv/actions/release-promote@v4
+            - uses: tomgrv/actions/release-promote@v5
               with:
                   scripts-ref: v3
                   dry-run: ${{ inputs.dry_run == true }}

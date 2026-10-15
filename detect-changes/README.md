@@ -57,14 +57,14 @@ jobs:
 
             - name: Detect changes
               id: changes
-              uses: tomgrv/actions/detect-changes@v4
+              uses: tomgrv/actions/detect-changes@v5
               with:
                   path: src
                   options: '--untracked-files=all'
 
             - name: Create PR if changes found
               if: steps.changes.outputs.has-changes == 'true'
-              uses: tomgrv/actions/create-pr@v4
+              uses: tomgrv/actions/create-pr@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

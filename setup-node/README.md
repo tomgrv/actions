@@ -40,10 +40,10 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Setup Node.js toolchain
-              uses: tomgrv/actions/setup-node@v4
+              uses: tomgrv/actions/setup-node@v5
 
             - name: Audit npm dependencies
-              uses: tomgrv/actions/check-security-npm@v4
+              uses: tomgrv/actions/check-security-npm@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

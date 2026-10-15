@@ -41,7 +41,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Scan for secrets
-              uses: tomgrv/actions/check-secret@v4
+              uses: tomgrv/actions/check-secret@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   gitleaks-license: ${{ secrets.GITLEAKS_LICENSE }}
