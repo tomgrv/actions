@@ -1,6 +1,6 @@
 {
   "name": "run-deployer",
-  "version": "4.1.0",
+  "version": "5.1.0",
   "description": "Install PHP Deployer and run a dep command, reporting warnings/errors via reviewdog.",
   "scripts": {
     "test": "bats run.bats"

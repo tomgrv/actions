@@ -1,6 +1,6 @@
 {
   "name": "run-pint",
-  "version": "4.1.0",
+  "version": "5.1.0",
   "description": "Run Laravel Pint with reviewdog.",
   "scripts": {
     "test": "bats run.bats"
