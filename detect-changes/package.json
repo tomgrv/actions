@@ -1,6 +1,6 @@
 {
   "name": "detect-changes",
-  "version": "4.1.0",
+  "version": "5.1.0",
   "description": "Detect uncommitted or untracked changes in a given path using git status.",
   "scripts": {
     "test": "bats run.bats"
