@@ -38,3 +38,10 @@ Homestead.yaml
 /public/css
 /public/js
 ./.gitattributes
+# devcontainer
+.devcontainer/devcontainer-lock.json
+.mono
+.toolkit
+obj
+## Gitversion
+VERSION

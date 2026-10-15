@@ -3,8 +3,6 @@ name: verify-and-stop
 description: Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion checks, focused gate runs, and last-mile proof.
 ---
 
-<!-- @format -->
-
 # Verify and stop
 
 Translate acceptance conditions into smallest sufficient proof set.

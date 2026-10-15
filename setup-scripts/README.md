@@ -48,7 +48,7 @@ steps:
     - uses: tomgrv/actions/setup-scripts@v4
       with:
           scripts: json-validate json-merge
-          scripts-ref: v2
+          scripts-ref: v3
 
     - run: json-validate --help
 ```
