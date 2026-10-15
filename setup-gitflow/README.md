@@ -35,7 +35,7 @@ image — every job starts from zero.
 
 ```yaml
 steps:
-    - uses: tomgrv/actions/setup-gitflow@v4
+    - uses: tomgrv/actions/setup-gitflow@v5
 
     - run: git flow release start 1.2.3
 ```

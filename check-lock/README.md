@@ -104,7 +104,7 @@ jobs:
                   node-version: 24
 
             - name: Validate lock coherence
-              uses: tomgrv/actions/check-lock@v4
+              uses: tomgrv/actions/check-lock@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

@@ -51,12 +51,12 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Setup Reviewdog toolchain
-              uses: tomgrv/actions/setup-reviewdog@v4
+              uses: tomgrv/actions/setup-reviewdog@v5
               with:
                   version: v0.21.0
 
             - name: Run PHPStan
-              uses: tomgrv/actions/run-phpstan@v4
+              uses: tomgrv/actions/run-phpstan@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

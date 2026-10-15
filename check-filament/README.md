@@ -72,7 +72,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Validate Filament
-              uses: tomgrv/actions/check-filament@v4
+              uses: tomgrv/actions/check-filament@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
