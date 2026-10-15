@@ -68,6 +68,6 @@ jobs:
 
             - uses: tomgrv/actions/release-promote@v4
               with:
-                  scripts-ref: v2
+                  scripts-ref: v3
                   dry-run: ${{ inputs.dry_run == true }}
 ```
