@@ -68,7 +68,6 @@ JSON array of package objects, each containing `org`, `name`, `path`, `repositor
 - [**setup-php**](../setup-php/README.md) — install Composer dependencies before listing packages.
 - [**setup-node**](../setup-node/README.md) — install npm dependencies before listing packages.
 
-
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
@@ -99,7 +98,7 @@ jobs:
             - name: Setup PHP toolchain
               uses: tomgrv/actions/setup-php@v5
               with:
-                  options: '--no-dev'
+                  options: "--no-dev"
 
             - name: Setup Node.js toolchain
               uses: tomgrv/actions/setup-node@v5
@@ -108,7 +107,7 @@ jobs:
               id: list
               uses: tomgrv/actions/list-packages@v5
               with:
-                  filter: '.private == false'
+                  filter: ".private == false"
 
     split-packages:
         runs-on: ubuntu-latest

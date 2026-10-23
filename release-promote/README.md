@@ -71,3 +71,11 @@ jobs:
                   scripts-ref: v4
                   dry-run: ${{ inputs.dry_run == true }}
 ```
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/release-promote@v5
+  with:
+      scripts-ref: <scripts-ref>
+```

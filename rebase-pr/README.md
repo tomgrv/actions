@@ -38,27 +38,27 @@ This action rebases the head branch of a pull request onto its base branch using
 name: Rebase PR on comment
 
 on:
-  issue_comment:
-    types: [created]
+    issue_comment:
+        types: [created]
 
 jobs:
-  rebase:
-    if: github.event.issue.pull_request && github.event.comment.body == '/rebase'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+    rebase:
+        if: github.event.issue.pull_request && github.event.comment.body == '/rebase'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Rebase PR
-        uses: tomgrv/actions/rebase-pr@main
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-number: ${{ github.event.issue.number }}
+            - name: Rebase PR
+              uses: tomgrv/actions/rebase-pr@main
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  pr-number: ${{ github.event.issue.number }}
 ```
 
 ### Rebase on PR update
@@ -67,26 +67,26 @@ jobs:
 name: Rebase PR on base update
 
 on:
-  pull_request:
-    types: [synchronize]
+    pull_request:
+        types: [synchronize]
 
 jobs:
-  rebase:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+    rebase:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Rebase PR
-        uses: tomgrv/actions/rebase-pr@main
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          autosquash: 'true'
+            - name: Rebase PR
+              uses: tomgrv/actions/rebase-pr@main
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  autosquash: "true"
 ```
 
 ## Local Usage
@@ -99,3 +99,8 @@ zz-use -x ./rebase-pr
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
 
+## Example
+
+```yaml
+- uses: tomgrv/actions/rebase-pr@v5
+```

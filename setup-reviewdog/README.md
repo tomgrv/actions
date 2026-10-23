@@ -20,6 +20,10 @@ It also resolves the reviewdog GitHub API token the same way: `github-token` (de
 
 **Optional.** GitHub token for reviewdog reporting. Falls back to a bare `GITHUB_TOKEN` env var when empty. Defaults to `github.token`.
 
+### type
+
+**Optional.** Report type: check (github-check), review (github-pr-review), or annotations (github-pr-check). When unset, auto-detects based on event context (PR events use annotations, others use check).
+
 ## Outputs
 
 This action has no outputs.
@@ -60,3 +64,13 @@ jobs:
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./setup-reviewdog
+```
+
+See [Inputs](#inputs) for the environment variables to set.

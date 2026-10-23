@@ -28,10 +28,6 @@ Findings are sorted most severe first and capped at `max-diagnostics` (default `
 
 **Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise), which posts a Check annotation for every finding regardless of whether the PR touches `package.json`. Requires the job to have `checks: write` permission. Set explicitly to `github-pr-review` to post applyable version-bump suggestions instead, but only for findings on lines already part of the PR diff; everything else is dropped to a generic rolled-up comment. Requires `pull-requests: write` permission.
 
-### filter-mode
-
-Fixed to `nofilter`: this action audits the whole dependency tree rather than specific files, so reviewdog reports every finding regardless of diff. Not configurable.
-
 ### fail-level
 
 **Optional.** Exit code for reviewdog if it finds at least the specified level `[none,any,info,warning,error]`. Defaults to `none`.

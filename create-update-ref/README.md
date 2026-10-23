@@ -38,3 +38,23 @@ The ref that was created or updated.
       ref: refs/tags/deploy/myhost
       sha: ${{ github.sha }}
 ```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./create-update-ref
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/create-update-ref@v5
+  with:
+      github-token: <github-token>
+      ref: <ref>
+      sha: <sha>
+```

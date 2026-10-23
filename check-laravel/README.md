@@ -56,6 +56,22 @@ PHP, Composer and reviewdog are set up automatically (each wrapped action embeds
 
 **Optional.** Additional reviewdog flags, shared by every wrapped check. Defaults to empty.
 
+### pint
+
+**Optional.** Whether to run Pint. Defaults to `true`.
+
+### phpinsights
+
+**Optional.** Whether to run PHP Insights. Defaults to `false`.
+
+### phpmd
+
+**Optional.** Whether to run PHPMD. Defaults to `false`.
+
+### tests
+
+**Optional.** Whether to run the test suite. Defaults to `false`.
+
 ## Outputs
 
 - `tests-passed`: Whether the test suite passed.
@@ -103,5 +119,5 @@ jobs:
               uses: tomgrv/actions/check-laravel@v5
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  phpmd: 'false'
+                  phpmd: "false"
 ```

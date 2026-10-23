@@ -16,6 +16,14 @@ Shared composite action that prepares Node.js and npm for workflow jobs. Sets up
 
 **Optional.** Node.js version to set up. Defaults to `24`.
 
+### options
+
+**Optional.** Additional arguments to pass to the install command. includes --no-progress and --workspaces by default.
+
+### bare
+
+**Optional.** If true, skips the `npm ci` step. Useful for actions that only need Node.js and npm available, but not the project's dependencies. Defaults to `false`.
+
 ## Outputs
 
 This action has no outputs.

@@ -24,7 +24,6 @@ This action has no outputs.
 - [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependency security.
 - [**check-security-npm**](../check-security-npm/README.md) — audit npm dependency security.
 
-
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

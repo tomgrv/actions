@@ -52,3 +52,9 @@ steps:
 
     - run: json-validate --help
 ```
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/setup-scripts@v5
+```

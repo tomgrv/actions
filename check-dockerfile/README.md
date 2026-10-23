@@ -1,29 +1,56 @@
+<!-- @format -->
+
 # Check Dockerfile Action
 
 A GitHub Action that validates Dockerfiles against 6 production best practices from [Docker DevOps principles](https://www.linkedin.com/posts/yohan-parent_docker-devops-sre-share-7492635770483023872).
 
 Reports findings via [reviewdog](https://github.com/reviewdog/reviewdog) with inline GitHub annotations.
 
+## Inputs
+
+### dockerfile-path
+
+**Optional.** Path to the Dockerfile to check Defaults to `./Dockerfile`.
+
+### strict
+
+**Optional.** Treat warnings as errors Defaults to `false`.
+
+### github-token
+
+**Optional.** GitHub token for reviewdog reporting
+
+## Outputs
+
+- `issues-found`: Total number of issues found
+- `checks-failed`: Number of failed required checks
+- `checks-warned`: Number of warnings
+
 ## 🎯 What It Checks
 
 ### 1️⃣ Pinned Versions (Required)
+
 - ❌ **Fails if:** `FROM node:latest` or similar `latest` tags found
 - ✅ **Passes if:** Base image has pinned version (e.g., `FROM node:20.11-alpine`)
 - **Why:** `latest` is unpredictable. Pin versions for reproducible builds.
 
 ### 2️⃣ .dockerignore (Warning / Strict)
+
 - ⚠️ **Warns if:** `.dockerignore` file doesn't exist
 - **Why:** Prevents leaking `.git`, `node_modules`, secrets. Prevents 380MB+ of unnecessary data in images.
 
 ### 3️⃣ Multi-Stage Build (Warning / Strict)
+
 - ⚠️ **Warns if:** Only one `FROM` statement (single-stage build)
 - **Why:** Separate build stage from runtime. Reduces image size from 1GB to 90MB.
 
 ### 4️⃣ Non-Root User (Warning / Strict)
+
 - ⚠️ **Warns if:** No `USER` statement or runs as `root`
 - **Why:** Best effort/security ratio. Non-root limits blast radius if container is compromised.
 
 ### 5️⃣ HEALTHCHECK (Warning / Strict)
+
 - ⚠️ **Warns if:** No `HEALTHCHECK` defined
 - **Why:** Orchestrators need it to detect stuck processes. Dead containers stay in production without it.
 
@@ -36,20 +63,20 @@ name: Docker Check
 on: [push, pull_request]
 
 jobs:
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Check Dockerfile best practices
-        uses: tomgrv/actions/check-dockerfile@main
-        with:
-          dockerfile-path: ./Dockerfile
-      
-      - name: Run hadolint linter
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ./Dockerfile
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Check Dockerfile best practices
+              uses: tomgrv/actions/check-dockerfile@main
+              with:
+                  dockerfile-path: ./Dockerfile
+
+            - name: Run hadolint linter
+              uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./Dockerfile
 ```
 
 ### Strict Mode (Fail on Warnings)
@@ -58,8 +85,8 @@ jobs:
 - name: Check Dockerfile
   uses: tomgrv/actions/check-dockerfile@main
   with:
-    dockerfile-path: ./Dockerfile
-    strict: 'true'
+      dockerfile-path: ./Dockerfile
+      strict: "true"
 ```
 
 ### Custom Dockerfile Path
@@ -68,7 +95,7 @@ jobs:
 - name: Check Dockerfile
   uses: tomgrv/actions/check-dockerfile@main
   with:
-    dockerfile-path: ./docker/Dockerfile.prod
+      dockerfile-path: ./docker/Dockerfile.prod
 ```
 
 ### Pairing with hadolint-action
@@ -78,18 +105,18 @@ This action validates 6 specific best practices. Complement it with [hadolint-ac
 ```yaml
 - uses: tomgrv/actions/check-dockerfile@main
   with:
-    dockerfile-path: ./Dockerfile
+      dockerfile-path: ./Dockerfile
 - uses: hadolint/hadolint-action@v3.1.0
   with:
-    dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile
 ```
 
 ## 📊 Outputs
 
 ```yaml
-issues-found:     # Total issues (errors + warnings)
-checks-failed:    # Number of failed required checks
-checks-warned:    # Number of warnings
+issues-found: # Total issues (errors + warnings)
+checks-failed: # Number of failed required checks
+checks-warned: # Number of warnings
 ```
 
 ## ✅ Example: Passing Dockerfile
@@ -126,24 +153,27 @@ CMD ["node", "server.js"]
 
 ## 🔧 Inputs
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `dockerfile-path` | `./Dockerfile` | Path to Dockerfile to check |
-| `strict` | `false` | Treat warnings (2-5) as errors |
-| `github-token` | `github.token` | GitHub token for reviewdog |
+| Input             | Default        | Description                    |
+| ----------------- | -------------- | ------------------------------ |
+| `dockerfile-path` | `./Dockerfile` | Path to Dockerfile to check    |
+| `strict`          | `false`        | Treat warnings (2-5) as errors |
+| `github-token`    | `github.token` | GitHub token for reviewdog     |
 
 ## 📋 Check Behavior
 
 **Default Mode** (`strict: false`):
+
 - Check 1 (Pinned versions): **Required** ❌
 - Checks 2-5 (Others): **Warnings only** ⚠️
 
 **Strict Mode** (`strict: true`):
+
 - All checks: **Required** ❌
 
 ## 🏗️ Architecture
 
 Each check is a separate script:
+
 - `check-pinned-versions.sh` — FROM statements
 - `check-dockerignore.sh` — .dockerignore presence
 - `check-multistage.sh` — Multi-stage detection
@@ -155,3 +185,19 @@ Each check is a separate script:
 ## 📝 License
 
 MIT
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./check-dockerfile
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/check-dockerfile@v5
+```

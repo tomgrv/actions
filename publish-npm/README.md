@@ -42,7 +42,7 @@ permissions:
 
 ```yaml
 with:
-    path: './packages/my-package'
+    path: "./packages/my-package"
 ```
 
 ### registry-url
@@ -53,7 +53,7 @@ Use this to publish to a private registry or alternative npm registry:
 
 ```yaml
 with:
-    registry-url: 'https://npm.example.com/'
+    registry-url: "https://npm.example.com/"
 ```
 
 ### provenance
@@ -64,7 +64,7 @@ Provenance attestations allow consumers to verify the package was built by your 
 
 ```yaml
 with:
-    provenance: 'false' # Disable if using older npm versions
+    provenance: "false" # Disable if using older npm versions
 ```
 
 ### tag
@@ -75,7 +75,7 @@ Use this for pre-release versions or different release channels:
 
 ```yaml
 with:
-    tag: 'next' # Publish as latest-next release, not stable
+    tag: "next" # Publish as latest-next release, not stable
 ```
 
 ### dry-run
@@ -86,7 +86,7 @@ Useful for testing the publish process:
 
 ```yaml
 with:
-    dry-run: 'true'
+    dry-run: "true"
 ```
 
 ## Outputs
@@ -146,7 +146,7 @@ jobs:
 - name: Publish from packages/ui
   uses: tomgrv/actions/publish-npm@v5
   with:
-      path: './packages/ui'
+      path: "./packages/ui"
 ```
 
 ### Pre-release to npm with custom tag
@@ -155,8 +155,8 @@ jobs:
 - name: Publish next version
   uses: tomgrv/actions/publish-npm@v5
   with:
-      tag: 'next'
-      provenance: 'true'
+      tag: "next"
+      provenance: "true"
 ```
 
 ### Test publish with dry-run
@@ -165,7 +165,7 @@ jobs:
 - name: Validate publish configuration
   uses: tomgrv/actions/publish-npm@v5
   with:
-      dry-run: 'true'
+      dry-run: "true"
 ```
 
 ## Troubleshooting
@@ -215,7 +215,7 @@ permissions:
 
 ```yaml
 with:
-    provenance: 'false'
+    provenance: "false"
 ```
 
 ## Local Usage
@@ -242,3 +242,9 @@ This action:
 6. Outputs package metadata for downstream steps
 
 No long-lived secrets are needed. The npm CLI must be 11.5.1 or newer (Node 24 ships it).
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/publish-npm@v5
+```

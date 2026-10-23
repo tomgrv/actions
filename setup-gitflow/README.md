@@ -39,3 +39,9 @@ steps:
 
     - run: git flow release start 1.2.3
 ```
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/setup-gitflow@v5
+```
