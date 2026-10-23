@@ -21,21 +21,43 @@ Optional. Comma-separated list of workflow file names to clean (e.g. `deploy.yml
 
 > **Note**: Up to 500 recent runs are inspected per workflow. Repositories with extremely high run counts may retain some older runs beyond this window.
 
+### github-token
+
+**Required.** GitHub token with actions:read and actions:write permissions.
+
 ## Usage
 
 ```yaml
 - name: Clean workflow history
   uses: tomgrv/actions/clean-history@v5
   with:
-    min-days: '10'
-    min-runs: '10'
+      min-days: "10"
+      min-runs: "10"
 ```
 
 ```yaml
 - name: Clean specific workflows
   uses: tomgrv/actions/clean-history@v5
   with:
-    workflows: deploy.yml,clean.yml,split.yml
-    min-days: '10'
-    min-runs: '10'
+      workflows: deploy.yml,clean.yml,split.yml
+      min-days: "10"
+      min-runs: "10"
+```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./clean-history
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/clean-history@v5
+  with:
+      github-token: <github-token>
 ```

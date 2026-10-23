@@ -47,3 +47,9 @@ steps:
 
     - run: gv -showvariable MajorMinorPatch
 ```
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/setup-gitversion@v5
+```

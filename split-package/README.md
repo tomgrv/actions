@@ -42,7 +42,6 @@ Splits a package from a monorepo a separate repository using [splitsh-lite](http
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before splitting.
 - [**create-pr**](../create-pr/README.md) — open a pull request in the origin repository using `split-branch` and `split-workdir` outputs.
 
-
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
@@ -73,7 +72,7 @@ jobs:
             - name: Setup PHP toolchain
               uses: tomgrv/actions/setup-php@v5
               with:
-                  options: '--no-dev'
+                  options: "--no-dev"
 
             - name: Setup Node.js toolchain
               uses: tomgrv/actions/setup-node@v5
@@ -125,5 +124,5 @@ jobs:
                   repository: ${{ matrix.package.org }}/${{ matrix.package.name }}
                   head-branch: ${{ steps.split.outputs.split-branch }}
                   workdir: ${{ steps.split.outputs.split-workdir }}
-                  pr-title: 'sync: import from monorepo'
+                  pr-title: "sync: import from monorepo"
 ```

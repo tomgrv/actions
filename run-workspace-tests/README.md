@@ -47,3 +47,21 @@ jobs:
 ```sh
 ./.repo/tests/run-tests.sh -f run-workspace-tests
 ```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./run-workspace-tests
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/run-workspace-tests@v5
+  with:
+      workspace: <workspace>
+```

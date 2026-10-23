@@ -28,6 +28,10 @@ Optional. When `true` (default), initializes git-flow with the branch inputs and
 
 Optional. When `true`, only lists the branches that would be renamed. Defaults to `false`.
 
+### develop-branch
+
+**Optional.** Branch git-flow treats as develop. Defaults to `develop`.
+
 ## Outputs
 
 ### renamed-branches
@@ -50,4 +54,22 @@ Number of branches renamed.
   uses: tomgrv/actions/prefix-orphan-branches@v5
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./prefix-orphan-branches
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/prefix-orphan-branches@v5
+  with:
+      github-token: <github-token>
 ```

@@ -47,7 +47,6 @@ Imports the tip of a source repository branch into a target repository workspace
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before pushing the prepared branch.
 - [**create-pr**](../create-pr/README.md) — open or update a pull request using `degit-branch` and `degit-workdir` outputs.
 
-
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
@@ -119,5 +118,5 @@ jobs:
                   repository: ${{ matrix.package.org }}/${{ matrix.package.name }}
                   head-branch: ${{ steps.degit.outputs.degit-branch }}
                   workdir: ${{ steps.degit.outputs.degit-workdir }}
-                  pr-title: 'sync: import from upstream'
+                  pr-title: "sync: import from upstream"
 ```

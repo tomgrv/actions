@@ -143,7 +143,7 @@ Then use the action:
   uses: tomgrv/actions/update-labels
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-      labels: '10 critical,20 high,30 medium,40 low,80 duplicate,90 wont-fix'
+      labels: "10 critical,20 high,30 medium,40 low,80 duplicate,90 wont-fix"
 ```
 
 ### With custom repository
@@ -154,7 +154,7 @@ Then use the action:
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       repository: owner/repo-name
-      labels: '25 documentation,10 must,20 should,30 could'
+      labels: "25 documentation,10 must,20 should,30 could"
 ```
 
 ## Behavior
@@ -185,3 +185,8 @@ zz-use -x ./update-labels
 
 Required environment variables must be set before running. See [Inputs](#inputs) for details.
 
+## Example
+
+```yaml
+- uses: tomgrv/actions/update-labels@v5
+```

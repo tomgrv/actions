@@ -28,7 +28,6 @@ Includes both tracked modifications and untracked files.
 - [**run-pint**](../run-pint/README.md) — run code style checks on changed paths.
 - [**run-phpstan**](../run-phpstan/README.md) — run static analysis only when relevant files changed.
 
-
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
@@ -60,7 +59,7 @@ jobs:
               uses: tomgrv/actions/detect-changes@v5
               with:
                   path: src
-                  options: '--untracked-files=all'
+                  options: "--untracked-files=all"
 
             - name: Create PR if changes found
               if: steps.changes.outputs.has-changes == 'true'

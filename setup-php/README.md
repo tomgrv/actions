@@ -26,6 +26,10 @@ This action also puts `vendor/bin` (project-local) and the global Composer bin d
 
 **Optional.** Comma-separated Composer packages to install globally (`composer global require`), each optionally pinned to a version with `package:constraint` (e.g. `deployer/deployer:^7`). Runs after `composer install`, on every invocation of this action within a job, even when the PHP/Composer setup itself was skipped as an already-ran duplicate, since a different caller may need a different global package. A package already present in the project's own `vendor/` (via `composer.json`), or already installed globally, is skipped. Defaults to none.
 
+### bare
+
+**Optional.** If true, skips the `composer install` step. Useful for actions that only need PHP and Composer available, but not the project's dependencies. Defaults to `false`.
+
 ## Outputs
 
 - `php-version`: Detected PHP version from `composer.json`, or the default (`8.3`).

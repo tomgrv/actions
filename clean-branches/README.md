@@ -14,6 +14,10 @@ Optional. Comma-separated list of branch names that must never be deleted, even 
 
 Optional. When `true`, only delete branches whose PR was merged. When `false` (default), also delete branches whose PR was closed without merging.
 
+### github-token
+
+**Required.** GitHub token with contents:write and pull-requests:read permissions.
+
 ## Outputs
 
 ### deleted-branches
@@ -41,5 +45,23 @@ Number of branches deleted.
   with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       protected-branches: main,develop,staging
-      merged-only: 'true'
+      merged-only: "true"
+```
+
+## Local Usage
+
+Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
+
+```sh
+zz-use -x ./clean-branches
+```
+
+See [Inputs](#inputs) for the environment variables to set.
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/clean-branches@v5
+  with:
+      github-token: <github-token>
 ```

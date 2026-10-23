@@ -6,10 +6,10 @@ Checks that a repository's dependency manifests and lock files are coherent, and
 
 For each directory in `paths`, the action runs whichever checks apply:
 
-| Manifest        | Lock file           | Check                                                                                     |
-| --------------- | -------------------- | ------------------------------------------------------------------------------------------ |
+| Manifest        | Lock file                  | Check                                                                                                      |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `composer.json` | `composer.lock` (optional) | `composer validate --strict` — schema, publish-readiness, and lock content-hash coherence, all in one pass |
-| `package.json`  | `package-lock.json`  | `npm ci --dry-run --package-lock-only` — the check CI itself runs                          |
+| `package.json`  | `package-lock.json`        | `npm ci --dry-run --package-lock-only` — the check CI itself runs                                          |
 
 Both are read-only: nothing is installed and no lock file is rewritten. `--workspaces` is added to the npm check only when `package.json` declares workspaces. `composer.lock` is optional — packages and libraries commonly don't commit one, and `composer.json` is still validated in that case; `package-lock.json` is required for the npm check to run at all.
 
@@ -42,10 +42,6 @@ This catches the case where a pull request edits a manifest but forgets to regen
 ### reporter
 
 **Optional.** Reporter of reviewdog command `[github-pr-check,github-check,github-pr-review]`. Defaults to the reporter resolved by [**setup-reviewdog**](../setup-reviewdog/README.md) for this run's context (`github-pr-check` on pull requests, `github-check` otherwise).
-
-### filter-mode
-
-Fixed to `nofilter`: this action validates repository-wide manifest/lock coherence rather than specific files, so reviewdog reports every finding regardless of diff. Not configurable.
 
 ### fail-level
 

@@ -79,9 +79,19 @@ Required environment variables must be set before running. See [Inputs](#inputs)
 - name: Run Deployer
   uses: tomgrv/actions/run-deployer@v5
   with:
-    dep: deploy
-    selector: env=production
-    ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    known-hosts: ${{ secrets.KNOWN_HOSTS }}
-    github-token: ${{ secrets.GITHUB_TOKEN }}
+      dep: deploy
+      selector: env=production
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      known-hosts: ${{ secrets.KNOWN_HOSTS }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Example
+
+```yaml
+- uses: tomgrv/actions/run-deployer@v5
+  with:
+      dep: <dep>
+      ssh-private-key: <ssh-private-key>
+      known-hosts: <known-hosts>
 ```
