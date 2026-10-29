@@ -99,3 +99,65 @@ GH
   [[ "$output" == *"pr comment 7 --repo o/r --body Released to main branch as v1.1.0"* ]]
   [[ "$output" == *"issue comment 9 --repo o/r --body Released to main branch as v1.1.0"* ]]
 }
+
+# GitLab: the release is pushed with the access token and the "Released" comments
+# go to the merge requests (and the issues they close) through the REST API.
+gitlab_repo() {
+  REPO="$(mktemp -d)"
+  git -C "$REPO" init -q -b main
+  git -C "$REPO" config user.email t@t
+  git -C "$REPO" config user.name t
+  git -C "$REPO" commit -q --allow-empty -m one
+  git -C "$REPO" tag v1.0.0
+  git -C "$REPO" remote add origin https://gitlab.test/g/p.git
+  git -C "$REPO" update-ref refs/remotes/origin/main HEAD
+  # git-release-prod stub: ships one more commit as v1.1.0
+  cat >"${STUB_BIN}/git-release-prod" <<STUB
+#!/bin/sh
+git commit -q --allow-empty -m two && git tag v1.1.0
+STUB
+  stub git-release-beta 0
+  chmod +x "${STUB_BIN}/git-release-prod"
+  cat >"${STUB_BIN}/curl" <<STUB
+#!/bin/sh
+echo "\$*" >>"${REPO}/calls"
+case "\$*" in
+*"/merge_requests"|*"merge_requests") echo '[{"iid":4,"state":"merged"}]' ;;
+*"closes_issues"*) echo '[{"iid":8}]' ;;
+esac
+STUB
+  chmod +x "${STUB_BIN}/curl"
+  printf '#!/bin/sh\nshift; echo "$*" >&2\n' >"${STUB_BIN}/zz-log"
+  chmod +x "${STUB_BIN}/zz-log"
+}
+
+run_gitlab() {
+  (
+    cd "$REPO"
+    export GITLAB_CI=true CI_API_V4_URL=https://gitlab.test/api/v4 CI_PROJECT_ID=7 CI_PROJECT_PATH=g/p CI_SERVER_HOST=gitlab.test GITLAB_TOKEN="${1-tok}"
+    sh "$SCRIPT"
+  )
+}
+
+@test "gitlab: fails without a token" {
+  gitlab_repo
+  run run_gitlab ""
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"GITLAB_TOKEN"* ]]
+}
+
+@test "gitlab: pushes with the access token and comments the released merge requests and issues" {
+  gitlab_repo
+  run run_gitlab
+  [ "$status" -eq 0 ]
+  [ "$(git -C "$REPO" remote get-url origin)" = "https://oauth2:tok@gitlab.test/g/p.git" ]
+  grep -q -- '--request POST .*/merge_requests/4/notes --data-urlencode body=Released to main branch as v1.1.0' "${REPO}/calls"
+  grep -q -- '--request POST .*/issues/8/notes --data-urlencode body=Released to main branch as v1.1.0' "${REPO}/calls"
+}
+
+@test "gitlab: dry-run does not touch the remote" {
+  gitlab_repo
+  DRY_RUN=true run run_gitlab
+  [ "$status" -eq 0 ]
+  [ "$(git -C "$REPO" remote get-url origin)" = "https://gitlab.test/g/p.git" ]
+}

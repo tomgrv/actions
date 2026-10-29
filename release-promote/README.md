@@ -52,6 +52,10 @@ protected `main`/tag rejects that push, this action fails with a clear
 the bypass checklist every repo in this family needs applied once, by
 hand.
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the release is pushed to `https://oauth2:$GITLAB_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git`, and the "Released to main branch as vX.Y.Z" comments go to the merged merge requests, and the issues they close, through the GitLab REST API (`curl`, `jq`) instead of `gh`. Set `GITLAB_TOKEN` to a project access token with the `api` and `write_repository` scopes, allowed to push to `main` and to create tags. The toolchain is installed with `zz-use -x tomgrv/actions/setup-gitversion` and `zz-use -x tomgrv/actions/setup-gitflow`; the git identity is set by the job.
+
 ## Local Usage
 
 ```yaml
