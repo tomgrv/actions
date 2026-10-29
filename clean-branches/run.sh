@@ -46,8 +46,15 @@ if [ "${GITLAB}" = "true" ]; then
   glapi() {
     curl -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN:-}" "$@"
   }
+  # One JSON array per page (up to 500 merge requests per state, like the gh limit)
   mrs() {
-    glapi "${GITLAB_API}/projects/${GITLAB_PROJECT}/merge_requests?state=$1&per_page=100"
+    page=1
+    while [ "${page}" -le 5 ]; do
+      json=$(glapi "${GITLAB_API}/projects/${GITLAB_PROJECT}/merge_requests?state=$1&per_page=100&page=${page}") || return 1
+      [ "$(printf '%s' "${json}" | jq 'length')" -gt 0 ] || break
+      printf '%s\n' "${json}"
+      page=$((page + 1))
+    done
   }
   # Merge requests whose source branch lives in this project (exclude forks)
   closed_branches=$(

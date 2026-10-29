@@ -113,6 +113,7 @@ echo "\$*" >>"${STUB_DIR}/calls"
 case "\$*" in
 *"--request DELETE"*) exit 0 ;;
 *"repository/branches/"*) exit 0 ;;
+*"page=2"*) echo '[]' ;;
 *"state=closed"*) echo '${CLOSED:-[]}' ;;
 *"state=merged"*) echo '${MERGED:-[]}' ;;
 *"state=opened"*) echo '${OPENED:-[]}' ;;
