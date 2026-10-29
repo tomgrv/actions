@@ -14,9 +14,28 @@ if [ "${WORKING_DIRECTORY}" = "." ]; then
   zz-log i "WORKING_DIRECTORY not set, using default: ."
 fi
 
-HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
+# The forge hosting REPOSITORY: GitLab inside GitLab CI, GitHub otherwise. Set FORGE=github
+# to target a GitHub repository from a GitLab job (e.g. a monorepo split).
+if [ -z "${FORGE:-}" ]; then
+  [ "${GITLAB_CI:-}" = "true" ] && FORGE=gitlab || FORGE=github
+fi
 
-DEFAULT_BRANCH=$(gh repo view "${REPOSITORY}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+if [ "${FORGE}" = "gitlab" ]; then
+  # GITLAB_TOKEN: a project access token with the api and write_repository scopes.
+  if [ -z "${GITLAB_TOKEN:-}" ]; then
+    zz-log e "GITLAB_TOKEN is required"
+    exit 1
+  fi
+  GITLAB_API="${CI_API_V4_URL:-https://gitlab.com/api/v4}"
+  GITLAB_PROJECT="$(printf '%s' "${REPOSITORY}" | sed 's|/|%2F|g')"
+  glapi() {
+    curl -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "$@"
+  }
+  DEFAULT_BRANCH=$(glapi "${GITLAB_API}/projects/${GITLAB_PROJECT}" | jq -r '.default_branch')
+else
+  HEAD_OWNER="${HEAD_OWNER:-${GITHUB_REPOSITORY%%/*}}"
+  DEFAULT_BRANCH=$(gh repo view "${REPOSITORY}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+fi
 DEFAULT_TITLE="sync: Update from ${HEAD_BRANCH}"
 
 BASE_BRANCH="${BASE_BRANCH:-${DEFAULT_BRANCH:-main}}"
@@ -29,12 +48,14 @@ PR_BODY="${PR_BODY:-${DEFAULT_TITLE}} \
 --- \
 _This pull request was created automatically by [tomgrv/actions/create-pr](https://github.com/tomgrv/actions/create-pr)_"
 
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz-log e "GITHUB_TOKEN is required"
-  exit 1
-fi
+if [ "${FORGE}" = "github" ]; then
+  if [ -z "${GITHUB_TOKEN:-}" ]; then
+    zz-log e "GITHUB_TOKEN is required"
+    exit 1
+  fi
 
-export GH_TOKEN="${GITHUB_TOKEN}"
+  export GH_TOKEN="${GITHUB_TOKEN}"
+fi
 
 cd "${WORKING_DIRECTORY}" || {
   zz-log e "Working directory '${WORKING_DIRECTORY}' does not exist"
@@ -60,7 +81,38 @@ fi
 git checkout -B "${HEAD_BRANCH}" >&2
 git add $(echo "${COMMIT_FILES:-.}" | tr ',' ' ') >&2
 git commit -m "${COMMIT_MESSAGE}" --no-verify >&2
+if [ "${FORGE}" = "gitlab" ]; then
+  # The CI checkout token is read-only: push with the access token.
+  git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST:-gitlab.com}/${REPOSITORY}.git" >&2
+fi
 git push origin "HEAD:${HEAD_BRANCH}" --no-verify --force >&2
+
+if [ "${FORGE}" = "gitlab" ]; then
+  MRS="${GITLAB_API}/projects/${GITLAB_PROJECT}/merge_requests"
+  PR_NUMBER=$(glapi "${MRS}?state=opened&source_branch=${HEAD_BRANCH}" | jq -r '.[0].iid // empty')
+
+  if [ -n "${PR_NUMBER}" ]; then
+    zz-log i "Existing MR !${PR_NUMBER} found for branch '${HEAD_BRANCH}'"
+    glapi --request PUT "${MRS}/${PR_NUMBER}" \
+      --data-urlencode "title=${PR_TITLE}" --data-urlencode "description=${PR_BODY}" >/dev/null
+    ACTION="updated"
+  else
+    zz-log i "No existing MR found for branch '${HEAD_BRANCH}', creating a new one"
+    PR_NUMBER=$(glapi --request POST "${MRS}" \
+      --data-urlencode "source_branch=${HEAD_BRANCH}" --data-urlencode "target_branch=${BASE_BRANCH}" \
+      --data-urlencode "title=${PR_TITLE}" --data-urlencode "description=${PR_BODY}" | jq -r '.iid')
+    ACTION="created"
+  fi
+
+  PR_URL=$(glapi "${MRS}/${PR_NUMBER}" | jq -r '.web_url')
+  zz-log n "MR !${PR_NUMBER} ${ACTION}: ${PR_URL}"
+
+  printf 'action=%s\n' "${ACTION}"
+  printf 'has-changes=true\n'
+  printf 'pr-number=%s\n' "${PR_NUMBER}"
+  printf 'pr-url=%s\n' "${PR_URL}"
+  exit 0
+fi
 
 HEAD_REF="${HEAD_OWNER}:${HEAD_BRANCH}"
 

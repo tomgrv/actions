@@ -61,6 +61,10 @@ This action configures the git identity itself via [**config-bot**](../config-bo
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; feed `degit-branch` and `degit-workdir` outputs into `create-pr`.
 - [**split-packages**](../split-packages/README.md) — split a monorepo subtree; feed `split-branch` and `split-workdir` outputs into `create-pr`.
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the merge request is found, created or updated through the GitLab REST API (`curl`, `jq`) instead of `gh`, and the branch is pushed to `https://oauth2:$GITLAB_TOKEN@$CI_SERVER_HOST/$REPOSITORY.git`. Set `GITLAB_TOKEN` to a project access token with the `api` and `write_repository` scopes, and `REPOSITORY` to the project path. The merge request number is returned in the `pr-number` output. Set `FORGE=github` to target a GitHub repository from a GitLab job (a monorepo split, for instance), with `GITHUB_TOKEN` as usual.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
