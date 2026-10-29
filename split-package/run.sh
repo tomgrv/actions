@@ -53,9 +53,23 @@ else
   SPLIT_BRANCH="chore/split-${SPLIT_SHA}"
 fi
 
+# The forge hosting the package repository: GitLab inside GitLab CI, GitHub otherwise.
+# Set FORGE=github to split to a GitHub repository from a GitLab job.
+if [ -z "${FORGE:-}" ]; then
+  [ "${GITLAB_CI:-}" = "true" ] && FORGE=gitlab || FORGE=github
+fi
+
 # Clone the fork repository to a temporary directory for preparing the PR.
-FORK_URL="https://github.com/${HEAD_OWNER}/${REPO_NAME}"
-REPO_URL="https://github.com/${REPO_ORG}/${REPO_NAME}"
+if [ "${FORGE}" = "gitlab" ]; then
+  # GITLAB_TOKEN: a project access token with the write_repository scope on the package project.
+  SERVER_URL="${CI_SERVER_URL:-https://gitlab.com}"
+  CLONE_URL="https://oauth2:${GITLAB_TOKEN:?GITLAB_TOKEN is required}@${SERVER_URL#https://}/${HEAD_OWNER}/${REPO_NAME}.git"
+else
+  SERVER_URL="https://github.com"
+  CLONE_URL=""
+fi
+FORK_URL="${SERVER_URL}/${HEAD_OWNER}/${REPO_NAME}"
+REPO_URL="${SERVER_URL}/${REPO_ORG}/${REPO_NAME}"
 CURRENT_ORG=$(git config --get remote.origin.url | sed -E 's#.*[:/]([^/]+)/[^/]+\.git#\1#')
 CURRENT_REPO=$(git config --get remote.origin.url | sed -E 's#.*[:/][^/]+/([^/]+)\.git#\1#')
 CURRENT_URL="https://github.com/${CURRENT_ORG}/${CURRENT_REPO}"
@@ -65,7 +79,7 @@ WORKDIR=$(mktemp -d)
 git config --global --name-only --get-regexp safe.directory ${WORKDIR} || git config --global --add safe.directory ${WORKDIR}
 
 # Clone the fork repository. If it fails, log an error and exit.
-if ! git clone "${FORK_URL}" "${WORKDIR}" >/dev/null 2>&1; then
+if ! git clone "${CLONE_URL:-${FORK_URL}}" "${WORKDIR}" >/dev/null 2>&1; then
   zz-log e "Failed to clone ${FORK_URL}. Check if the repository exists and the token has access."
   exit 1
 else

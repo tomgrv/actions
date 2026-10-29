@@ -47,6 +47,10 @@ Imports the tip of a source repository branch into a target repository workspace
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before pushing the prepared branch.
 - [**create-pr**](../create-pr/README.md) — open or update a pull request using `degit-branch` and `degit-workdir` outputs.
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the source repository is read from `$CI_SERVER_URL` (its default branch through the REST API with `curl` and `jq`) and cloned with `GITLAB_TOKEN`, a project access token with the `read_repository` and `api` scopes on the source project. Set `FORGE=github` to import a GitHub repository from a GitLab job, with `GITHUB_TOKEN` as usual.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

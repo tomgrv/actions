@@ -26,6 +26,10 @@ Configures global Git identity for bot commits within a workflow job. Resolves t
 - [**degit-package**](../degit-package/README.md) — import source content and prepare a branch; pair with `config-bot` for authenticated pushes.
 - [**split-packages**](../split-packages/README.md) — split a monorepo subtree; pair with `config-bot` to sign the split commits.
 
+## GitLab CI
+
+Outside GitHub there is no user to look up: set `BOT_NAME` and `BOT_EMAIL` and the identity is configured without calling `gh`.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

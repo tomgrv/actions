@@ -42,6 +42,10 @@ Splits a package from a monorepo a separate repository using [splitsh-lite](http
 - [**config-bot**](../config-bot/README.md) — configure git bot identity before splitting.
 - [**create-pr**](../create-pr/README.md) — open a pull request in the origin repository using `split-branch` and `split-workdir` outputs.
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the package repository is cloned from `$CI_SERVER_URL` with `GITLAB_TOKEN`, a project access token with the `write_repository` scope on the package project. Set `FORGE=github` to split to a GitHub repository from a GitLab job. `splitsh-lite` is not installed outside the GitHub action: download it first (see `setup.sh`).
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):
