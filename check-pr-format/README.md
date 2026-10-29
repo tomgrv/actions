@@ -24,6 +24,10 @@ This action has no outputs.
 - [**check-security-composer**](../check-security-composer/README.md) — audit Composer dependency security.
 - [**check-security-npm**](../check-security-npm/README.md) — audit npm dependency security.
 
+## GitLab CI
+
+When `GITLAB_CI=true`, the merge request title is read and updated through the GitLab REST API (`curl`) instead of the `gh` CLI. Run it with `zz-use -x tomgrv/actions/check-pr-format` and set `REPO` (`$CI_PROJECT_PATH`), `PR_TITLE` (`$CI_MERGE_REQUEST_TITLE`), `PR_NUMBER` (`$CI_MERGE_REQUEST_IID`), `HEAD_REPO_FULL_NAME` (`$CI_MERGE_REQUEST_SOURCE_PROJECT_PATH`), `FIX`, and `GITLAB_TOKEN`: a project access token with the `api` scope, as the CI job token cannot edit merge requests. Without a token, the title is only validated.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

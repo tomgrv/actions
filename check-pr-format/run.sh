@@ -11,8 +11,19 @@
 # Export GitHub token for gh CLI
 export GH_TOKEN="${GITHUB_TOKEN:-}"
 
-# Ensure gh CLI is available for fetching PR title
-if ! command -v gh >/dev/null 2>&1; then
+# On GitLab CI the merge request is read and edited through the REST API
+# (GITLAB_TOKEN: a project access token with the api scope, the job token cannot
+# edit merge requests); everywhere else through the gh CLI.
+if [ "${GITLAB_CI:-}" = "true" ]; then
+  gitlab_mr() {
+    curl -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN:-}" "$@" \
+      "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${PR_NUMBER}"
+  }
+  command -v curl >/dev/null 2>&1 || {
+    zz-log e "curl could not be found. Please install it to run this action."
+    exit 1
+  }
+elif ! command -v gh >/dev/null 2>&1; then
   zz-log e "gh CLI could not be found. Please install it to run this action."
   exit 1
 fi
@@ -55,7 +66,11 @@ fi
 PR_TITLE_TRIMMED="$(printf '%s' "${PR_TITLE:-}" | tr -d ' \t')"
 if [ -z "${PR_TITLE_TRIMMED}" ]; then
   zz-log i "PR_TITLE not set or empty, fetching from GitHub API"
-  PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
+  if [ "${GITLAB_CI:-}" = "true" ]; then
+    PR_TITLE="$(gitlab_mr | jq -r .title)"
+  else
+    PR_TITLE="$(gh pr view --repo "${REPO}" --json title --jq .title)"
+  fi
   # Validate that we got a title from the API
   if [ -z "${PR_TITLE}" ]; then
     zz-log e "PR title could not be fetched from GitHub API"
@@ -82,8 +97,17 @@ elif [ -n "${commitlint_output}" ]; then
 fi
 
 if [ "${PR_TITLE}" != "${formatted_title}" ]; then
-  if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${GH_TOKEN:-}" ]; then
-    gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
+  if [ "${GITLAB_CI:-}" = "true" ]; then
+    token="${GITLAB_TOKEN:-}"
+  else
+    token="${GH_TOKEN:-}"
+  fi
+  if [ "${FIX:-false}" = "true" ] && [ "${HEAD_REPO_FULL_NAME:-}" = "${REPO}" ] && [ -n "${token}" ]; then
+    if [ "${GITLAB_CI:-}" = "true" ]; then
+      gitlab_mr --request PUT --data-urlencode "title=${formatted_title}" >/dev/null || exit 1
+    else
+      gh pr edit "${PR_NUMBER}" --repo "${REPO}" --title "${formatted_title}"
+    fi
     zz-log s "PR title updated: ${formatted_title}"
   else
     error_message="PR title is not formatted with devmoji and could not be auto-updated (fix disabled, fork PR, or missing token).
