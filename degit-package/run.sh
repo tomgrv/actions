@@ -5,15 +5,38 @@
 
 set -eu
 
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-    zz-log e "GITHUB_TOKEN is required"
+# The forge hosting the source repository: GitLab inside GitLab CI, GitHub otherwise.
+# Set FORGE=github to import a GitHub repository from a GitLab job.
+if [ -z "${FORGE:-}" ]; then
+    [ "${GITLAB_CI:-}" = "true" ] && FORGE=gitlab || FORGE=github
+fi
+
+if [ "${FORGE}" = "gitlab" ]; then
+    # GITLAB_TOKEN: a project access token with the read_repository scope
+    # (api to read the default branch) on the source project.
+    TOKEN="${GITLAB_TOKEN:-}"
+    TOKEN_USER="oauth2"
+    SERVER_URL="${CI_SERVER_URL:-https://gitlab.com}"
+else
+    TOKEN="${GITHUB_TOKEN:-}"
+    TOKEN_USER="x-access-token"
+    SERVER_URL="https://github.com"
+fi
+
+if [ -z "${TOKEN}" ]; then
+    zz-log e "$([ "${FORGE}" = "gitlab" ] && echo GITLAB_TOKEN || echo GITHUB_TOKEN) is required"
     exit 1
 fi
 
 SOURCE_ORG="${SOURCE_ORG:?SOURCE_ORG is required}"
 SOURCE_NAME="${SOURCE_NAME:?SOURCE_NAME is required}"
 
-DEFAULT_BRANCH=$(gh repo view "${SOURCE_ORG}/${SOURCE_NAME}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+if [ "${FORGE}" = "gitlab" ]; then
+    DEFAULT_BRANCH=$(curl -fsS --header "PRIVATE-TOKEN: ${TOKEN}" \
+        "${CI_API_V4_URL:-${SERVER_URL}/api/v4}/projects/$(printf '%s' "${SOURCE_ORG}/${SOURCE_NAME}" | sed 's|/|%2F|g')" | jq -r '.default_branch')
+else
+    DEFAULT_BRANCH=$(gh repo view "${SOURCE_ORG}/${SOURCE_NAME}" --json defaultBranchRef --jq '.defaultBranchRef.name')
+fi
 
 SOURCE_BRANCH="${SOURCE_BRANCH:-${DEFAULT_BRANCH:-main}}"
 TARGET_SUBDIR="${TARGET_SUBDIR:-.}"
@@ -30,9 +53,9 @@ if [ -z "${SOURCE_ORG}" ] || [ -z "${SOURCE_NAME}" ]; then
     exit 1
 fi
 
-SOURCE_URL="https://github.com/${SOURCE_ORG}/${SOURCE_NAME}.git"
+SOURCE_URL="${SERVER_URL}/${SOURCE_ORG}/${SOURCE_NAME}.git"
 
-BASIC_CREDENTIAL=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+BASIC_CREDENTIAL=$(printf '%s:%s' "${TOKEN_USER}" "${TOKEN}" | base64 | tr -d '\n')
 AUTH_HEADER="AUTHORIZATION: basic ${BASIC_CREDENTIAL}"
 
 WORKDIR=$(mktemp -d)
@@ -44,7 +67,7 @@ zz-log i "Cloning ${SOURCE_URL}/tree/${SOURCE_BRANCH} to temporary directory..."
 # writing it to global git config: a global http.extraheader would still be
 # active for later steps in the job (e.g. actions/checkout's push), causing
 # git to send two Authorization headers and get rejected.
-if ! git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
+if ! git -c "http.${SERVER_URL}/.extraheader=${AUTH_HEADER}" clone --depth 1 --branch "${SOURCE_BRANCH}" "${SOURCE_URL}" "${WORKDIR}" >/dev/null 2>&1; then
     zz-log e "Failed to clone ${SOURCE_URL}/tree/${SOURCE_BRANCH}. Check if the repository and branch exist and the token has access."
     exit 1
 fi
@@ -73,7 +96,8 @@ IFS="${OLD_IFS}"
 zz-log i "Syncing files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} (SHA: ${SOURCE_SHA}) to <${TARGET_PATH}> (excluding paths: ${EXCLUDE_PATHS})"
 
 # Sync files from the source repository to the target subdirectory, excluding specified paths.
-if ! mkdir -p "${TARGET_PATH}" && rsync -a --delete ${EXCLUDE_ARGS} "${WORKDIR}/" "${TARGET_PATH}/"; then
+# The braces matter: without them, `! mkdir` is false once the directory exists and rsync never runs.
+if ! { mkdir -p "${TARGET_PATH}" && rsync -a --delete ${EXCLUDE_ARGS} "${WORKDIR}/" "${TARGET_PATH}/"; }; then
     zz-log e "Failed to sync files from ${SOURCE_URL}/tree/${SOURCE_BRANCH} to <${TARGET_PATH}>"
     exit 1
 fi

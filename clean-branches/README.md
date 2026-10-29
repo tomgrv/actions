@@ -48,6 +48,10 @@ Number of branches deleted.
       merged-only: "true"
 ```
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the merge requests and branches go through the GitLab REST API (`curl`, `jq`) instead of `gh`: merged and closed merge requests whose source branch lives in the project are cleaned the same way. Set `GITLAB_TOKEN` to a project access token with the `api` scope; `REPO` defaults to `$CI_PROJECT_PATH`.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

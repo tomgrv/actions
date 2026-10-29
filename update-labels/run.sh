@@ -5,7 +5,7 @@
 
 set -eu
 
-REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}}"
+REPOSITORY="${REPOSITORY:-${GITHUB_REPOSITORY:-${CI_PROJECT_PATH:?GITHUB_REPOSITORY is required}}}"
 LABELS_FILE="${LABELS_FILE:-.github/labels.json}"
 LABELS="${LABELS:-25 documentation,10 must,20 should,30 could,80 duplicate,90 wont}"
 
@@ -14,12 +14,52 @@ if [ "${LABELS_FILE}" = ".github/labels.json" ] && [ ! -f "${LABELS_FILE}" ]; th
   zz-log i "LABELS_FILE not set and .github/labels.json not found, using default inline labels"
 fi
 
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-  zz-log e "GITHUB_TOKEN is required"
-  exit 1
-fi
+# Inside GitLab CI the labels go through the REST API (GITLAB_TOKEN: a project
+# access token with the api scope) instead of gh.
+if [ "${GITLAB_CI:-}" = "true" ]; then
+  if [ -z "${GITLAB_TOKEN:-}" ]; then
+    zz-log e "GITLAB_TOKEN is required"
+    exit 1
+  fi
 
-export GH_TOKEN="${GITHUB_TOKEN}"
+  GITLAB_LABELS="${CI_API_V4_URL:-https://gitlab.com/api/v4}/projects/$(printf '%s' "${REPOSITORY}" | sed 's|/|%2F|g')/labels"
+  glapi() {
+    curl -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "$@"
+  }
+  # GitLab colors carry a leading '#'
+  list_labels() {
+    glapi "${GITLAB_LABELS}?per_page=100" | jq -r '.[] | [.name, (.color | ltrimstr("#")), (.description // "")] | @tsv'
+  }
+  delete_label() {
+    glapi --request DELETE "${GITLAB_LABELS}/$(printf '%s' "$1" | jq -sRr @uri)" >/dev/null
+  }
+  create_label() {
+    glapi --request POST "${GITLAB_LABELS}" --data-urlencode "name=$1" --data-urlencode "color=#$2" --data-urlencode "description=$3" >/dev/null
+  }
+  edit_label() {
+    glapi --request PUT "${GITLAB_LABELS}/$(printf '%s' "$1" | jq -sRr @uri)" --data-urlencode "new_name=$4" --data-urlencode "color=#$2" --data-urlencode "description=$3" >/dev/null
+  }
+else
+  if [ -z "${GITHUB_TOKEN:-}" ]; then
+    zz-log e "GITHUB_TOKEN is required"
+    exit 1
+  fi
+
+  export GH_TOKEN="${GITHUB_TOKEN}"
+
+  list_labels() {
+    gh label list --repo "${REPOSITORY}" --limit 1000 --json name,color,description --jq '.[] | [.name, .color, .description] | @tsv'
+  }
+  delete_label() {
+    gh label delete "$1" --repo "${REPOSITORY}" --yes >&2
+  }
+  create_label() {
+    gh label create "$1" --repo "${REPOSITORY}" --color "$2" --description "$3" >&2
+  }
+  edit_label() {
+    gh label edit "$1" --repo "${REPOSITORY}" --color "$2" --description "$3" --name "$4" >&2
+  }
+fi
 
 # Function to parse label name from "number name" format to return just the name
 parse_label_name() {
@@ -81,7 +121,7 @@ fi > "${TMP_DIR}/desired_labels"
 
 # Get existing labels from repository
 zz-log i "Fetching existing labels from ${REPOSITORY}"
-gh label list --repo "${REPOSITORY}" --limit 1000 --json name,color,description --jq '.[] | [.name, .color, .description] | @tsv' 2>/dev/null > "${TMP_DIR}/existing_labels"
+list_labels 2>/dev/null > "${TMP_DIR}/existing_labels"
 
 
 # Label deletion: Remove labels that exist in the repository but are not in the desired list
@@ -93,7 +133,7 @@ cat ${TMP_DIR}/existing_labels | tr '\t' '|' | while IFS='|' read -r fullname co
   if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/desired_labels"; then
 
     # Attempt to delete label
-    if ! gh label delete "${fullname}" --repo "${REPOSITORY}" --yes >&2; then
+    if ! delete_label "${fullname}"; then
       zz-log w "Failed to delete label: ${fullname}"
     fi
   fi
@@ -108,7 +148,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
   if ! grep -iqE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels"; then
 
      # Attempt to create label
-    if ! gh label create "${fullname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" >&2; then
+    if ! create_label "${fullname}" "${color}" "${desc}"; then
       zz-log w "Failed to create label: ${fullname}"
     fi
 
@@ -119,7 +159,7 @@ cat ${TMP_DIR}/desired_labels  | tr '\t' '|' | while IFS='|' read -r fullname co
     oldname=$(grep -iE "^([0-9]+ +)?${name}([[:space:]]|$)" "${TMP_DIR}/existing_labels" | head -n 1 | cut -f1)
 
     # Attempt to update label (color and description)
-    if ! gh label edit "${oldname}" --repo "${REPOSITORY}" --color "${color}" --description "${desc}" --name "${fullname}" >&2; then
+    if ! edit_label "${oldname}" "${color}" "${desc}" "${fullname}"; then
       zz-log w "Failed to update label: ${fullname}"
     fi
   fi

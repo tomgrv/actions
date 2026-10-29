@@ -175,6 +175,10 @@ Then use the action:
 
 Running the action multiple times with the same input produces the same result without unnecessary API calls or changes.
 
+## GitLab CI
+
+Inside GitLab CI (`GITLAB_CI=true`) the labels are listed, created, updated and deleted through the GitLab REST API (`curl`, `jq`) instead of `gh`; colors get their leading `#`. Set `GITLAB_TOKEN` to a project access token with the `api` scope; `REPOSITORY` defaults to `$CI_PROJECT_PATH`.
+
 ## Local Usage
 
 Run this action locally from a clone of this repository with [`zz-use`](https://github.com/tomgrv/scripts/tree/main/zz-use):

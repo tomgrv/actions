@@ -8,6 +8,19 @@ set -eu
 
 DRY_RUN="${DRY_RUN:-false}"
 
+# Inside GitLab CI the release is pushed with GITLAB_TOKEN (a project access
+# token with the api and write_repository scopes, allowed to push to main and
+# tags) and the "Released" comments go through the REST API instead of gh.
+GITLAB="false"
+if [ "${GITLAB_CI:-}" = "true" ]; then
+    GITLAB="true"
+    : "${GITLAB_TOKEN:?release-promote: GITLAB_TOKEN is required}"
+    GITLAB_PROJECT="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}"
+    glapi() {
+        curl -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "$@"
+    }
+fi
+
 command -v git-release-beta > /dev/null || {
     zz-log e "release-promote: git-release-beta not on PATH (the setup-scripts step should have installed it)"
     exit 1
@@ -20,11 +33,37 @@ command -v git-release-prod > /dev/null || {
 # Comment "Released to main branch as vX.Y.Z" on every PR merged since the
 # previous release, and on the issues those PRs close. Best-effort: the release itself already succeeded, so
 # nothing here may fail the run.
+# GitLab flavor of comment_released_prs: merge requests and the issues they close.
+comment_released_mrs() {
+    MRS="$(git rev-list "${PREV_TAG}..${NEW_TAG}" |
+        while read -r sha; do
+            glapi "${GITLAB_PROJECT}/repository/commits/${sha}/merge_requests" 2> /dev/null |
+                jq -r '.[] | select(.state == "merged") | .iid' || true
+        done | sort -nu)"
+
+    echo "Merged MRs since ${PREV_TAG}: ${MRS:-none}" | tr '\n' ' '
+    echo
+    for mr in ${MRS}; do
+        glapi --request POST "${GITLAB_PROJECT}/merge_requests/${mr}/notes" \
+            --data-urlencode "body=Released to main branch as ${NEW_TAG}" > /dev/null ||
+            zz-log w "release-promote: could not comment on MR !${mr}"
+        for issue in $(glapi "${GITLAB_PROJECT}/merge_requests/${mr}/closes_issues" 2> /dev/null | jq -r '.[].iid' || true); do
+            glapi --request POST "${GITLAB_PROJECT}/issues/${issue}/notes" \
+                --data-urlencode "body=Released to main branch as ${NEW_TAG}" > /dev/null ||
+                zz-log w "release-promote: could not comment on issue #${issue}"
+        done
+    done
+}
+
 comment_released_prs() {
     NEW_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' main 2> /dev/null || true)"
 
     if [ -z "${PREV_TAG}" ] || [ -z "${NEW_TAG}" ] || [ "${PREV_TAG}" = "${NEW_TAG}" ]; then
         zz-log w "release-promote: no previous/new release tag found (prev='${PREV_TAG}' new='${NEW_TAG}'), skipping PR comments"
+        return 0
+    fi
+    if [ "${GITLAB}" = "true" ]; then
+        comment_released_mrs
         return 0
     fi
     command -v gh > /dev/null || {
@@ -54,6 +93,10 @@ comment_released_prs() {
 if [ "${DRY_RUN}" = "true" ]; then
     echo "dry-run=true, stopping before git-release-beta/git-release-prod would push to main."
     exit 0
+fi
+
+if [ "${GITLAB}" = "true" ]; then
+    git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
 fi
 
 # Last release before this run, so we can list what this one ships.
