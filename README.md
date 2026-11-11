@@ -55,6 +55,7 @@ Set the `GITHUB_*` variables or inputs the action reads before running it.
 
 ### 🔧 Utils
 
+- [**configure-ci**](configure-ci/README.md): Detect the forge (GitHub, Forgejo, Gitea) and normalise it for later steps.
 - [**config-bot**](config-bot/README.md): Configure git bot identity and authentication for CI/CD.
 - [**setup-scripts**](setup-scripts/README.md) _(beta)_: Idempotently bootstrap `zz-use` from `tomgrv/scripts`, optionally installing specific scripts.
 - [**setup-gitversion**](setup-gitversion/README.md) _(beta)_: Idempotently install the `gitversion` devcontainer feature's toolchain (GitVersion CLI plus `gv`/`bump-tag`/`bump-changelog`/`bump-version`).
@@ -119,6 +120,7 @@ those files. `check-*` actions validate repository or pull-request state.
 Every action and the shipped workflows run on GitHub and on [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/overview/). Forgejo aims for familiarity, not compatibility, so the differences are handled here:
 
 - **Forge detection**: scripts under `<action>/run.sh` source [`_lib/forge.sh`](_lib/forge.sh). When `GITHUB_API_URL` ends in `/api/v1` (Forgejo), it defines a `gh` function that translates the `gh` subcommands used here (`api`, `pr`, `repo`, `issue`, `label`) into Forgejo REST calls with `curl` + `jq`. On GitHub the real `gh` CLI is used untouched.
+- **`configure-ci`**: add `uses: tomgrv/actions/configure-ci@v5` to a job to get a `forge` output (`github`, `forgejo` or `gitea`) for step-level guards, and a `gh` on `PATH` off GitHub. The `run.sh` scripts still source `_lib/forge.sh` themselves, so they work without it.
 - **Runner image**: the default Forgejo runner image is minimal. Use a runner label whose image has `git`, `curl`, `jq` and `node`.
 - **`uses:` resolution**: short names (`actions/checkout`, `tomgrv/actions/...`, third-party actions) resolve against the instance's `[actions] DEFAULT_ACTIONS_URL`. Set it to `github` so they resolve exactly as on GitHub.
 - **Workflow location**: Forgejo reads `.forgejo/workflows`, and falls back to `.github/workflows` when that folder does not exist, so the same files serve both forges.

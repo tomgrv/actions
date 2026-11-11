@@ -19,7 +19,10 @@ case "${GITHUB_API_URL:-}" in
 */api/v1) FORGE=forgejo ;;
 *) FORGE=github ;;
 esac
-export FORGE
+# FORGE is the API family (github|forgejo, Gitea shares Forgejo's); FORGE_FLAVOR also tells
+# forgejo from gitea once the configure-ci action has probed it, else it equals FORGE.
+FORGE_FLAVOR="${FORGE_FLAVOR:-${FORGE}}"
+export FORGE FORGE_FLAVOR
 
 [ "${FORGE}" = forgejo ] || return 0
 

@@ -26,7 +26,7 @@ jobs:
           npm install -g bats
 
       - name: Unit tests
-        run: bats _lib clean-branches split-package
+        run: bats _lib configure-ci clean-branches split-package
 
       - name: Shim against this instance's API
         env:

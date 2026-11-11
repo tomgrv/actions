@@ -1,0 +1,20 @@
+{
+  "name": "configure-ci",
+  "version": "5.1.0",
+  "description": "Detect the forge (GitHub, Forgejo, Gitea) and normalise it for later steps.",
+  "scripts": {
+    "test": "bats run.bats"
+  },
+  "outputs": {
+    "forge": {
+      "description": "Forge running the workflow, one of github, forgejo or gitea."
+    },
+    "server-url": {
+      "description": "Web URL of the forge."
+    },
+    "api-url": {
+      "description": "REST API URL of the forge."
+    }
+  },
+  "private": true
+}

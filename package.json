@@ -193,6 +193,7 @@
         "clean-branches",
         "clean-history",
         "config-bot",
+        "configure-ci",
         "confirm-pr-comment",
         "create-pr",
         "create-pr-comment",
