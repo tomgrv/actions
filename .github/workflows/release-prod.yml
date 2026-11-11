@@ -12,7 +12,6 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-  actions: write # dispatch the follow-up workflows
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
@@ -26,22 +25,9 @@ jobs:
         with:
           fetch-depth: 0
           ref: develop
+
       - name: Release promote
         uses: ./release-promote
         with:
           scripts-ref: v5
           dry-run: ${{ inputs.dry_run == true }}
-
-      # A push made with GITHUB_TOKEN does not trigger push workflows (GitHub or Forgejo), and
-      # Forgejo has no workflow_run event: start the follow-up workflows explicitly.
-      - name: Dispatch follow-up workflows
-        if: ${{ inputs.dry_run != true }}
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          for wf in manage-monorepo-split.yml publish-features.yml; do
-            [ -f ".forgejo/workflows/${wf}" ] || [ -f ".github/workflows/${wf}" ] || continue
-            curl -fsS -X POST -H "Authorization: token ${TOKEN}" -H 'Content-Type: application/json' \
-              -d '{"ref":"main"}' "${{ github.api_url }}/repos/${{ github.repository }}/actions/workflows/${wf}/dispatches" ||
-              echo "::warning::could not dispatch ${wf}"
-          done
