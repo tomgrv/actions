@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Provides a `gh` shim on Forgejo (no-op on GitHub).
+. "$(dirname "$0")/../_lib/forge.sh"
+
 # Create or update repository labels from a JSON file or comma-separated list,
 # and delete labels no longer in the desired set.
 

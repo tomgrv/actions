@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Provides a `gh` shim on Forgejo (no-op on GitHub).
+. "$(dirname "$0")/../_lib/forge.sh"
+
 # Add an emoji reaction to a pull request or issue comment.
 
 set -eu
@@ -70,7 +73,7 @@ if [ -z "${COMMENT_URL}" ]; then
     zz-log e "Provide comment-url, or comment-id with repository."
     exit 1
   fi
-  COMMENT_URL="https://api.github.com/repos/${REPOSITORY}/issues/comments/${COMMENT_ID}"
+  COMMENT_URL="${GITHUB_API_URL:-https://api.github.com}/repos/${REPOSITORY}/issues/comments/${COMMENT_ID}"
 fi
 
 zz-log i "Adding reaction '${REACTION_CONTENT}' to comment ${COMMENT_URL}"

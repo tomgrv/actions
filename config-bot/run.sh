@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Provides a `gh` shim on Forgejo (no-op on GitHub).
+. "$(dirname "$0")/../_lib/forge.sh"
+
 # Configure the git bot identity (user.name/user.email) used by later steps
 # in the job to author commits.
 
@@ -7,11 +10,17 @@ set -eu
 
 export GH_TOKEN="${GITHUB_TOKEN:-}"
 
-GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
+if [ "${FORGE}" = forgejo ]; then
+  # No GitHub Apps / numeric noreply ids on Forgejo: <name>@noreply.<host>.
+  GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-forgejo-actions}"
+  BOT_EMAIL="${BOT_EMAIL:-${GITHUB_APP_SLUG}@noreply.${GITHUB_SERVER_URL#*://}}"
+else
+  GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
+fi
 
 # Input defaulting is a setup detail, not a finding: plain log only, no
 # GitHub annotation.
-if [ "${GITHUB_APP_SLUG}" = "github-actions" ] && [ -z "${BOT_NAME:-}" ]; then
+if [ "${FORGE}" = github ] && [ "${GITHUB_APP_SLUG}" = "github-actions" ] && [ -z "${BOT_NAME:-}" ]; then
   zz-log i "GITHUB_APP_SLUG not set, using default: github-actions"
 fi
 

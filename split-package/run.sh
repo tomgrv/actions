@@ -54,11 +54,11 @@ else
 fi
 
 # Clone the fork repository to a temporary directory for preparing the PR.
-FORK_URL="https://github.com/${HEAD_OWNER}/${REPO_NAME}"
-REPO_URL="https://github.com/${REPO_ORG}/${REPO_NAME}"
+FORK_URL="${GITHUB_SERVER_URL:-https://github.com}/${HEAD_OWNER}/${REPO_NAME}"
+REPO_URL="${GITHUB_SERVER_URL:-https://github.com}/${REPO_ORG}/${REPO_NAME}"
 CURRENT_ORG=$(git config --get remote.origin.url | sed -E 's#.*[:/]([^/]+)/[^/]+\.git#\1#')
 CURRENT_REPO=$(git config --get remote.origin.url | sed -E 's#.*[:/][^/]+/([^/]+)\.git#\1#')
-CURRENT_URL="https://github.com/${CURRENT_ORG}/${CURRENT_REPO}"
+CURRENT_URL="${GITHUB_SERVER_URL:-https://github.com}/${CURRENT_ORG}/${CURRENT_REPO}"
 WORKDIR=$(mktemp -d)
 
 # Mark the working directory as safe for Git operations to avoid "detected dubious ownership" errors.

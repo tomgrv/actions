@@ -12,6 +12,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   configure-github:
+    # Branch protection through the GitHub API only; nothing to do on Forgejo.
+    if: ${{ github.server_url == 'https://github.com' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

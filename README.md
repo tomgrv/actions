@@ -114,6 +114,18 @@ Set the `GITHUB_*` variables or inputs the action reads before running it.
 `run-*` actions analyse the files they are given and report through reviewdog on
 those files. `check-*` actions validate repository or pull-request state.
 
+## Forgejo Actions
+
+Every action and the shipped workflows run on GitHub and on [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/overview/). Forgejo aims for familiarity, not compatibility, so the differences are handled here:
+
+- **Forge detection**: scripts under `<action>/run.sh` source [`_lib/forge.sh`](_lib/forge.sh). When `GITHUB_API_URL` ends in `/api/v1` (Forgejo), it defines a `gh` function that translates the `gh` subcommands used here (`api`, `pr`, `repo`, `issue`, `label`) into Forgejo REST calls with `curl` + `jq`. On GitHub the real `gh` CLI is used untouched.
+- **Runner image**: the default Forgejo runner image is minimal. Use a runner label whose image has `git`, `curl`, `jq` and `node`.
+- **`uses:` resolution**: short names (`actions/checkout`, `tomgrv/actions/...`, third-party actions) resolve against the instance's `[actions] DEFAULT_ACTIONS_URL`. Set it to `github` so they resolve exactly as on GitHub.
+- **Workflow location**: Forgejo reads `.forgejo/workflows`, and falls back to `.github/workflows` when that folder does not exist, so the same files serve both forges.
+- **GitHub-only steps are skipped** with `github.server_url == 'https://github.com'`: GitHub App tokens, branch protection (`configure-github`) and the SARIF upload to the Security tab.
+- **Monorepo split/merge**: GitHub App tokens do not exist on Forgejo; set the `KLICKSPLIT_CLIENT_ID` secret (any non-empty value, it enables the job) and `KLICKSPLIT_TOKEN` (a personal access token with repository write access).
+- **Not supported by Forgejo** (documented upstream): `permissions:` and job-level `continue-on-error` are ignored; the `workflow_run` event and the `ready_for_review` pull request type do not exist, so `manage-monorepo-split` (triggered after _Release Prod_) and workflows triggered only by `ready_for_review` must be started with `workflow_dispatch` there. `clean-history` (workflow run deletion) is a no-op, and `create-update-ref` pushes the ref with git, so the SHA must exist in the local clone.
+
 ## Release a repository
 
 Run **Actions → release-prod → Run workflow** in the repository: it calls

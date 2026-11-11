@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+# Provides a `gh` shim on Forgejo (no-op on GitHub).
+. "$(dirname "$0")/../_lib/forge.sh"
+
 # Validate PR title format (commitlint + devmoji) and auto-fix it when possible.
 
 # do not exit on error to allow for proper error reporting and annotation
