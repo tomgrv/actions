@@ -25,6 +25,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Configure CI
+      uses: $/configure-ci
+
     # release-promote is uniquely self-referential: it releases the very
     # repo it's defined in, so any sibling action whose *content* changes
     # in the same release (config-bot/setup-gitversion/setup-gitflow's own

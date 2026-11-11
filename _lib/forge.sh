@@ -1,7 +1,8 @@
 #!/usr/bin/sh
-# Forge compatibility shim, meant to be sourced by an action's run.sh:
+# Forge compatibility shim. The configure-ci action sources it from the `gh` wrapper it puts
+# on PATH off GitHub; it can also be sourced by hand:
 #
-#   . "$(dirname "$0")/../_lib/forge.sh"
+#   . ./_lib/forge.sh
 #
 # Exports FORGE=github|forgejo (Forgejo/Gitea expose their REST API under
 # .../api/v1 in GITHUB_API_URL; GitHub.com and GHES do not).

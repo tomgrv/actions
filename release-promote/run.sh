@@ -1,8 +1,5 @@
 #!/usr/bin/sh
 
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
-
 # Run git-release-beta then git-release-prod against the already-checked-out
 # repo. Assumes this action's own earlier steps already put both commands
 # on PATH (setup-scripts) and configured git identity (config-bot).

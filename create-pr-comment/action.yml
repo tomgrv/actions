@@ -37,6 +37,9 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Configure CI
+      uses: $/configure-ci
+
     - name: Setup scripts toolchain
       uses: $/setup-scripts
       with:

@@ -53,8 +53,11 @@ jobs:
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v7
+      - name: Configure CI
+        id: ci
+        uses: ./configure-ci
       - name: Generate a token
-        if: ${{ github.server_url == 'https://github.com' }}
+        if: ${{ steps.ci.outputs.forge == 'github' }}
         id: app-token
         uses: actions/create-github-app-token@v3
         with:

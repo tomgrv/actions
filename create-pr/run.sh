@@ -1,8 +1,5 @@
 #!/usr/bin/sh
 
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
-
 # Commit any pending changes in the working directory and open or update a
 # pull request for them.
 

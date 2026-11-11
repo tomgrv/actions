@@ -1,7 +1,4 @@
 #!/usr/bin/sh
-
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
 # Rebase a pull request's head branch onto its base branch.
 # No Python dependency: all processing done via sh, jq, and awk.
 

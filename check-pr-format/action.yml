@@ -22,6 +22,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Configure CI
+      uses: $/configure-ci
+
     - name: Set up Node.js
       uses: $/setup-node
       with:

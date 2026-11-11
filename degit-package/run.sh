@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
-
 # Import the latest source branch content from another repository into a
 # target subdirectory and prune excluded paths.
 

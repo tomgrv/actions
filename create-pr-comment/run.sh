@@ -1,8 +1,5 @@
 #!/usr/bin/sh
 
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
-
 # Post a new comment on a pull request or issue.
 
 set -eu

@@ -1,8 +1,5 @@
 #!/usr/bin/sh
 
-# Provides a `gh` shim on Forgejo (no-op on GitHub).
-. "$(dirname "$0")/../_lib/forge.sh"
-
 # Add an emoji reaction to a pull request or issue comment.
 
 set -eu
