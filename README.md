@@ -13,7 +13,7 @@ name: PR checks
 
 on:
     pull_request:
-        types: [opened, reopened, ready_for_review, synchronize]
+        types: [opened, reopened, synchronize]
 
 jobs:
     checks:
@@ -55,6 +55,7 @@ Set the `GITHUB_*` variables or inputs the action reads before running it.
 
 ### 🔧 Utils
 
+- [**configure-ci**](configure-ci/README.md): Detect the forge (GitHub, Forgejo, Gitea) and normalise it for later steps.
 - [**config-bot**](config-bot/README.md): Configure git bot identity and authentication for CI/CD.
 - [**setup-scripts**](setup-scripts/README.md) _(beta)_: Idempotently bootstrap `zz-use` from `tomgrv/scripts`, optionally installing specific scripts.
 - [**setup-gitversion**](setup-gitversion/README.md) _(beta)_: Idempotently install the `gitversion` devcontainer feature's toolchain (GitVersion CLI plus `gv`/`bump-tag`/`bump-changelog`/`bump-version`).
@@ -113,6 +114,21 @@ Set the `GITHUB_*` variables or inputs the action reads before running it.
 
 `run-*` actions analyse the files they are given and report through reviewdog on
 those files. `check-*` actions validate repository or pull-request state.
+
+## Forgejo Actions
+
+Every action and the shipped workflows run on GitHub and on [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/overview/). Forgejo aims for familiarity, not compatibility, so the differences are handled here:
+
+- **Forge detection**: every action that calls `gh` starts with a `configure-ci` step, which sources [`configure-ci/forge.sh`](configure-ci/forge.sh). When `GITHUB_API_URL` ends in `/api/v1` (Forgejo), it defines a `gh` function that translates the `gh` subcommands used here (`api`, `pr`, `repo`, `issue`, `label`) into Forgejo REST calls with `curl` + `jq`. On GitHub the real `gh` CLI is used untouched.
+- **`configure-ci`**: the actions run it themselves; add `uses: tomgrv/actions/configure-ci@v5` to a job to get a `forge` output (`github`, `forgejo` or `gitea`) for step-level guards, and a `gh` on `PATH` off GitHub.
+- **Runner image**: the default Forgejo runner image is minimal. Use a runner label whose image has `git`, `curl`, `jq` and `node`.
+- **`uses:` resolution**: short names (`actions/checkout`, `tomgrv/actions/...`, third-party actions) resolve against the instance's `[actions] DEFAULT_ACTIONS_URL`. Set it to `github` so they resolve exactly as on GitHub.
+- **Workflow location**: Forgejo reads `.forgejo/workflows`, and falls back to `.github/workflows` when that folder does not exist, so the same files serve both forges.
+- **GitHub-only steps run only where** `!endsWith(github.api_url, '/api/v1')` is true (github.com and GitHub Enterprise Server, not Forgejo or Gitea): GitHub App tokens, branch protection (`configure-github`) and the SARIF upload to the Security tab.
+- **Monorepo split/merge**: GitHub App tokens do not exist on Forgejo; set the `KLICKSPLIT_CLIENT_ID` secret (any non-empty value, it enables the job) and `KLICKSPLIT_TOKEN` (a personal access token with repository write access).
+- **Triggers**: workflows only use events and types that both forges support (`push`, `pull_request` opened/reopened/synchronize, `issue_comment` created, `schedule`, `workflow_dispatch`). There is no `workflow_run` or `ready_for_review`, and no workflow starts another one. `permissions:` and job-level `continue-on-error` are ignored by Forgejo, which is harmless.
+- **Not available on Forgejo**: `clean-history` (workflow run deletion) is a no-op, and `create-update-ref` pushes the ref with git, so the SHA must exist in the local clone.
+- **CI**: `test-forgejo.yaml` runs the shim tests and a live API check on a Forgejo runner (set the `FORGEJO_RUNNER_LABEL` variable to your runner label).
 
 ## Release a repository
 

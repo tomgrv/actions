@@ -5,6 +5,11 @@ set -e
 # Export GitHub token for gh CLI
 export GH_TOKEN="${GITHUB_TOKEN:-}"
 
+if [ "${FORGE:-github}" = forgejo ]; then
+  zz-log w "clean-history: workflow run deletion is not available through the Forgejo API, skipping (use Forgejo's built-in log cleanup)."
+  exit 0
+fi
+
 MIN_DAYS="${MIN_DAYS:-10}"
 MIN_RUNS="${MIN_RUNS:-10}"
 WORKFLOWS="${WORKFLOWS:-}"

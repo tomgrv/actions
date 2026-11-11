@@ -53,7 +53,11 @@ jobs:
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v7
+      - name: Configure CI
+        id: ci
+        uses: ./configure-ci
       - name: Generate a token
+        if: ${{ steps.ci.outputs.forge == 'github' }}
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
@@ -64,13 +68,13 @@ jobs:
       - name: Configure bot identity
         uses: ./config-bot
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token || secrets.KLICKSPLIT_TOKEN }}
           github-app-slug: ${{ steps.app-token.outputs.app-slug }}
       - name: Degit package content
         id: degit
         uses: ./degit-package
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token || secrets.KLICKSPLIT_TOKEN }}
           source-organization: ${{ matrix.package.org }}
           source-repository: ${{ matrix.package.name }}
           target-subdir: ${{ matrix.package.location }}
@@ -80,7 +84,7 @@ jobs:
         if: ${{ steps.degit.outputs.has-changes == 'true' }}
         uses: ./create-pr
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token || secrets.KLICKSPLIT_TOKEN }}
           repository: ${{ matrix.package.org }}/${{ matrix.package.name }}
           head-branch: ${{ steps.degit.outputs.degit-branch }}
           workdir: ${{ steps.degit.outputs.degit-workdir }}

@@ -7,11 +7,18 @@ set -eu
 
 export GH_TOKEN="${GITHUB_TOKEN:-}"
 
-GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
+if [ "${FORGE:-github}" = forgejo ]; then
+  # No GitHub Apps / numeric noreply ids on Forgejo: <name>@noreply.<host>.
+  GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-forgejo-actions}"
+  _domain="${FORGE_DOMAIN:-${GITHUB_SERVER_URL#*://}}"
+  BOT_EMAIL="${BOT_EMAIL:-${GITHUB_APP_SLUG}@noreply.${_domain%%:*}}"
+else
+  GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
+fi
 
 # Input defaulting is a setup detail, not a finding: plain log only, no
 # GitHub annotation.
-if [ "${GITHUB_APP_SLUG}" = "github-actions" ] && [ -z "${BOT_NAME:-}" ]; then
+if [ "${FORGE:-github}" = github ] && [ "${GITHUB_APP_SLUG}" = "github-actions" ] && [ -z "${BOT_NAME:-}" ]; then
   zz-log i "GITHUB_APP_SLUG not set, using default: github-actions"
 fi
 

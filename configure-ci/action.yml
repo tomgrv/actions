@@ -1,0 +1,29 @@
+# @format
+
+# @package tomgrv/actions/configure-ci
+
+name: Configure CI
+description: Detect the forge running the workflow (GitHub, Forgejo, Gitea) and normalise it for the next steps.
+author: Perspikapps
+branding:
+  icon: settings
+  color: green
+
+outputs:
+  forge:
+    description: Forge running the workflow, one of github, forgejo or gitea.
+    value: ${{ steps.configure-ci.outputs.forge }}
+  server-domain:
+    description: Domain of the forge (host and port, no scheme).
+    value: ${{ steps.configure-ci.outputs.server-domain }}
+  api-url:
+    description: REST API URL of the forge.
+    value: ${{ steps.configure-ci.outputs.api-url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Detect the forge
+      id: configure-ci
+      shell: sh
+      run: sh -c "${{ github.action_path }}/run.sh" >> "$GITHUB_OUTPUT"
