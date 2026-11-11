@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 
-# Detect the forge, export it to the next steps (FORGE, FORGE_FLAVOR) and, off
+# Detect the forge, export it to the next steps (FORGE, FORGE_FLAVOR, FORGE_DOMAIN) and, off
 # GitHub, put a `gh` on PATH that talks to the forge's REST API (see forge.sh).
 
 set -eu
@@ -9,6 +9,9 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 . "${DIR}/forge.sh"
 
 SERVER_URL="${GITHUB_SERVER_URL:-https://github.com}"
+# host[:port] of the forge, without scheme or path
+DOMAIN="${SERVER_URL#*://}"
+DOMAIN="${DOMAIN%%/*}"
 API_URL="${GITHUB_API_URL:-https://api.github.com}"
 
 if [ "${FORGE}" = github ]; then
@@ -19,7 +22,7 @@ else
   FLAVOR=gitea
 fi
 
-[ -z "${GITHUB_ENV:-}" ] || printf 'FORGE=%s\nFORGE_FLAVOR=%s\n' "${FORGE}" "${FLAVOR}" >>"${GITHUB_ENV}"
+[ -z "${GITHUB_ENV:-}" ] || printf 'FORGE=%s\nFORGE_FLAVOR=%s\nFORGE_DOMAIN=%s\n' "${FORGE}" "${FLAVOR}" "${DOMAIN}" >>"${GITHUB_ENV}"
 
 if [ "${FORGE}" != github ] && [ -n "${GITHUB_PATH:-}" ]; then
   BIN="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/forge-bin"
@@ -29,8 +32,8 @@ if [ "${FORGE}" != github ] && [ -n "${GITHUB_PATH:-}" ]; then
   printf '%s\n' "${BIN}" >>"${GITHUB_PATH}"
 fi
 
-zz-log i "Forge: ${FLAVOR} (${SERVER_URL})" 2>/dev/null || echo "Forge: ${FLAVOR} (${SERVER_URL})" >&2
+zz-log i "Forge: ${FLAVOR} (${DOMAIN})" 2>/dev/null || echo "Forge: ${FLAVOR} (${DOMAIN})" >&2
 
 printf 'forge=%s\n' "${FLAVOR}"
-printf 'server-url=%s\n' "${SERVER_URL}"
+printf 'server-domain=%s\n' "${DOMAIN}"
 printf 'api-url=%s\n' "${API_URL}"

@@ -13,9 +13,9 @@ outputs:
   forge:
     description: Forge running the workflow, one of github, forgejo or gitea.
     value: ${{ steps.configure-ci.outputs.forge }}
-  server-url:
-    description: Web URL of the forge.
-    value: ${{ steps.configure-ci.outputs.server-url }}
+  server-domain:
+    description: Domain of the forge (host and port, no scheme).
+    value: ${{ steps.configure-ci.outputs.server-domain }}
   api-url:
     description: REST API URL of the forge.
     value: ${{ steps.configure-ci.outputs.api-url }}

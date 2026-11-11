@@ -10,7 +10,8 @@ export GH_TOKEN="${GITHUB_TOKEN:-}"
 if [ "${FORGE:-github}" = forgejo ]; then
   # No GitHub Apps / numeric noreply ids on Forgejo: <name>@noreply.<host>.
   GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-forgejo-actions}"
-  BOT_EMAIL="${BOT_EMAIL:-${GITHUB_APP_SLUG}@noreply.${GITHUB_SERVER_URL#*://}}"
+  _domain="${FORGE_DOMAIN:-${GITHUB_SERVER_URL#*://}}"
+  BOT_EMAIL="${BOT_EMAIL:-${GITHUB_APP_SLUG}@noreply.${_domain%%:*}}"
 else
   GITHUB_APP_SLUG="${GITHUB_APP_SLUG:-github-actions}"
 fi
