@@ -87,7 +87,7 @@ name: PR Checks
 
 on:
     pull_request:
-        types: [opened, synchronize, reopened, ready_for_review]
+        types: [opened, synchronize, reopened]
 
 jobs:
     validate-lock:

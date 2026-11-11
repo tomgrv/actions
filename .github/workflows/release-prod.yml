@@ -12,6 +12,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  actions: write # dispatch the follow-up workflows
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
@@ -31,9 +32,10 @@ jobs:
           scripts-ref: v5
           dry-run: ${{ inputs.dry_run == true }}
 
-      # Forgejo has no workflow_run event: start the follow-up workflows by hand.
+      # A push made with GITHUB_TOKEN does not trigger push workflows (GitHub or Forgejo), and
+      # Forgejo has no workflow_run event: start the follow-up workflows explicitly.
       - name: Dispatch follow-up workflows
-        if: ${{ endsWith(github.api_url, '/api/v1') && inputs.dry_run != true }}
+        if: ${{ inputs.dry_run != true }}
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

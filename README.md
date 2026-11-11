@@ -13,7 +13,7 @@ name: PR checks
 
 on:
     pull_request:
-        types: [opened, reopened, ready_for_review, synchronize]
+        types: [opened, reopened, synchronize]
 
 jobs:
     checks:
@@ -126,7 +126,8 @@ Every action and the shipped workflows run on GitHub and on [Forgejo Actions](ht
 - **Workflow location**: Forgejo reads `.forgejo/workflows`, and falls back to `.github/workflows` when that folder does not exist, so the same files serve both forges.
 - **GitHub-only steps run only where** `!endsWith(github.api_url, '/api/v1')` is true (github.com and GitHub Enterprise Server, not Forgejo or Gitea): GitHub App tokens, branch protection (`configure-github`) and the SARIF upload to the Security tab.
 - **Monorepo split/merge**: GitHub App tokens do not exist on Forgejo; set the `KLICKSPLIT_CLIENT_ID` secret (any non-empty value, it enables the job) and `KLICKSPLIT_TOKEN` (a personal access token with repository write access).
-- **Not supported by Forgejo** (documented upstream): `permissions:` and job-level `continue-on-error` are ignored, and the `workflow_run` event and `ready_for_review` pull request type do not exist. _Release Prod_ therefore dispatches `manage-monorepo-split` and `publish-features` itself on Forgejo (the token must be allowed to start workflows), and the `ready_for_review`-only workflows ship a `-forgejo` twin triggered on opened/reopened/synchronize and skipped on github.com. `clean-history` (workflow run deletion) is a no-op, and `create-update-ref` pushes the ref with git, so the SHA must exist in the local clone.
+- **Triggers**: workflows only use events and types that both forges support (`push`, `pull_request` opened/reopened/synchronize, `issue_comment` created, `schedule`, `workflow_dispatch`). There is no `workflow_run` or `ready_for_review`: _Release Prod_ dispatches `manage-monorepo-split` and `publish-features` itself, on both forges (the token must be allowed to start workflows). `permissions:` and job-level `continue-on-error` are ignored by Forgejo, which is harmless.
+- **Not available on Forgejo**: `clean-history` (workflow run deletion) is a no-op, and `create-update-ref` pushes the ref with git, so the SHA must exist in the local clone.
 - **CI**: `test-forgejo.yaml` runs the shim tests and a live API check on a Forgejo runner (set the `FORGEJO_RUNNER_LABEL` variable to your runner label).
 
 ## Release a repository
