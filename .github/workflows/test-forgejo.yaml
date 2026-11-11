@@ -1,0 +1,39 @@
+# @format
+
+# End-to-end check of the Forgejo support (_lib/forge.sh) on a Forgejo runner.
+# Skipped on github.com, where test-workspaces covers the actions.
+
+name: Test on Forgejo
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  test-forgejo:
+    if: ${{ github.server_url != 'https://github.com' }}
+    # Forgejo runner labels are chosen by the instance: set the variable to match yours.
+    runs-on: ${{ vars.FORGEJO_RUNNER_LABEL || 'docker' }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tooling
+        run: |
+          command -v jq >/dev/null && command -v curl >/dev/null ||
+            (apt-get update && apt-get install -y --no-install-recommends jq curl)
+          npm install -g bats
+
+      - name: Unit tests
+        run: bats _lib clean-branches split-package
+
+      - name: Shim against this instance's API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          . ./_lib/forge.sh
+          [ "${FORGE}" = forgejo ]
+          branch=$(gh repo view "${GITHUB_REPOSITORY}" --json defaultBranchRef --jq .defaultBranchRef.name)
+          test -n "${branch}" && echo "default branch: ${branch}"
+          gh pr list --repo "${GITHUB_REPOSITORY}" --state all --limit 5 --json number,headRefName --jq '.[].number' >/dev/null
