@@ -33,7 +33,7 @@ jobs:
 
       # Forgejo has no workflow_run event: start the follow-up workflows by hand.
       - name: Dispatch follow-up workflows
-        if: ${{ github.server_url != 'https://github.com' && inputs.dry_run != true }}
+        if: ${{ endsWith(github.api_url, '/api/v1') && inputs.dry_run != true }}
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

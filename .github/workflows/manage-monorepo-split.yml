@@ -50,7 +50,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Generate a token
-        if: ${{ github.server_url == 'https://github.com' }}
+        if: ${{ !endsWith(github.api_url, '/api/v1') }}
         id: app-token
         uses: actions/create-github-app-token@v3
         with:

@@ -1,7 +1,7 @@
 # @format
 
 # End-to-end check of the Forgejo support (_lib/forge.sh) on a Forgejo runner.
-# Skipped on github.com, where test-workspaces covers the actions.
+# Skipped on GitHub (including Enterprise Server), where test-workspaces covers the actions.
 
 name: Test on Forgejo
 
@@ -12,7 +12,7 @@ on:
 
 jobs:
   test-forgejo:
-    if: ${{ github.server_url != 'https://github.com' }}
+    if: ${{ endsWith(github.api_url, '/api/v1') }}
     # Forgejo runner labels are chosen by the instance: set the variable to match yours.
     runs-on: ${{ vars.FORGEJO_RUNNER_LABEL || 'docker' }}
     timeout-minutes: 15
