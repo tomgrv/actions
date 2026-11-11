@@ -8,13 +8,16 @@ on:
         description: 'Run through beta/prod without pushing to main (verification only)'
         type: boolean
         default: false
+
 permissions:
   contents: write
   pull-requests: write
   issues: write
+
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
+
 jobs:
   release-prod:
     runs-on: ubuntu-latest
