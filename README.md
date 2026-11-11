@@ -119,7 +119,7 @@ those files. `check-*` actions validate repository or pull-request state.
 
 Every action and the shipped workflows run on GitHub and on [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/overview/). Forgejo aims for familiarity, not compatibility, so the differences are handled here:
 
-- **Forge detection**: every action that calls `gh` starts with a `configure-ci` step, which sources [`_lib/forge.sh`](_lib/forge.sh). When `GITHUB_API_URL` ends in `/api/v1` (Forgejo), it defines a `gh` function that translates the `gh` subcommands used here (`api`, `pr`, `repo`, `issue`, `label`) into Forgejo REST calls with `curl` + `jq`. On GitHub the real `gh` CLI is used untouched.
+- **Forge detection**: every action that calls `gh` starts with a `configure-ci` step, which sources [`configure-ci/forge.sh`](configure-ci/forge.sh). When `GITHUB_API_URL` ends in `/api/v1` (Forgejo), it defines a `gh` function that translates the `gh` subcommands used here (`api`, `pr`, `repo`, `issue`, `label`) into Forgejo REST calls with `curl` + `jq`. On GitHub the real `gh` CLI is used untouched.
 - **`configure-ci`**: the actions run it themselves; add `uses: tomgrv/actions/configure-ci@v5` to a job to get a `forge` output (`github`, `forgejo` or `gitea`) for step-level guards, and a `gh` on `PATH` off GitHub.
 - **Runner image**: the default Forgejo runner image is minimal. Use a runner label whose image has `git`, `curl`, `jq` and `node`.
 - **`uses:` resolution**: short names (`actions/checkout`, `tomgrv/actions/...`, third-party actions) resolve against the instance's `[actions] DEFAULT_ACTIONS_URL`. Set it to `github` so they resolve exactly as on GitHub.

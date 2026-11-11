@@ -1,12 +1,12 @@
 #!/usr/bin/sh
 
 # Detect the forge, export it to the next steps (FORGE, FORGE_FLAVOR) and, off
-# GitHub, put a `gh` on PATH that talks to the forge's REST API (see _lib/forge.sh).
+# GitHub, put a `gh` on PATH that talks to the forge's REST API (see forge.sh).
 
 set -eu
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${DIR}/../_lib/forge.sh"
+. "${DIR}/forge.sh"
 
 SERVER_URL="${GITHUB_SERVER_URL:-https://github.com}"
 API_URL="${GITHUB_API_URL:-https://api.github.com}"
@@ -24,7 +24,7 @@ fi
 if [ "${FORGE}" != github ] && [ -n "${GITHUB_PATH:-}" ]; then
   BIN="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/forge-bin"
   mkdir -p "${BIN}"
-  printf '#!/bin/sh\n. "%s/../_lib/forge.sh"\ngh "$@"\n' "${DIR}" >"${BIN}/gh"
+  printf '#!/bin/sh\n. "%s/forge.sh"\ngh "$@"\n' "${DIR}" >"${BIN}/gh"
   chmod +x "${BIN}/gh"
   printf '%s\n' "${BIN}" >>"${GITHUB_PATH}"
 fi

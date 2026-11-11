@@ -1,6 +1,6 @@
 # @format
 
-# End-to-end check of the Forgejo support (_lib/forge.sh) on a Forgejo runner.
+# End-to-end check of the Forgejo support (configure-ci/forge.sh) on a Forgejo runner.
 # Skipped on GitHub (including Enterprise Server), where test-workspaces covers the actions.
 
 name: Test on Forgejo
@@ -26,13 +26,13 @@ jobs:
           npm install -g bats
 
       - name: Unit tests
-        run: bats _lib configure-ci clean-branches split-package
+        run: bats configure-ci clean-branches split-package
 
       - name: Shim against this instance's API
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          . ./_lib/forge.sh
+          . ./configure-ci/forge.sh
           [ "${FORGE}" = forgejo ]
           branch=$(gh repo view "${GITHUB_REPOSITORY}" --json defaultBranchRef --jq .defaultBranchRef.name)
           test -n "${branch}" && echo "default branch: ${branch}"

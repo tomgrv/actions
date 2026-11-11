@@ -2,7 +2,7 @@
 # Forge compatibility shim. The configure-ci action sources it from the `gh` wrapper it puts
 # on PATH off GitHub; it can also be sourced by hand:
 #
-#   . ./_lib/forge.sh
+#   . ./configure-ci/forge.sh
 #
 # Exports FORGE=github|forgejo (Forgejo/Gitea expose their REST API under
 # .../api/v1 in GITHUB_API_URL; GitHub.com and GHES do not).

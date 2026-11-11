@@ -20,7 +20,7 @@ Detect the forge running the workflow and normalise it for the next steps.
 ## Side effects
 
 - Exports `FORGE` (`github` or `forgejo`, the API family Gitea shares) and `FORGE_FLAVOR` (`github`, `forgejo` or `gitea`) to the next steps.
-- Off GitHub, puts a `gh` executable on `PATH` that translates the subcommands used by these actions to the forge's REST API ([`_lib/forge.sh`](../_lib/forge.sh)). On GitHub the real `gh` is left alone.
+- Off GitHub, puts a `gh` executable on `PATH` that translates the subcommands used by these actions to the forge's REST API ([`forge.sh`](forge.sh)). On GitHub the real `gh` is left alone.
 
 Gitea is told from Forgejo by probing `/api/forgejo/v1/version`.
 
